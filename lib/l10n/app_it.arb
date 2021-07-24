@@ -1,0 +1,15 @@
+{
+  "appName": "Airborne",
+
+  "mainNav_bookFlight": "Prenota",
+  "mainNav_logBook": "Log book",
+  "mainNav_about": "Info",
+
+  "button_goToday": "Oggi",
+  "button_bookFlight": "Prenota",
+
+  "bookFlight_view_schedule": "Agenda",
+  "bookFlight_view_month": "Mese",
+  "bookFlight_view_week": "Settimana",
+  "bookFlight_view_day": "Giorno"
+}

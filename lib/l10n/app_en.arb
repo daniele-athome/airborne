@@ -1,0 +1,18 @@
+{
+  "appName": "Airborne",
+  "@appName": {
+    "description": "The application name. Do not translate."
+  },
+
+  "mainNav_bookFlight": "Bookings",
+  "mainNav_logBook": "Log book",
+  "mainNav_about": "Info",
+
+  "button_goToday": "Today",
+  "button_bookFlight": "Book",
+
+  "bookFlight_view_schedule": "Schedule",
+  "bookFlight_view_month": "Month",
+  "bookFlight_view_week": "Week",
+  "bookFlight_view_day": "Day"
+}

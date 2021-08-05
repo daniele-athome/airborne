@@ -493,6 +493,7 @@ class FlightBookingDataSource extends CalendarDataSource {
   Future<void> handleLoadMore(DateTime startDate, DateTime endDate) async {
     List<FlightBooking> added = [];
     List<FlightBooking> removed = [];
+    List<FlightBooking> changed = [];
 
     print('Loading more events from ' + startDate.toIso8601String() + ' to ' + endDate.toIso8601String());
     try {
@@ -501,9 +502,24 @@ class FlightBookingDataSource extends CalendarDataSource {
 
       // TODO maybe load a few days before and after if currently in schedule view?
       final events = await _service.search(_calendarId, startDate, endDate.add(Duration(days: 1))).timeout(Duration(seconds: 3));
+      print('EVENTS: ' + events.toString());
 
-      // FIXME changed events don't get caught in this (because equals only checks for event ID)
-      // a "changed" event is not supported (unless it's a remove followed by an add...)
+      // changed events
+      changed.addAll(events
+        .where((FlightBooking f) {
+          final FlightBooking? otherEvent = appointments!
+              .firstWhere((e) => e == f, orElse: () => null);
+          return otherEvent != null ? !otherEvent.equals(f) : false;
+        })
+      );
+      if (changed.length > 0) {
+        changed.forEach(appointments!.remove);
+        notifyListeners(CalendarDataSourceAction.remove, changed);
+        appointments!.addAll(changed);
+        notifyListeners(CalendarDataSourceAction.add, changed);
+      }
+
+      // changed events don't get caught in this (because equals only checks for event ID)
       added.addAll(events.where((FlightBooking f) => !appointments!.contains(f)));
 
       // removed items are events that are not seen on the returned collection but are present on the internal data source
@@ -518,6 +534,7 @@ class FlightBookingDataSource extends CalendarDataSource {
 
       print('ADDED: ' + added.toString());
       print('REMOVED: ' + removed.toString());
+      print('CHANGED: ' + changed.toString());
       notifyListeners(CalendarDataSourceAction.add, added);
       if (removed.length > 0) {
         notifyListeners(CalendarDataSourceAction.remove, removed);

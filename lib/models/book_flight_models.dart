@@ -19,6 +19,14 @@ class FlightBooking {
   @override
   int get hashCode => id?.hashCode?? 0;
 
+  bool equals(FlightBooking other) =>
+      identical(this, other) ||
+          (id == other.id &&
+              pilotName == other.pilotName &&
+              from == other.from &&
+              to == other.to &&
+              notes == other.notes);
+
   @override
   String toString() {
     return 'FlightBooking{pilotName: $pilotName, from: $from, to: $to, notes: $notes}';

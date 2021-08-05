@@ -31,8 +31,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
   shared_preferences: ^2.0.6
-  syncfusion_flutter_calendar: ^19.2.48
-  syncfusion_localizations: ^19.2.48
+  syncfusion_flutter_calendar: ^19.2.51
+  syncfusion_localizations: ^19.2.51
   material_segmented_control: ^3.1.2
   flutter_platform_widgets: ^1.9.5
   provider: ^5.0.0
@@ -42,7 +42,7 @@ dependencies:
   daylight: ^2.0.0
   timezone: ^0.7.0
   future_progress_dialog: ^0.2.0
-  fluttertoast: ^8.0.7
+  fluttertoast: ^8.0.8
 
 dev_dependencies:
   flutter_test:

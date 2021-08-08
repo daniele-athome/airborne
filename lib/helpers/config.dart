@@ -19,7 +19,7 @@ class AppConfig {
     await dotenv.load(fileName: 'assets/data/.env');
     _googleServiceAccountJson =
         await rootBundle.loadString(dotenv.env['google_api_service_account']!);
-    currentAircraft = aircrafts![0];
+    // TEST currentAircraft = aircrafts![0];
 
     tzData.initializeTimeZones();
   }
@@ -80,7 +80,7 @@ class AppConfig {
     _currentAircraftId = data.id;
   }
 
-  List<AircraftData>? get aircrafts {
+  List<AircraftData> get aircrafts {
     // TODO
 
     return [

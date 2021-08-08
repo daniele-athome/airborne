@@ -43,6 +43,7 @@ dependencies:
   timezone: ^0.7.0
   future_progress_dialog: ^0.2.0
   fluttertoast: ^8.0.8
+  validators: ^3.0.0
 
 dev_dependencies:
   flutter_test:

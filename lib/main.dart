@@ -1,3 +1,4 @@
+import 'package:airborne/screens/aircraft_select/aircraft_data_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,15 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+  String _getInitialRoute(AppConfig appConfig) {
+    if (appConfig.aircrafts.isEmpty || appConfig.currentAircraft == null) {
+      return 'aircraft-data';
+    }
+    else {
+      return appConfig.pilotName != null ? '/' : 'pilot-select';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AppConfig>(
@@ -67,11 +77,11 @@ class _MyAppState extends State<MyApp> {
               ],
               // TEST
               locale: const Locale('it', ''),
-              initialRoute:
-                  appConfig.pilotName != null ? '/' : 'pilot-select',
+              initialRoute: _getInitialRoute(appConfig),
               routes: <String, WidgetBuilder>{
                 '/': (context) => MainNavigation(appConfig),
                 'pilot-select': (context) => PilotSelectScreen(),
+                'aircraft-data': (context) => SetAircraftDataScreen(),
               },
               debugShowCheckedModeBanner: false,
               material: (_, __) => MaterialAppData(

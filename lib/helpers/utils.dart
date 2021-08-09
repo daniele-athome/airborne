@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:daylight/daylight.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:timezone/timezone.dart';
 
 String getExceptionMessage(error) {
@@ -42,4 +46,21 @@ void showToast(FToast fToast, String text, Duration duration) {
     toastDuration: duration,
     gravity: ToastGravity.BOTTOM,
   );
+}
+
+Future<File> downloadToFile(String url, String filename) async {
+  HttpClient httpClient = new HttpClient();
+  var request = await httpClient.getUrl(Uri.parse(url));
+  var response = await request.close();
+  if (response.statusCode == 200) {
+    final directory = await getApplicationSupportDirectory();
+    final file = File(directory.path + '/' + filename);
+    print('downloading to ' + file.toString());
+    return response
+        .pipe(file.openWrite())
+        .then((value) => file);
+  }
+  else {
+    return Future.error(Exception('Download error (' + response.statusCode.toString() + ')'));
+  }
 }

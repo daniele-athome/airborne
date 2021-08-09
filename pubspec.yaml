@@ -44,6 +44,7 @@ dependencies:
   future_progress_dialog: ^0.2.0
   fluttertoast: ^8.0.8
   validators: ^3.0.0
+  path_provider: ^2.0.2
 
 dev_dependencies:
   flutter_test:

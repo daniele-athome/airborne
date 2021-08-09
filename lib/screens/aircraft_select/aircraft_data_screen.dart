@@ -1,6 +1,8 @@
+import 'package:airborne/helpers/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 
@@ -37,10 +39,52 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
+  _showError(text) {
+    showPlatformDialog(
+      context: context,
+      builder: (_context) => PlatformAlertDialog(
+        // TODO i18n
+        title: Text('Errore'),
+        // TODO i18n
+        content: Text(text),
+        actions: <Widget>[
+          PlatformDialogAction(
+            // TODO i18n
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.pop(_context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   _downloadData() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // TODO download file somehow...
+
+      showPlatformDialog(
+        context: context,
+        builder: (context) => FutureProgressDialog(
+          // TODO filename
+          // TODO password
+          downloadToFile(_aircraftUrl!, 'temp.zip').catchError((error, stacktrace) {
+            print('DOWNLOAD ERROR');
+            print(error);
+            // TODO analyze exception somehow (e.g. TimeoutException)
+            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+              _showError(getExceptionMessage(error));
+            });
+          }),
+          // TODO i18n
+          message: const Text('Downloading...'),
+        ),
+      ).then((value) {
+        if (value != null) {
+          // TODO what now?
+        }
+      });
     }
   }
 

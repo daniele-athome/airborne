@@ -110,7 +110,7 @@ packages:
       name: flutter_dotenv
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
+    version: "5.0.2"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -375,28 +375,28 @@ packages:
       name: syncfusion_flutter_calendar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.2.51"
+    version: "19.2.55"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.2.51"
+    version: "19.2.55"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.2.51"
+    version: "19.2.55"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.2.51"
+    version: "19.2.55"
   term_glyph:
     dependency: transitive
     description:

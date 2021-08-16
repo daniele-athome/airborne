@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzData;
 import 'package:timezone/standalone.dart' as tz;
 
+import 'aircraft_data.dart';
+
 class AppConfig {
 
   @deprecated
@@ -20,6 +22,11 @@ class AppConfig {
     _googleServiceAccountJson =
         await rootBundle.loadString(dotenv.env['google_api_service_account']!);
     // TEST currentAircraft = aircrafts![0];
+    // TEST
+    _currentAircraftId = 'a1234';
+    final aircraftReader = await loadAircraft(_currentAircraftId!);
+    currentAircraft = aircraftReader.toAircraftData();
+    // END TEST
 
     tzData.initializeTimeZones();
   }
@@ -125,28 +132,5 @@ class AppConfig {
       _prefs.remove('pilotName');
     }
   }
-
-}
-
-class AircraftData {
-  final String id;
-  final String callSign;
-  final Map<String, dynamic> backendInfo;
-  final List<String> pilotNames;
-  final double locationLatitude;
-  final double locationLongitude;
-  final String locationTimeZone;
-  final bool admin;
-
-  AircraftData({
-    required this.id,
-    required this.callSign,
-    required this.backendInfo,
-    required this.pilotNames,
-    required this.locationLatitude,
-    required this.locationLongitude,
-    required this.locationTimeZone,
-    this.admin = false,
-  });
 
 }

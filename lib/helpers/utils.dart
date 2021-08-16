@@ -48,12 +48,12 @@ void showToast(FToast fToast, String text, Duration duration) {
   );
 }
 
-Future<File> downloadToFile(String url, String filename) async {
+Future<File> downloadToFile(String url, String filename, bool temp) async {
   HttpClient httpClient = new HttpClient();
   var request = await httpClient.getUrl(Uri.parse(url));
   var response = await request.close();
   if (response.statusCode == 200) {
-    final directory = await getApplicationSupportDirectory();
+    final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());
     final file = File(directory.path + '/' + filename);
     print('downloading to ' + file.toString());
     return response

@@ -1,4 +1,5 @@
-import 'package:airborne/helpers/utils.dart';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -6,7 +7,9 @@ import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 
+import '../../helpers/aircraft_data.dart';
 import '../../helpers/config.dart';
+import '../../helpers/utils.dart';
 
 class SetAircraftDataScreen extends StatefulWidget {
 
@@ -60,16 +63,15 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  _downloadData() {
+  _downloadData(AppConfig appConfig) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       showPlatformDialog(
         context: context,
         builder: (context) => FutureProgressDialog(
-          // TODO filename
           // TODO password
-          downloadToFile(_aircraftUrl!, 'temp.zip').catchError((error, stacktrace) {
+          downloadToFile(_aircraftUrl!, 'aircraft.zip', true).catchError((error, stacktrace) {
             print('DOWNLOAD ERROR');
             print(error);
             // TODO analyze exception somehow (e.g. TimeoutException)
@@ -80,10 +82,37 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           // TODO i18n
           message: const Text('Downloading...'),
         ),
-      ).then((value) {
+      ).then((value) async {
         if (value != null) {
-          // TODO what now?
+          print(value);
+          await _validateAndStoreAircraft(value as File, appConfig);
         }
+      });
+    }
+  }
+
+  _validateAndStoreAircraft(File file, AppConfig appConfig) async {
+    final reader = AircraftDataReader(dataFile: file);
+    final validation = await reader.validate();
+    print('VALIDATION: ' + validation.toString());
+    if (validation) {
+      try {
+        final dataFile = await addAircraftDataFile(reader);
+        print(dataFile);
+        appConfig.addAircraft(reader.toAircraftData());
+      }
+      catch (e) {
+        print(e);
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          // TODO i18n
+          _showError('Unable to store aircraft data file.');
+        });
+      }
+    }
+    else {
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        // TODO i18n
+        _showError('Not a valid aircraft data file.');
       });
     }
   }
@@ -137,7 +166,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           PlatformButton(
             // TODO i18n
             child: Text('Install'),
-            onPressed: _downloadData,
+            onPressed: () => _downloadData(appConfig),
             //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
           ),
         ],

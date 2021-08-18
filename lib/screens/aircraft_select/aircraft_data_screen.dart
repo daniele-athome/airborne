@@ -69,9 +69,18 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
 
       showPlatformDialog(
         context: context,
-        builder: (context) => FutureProgressDialog(
-          // TODO password
-          downloadToFile(_aircraftUrl!, 'aircraft.zip', true).catchError((error, stacktrace) {
+        builder: (context) {
+          final userpass = _aircraftPassword;
+          String? username, password;
+          if (userpass != null) {
+            final separator = userpass.indexOf(':');
+            if (separator >= 0) {
+              username = userpass.substring(0, separator);
+              password = userpass.substring(separator + 1);
+            }
+          }
+          return FutureProgressDialog(
+          downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).catchError((error, stacktrace) {
             print('DOWNLOAD ERROR');
             print(error);
             // TODO analyze exception somehow (e.g. TimeoutException)
@@ -81,17 +90,27 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           }),
           // TODO i18n
           message: const Text('Downloading...'),
-        ),
+        );
+        },
       ).then((value) async {
         if (value != null) {
           print(value);
-          await _validateAndStoreAircraft(value as File, appConfig);
+          final aircraftData = await _validateAndStoreAircraft(value as File, appConfig);
+          if (aircraftData != null) {
+            // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
+            // probably FutureProgressDialog popping the navigator has something to do with it
+            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+              appConfig.currentAircraft = aircraftData;
+              Navigator.of(context, rootNavigator: true)
+                  .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
+            });
+          }
         }
       });
     }
   }
 
-  _validateAndStoreAircraft(File file, AppConfig appConfig) async {
+  Future<AircraftData?> _validateAndStoreAircraft(File file, AppConfig appConfig) async {
     final reader = AircraftDataReader(dataFile: file);
     final validation = await reader.validate();
     print('VALIDATION: ' + validation.toString());
@@ -99,7 +118,9 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       try {
         final dataFile = await addAircraftDataFile(reader);
         print(dataFile);
-        appConfig.addAircraft(reader.toAircraftData());
+        final aircraftData = reader.toAircraftData();
+        appConfig.addAircraft(aircraftData);
+        return aircraftData;
       }
       catch (e) {
         print(e);
@@ -114,6 +135,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         // TODO i18n
         _showError('Not a valid aircraft data file.');
       });
+      return null;
     }
   }
 

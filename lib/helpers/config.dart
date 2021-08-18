@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,59 +8,56 @@ import 'aircraft_data.dart';
 
 class AppConfig {
 
-  @deprecated
-  late String _googleServiceAccountJson;
   late SharedPreferences _prefs;
 
-  AircraftData? currentAircraft;
+  AircraftData? _currentAircraft;
 
   init() async {
     _prefs = await SharedPreferences.getInstance();
-    // TEMP
+    // @deprecated?
     await dotenv.load(fileName: 'assets/data/.env');
-    _googleServiceAccountJson =
-        await rootBundle.loadString(dotenv.env['google_api_service_account']!);
-    // TEST currentAircraft = aircrafts![0];
-    // TEST
-    _currentAircraftId = 'a1234';
-    final aircraftReader = await loadAircraft(_currentAircraftId!);
-    currentAircraft = aircraftReader.toAircraftData();
-    // END TEST
+
+    if (_currentAircraftId != null) {
+      // load current aircraft
+      // TODO error handling
+      final aircraftReader = await loadAircraft(_currentAircraftId!);
+      currentAircraft = aircraftReader.toAircraftData();
+    }
 
     tzData.initializeTimeZones();
   }
 
   bool get admin {
-    return currentAircraft!.admin;
+    return _currentAircraft!.admin;
   }
 
   String get googleServiceAccountJson {
-    return currentAircraft!.backendInfo['google_api_service_account']!;
+    return _currentAircraft!.backendInfo['google_api_service_account']!;
   }
 
   String get googleApiKey {
-    return currentAircraft!.backendInfo['google_api_key']!;
+    return _currentAircraft!.backendInfo['google_api_key']!;
   }
 
   String get googleCalendarId {
-    return currentAircraft!.backendInfo['google_calendar_id']!;
+    return _currentAircraft!.backendInfo['google_calendar_id']!;
   }
 
   double get locationLatitude {
-    return currentAircraft!.locationLatitude;
+    return _currentAircraft!.locationLatitude;
   }
 
   double get locationLongitude {
-    return currentAircraft!.locationLongitude;
+    return _currentAircraft!.locationLongitude;
   }
 
   tz.Location get locationTimeZone {
-    return tz.getLocation(currentAircraft!.locationTimeZone);
+    return tz.getLocation(_currentAircraft!.locationTimeZone);
   }
 
   // TODO handle non-pilot user "(prove tecniche)"
   List<String> get pilotNames {
-    return currentAircraft!.pilotNames;
+    return _currentAircraft!.pilotNames;
   }
 
   ImageProvider getPilotAvatar(String name) {
@@ -82,30 +78,22 @@ class AppConfig {
     }
   }
 
-  void switchAircraft(AircraftData data) {
-    this.currentAircraft = data;
-    _currentAircraftId = data.id;
+  AircraftData? get currentAircraft => this._currentAircraft;
+
+  set currentAircraft(AircraftData? data) {
+    if (data != null) {
+      print('Switching aircraft: ' + data.callSign);
+    }
+    else {
+      print('Selecting no aircraft');
+    }
+    this._currentAircraft = data;
+    _currentAircraftId = data?.id;
   }
 
   List<AircraftData> get aircrafts {
     // TODO
-
-    return [
-      AircraftData(
-        id: dotenv.env['aircraft_id']!,
-        callSign: dotenv.env['callsign']!,
-        backendInfo: {
-          'google_api_service_account': _googleServiceAccountJson,
-          'google_api_key': dotenv.env['google_api_key']!,
-          'google_calendar_id': dotenv.env['google_calendar_id']!,
-        },
-        pilotNames: dotenv.env['pilotNames']!.split(r','),
-        locationLatitude: double.parse(dotenv.env['location_latitude']!),
-        locationLongitude: double.parse(dotenv.env['location_longitude']!),
-        locationTimeZone: dotenv.env['location_timezone']!,
-        admin: dotenv.env['admin']!.toLowerCase() == 'true',
-      )
-    ];
+    return [];
   }
 
   void addAircraft(AircraftData data) {

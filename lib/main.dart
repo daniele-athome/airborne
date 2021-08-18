@@ -28,12 +28,13 @@ Future<void> main() async {
 
   // we need configuration to be loaded so we block here
   // it's just assets reading anyway so it won't take long
+  // FIXME this will also load the current aircraft, so it's not so fast afterall :P
   final appConfig = AppConfig();
   await appConfig.init();
   runApp(
     Provider.value(
       value: appConfig,
-      child: MyApp(),
+      builder: (_, __) => MyApp(),
     ),
   );
 }
@@ -50,7 +51,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   String _getInitialRoute(AppConfig appConfig) {
-    if (appConfig.aircrafts.isEmpty || appConfig.currentAircraft == null) {
+    if (appConfig.aircrafts.isEmpty && appConfig.currentAircraft == null) {
       return 'aircraft-data';
     }
     else {
@@ -60,39 +61,40 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    print('MAIN-BUILD');
     return Consumer<AppConfig>(
-        builder: (context, appConfig, child) => PlatformApp(
-              onGenerateTitle: (BuildContext context) =>
-                  AppLocalizations.of(context)!.appName,
-              localizationsDelegates: [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                SfGlobalLocalizations.delegate,
-              ],
-              supportedLocales: [
-                const Locale('en', ''),
-                const Locale('it', ''),
-              ],
-              // TEST
-              locale: const Locale('it', ''),
-              initialRoute: _getInitialRoute(appConfig),
-              routes: <String, WidgetBuilder>{
-                '/': (context) => MainNavigation(appConfig),
-                'pilot-select': (context) => PilotSelectScreen(),
-                'aircraft-data': (context) => SetAircraftDataScreen(),
-              },
-              debugShowCheckedModeBanner: false,
-              material: (_, __) => MaterialAppData(
-                theme: ThemeData(
-                  primarySwatch: Colors.deepOrange,
-                ),
-              ),
-              cupertino: (_, __) => CupertinoAppData(
-                // TODO
-              ),
-            ));
+      builder: (context, appConfig, child) => PlatformApp(
+        onGenerateTitle: (BuildContext context) =>
+            AppLocalizations.of(context)!.appName,
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          SfGlobalLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', ''),
+          const Locale('it', ''),
+        ],
+        // TEST
+        locale: const Locale('it', ''),
+        initialRoute: _getInitialRoute(appConfig),
+        routes: <String, WidgetBuilder>{
+          '/': (context) => MainNavigation(appConfig),
+          'pilot-select': (context) => PilotSelectScreen(),
+          'aircraft-data': (context) => SetAircraftDataScreen(),
+        },
+        debugShowCheckedModeBanner: false,
+        material: (_, __) => MaterialAppData(
+          theme: ThemeData(
+            primarySwatch: Colors.deepOrange,
+          ),
+        ),
+        cupertino: (_, __) => CupertinoAppData(
+          // TODO
+        ),
+      ));
   }
 }
 

@@ -48,9 +48,14 @@ void showToast(FToast fToast, String text, Duration duration) {
   );
 }
 
-Future<File> downloadToFile(String url, String filename, bool temp) async {
+Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
+  final uri = Uri.parse(url);
   HttpClient httpClient = new HttpClient();
-  var request = await httpClient.getUrl(Uri.parse(url));
+  if (username != null && password != null) {
+    httpClient.addCredentials(
+        uri, "", HttpClientBasicCredentials(username, password));
+  }
+  var request = await httpClient.getUrl(uri);
   var response = await request.close();
   if (response.statusCode == 200) {
     final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());

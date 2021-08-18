@@ -49,7 +49,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
   @override
   void didChangeDependencies() {
     _service = Provider.of<BookFlightCalendarService>(context);
-    _appConfig = Provider.of<AppConfig>(context);
+    _appConfig = Provider.of<AppConfig>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -555,7 +555,7 @@ class _PilotSelectListState extends State<_PilotSelectList> {
 
   @override
   void didChangeDependencies() {
-    _appConfig = Provider.of<AppConfig>(context);
+    _appConfig = Provider.of<AppConfig>(context, listen: false);
     super.didChangeDependencies();
   }
 

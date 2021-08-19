@@ -80,7 +80,19 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             }
           }
           return FutureProgressDialog(
-            downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).catchError((error, stacktrace) {
+            downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).then((value) async {
+              print(value);
+              final aircraftData = await _validateAndStoreAircraft(value, appConfig);
+              if (aircraftData != null) {
+                // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
+                // probably FutureProgressDialog popping the navigator has something to do with it
+                WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                  appConfig.currentAircraft = aircraftData;
+                  Navigator.of(context, rootNavigator: true)
+                      .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
+                });
+              }
+            }).catchError((error, stacktrace) {
               print('DOWNLOAD ERROR');
               print(error);
               // TODO analyze exception somehow (e.g. TimeoutException)
@@ -94,17 +106,12 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         },
       ).then((value) async {
         if (value != null) {
-          print(value);
-          final aircraftData = await _validateAndStoreAircraft(value as File, appConfig);
-          if (aircraftData != null) {
-            // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
-            // probably FutureProgressDialog popping the navigator has something to do with it
-            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-              appConfig.currentAircraft = aircraftData;
-              Navigator.of(context, rootNavigator: true)
-                  .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
-            });
-          }
+          // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
+          // probably FutureProgressDialog popping the navigator has something to do with it
+          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+            Navigator.of(context, rootNavigator: true)
+                .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
+          });
         }
       });
     }

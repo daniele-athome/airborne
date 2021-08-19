@@ -16,9 +16,16 @@ class AppConfig {
 
     if (_currentAircraftId != null) {
       // load current aircraft
-      // TODO error handling
-      final aircraftReader = await loadAircraft(_currentAircraftId!);
-      currentAircraft = aircraftReader.toAircraftData();
+      try {
+        final aircraftReader = await loadAircraft(_currentAircraftId!);
+        currentAircraft = aircraftReader.toAircraftData();
+      }
+      catch (e) {
+        print('Error loading current aircraft, cleaning everything ('+e.toString()+')');
+        _currentAircraftId = null;
+        // a bit drastic maybe...
+        deleteAllAircrafts();
+      }
     }
 
     tzData.initializeTimeZones();

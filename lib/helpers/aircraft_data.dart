@@ -7,7 +7,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 class AircraftData {
-  final Directory dataPath;
+  final Directory? dataPath;
   final String id;
   final String callSign;
   final Map<String, dynamic> backendInfo;
@@ -30,7 +30,7 @@ class AircraftData {
   });
 
   File getPilotAvatar(String name) {
-    return File(path.join(this.dataPath.path, 'avatar-' + name.toLowerCase() + '.jpg'));
+    return File(path.join(this.dataPath!.path, 'avatar-' + name.toLowerCase() + '.jpg'));
   }
 
 }
@@ -162,17 +162,39 @@ class AircraftDataReader {
 /// Add an aircraft data file to a local data store for long-term storage.
 Future<File> addAircraftDataFile(AircraftDataReader reader) async {
   final baseDir = await getApplicationSupportDirectory();
-  final directory = Directory(baseDir.path + '/aircrafts');
+  final directory = Directory(path.join(baseDir.path, 'aircrafts'));
   await directory.create(recursive: true);
-  final filename = directory.path + '/' + reader.metadata!['aircraft_id'] + '.zip';
+  final filename = path.join(directory.path, reader.metadata!['aircraft_id'] + '.zip');
+  await deleteAircraftCache(reader.metadata!['aircraft_id']);
   return reader.dataFile.copy(filename);
 }
 
 /// Loads an aircraft data file into the cache.
 Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   final baseDir = await getApplicationSupportDirectory();
-  final dataFile = File(baseDir.path + '/aircrafts/' + aircraftId + '.zip');
+  final dataFile = File(path.join(baseDir.path, 'aircrafts', aircraftId + '.zip'));
   final reader = AircraftDataReader(dataFile: dataFile);
   await reader.open();
   return reader;
+}
+
+Future<Directory> deleteAircraftCache(String aircraftId) async {
+  final cacheDir = await getTemporaryDirectory();
+  final tmpDirectory = Directory(path.join(cacheDir.path, 'aircrafts', aircraftId));
+  final exists = await tmpDirectory.exists();
+  return exists ? tmpDirectory.delete(recursive: true) as Future<Directory> : Future.value(tmpDirectory);
+}
+
+Future<Directory> deleteAllAircrafts() async {
+  // delete cache
+  final cacheDir = await getTemporaryDirectory();
+  final tmpDirectory = Directory(path.join(cacheDir.path, 'aircrafts'));
+  if (await tmpDirectory.exists()) {
+    await tmpDirectory.delete(recursive: true);
+  }
+  // delete files
+  final baseDir = await getApplicationSupportDirectory();
+  final directory = Directory(path.join(baseDir.path, 'aircrafts'));
+  final exists = await directory.exists();
+  return exists ? directory.delete(recursive: true) as Future<Directory> : Future.value(directory);
 }

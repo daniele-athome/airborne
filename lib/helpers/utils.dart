@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:daylight/daylight.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +10,9 @@ import 'package:timezone/timezone.dart';
 String getExceptionMessage(error) {
   if (error is LocationNotFoundException) {
     return error.msg;
+  }
+  else if (error is SocketException) {
+    return (error.osError?.message)?? "unknown";
   }
   else {
     return error.message;

@@ -118,12 +118,14 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       try {
         final dataFile = await addAircraftDataFile(reader);
         print(dataFile);
+        await reader.open();
         final aircraftData = reader.toAircraftData();
         appConfig.addAircraft(aircraftData);
         return aircraftData;
       }
-      catch (e) {
+      catch (e, stacktrace) {
         print(e);
+        print(stacktrace);
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
           // TODO i18n
           _showError('Unable to store aircraft data file.');

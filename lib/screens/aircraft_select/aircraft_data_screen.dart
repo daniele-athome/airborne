@@ -80,17 +80,17 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             }
           }
           return FutureProgressDialog(
-          downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).catchError((error, stacktrace) {
-            print('DOWNLOAD ERROR');
-            print(error);
-            // TODO analyze exception somehow (e.g. TimeoutException)
-            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-              _showError(getExceptionMessage(error));
-            });
-          }),
-          // TODO i18n
-          message: const Text('Downloading...'),
-        );
+            downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).catchError((error, stacktrace) {
+              print('DOWNLOAD ERROR');
+              print(error);
+              // TODO analyze exception somehow (e.g. TimeoutException)
+              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                _showError(getExceptionMessage(error));
+              });
+            }),
+            // TODO i18n
+            message: const Text('Downloading...'),
+          );
         },
       ).then((value) async {
         if (value != null) {

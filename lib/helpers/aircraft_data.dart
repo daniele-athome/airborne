@@ -7,6 +7,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 class AircraftData {
+  final Directory dataPath;
   final String id;
   final String callSign;
   final Map<String, dynamic> backendInfo;
@@ -17,6 +18,7 @@ class AircraftData {
   final bool admin;
 
   AircraftData({
+    required this.dataPath,
     required this.id,
     required this.callSign,
     required this.backendInfo,
@@ -26,6 +28,10 @@ class AircraftData {
     required this.locationTimeZone,
     this.admin = false,
   });
+
+  File getPilotAvatar(String name) {
+    return File(path.join(this.dataPath.path, 'avatar-' + name.toLowerCase() + '.jpg'));
+  }
 
 }
 
@@ -84,33 +90,62 @@ class AircraftDataReader {
 
   /// Opens an aircraft data file and extract contents in a temporary directory.
   Future<Directory> open() async {
-    final baseDir = await getTemporaryDirectory();
-    final directory = Directory(path.join(baseDir.path, 'aircrafts', path.basenameWithoutExtension(dataFile.path)));
-    await directory.create(recursive: true);
-
-    // FIXME in-memory operations - fine for small files, but it needs to change
-    final bytes = await this.dataFile.readAsBytes();
-    final archive = ZipDecoder().decodeBytes(bytes, verify: true);
-
-    for (final file in archive.files) {
-      if (!file.isFile) {
-        continue;
-      }
-      final f = File(path.join(directory.path, file.name));
-      await f.writeAsBytes(file.content as List<int>);
+    if (metadata != null && metadata!['path'] != null) {
+      return metadata!['path'];
     }
 
-    // TODO really?
-    final valid = await validate();
-    if (!valid) {
+    final baseDir = await getTemporaryDirectory();
+    final directory = Directory(path.join(baseDir.path, 'aircrafts', path.basenameWithoutExtension(dataFile.path)));
+    final exists = await directory.exists();
+    if (!exists) {
+      await directory.create(recursive: true);
+
+      // FIXME in-memory operations - fine for small files, but it needs to change
+      final bytes = await this.dataFile.readAsBytes();
+      final archive = ZipDecoder().decodeBytes(bytes, verify: true);
+
+      for (final file in archive.files) {
+        if (!file.isFile) {
+          continue;
+        }
+        final f = File(path.join(directory.path, file.name));
+        await f.writeAsBytes(file.content as List<int>);
+      }
+    }
+
+    try {
+      final jsonFile = File(path.join(directory.path, 'aircraft.json'));
+      final jsonData = await jsonFile.readAsString();
+      metadata = json.decode(jsonData) as Map<String, dynamic>;
+    }
+    catch(e) {
+      print('aircraft.json is not valid JSON: ' + e.toString());
       throw FormatException('Not a valid aircraft archive.');
     }
 
+    // aircraft picture
+    final aircraftPicFile = File(path.join(directory.path, 'aircraft.jpg'));
+    if (!(await aircraftPicFile.exists())) {
+      print('aircraft.jpg is missing');
+      throw FormatException('Not a valid aircraft archive.');
+    }
+
+    // pilot avatars
+    for (var pilot in List<String>.from(metadata!['pilot_names'])) {
+      if (!(await File(path.join(directory.path, 'avatar-' + pilot.toLowerCase() + '.jpg')).exists())) {
+        print('pilot avatar for ' + pilot + ' is missing');
+        throw FormatException('Not a valid aircraft archive.');
+      }
+    }
+
+    // store path for later use
+    metadata!['path'] = directory;
     return directory;
   }
 
   AircraftData toAircraftData() {
     return AircraftData(
+      dataPath: metadata!['path'],
       id: metadata!['aircraft_id'],
       callSign: metadata!['callsign'],
       backendInfo: metadata!['backend_info'],

@@ -37,7 +37,6 @@ dependencies:
   flutter_platform_widgets: ^1.9.5
   provider: ^5.0.0
   googleapis_auth: ^1.1.0
-  flutter_dotenv: ^5.0.2
   googleapis: ^4.0.0
   daylight: ^2.0.0
   timezone: ^0.7.0
@@ -66,16 +65,7 @@ flutter:
   # Generate localizations
   generate: true
 
-  assets:
-    - assets/data/.env
-    - assets/data/service_account.json
-    - assets/data/aircraft.jpg
-    - assets/data/avatar-claudia.jpg
-    - assets/data/avatar-daniele.jpg
-    - assets/data/avatar-davide.jpg
-    - assets/data/avatar-manuel.jpg
-    - assets/data/avatar-simone.jpg
-    - assets/data/avatar-victoriano.jpg
+  #assets:
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

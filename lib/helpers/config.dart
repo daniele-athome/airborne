@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzData;
 import 'package:timezone/standalone.dart' as tz;
@@ -14,8 +13,6 @@ class AppConfig {
 
   init() async {
     _prefs = await SharedPreferences.getInstance();
-    // @deprecated?
-    await dotenv.load(fileName: 'assets/data/.env');
 
     if (_currentAircraftId != null) {
       // load current aircraft
@@ -61,8 +58,7 @@ class AppConfig {
   }
 
   ImageProvider getPilotAvatar(String name) {
-    // TODO load from files
-    return AssetImage('assets/data/avatar-' + name.toLowerCase() + '.jpg');
+    return FileImage(_currentAircraft!.getPilotAvatar(name));
   }
 
   String? get _currentAircraftId {

@@ -15,7 +15,7 @@ on:
 jobs:
   linux:
     runs-on: ubuntu-latest
-    environment: i8104
+    # TODO environment: ???
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -34,21 +34,6 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Decrypt files
-        env:
-          ENCRYPTED_FILE_KEY: ${{ secrets.ENCRYPTED_FILE_KEY }}
-          ENCRYPTED_FILE_IV: ${{ secrets.ENCRYPTED_FILE_IV }}
-        run: |
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/env.txt.enc -out assets/data/.env -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/service_account.json.enc -out assets/data/service_account.json -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/aircraft.jpg.enc -out assets/data/aircraft.jpg -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/avatar-claudia.jpg.enc -out assets/data/avatar-claudia.jpg -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/avatar-daniele.jpg.enc -out assets/data/avatar-daniele.jpg -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/avatar-davide.jpg.enc -out assets/data/avatar-davide.jpg -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/avatar-manuel.jpg.enc -out assets/data/avatar-manuel.jpg -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/avatar-simone.jpg.enc -out assets/data/avatar-simone.jpg -d
-          openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in deploy/i8104/avatar-victoriano.jpg.enc -out assets/data/avatar-victoriano.jpg -d
 
       - name: Build Linux application
         run: |

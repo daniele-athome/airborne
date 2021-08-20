@@ -35,7 +35,7 @@ dependencies:
   syncfusion_localizations: ^19.2.56
   material_segmented_control: ^3.1.2
   flutter_platform_widgets: ^1.9.5
-  provider: ^5.0.0
+  provider: ^6.0.0
   googleapis_auth: ^1.1.0
   googleapis: ^4.0.0
   daylight: ^2.0.0

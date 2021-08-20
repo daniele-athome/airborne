@@ -38,7 +38,7 @@ jobs:
           flutter config --enable-linux-desktop
 
       - name: Run tests
-        run: flutter test
+        run: flutter test -r expanded
 
       - name: Build Linux application
         run: |

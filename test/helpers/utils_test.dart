@@ -13,6 +13,8 @@ void main() {
   });
 
   test('getSunTimes', () {
+    print(getSunTimes(0, 0, DateTime.utc(2020), UTC).sunrise);
+    print(TZDateTime.parse(UTC, "2020-01-01 04:59:50.032Z"));
     expect(getSunTimes(0, 0, DateTime.utc(2020), UTC),
         SunTimes(TZDateTime.parse(UTC, "2020-01-01 04:59:50.032Z"), TZDateTime.parse(UTC, "2020-01-01 17:07:18.720Z")));
   });

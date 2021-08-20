@@ -33,9 +33,13 @@ jobs:
           sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter config --enable-linux-desktop
+
+      - name: Run tests
+        run: flutter test
 
       - name: Build Linux application
         run: |
-          flutter config --enable-linux-desktop
           flutter build linux

@@ -23,6 +23,17 @@ class SunTimes {
   final TZDateTime sunrise;
   final TZDateTime sunset;
   SunTimes(this.sunrise, this.sunset);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is SunTimes &&
+              sunrise == other.sunrise &&
+              sunset == other.sunset;
+
+  @override
+  int get hashCode => sunrise.hashCode ^ sunset.hashCode;
+
 }
 
 SunTimes getSunTimes(double latitude, double longitude, DateTime dateTime, Location tzLocation) {

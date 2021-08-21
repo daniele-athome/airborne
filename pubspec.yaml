@@ -38,8 +38,7 @@ dependencies:
   provider: ^6.0.0
   googleapis_auth: ^1.1.0
   googleapis: ^4.0.0
-  # FIXME buggy library -- daylight: ^2.0.0
-  sunrise_sunset_calc: ^2.1.0
+  solar_calculator: ^1.0.2
   timezone: ^0.7.0
   future_progress_dialog: ^0.2.0
   fluttertoast: ^8.0.8

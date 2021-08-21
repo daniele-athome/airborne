@@ -22,13 +22,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.1"
-  angles:
-    dependency: transitive
-    description:
-      name: angles
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.0"
   archive:
     dependency: "direct main"
     description:
@@ -155,13 +148,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.3"
-  daylight:
-    dependency: "direct main"
-    description:
-      name: daylight
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -530,6 +516,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  solar_calculator:
+    dependency: "direct main"
+    description:
+      name: solar_calculator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   source_gen:
     dependency: transitive
     description:
@@ -579,13 +572,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
-  sunrise_sunset_calc:
-    dependency: "direct main"
-    description:
-      name: sunrise_sunset_calc
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.0"
   syncfusion_flutter_calendar:
     dependency: "direct main"
     description:

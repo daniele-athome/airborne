@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sunrise_sunset_calc/sunrise_sunset_calc.dart';
+import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
 
 String getExceptionMessage(error) {
@@ -37,13 +37,16 @@ class SunTimes {
 }
 
 SunTimes getSunTimes(double latitude, double longitude, DateTime dateTime, Location tzLocation) {
-  // WARNING very VERY slow library, but the other (faster) one is buggy
-  final times = getSunriseSunset(latitude, longitude,
-      tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset / 1000 / 60 ~/ 60,
-      dateTime);
+  final instant = Instant(
+    year: dateTime.year,
+    month: dateTime.month,
+    day: dateTime.day,
+    timeZoneOffset: tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset / 1000 / 60 / 60
+  );
+  final times = SolarCalculator(instant, latitude, longitude);
   return SunTimes(
-      TZDateTime.from(times.sunrise, tzLocation),
-      TZDateTime.from(times.sunset, tzLocation)
+      TZDateTime.from(times.sunriseTime.toUtcDateTime(), tzLocation),
+      TZDateTime.from(times.sunsetTime.toUtcDateTime(), tzLocation)
   );
 }
 

@@ -16,6 +16,10 @@
   "bookFlight_view_month": "Mese",
   "bookFlight_view_week": "Settimana",
   "bookFlight_view_day": "Giorno",
+  "bookFlight_button_error_retry": "Riprova",
+  "bookFlight_message_flight_added": "Prenotazione effettuata.",
+  "bookFlight_message_flight_canceled": "Prenotazione cancellata.",
+  "bookFlight_message_flight_updated": "Prenotazione modificata.",
 
   "addAircraft_title": "Configura aereo",
   "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",

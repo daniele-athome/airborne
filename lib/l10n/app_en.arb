@@ -19,6 +19,10 @@
   "bookFlight_view_month": "Month",
   "bookFlight_view_week": "Week",
   "bookFlight_view_day": "Day",
+  "bookFlight_button_error_retry": "Retry",
+  "bookFlight_message_flight_added": "Flight booked successfully.",
+  "bookFlight_message_flight_canceled": "Flight canceled successfully.",
+  "bookFlight_message_flight_updated": "Flight saved successfully.",
 
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",

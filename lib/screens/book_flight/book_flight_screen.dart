@@ -241,8 +241,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
                 Navigator.pop(_context);
                 retryCallback();
               },
-              // TODO i18n
-              child: Text('Riprova'),
+              child: Text(AppLocalizations.of(context)!.bookFlight_button_error_retry),
             ),
           ],
         ),
@@ -255,8 +254,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(days: 1),
         action: SnackBarAction(
-          // TODO i18n
-          label: 'Riprova',
+          label: AppLocalizations.of(context)!.bookFlight_button_error_retry,
           textColor: Colors.white,
           onPressed: () {
             _hideError();
@@ -336,16 +334,15 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       .push(route)
       .then((result) {
         if (result != null) {
-          // TODO i18n
           final String message;
           if (event == null) {
-            message = 'Prenotazione effettuata.';
+            message = AppLocalizations.of(context)!.bookFlight_message_flight_added;
           }
           else if (result is DeletedFlightBooking) {
-            message = 'Prenotazione cancellata.';
+            message = AppLocalizations.of(context)!.bookFlight_message_flight_canceled;
           }
           else {
-            message = 'Prenotazione modificata.';
+            message = AppLocalizations.of(context)!.bookFlight_message_flight_updated;
           }
           showToast(_fToast, message, const Duration(seconds: 2));
           _refresh(result as FlightBooking, event == null);

@@ -3,8 +3,11 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
+import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+
+final Logger _log = Logger((AircraftData).toString());
 
 class AircraftData {
   final Directory? dataPath;
@@ -53,13 +56,13 @@ class AircraftDataReader {
       archive = ZipDecoder().decodeBytes(bytes, verify: true);
     }
     catch (e) {
-      print('Not a valid zip file: $e');
+      _log.warning('Not a valid zip file: $e');
       return false;
     }
 
     final mainFile = archive.findFile("aircraft.json");
     if (mainFile == null || !mainFile.isFile) {
-      print('aircraft.json not found in archive!');
+      _log.warning('aircraft.json not found in archive!');
       return false;
     }
 
@@ -69,11 +72,11 @@ class AircraftDataReader {
       metadata = json.decode(String.fromCharCodes(jsonData)) as Map<String, dynamic>;
     }
     catch(e) {
-      print('aircraft.json is not valid JSON: $e');
+      _log.warning('aircraft.json is not valid JSON: $e');
       return false;
     }
 
-    print(metadata);
+    _log.finest(metadata);
     // TODO JSON Schema validation
     if (metadata['aircraft_id'] != null && metadata['callsign'] != null &&
         metadata['backend_info'] != null && metadata['pilot_names'] != null) {
@@ -119,21 +122,21 @@ class AircraftDataReader {
       metadata = json.decode(jsonData) as Map<String, dynamic>;
     }
     catch(e) {
-      print('aircraft.json is not valid JSON: $e');
+      _log.warning('aircraft.json is not valid JSON: $e');
       throw const FormatException('Not a valid aircraft archive.');
     }
 
     // aircraft picture
     final aircraftPicFile = File(path.join(directory.path, 'aircraft.jpg'));
     if (!(await aircraftPicFile.exists())) {
-      print('aircraft.jpg is missing');
+      _log.warning('aircraft.jpg is missing');
       throw const FormatException('Not a valid aircraft archive.');
     }
 
     // pilot avatars
     for (final pilot in List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>)) {
       if (!(await File(path.join(directory.path, 'avatar-${pilot.toLowerCase()}.jpg')).exists())) {
-        print('pilot avatar for $pilot is missing');
+        _log.warning('pilot avatar for $pilot is missing');
         throw const FormatException('Not a valid aircraft archive.');
       }
     }

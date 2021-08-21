@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:material_segmented_control/material_segmented_control.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -18,6 +19,8 @@ import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
 import '../../services/book_flight_services.dart';
 import 'book_flight_modal.dart';
+
+final Logger _log = Logger((FlightBooking).toString());
 
 class BookFlightScreen extends StatefulWidget {
   @override
@@ -45,7 +48,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
 
   @override
   void initState() {
-    print('INIT');
+    _log.finest('INIT');
     _fToast = FToast();
     _fToast.init(context);
     _calendarController = CalendarController();
@@ -64,14 +67,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
 
   void _rebuildData() {
     _dataSource = FlightBookingDataSource(_appConfig.googleCalendarId,
-        BookFlightCalendarService(_googleServiceAccountService), (error) {
-      print('Error fetching data');
-      print(error);
-      // TODO analyze exception somehow (e.g. TimeoutException)
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-        _showError(getExceptionMessage(error), null, _retryFetchData);
-      });
-    });
+      BookFlightCalendarService(_googleServiceAccountService), (error) {
+        _log.warning('Error fetching data', error);
+        // TODO analyze exception somehow (e.g. TimeoutException)
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          _showError(getExceptionMessage(error), null, _retryFetchData);
+        });
+      }
+    );
   }
 
   void _retryFetchData() {
@@ -83,7 +86,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('BUILD');
+    _log.finest('BUILD');
     Widget? fab;
     Widget? leadingAction;
     Widget trailingAction;
@@ -486,14 +489,14 @@ class FlightBookingDataSource extends CalendarDataSource {
     final List<FlightBooking> removed = [];
     final List<FlightBooking> changed = [];
 
-    print('Loading more events from ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
+    _log.fine('Loading more events from ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
     try {
       // FIXME trick to avoid race conditions with setState called by _changeVisibleDates
       await Future.delayed(const Duration(milliseconds: 500));
 
       // TODO maybe load a few days before and after if currently in schedule view?
       final events = await _service.search(_calendarId, startDate, endDate.add(const Duration(days: 1))).timeout(const Duration(seconds: 3));
-      print('EVENTS: $events');
+      _log.finest('EVENTS: $events');
 
       // changed events
       changed.addAll(events
@@ -523,17 +526,16 @@ class FlightBookingDataSource extends CalendarDataSource {
       appointments!.addAll(added);
       removed.forEach(appointments!.remove);
 
-      print('ADDED: $added');
-      print('REMOVED: $removed');
-      print('CHANGED: $changed');
+      _log.finest('ADDED: $added');
+      _log.finest('REMOVED: $removed');
+      _log.finest('CHANGED: $changed');
       notifyListeners(CalendarDataSourceAction.add, added);
       if (removed.isNotEmpty) {
         notifyListeners(CalendarDataSourceAction.remove, removed);
       }
     }
-    catch (err) {
-      print('ERROR');
-      print(err);
+    catch (err, stacktrace) {
+      _log.warning('Error loading events', err, stacktrace);
       _onError(err);
       notifyListeners(CalendarDataSourceAction.add, []);
     }

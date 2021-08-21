@@ -1,9 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/standalone.dart' as tz;
 
 import 'aircraft_data.dart';
+
+final Logger _log = Logger((AppConfig).toString());
 
 class AppConfig {
 
@@ -21,7 +24,7 @@ class AppConfig {
         currentAircraft = aircraftReader.toAircraftData();
       }
       catch (e) {
-        print('Error loading current aircraft, cleaning everything ($e)');
+        _log.info('Error loading current aircraft, cleaning everything ($e)');
         _currentAircraftId = null;
         // a bit drastic maybe...
         deleteAllAircrafts();
@@ -85,10 +88,10 @@ class AppConfig {
 
   set currentAircraft(AircraftData? data) {
     if (data != null) {
-      print('Switching aircraft: ${data.callSign}');
+      _log.fine('Switching aircraft: ${data.callSign}');
     }
     else {
-      print('Selecting no aircraft');
+      _log.fine('Selecting no aircraft');
     }
     _currentAircraft = data;
     _currentAircraftId = data?.id;

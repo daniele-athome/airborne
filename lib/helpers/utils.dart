@@ -79,7 +79,6 @@ Future<File> downloadToFile(String url, String filename, String? username, Strin
   if (response.statusCode == 200) {
     final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());
     final file = File(path.join(directory.path, filename));
-    print('Downloading to $file');
     return response
         .pipe(file.openWrite())
         .then((value) => file);

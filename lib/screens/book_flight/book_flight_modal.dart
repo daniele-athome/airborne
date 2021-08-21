@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
@@ -14,6 +15,8 @@ import '../../helpers/config.dart';
 import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
 import '../../services/book_flight_services.dart';
+
+final Logger _log = Logger((FlightBooking).toString());
 
 class BookFlightModal extends StatefulWidget {
 
@@ -363,9 +366,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
     showPlatformDialog(
       context: context,
       builder: (context) => FutureProgressDialog(
-        task.catchError((error, stacktrace) {
-          print('SAVE ERROR');
-          print(error);
+        task.catchError((error, StackTrace stacktrace) {
+          _log.warning('SAVE ERROR', error, stacktrace);
           // TODO analyze exception somehow (e.g. TimeoutException)
           WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
             _showError(getExceptionMessage(error));
@@ -402,9 +404,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
     showPlatformDialog(
       context: context,
       builder: (context) => FutureProgressDialog(
-        task.catchError((error, stacktrace) {
-          print('DELETE ERROR');
-          print(error);
+        task.catchError((error, StackTrace stacktrace) {
+          _log.warning('DELETE ERROR', error, stacktrace);
           // TODO analyze exception somehow (e.g. TimeoutException)
           WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
             _showError(getExceptionMessage(error));

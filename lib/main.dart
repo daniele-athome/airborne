@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/intl_standalone.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
@@ -17,7 +18,15 @@ import 'screens/book_flight/book_flight_screen.dart';
 import 'screens/flight_log/flight_log_screen.dart';
 import 'screens/pilot_select/pilot_select_screen.dart';
 
+final Logger _log = Logger("main");
+
 Future<void> main() async {
+  // TODO properly configure logging
+  Logger.root.level = Level.ALL;
+  Logger.root.onRecord.listen((record) {
+    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+  });
+
   await findSystemLocale();
   // TODO do we need this?
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,7 +70,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    print('MAIN-BUILD');
+    _log.finest('MAIN-BUILD');
     return Consumer<AppConfig>(
       builder: (context, appConfig, child) => PlatformApp(
         onGenerateTitle: (BuildContext context) =>

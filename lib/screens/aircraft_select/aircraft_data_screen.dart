@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 
 import '../../helpers/aircraft_data.dart';
 import '../../helpers/config.dart';
 import '../../helpers/utils.dart';
+
+final Logger _log = Logger((AircraftData).toString());
 
 class SetAircraftDataScreen extends StatefulWidget {
 
@@ -79,7 +82,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           }
           return FutureProgressDialog(
             downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).then((value) async {
-              print(value);
+              _log.finest(value);
               final aircraftData = await _validateAndStoreAircraft(value, appConfig);
               if (aircraftData != null) {
                 // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
@@ -90,9 +93,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
                       .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
                 });
               }
-            }).catchError((error, stacktrace) {
-              print('DOWNLOAD ERROR');
-              print(error);
+            }).catchError((error, StackTrace? stacktrace) {
+              _log.info('DOWNLOAD ERROR', error, stacktrace);
               // TODO analyze exception somehow (e.g. TimeoutException)
               WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
                 _showError(getExceptionMessage(error));
@@ -117,19 +119,18 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   Future<AircraftData?> _validateAndStoreAircraft(File file, AppConfig appConfig) async {
     final reader = AircraftDataReader(dataFile: file);
     final validation = await reader.validate();
-    print('VALIDATION: $validation');
+    _log.finest('VALIDATION: $validation');
     if (validation) {
       try {
         final dataFile = await addAircraftDataFile(reader);
-        print(dataFile);
+        _log.finest(dataFile);
         await reader.open();
         final aircraftData = reader.toAircraftData();
         appConfig.addAircraft(aircraftData);
         return aircraftData;
       }
       catch (e, stacktrace) {
-        print(e);
-        print(stacktrace);
+        _log.warning('Error storing aircraft data file', e, stacktrace);
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
           _showError(AppLocalizations.of(context)!.addAircraft_error_storing);
         });

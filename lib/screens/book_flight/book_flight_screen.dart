@@ -185,11 +185,9 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         _appBarTitle = DateFormat('MMMM yyyy').format(DateTime(year, month));
         break;
       case CalendarView.week:
-        _appBarTitle = DateFormat('dd MMMM')
-                .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b)) +
-            ' - ' +
-            DateFormat('dd MMMM')
-                .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? b : a));
+        _appBarTitle = '${DateFormat('dd MMMM')
+                .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b))} - ${DateFormat('dd MMMM')
+                .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? b : a))}';
         break;
       case CalendarView.day:
         _appBarTitle = DateFormat('dd MMMM yyyy').format(_visibleDates[0]);
@@ -317,17 +315,18 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       model = event;
     }
 
-    final builder = (BuildContext context) => Provider.value(
+    Widget pageRouteBuilder(BuildContext context) => Provider.value(
       value: BookFlightCalendarService(_googleServiceAccountService),
       child: BookFlightModal(model),
     );
+
     final route = isCupertino(context) ?
         CupertinoPageRoute(
-          builder: builder,
+          builder: pageRouteBuilder,
           fullscreenDialog: true,
         ) :
         MaterialPageRoute(
-          builder: builder,
+          builder: pageRouteBuilder,
           fullscreenDialog: true,
         );
     Navigator.of(context, rootNavigator: true)

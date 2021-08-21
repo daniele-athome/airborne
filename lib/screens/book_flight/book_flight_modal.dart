@@ -222,10 +222,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
                     fontSize: 18,
                     color: defaultColor,
                     fontWeight: FontWeight.w400),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
-                  // TODO i18n
-                  hintText: 'Note',
+                  hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
                 ),
               ),
             ),
@@ -237,8 +236,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
               onPressed: () => _onDelete(context),
               color: CupertinoColors.destructiveRed,
               cupertino: (_, __) => CupertinoButtonData(),
-              // TODO i18n
-              child: Text('Elimina'),
+              child: Text(AppLocalizations.of(context)!.bookFlightModal_button_delete),
               //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
             ),
           ],
@@ -258,8 +256,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           // workaround for https://github.com/flutter/flutter/issues/32701
           padding: EdgeInsets.zero,
         ),
-        // TODO i18n
-        child: const Text('Salva'),
+        child: Text(AppLocalizations.of(context)!.bookFlightModal_button_save),
       )];
     }
     else {
@@ -268,8 +265,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           onPressed: () => _onSave(context),
           icon: const Icon(Icons.check_sharp),
           material: (_, __) => MaterialIconButtonData(
-            // TODO i18n
-            tooltip: 'Salva',
+            tooltip: AppLocalizations.of(context)!.bookFlightModal_button_save,
           ),
         ),
       ];
@@ -278,8 +274,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
             material: (_, __) => MaterialIconButtonData(
-              // TODO i18n
-              tooltip: 'Elimina',
+              tooltip: AppLocalizations.of(context)!.bookFlightModal_button_delete,
             ),
           ),
         );
@@ -289,8 +284,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
     return PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
-        // TODO i18n
-        title: Text(_isEditing ? 'Modifica' : 'Prenota'),
+        title: Text(_isEditing ?
+          AppLocalizations.of(context)!.bookFlightModal_title_edit :
+          AppLocalizations.of(context)!.bookFlightModal_title_create
+        ),
         trailingActions: trailingActions,
       ),
       body: Padding(
@@ -310,8 +307,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     if (_isEditing) {
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != widget.event.pilotName) {
-          // TODO i18n
-          _showError('La prenotazione non è tua, non puoi modificarla.');
+          _showError(AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_edit);
           return;
         }
       }
@@ -319,10 +315,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
         // TODO allow pilot change but only to the non-pilot
 
         if (_pilotName != widget.event.pilotName) {
-          // TODO i18n
           _showConfirm(
-            text: 'Stai cambiando il pilota di una prenotazione.',
-            title: 'Cambiare pilota?',
+            text: AppLocalizations.of(context)!.bookFlightModal_dialog_changePilot_message,
+            title: AppLocalizations.of(context)!.bookFlightModal_dialog_changePilot_title,
             okCallback: () => _doSave(context)
           );
           return;
@@ -332,8 +327,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     else {
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != _pilotName) {
-          // TODO i18n
-          _showError('Non puoi prenotare voli per un altro pilota.');
+          _showError(AppLocalizations.of(context)!.bookFlightModal_error_bookingForOthers);
           return;
         }
       }
@@ -354,8 +348,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
     final Future task = _service.bookingConflicts(_appConfig.googleCalendarId, event).then((conflict) {
       if (conflict) {
-        // TODO i18n
-        throw Exception('Un\'altra prenotazione è già presente per l\'orario indicato!');
+        throw Exception(AppLocalizations.of(context)!.bookFlightModal_error_timeConflict);
       }
       else {
         if (_isEditing) {
@@ -378,8 +371,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             _showError(getExceptionMessage(error));
           });
         }),
-        // TODO i18n
-        message: const Text('Un attimo...'),
+        message: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
     ).then((value) {
       if (value != null) {
@@ -391,18 +383,16 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _onDelete(BuildContext context) {
     if (!_appConfig.admin) {
       if (_appConfig.pilotName != widget.event.pilotName) {
-        // TODO i18n
-        _showError('La prenotazione non è tua, non puoi cancellarla.');
+        _showError(AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_delete);
         return;
       }
     }
 
-    // TODO i18n
     _showConfirm(
-     text: 'Non cancellare prenotazioni altrui senza il consenso del pilota.',
-     title: 'Cancellare?',
+     text: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_message,
+     title: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_title,
      okCallback: () => _doDelete(context),
-     destructiveOk: true
+     destructiveOk: true,
     );
   }
 
@@ -420,8 +410,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             _showError(getExceptionMessage(error));
           });
         }),
-        // TODO i18n
-        message: const Text('Un attimo...'),
+        message: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
     ).then((value) {
       if (value != null) {
@@ -435,7 +424,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
       context: context,
       builder: (_context) => PlatformAlertDialog(
         title: Text(AppLocalizations.of(context)!.dialog_title_error),
-        // TODO i18n
         content: Text(text),
         actions: <Widget>[
           PlatformDialogAction(
@@ -500,8 +488,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
       showPlatformDialog(
         context: context,
         builder: (_context) => PlatformAlertDialog(
-          // TODO i18n
-          title: Text('Select pilot', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
+              style: TextStyle(fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: _PilotSelectList(
               pilotNames: items,

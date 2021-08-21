@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sunrise_sunset_calc/sunrise_sunset_calc.dart';
 import 'package:timezone/timezone.dart';
 
 String getExceptionMessage(error) {
@@ -37,11 +38,13 @@ class SunTimes {
 }
 
 SunTimes getSunTimes(double latitude, double longitude, DateTime dateTime, Location tzLocation) {
-  final calc = DaylightCalculator(DaylightLocation(latitude, longitude));
-  var times = calc.calculateForDay(dateTime);
+  // WARNING very VERY slow library, but the other (faster) one is buggy
+  final times = getSunriseSunset(latitude, longitude,
+      tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset / 1000 / 60 ~/ 60,
+      dateTime);
   return SunTimes(
-      TZDateTime.from(times.sunrise!, tzLocation),
-      TZDateTime.from(times.sunset!, tzLocation)
+      TZDateTime.from(times.sunrise, tzLocation),
+      TZDateTime.from(times.sunset, tzLocation)
   );
 }
 

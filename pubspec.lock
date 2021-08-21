@@ -579,6 +579,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  sunrise_sunset_calc:
+    dependency: "direct main"
+    description:
+      name: sunrise_sunset_calc
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   syncfusion_flutter_calendar:
     dependency: "direct main"
     description:

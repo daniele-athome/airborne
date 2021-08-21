@@ -500,7 +500,7 @@ class FlightBookingDataSource extends CalendarDataSource {
         .where((FlightBooking f) {
           final FlightBooking? otherEvent = appointments!
               .firstWhere((e) => e == f, orElse: () => null) as FlightBooking?;
-          return otherEvent != null ? !otherEvent.equals(f) : false;
+          return otherEvent != null && !otherEvent.equals(f);
         })
       );
       if (changed.isNotEmpty) {

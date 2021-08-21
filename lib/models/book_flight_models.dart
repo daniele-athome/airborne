@@ -35,7 +35,7 @@ class FlightBooking {
 }
 
 class DeletedFlightBooking extends FlightBooking {
-  static TZDateTime _dummy = TZDateTime.now(UTC);
+  static final TZDateTime _dummy = TZDateTime.now(UTC);
 
   // FIXME this _dummy stuff is not nice
   DeletedFlightBooking(String id) : super(id, "", _dummy, _dummy, null);

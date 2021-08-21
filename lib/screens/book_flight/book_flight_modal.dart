@@ -489,7 +489,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         context: context,
         builder: (_context) => PlatformAlertDialog(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
-              style: TextStyle(fontWeight: FontWeight.bold)),
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: _PilotSelectList(
               pilotNames: items,
@@ -552,7 +552,7 @@ class _PilotSelectListState extends State<_PilotSelectList> {
       // TODO round corners
       return Container(
           height: 250,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               Expanded(

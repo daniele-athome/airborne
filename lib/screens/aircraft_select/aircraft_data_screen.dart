@@ -68,7 +68,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         context: context,
         builder: (context) {
           final userpass = _aircraftPassword;
-          String? username, password;
+          String? username;
+          String? password;
           if (userpass != null) {
             final separator = userpass.indexOf(':');
             if (separator >= 0) {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:provider/provider.dart';
@@ -30,8 +31,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     return PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
-        // TODO i18n
-        title: Text('Setup aircraft'),
+        title: Text(AppLocalizations.of(context)!.addAircraft_title),
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -46,17 +46,14 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     showPlatformDialog(
       context: context,
       builder: (_context) => PlatformAlertDialog(
-        // TODO i18n
-        title: Text('Errore'),
-        // TODO i18n
+        title: Text(AppLocalizations.of(context)!.dialog_title_error),
         content: Text(text),
         actions: <Widget>[
           PlatformDialogAction(
             onPressed: () {
               Navigator.pop(_context);
             },
-            // TODO i18n
-            child: Text('OK'),
+            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
           ),
         ],
       ),
@@ -100,8 +97,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
                 _showError(getExceptionMessage(error));
               });
             }),
-            // TODO i18n
-            message: const Text('Downloading...'),
+            message: Text(AppLocalizations.of(context)!.addAircraft_dialog_downloading),
           );
         },
       ).then((value) async {
@@ -134,15 +130,13 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         print(e);
         print(stacktrace);
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          // TODO i18n
-          _showError('Unable to store aircraft data file.');
+          _showError(AppLocalizations.of(context)!.addAircraft_error_storing);
         });
       }
     }
     else {
       WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-        // TODO i18n
-        _showError('Not a valid aircraft data file.');
+        _showError(AppLocalizations.of(context)!.addAircraft_error_invalid_datafile);
       });
       return null;
     }
@@ -154,16 +148,15 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // TODO i18n
-          Text('Please type in the address to the aircraft data and its password.',
+          Text(AppLocalizations.of(context)!.addAircraft_text1,
             style: const TextStyle(fontSize: 16)),
           const SizedBox(
             height: 5,
           ),
           PlatformTextFormField(
             material: (context, platform) => MaterialTextFormFieldData(
-              decoration: const InputDecoration(
-                hintText: 'Aircraft data address',
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.addAircraft_hint_address,
               ),
             ),
             cupertino: (context, platform) => CupertinoTextFormFieldData(
@@ -171,8 +164,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             onSaved: (newValue) => _aircraftUrl = newValue,
             validator: (String? value) {
               if (value == null || value.isEmpty || !isURL(value, protocols: ['http', 'https'], requireProtocol: true)) {
-                // TODO i18n
-                return 'Please insert a valid address';
+                return AppLocalizations.of(context)!.addAircraft_error_invalid_address;
               }
               return null;
             },
@@ -183,8 +175,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             keyboardType: TextInputType.visiblePassword,
             onSaved: (newValue) => _aircraftPassword = newValue,
             material: (context, platform) => MaterialTextFormFieldData(
-              decoration: const InputDecoration(
-                hintText: 'Password',
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
               ),
             ),
             cupertino: (context, platform) => CupertinoTextFormFieldData(
@@ -195,8 +187,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           ),
           PlatformButton(
             onPressed: () => _downloadData(appConfig),
-            // TODO i18n
-            child: Text('Install'),
+            child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
             //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
           ),
         ],

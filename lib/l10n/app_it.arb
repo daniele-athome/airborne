@@ -1,6 +1,10 @@
 {
   "appName": "Airborne",
 
+  "dialog_button_ok": "OK",
+  "dialog_button_cancel": "Annulla",
+  "dialog_title_error": "Errore",
+
   "mainNav_bookFlight": "Prenota",
   "mainNav_logBook": "Log book",
   "mainNav_about": "Info",
@@ -11,5 +15,15 @@
   "bookFlight_view_schedule": "Agenda",
   "bookFlight_view_month": "Mese",
   "bookFlight_view_week": "Settimana",
-  "bookFlight_view_day": "Giorno"
+  "bookFlight_view_day": "Giorno",
+
+  "addAircraft_title": "Configura aereo",
+  "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",
+  "addAircraft_hint_address": "Indirizzo configurazione aereo",
+  "addAircraft_hint_password": "Password",
+  "addAircraft_button_install": "Installa",
+  "addAircraft_dialog_downloading": "Download in corso...",
+  "addAircraft_error_invalid_address": "Inserisci un indirizzo valido",
+  "addAircraft_error_storing": "Errore durante l'installazione dell'aereo.",
+  "addAircraft_error_invalid_datafile": "Configurazione dell'aereo non valida."
 }

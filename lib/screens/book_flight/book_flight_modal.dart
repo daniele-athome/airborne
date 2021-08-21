@@ -3,10 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:timezone/timezone.dart';
 
 import '../../helpers/config.dart';
@@ -433,8 +434,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     showPlatformDialog(
       context: context,
       builder: (_context) => PlatformAlertDialog(
-        // TODO i18n
-        title: Text('Errore'),
+        title: Text(AppLocalizations.of(context)!.dialog_title_error),
         // TODO i18n
         content: Text(text),
         actions: <Widget>[
@@ -442,8 +442,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onPressed: () {
               Navigator.pop(_context);
             },
-            // TODO i18n
-            child: Text('OK'),
+            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
           ),
         ],
       ),
@@ -464,8 +463,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         actions: <Widget>[
           PlatformDialogAction(
             onPressed: () => Navigator.pop(_context),
-            // TODO i18n
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
           ),
           PlatformDialogAction(
             onPressed: () {
@@ -474,8 +472,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             },
             // TODO destructiveOk for material
             cupertino: (_, __) => CupertinoDialogActionData(isDestructiveAction: destructiveOk),
-            // TODO i18n
-            child: Text('OK'),
+            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
           ),
         ],
       ),
@@ -593,8 +590,7 @@ class _PilotSelectListState extends State<_PilotSelectList> {
                         widget.onSelection(widget.pilotNames[_selectedIndex]);
                         Navigator.of(context).pop();
                       },
-                      // TODO i18n
-                      child: Text('OK'),
+                      child: Text(AppLocalizations.of(context)!.dialog_button_ok),
                     ),
                   ),
                 ],

@@ -227,17 +227,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       showPlatformDialog(
         context: context,
         builder: (_context) => PlatformAlertDialog(
-          // TODO i18n
-          title: Text(title?? 'Errore'),
-          // TODO i18n
+          title: Text(title?? AppLocalizations.of(context)!.dialog_title_error),
           content: Text(text),
           actions: <Widget>[
             PlatformDialogAction(
               onPressed: () {
                 Navigator.pop(_context);
               },
-              // TODO i18n
-              child: Text('Annulla'),
+              child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
             ),
             PlatformDialogAction(
               onPressed: () {

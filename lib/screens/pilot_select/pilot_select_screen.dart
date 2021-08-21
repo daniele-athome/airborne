@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -48,16 +50,14 @@ class PilotSelectScreen extends StatelessWidget {
         actions: <Widget>[
           PlatformDialogAction(
             onPressed: () => Navigator.pop(_context),
-            // TODO i18n
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
           ),
           PlatformDialogAction(
             onPressed: () {
               Navigator.pop(_context);
               _confirmPilot(context, appConfig, name);
             },
-            // TODO i18n
-            child: Text('OK'),
+            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
           ),
         ],
       ),

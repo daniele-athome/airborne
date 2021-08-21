@@ -4,6 +4,10 @@
     "description": "The application name. Do not translate."
   },
 
+  "dialog_button_ok": "OK",
+  "dialog_button_cancel": "Cancel",
+  "dialog_title_error": "Error",
+
   "mainNav_bookFlight": "Bookings",
   "mainNav_logBook": "Log book",
   "mainNav_about": "Info",
@@ -14,5 +18,15 @@
   "bookFlight_view_schedule": "Schedule",
   "bookFlight_view_month": "Month",
   "bookFlight_view_week": "Week",
-  "bookFlight_view_day": "Day"
+  "bookFlight_view_day": "Day",
+
+  "addAircraft_title": "Setup aircraft",
+  "addAircraft_text1": "Please type in the address to the aircraft data and its password.",
+  "addAircraft_hint_address": "Aircraft data address",
+  "addAircraft_hint_password": "Password",
+  "addAircraft_button_install": "Install",
+  "addAircraft_dialog_downloading": "Downloading...",
+  "addAircraft_error_invalid_address": "Please insert a valid address",
+  "addAircraft_error_storing": "Unable to store aircraft data file.",
+  "addAircraft_error_invalid_datafile": "Not a valid aircraft data file."
 }

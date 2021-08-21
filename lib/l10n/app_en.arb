@@ -28,5 +28,17 @@
   "addAircraft_dialog_downloading": "Downloading...",
   "addAircraft_error_invalid_address": "Please insert a valid address",
   "addAircraft_error_storing": "Unable to store aircraft data file.",
-  "addAircraft_error_invalid_datafile": "Not a valid aircraft data file."
+  "addAircraft_error_invalid_datafile": "Not a valid aircraft data file.",
+
+  "pilotSelect_title": "Who are you?",
+  "pilotSelect_confirm_title": "Confirm?",
+  "pilotSelect_confirm_message": "So you are {name}.",
+  "@pilotSelect_confirm_message": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Daniele"
+      }
+    }
+  }
 }

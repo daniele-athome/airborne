@@ -13,8 +13,7 @@ class PilotSelectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformScaffold(
         appBar: PlatformAppBar(
-          // TODO i18n
-          title: const Text('Chi sei?'),
+          title: Text(AppLocalizations.of(context)!.pilotSelect_title),
           automaticallyImplyLeading: false,
         ),
         body: Container(
@@ -42,11 +41,9 @@ class PilotSelectScreen extends StatelessWidget {
     showPlatformDialog(
       context: context,
       builder: (_context) => PlatformAlertDialog(
-        // TODO i18n
-        title: Text('Confermi?'),
-        // TODO i18n
+        title: Text(AppLocalizations.of(context)!.pilotSelect_confirm_title),
         // TODO name should be bold
-        content: Text('Dici di essere ' + name + '.'),
+        content: Text(AppLocalizations.of(context)!.pilotSelect_confirm_message(name)),
         actions: <Widget>[
           PlatformDialogAction(
             onPressed: () => Navigator.pop(_context),

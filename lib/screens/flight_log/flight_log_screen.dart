@@ -19,7 +19,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
     super.initState();
   }
 
-  _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context) {
     return Container(
       child: ListView(
         children: [

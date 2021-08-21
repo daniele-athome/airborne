@@ -21,38 +21,35 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  archive: ^3.1.2
+  cupertino_icons: ^1.0.3
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_platform_widgets: ^1.9.5
+  fluttertoast: ^8.0.8
+  future_progress_dialog: ^0.2.0
+  googleapis: ^4.0.0
+  googleapis_auth: ^1.1.0
   intl: ^0.17.0
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.3
+  material_segmented_control: ^3.1.2
+  path: ^1.8.0
+  path_provider: ^2.0.2
+  provider: ^6.0.0
   shared_preferences: ^2.0.6
+  solar_calculator: ^1.0.2
   syncfusion_flutter_calendar: ^19.2.56
   syncfusion_localizations: ^19.2.56
-  material_segmented_control: ^3.1.2
-  flutter_platform_widgets: ^1.9.5
-  provider: ^6.0.0
-  googleapis_auth: ^1.1.0
-  googleapis: ^4.0.0
-  solar_calculator: ^1.0.2
   timezone: ^0.7.0
-  future_progress_dialog: ^0.2.0
-  fluttertoast: ^8.0.8
   validators: ^3.0.0
-  path_provider: ^2.0.2
-  archive: ^3.1.2
-  path: ^1.8.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.16.5
   lint: ^1.6.0
   mockito: ^5.0.14
+  test: ^1.16.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

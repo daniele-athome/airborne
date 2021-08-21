@@ -70,14 +70,14 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   // FIXME use AppConfig state instance
   Widget _getEventEditor(BuildContext context, AppConfig appConfig, Color defaultColor) {
-    SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDate, appConfig.locationTimeZone);
-    SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDate, appConfig.locationTimeZone);
+    final SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDate, appConfig.locationTimeZone);
+    final SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDate, appConfig.locationTimeZone);
 
     return Container(
       // TODO color: backgroundColor,
       child: Material(
         child: ListView(
-          padding: const EdgeInsets.all(0),
+          padding: EdgeInsets.zero,
           children: <Widget>[
             ListTile(
               contentPadding: const EdgeInsets.fromLTRB(5, 0, 5, 5),
@@ -110,8 +110,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
                         date.month,
                         date.day,
                         _startTime.hour,
-                        _startTime.minute,
-                        0);
+                        _startTime.minute
+                    );
                     _endDate = _startDate.add(difference);
                     _endTime = TimeOfDay(
                       hour: _endDate.hour,
@@ -133,7 +133,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                         _startDate.day,
                         _startTime.hour,
                         _startTime.minute,
-                        0);
+                    );
                     _endDate = _startDate.add(difference);
                     _endTime = TimeOfDay(
                         hour: _endDate.hour,
@@ -160,7 +160,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                         date.day,
                         _endTime.hour,
                         _endTime.minute,
-                        0);
+                    );
                     if (_endDate.isBefore(_startDate)) {
                       _startDate = _endDate.subtract(difference);
                       _startTime = TimeOfDay(
@@ -183,7 +183,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                         _endDate.day,
                         _endTime.hour,
                         _endTime.minute,
-                        0);
+                    );
                     if (_endDate.isBefore(_startDate)) {
                       _startDate = _endDate.subtract(difference);
                       _startTime = TimeOfDay(
@@ -228,16 +228,16 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 ),
               ),
             ),
-            if (_isEditing && isCupertino(context)) SizedBox(
+            if (_isEditing && isCupertino(context)) const SizedBox(
               height: 20,
             ),
             // TODO some margin
             if (_isEditing && isCupertino(context)) PlatformButton(
-              // TODO i18n
-              child: Text('Elimina'),
               onPressed: () => _onDelete(context),
               color: CupertinoColors.destructiveRed,
               cupertino: (_, __) => CupertinoButtonData(),
+              // TODO i18n
+              child: Text('Elimina'),
               //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
             ),
           ],
@@ -252,20 +252,20 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
     if (isCupertino(context)) {
       trailingActions = [PlatformButton(
-        // TODO i18n
-        child: const Text('Salva'),
         onPressed: () => _onSave(context),
         cupertino: (_, __) => CupertinoButtonData(
           // workaround for https://github.com/flutter/flutter/issues/32701
           padding: EdgeInsets.zero,
         ),
+        // TODO i18n
+        child: const Text('Salva'),
       )];
     }
     else {
       trailingActions = [
         PlatformIconButton(
           onPressed: () => _onSave(context),
-          icon: Icon(Icons.check_sharp),
+          icon: const Icon(Icons.check_sharp),
           material: (_, __) => MaterialIconButtonData(
             // TODO i18n
             tooltip: 'Salva',
@@ -275,7 +275,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       if (_isEditing) {
         trailingActions.insert(0, PlatformIconButton(
             onPressed: () => _onDelete(context),
-            icon: Icon(Icons.delete_sharp),
+            icon: const Icon(Icons.delete_sharp),
             material: (_, __) => MaterialIconButtonData(
               // TODO i18n
               tooltip: 'Elimina',
@@ -303,7 +303,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     );
   }
 
-  _onSave(BuildContext context) {
+  void _onSave(BuildContext context) {
     // TODO no validate necessary here?
 
     if (_isEditing) {
@@ -342,7 +342,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     _doSave(context);
   }
 
-  _doSave(BuildContext context) {
+  void _doSave(BuildContext context) {
     final event = FlightBooking(
       widget.event.id,
       _pilotName,
@@ -353,6 +353,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
     final Future task = _service.bookingConflicts(_appConfig.googleCalendarId, event).then((conflict) {
       if (conflict) {
+        // TODO i18n
         throw Exception('Un\'altra prenotazione è già presente per l\'orario indicato!');
       }
       else {
@@ -386,7 +387,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     });
   }
 
-  _onDelete(BuildContext context) {
+  void _onDelete(BuildContext context) {
     if (!_appConfig.admin) {
       if (_appConfig.pilotName != widget.event.pilotName) {
         // TODO i18n
@@ -404,7 +405,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     );
   }
 
-  _doDelete(BuildContext context) {
+  void _doDelete(BuildContext context) {
     final Future task = _service.deleteBooking(_appConfig.googleCalendarId, widget.event);
 
     showPlatformDialog(
@@ -428,7 +429,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     });
   }
 
-  _showError(text) {
+  void _showError(String text) {
     showPlatformDialog(
       context: context,
       builder: (_context) => PlatformAlertDialog(
@@ -438,18 +439,18 @@ class _BookFlightModalState extends State<BookFlightModal> {
         content: Text(text),
         actions: <Widget>[
           PlatformDialogAction(
-            // TODO i18n
-            child: Text('OK'),
             onPressed: () {
               Navigator.pop(_context);
             },
+            // TODO i18n
+            child: Text('OK'),
           ),
         ],
       ),
     );
   }
 
-  _showConfirm({
+  void _showConfirm({
     required String text,
     required String title,
     required void Function() okCallback,
@@ -462,19 +463,19 @@ class _BookFlightModalState extends State<BookFlightModal> {
         content: Text(text),
         actions: <Widget>[
           PlatformDialogAction(
+            onPressed: () => Navigator.pop(_context),
             // TODO i18n
             child: Text('Cancel'),
-            onPressed: () => Navigator.pop(_context),
           ),
           PlatformDialogAction(
-            // TODO i18n
-            child: Text('OK'),
             onPressed: () {
               Navigator.pop(_context);
               okCallback();
             },
             // TODO destructiveOk for material
             cupertino: (_, __) => CupertinoDialogActionData(isDestructiveAction: destructiveOk),
+            // TODO i18n
+            child: Text('OK'),
           ),
         ],
       ),
@@ -482,7 +483,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
   }
 
   // TODO use AppConfig state instance
-  _onTapPilot(BuildContext context, AppConfig appConfig) {
+  void _onTapPilot(BuildContext context, AppConfig appConfig) {
     final items = appConfig.pilotNames;
     if (isCupertino(context)) {
       showCupertinoModalPopup(
@@ -517,7 +518,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             ),
           ),
           material: (context, platform) => MaterialAlertDialogData(
-            contentPadding: EdgeInsets.symmetric(vertical: 20),
+            contentPadding: const EdgeInsets.symmetric(vertical: 20),
           ),
         ),
       );
@@ -539,7 +540,7 @@ class _PilotSelectList extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _PilotSelectListState();
+  State<StatefulWidget> createState() => _PilotSelectListState();
 }
 
 class _PilotSelectListState extends State<_PilotSelectList> {
@@ -583,16 +584,17 @@ class _PilotSelectListState extends State<_PilotSelectList> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 children: [
                   Expanded(
                     child: CupertinoButton.filled(
-                      child: Text('OK'),
                       onPressed: () {
                         widget.onSelection(widget.pilotNames[_selectedIndex]);
                         Navigator.of(context).pop();
                       },
+                      // TODO i18n
+                      child: Text('OK'),
                     ),
                   ),
                 ],
@@ -612,7 +614,7 @@ class _PilotSelectListState extends State<_PilotSelectList> {
             title: Text(e),
             onTap: () {
               _selectedIndex = widget.pilotNames.indexOf(e);
-              return widget.onSelection(e);
+              widget.onSelection(e);
             },
           )).toList(growable: false),
         ),
@@ -641,13 +643,12 @@ class _DateTimeListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
           flex: 7,
           child: ListTile(
             contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-            leading: showIcon ? Icon(
+            leading: showIcon ? const Icon(
               Icons.access_time,
               //color: defaultColor,
             ) : const Text(''),
@@ -744,18 +745,17 @@ class _SunTimesListTile extends StatelessWidget {
         alignment: Alignment.centerRight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // TODO theme
-            Icon(Icons.wb_sunny, color: Colors.black45),
-            SizedBox(width: 10, height: 0),
+            const Icon(Icons.wb_sunny, color: Colors.black45),
+            const SizedBox(width: 10, height: 0),
             // TODO locale
-            Text(DateFormat('HH:mm').format(sunrise), style: Theme.of(context).textTheme.subtitle1!),
+            Text(DateFormat('HH:mm').format(sunrise), style: Theme.of(context).textTheme.subtitle1),
             SizedBox(width: MediaQuery.of(context).size.width * 0.2, height: 0),
-            Icon(Icons.nightlight_round, color: Colors.black45),
-            SizedBox(width: 10, height: 0),
+            const Icon(Icons.nightlight_round, color: Colors.black45),
+            const SizedBox(width: 10, height: 0),
             // TODO locale
-            Text(DateFormat('HH:mm').format(sunset), style: Theme.of(context).textTheme.subtitle1!),
+            Text(DateFormat('HH:mm').format(sunset), style: Theme.of(context).textTheme.subtitle1),
           ],
         ),
       ),

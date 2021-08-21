@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
 
-String getExceptionMessage(error) {
+String getExceptionMessage(dynamic error) {
   if (error is LocationNotFoundException) {
     return error.msg;
   }
@@ -15,7 +16,7 @@ String getExceptionMessage(error) {
     return (error.osError?.message)?? "unknown";
   }
   else {
-    return error.message;
+    return error.message.toString();
   }
 }
 
@@ -68,22 +69,22 @@ void showToast(FToast fToast, String text, Duration duration) {
 
 Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
   final uri = Uri.parse(url);
-  HttpClient httpClient = new HttpClient();
+  final HttpClient httpClient = HttpClient();
   if (username != null && password != null) {
     httpClient.addCredentials(
         uri, "", HttpClientBasicCredentials(username, password));
   }
-  var request = await httpClient.getUrl(uri);
-  var response = await request.close();
+  final request = await httpClient.getUrl(uri);
+  final response = await request.close();
   if (response.statusCode == 200) {
     final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());
-    final file = File(directory.path + '/' + filename);
-    print('downloading to ' + file.toString());
+    final file = File(path.join(directory.path, filename));
+    print('Downloading to $file');
     return response
         .pipe(file.openWrite())
         .then((value) => file);
   }
   else {
-    return Future.error(Exception('Download error (' + response.statusCode.toString() + ')'));
+    return Future.error(Exception('Download error (${response.statusCode})'));
   }
 }

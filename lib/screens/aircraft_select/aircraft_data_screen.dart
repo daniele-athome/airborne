@@ -42,7 +42,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  _showError(text) {
+  void _showError(String text) {
     showPlatformDialog(
       context: context,
       builder: (_context) => PlatformAlertDialog(
@@ -52,18 +52,18 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         content: Text(text),
         actions: <Widget>[
           PlatformDialogAction(
-            // TODO i18n
-            child: Text('OK'),
             onPressed: () {
               Navigator.pop(_context);
             },
+            // TODO i18n
+            child: Text('OK'),
           ),
         ],
       ),
     );
   }
 
-  _downloadData(AppConfig appConfig) {
+  void _downloadData(AppConfig appConfig) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -120,7 +120,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   Future<AircraftData?> _validateAndStoreAircraft(File file, AppConfig appConfig) async {
     final reader = AircraftDataReader(dataFile: file);
     final validation = await reader.validate();
-    print('VALIDATION: ' + validation.toString());
+    print('VALIDATION: $validation');
     if (validation) {
       try {
         final dataFile = await addAircraftDataFile(reader);
@@ -148,17 +148,16 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     }
   }
 
-  _buildForm(BuildContext context, AppConfig appConfig) =>
+  Widget _buildForm(BuildContext context, AppConfig appConfig) =>
     Form(
       key: _formKey,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // TODO i18n
           Text('Please type in the address to the aircraft data and its password.',
-            style: TextStyle(fontSize: 16)),
-          SizedBox(
+            style: const TextStyle(fontSize: 16)),
+          const SizedBox(
             height: 5,
           ),
           PlatformTextFormField(
@@ -191,13 +190,13 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             cupertino: (context, platform) => CupertinoTextFormFieldData(
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           PlatformButton(
+            onPressed: () => _downloadData(appConfig),
             // TODO i18n
             child: Text('Install'),
-            onPressed: () => _downloadData(appConfig),
             //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
           ),
         ],

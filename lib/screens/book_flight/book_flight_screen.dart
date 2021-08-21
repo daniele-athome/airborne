@@ -116,7 +116,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     else {
       trailingAction = PlatformIconButton(
         onPressed: () => setState(() => _goToday()),
-        icon: Icon(Icons.calendar_today_sharp),
+        icon: const Icon(Icons.calendar_today_sharp),
         material: (_, __) => MaterialIconButtonData(
           tooltip: AppLocalizations.of(context)!.button_goToday,
         ),
@@ -124,7 +124,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       fab = FloatingActionButton(
         onPressed: () async => _bookFlight(context, _appConfig, null),
         tooltip: AppLocalizations.of(context)!.button_bookFlight,
-        child: Icon(Icons.airplanemode_active_sharp),
+        child: const Icon(Icons.airplanemode_active_sharp),
         // TODO colors
       );
     }
@@ -144,13 +144,12 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 12,
             ),
             _buildViewSelector(context),
-            SizedBox(
+            const SizedBox(
               height: 12,
             ),
             Expanded(
@@ -170,7 +169,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   void _setTitle() {
-    if (_visibleDates.length == 0) {
+    if (_visibleDates.isEmpty) {
       _appBarTitle = null;
       return;
     }
@@ -206,7 +205,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     _calendarController.displayDate = now;
   }
 
-  void _changeView(index) {
+  void _changeView(int index) {
     _calendarController.view = _calendarViews[index];
     _setTitle();
   }
@@ -234,19 +233,19 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
           content: Text(text),
           actions: <Widget>[
             PlatformDialogAction(
-              // TODO i18n
-              child: Text('Annulla'),
               onPressed: () {
                 Navigator.pop(_context);
               },
+              // TODO i18n
+              child: Text('Annulla'),
             ),
             PlatformDialogAction(
-              // TODO i18n
-              child: Text('Riprova'),
               onPressed: () {
                 Navigator.pop(_context);
                 retryCallback();
               },
+              // TODO i18n
+              child: Text('Riprova'),
             ),
           ],
         ),
@@ -257,7 +256,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         content: Text(text),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(days: 1),
+        duration: const Duration(days: 1),
         action: SnackBarAction(
           // TODO i18n
           label: 'Riprova',
@@ -289,7 +288,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     });
   }
 
-  void _onTapCalendar(BuildContext context, AppConfig appConfig, CalendarTapDetails calendarTapDetails) async {
+  void _onTapCalendar(BuildContext context, AppConfig appConfig, CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.header ||
         calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
       return;
@@ -302,8 +301,8 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     }
   }
 
-  void _bookFlight(BuildContext context, AppConfig appConfig, FlightBooking? event) async {
-    final model;
+  void _bookFlight(BuildContext context, AppConfig appConfig, FlightBooking? event) {
+    final FlightBooking model;
     if (event == null) {
       // TODO startDate = tomorrow 12:00
       final date = TZDateTime.now(appConfig.locationTimeZone);
@@ -341,7 +340,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       .then((result) {
         if (result != null) {
           // TODO i18n
-          final message;
+          final String message;
           if (event == null) {
             message = 'Prenotazione effettuata.';
           }
@@ -351,15 +350,15 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
           else {
             message = 'Prenotazione modificata.';
           }
-          showToast(_fToast, message, Duration(seconds: 2));
-          _refresh(result, event == null);
+          showToast(_fToast, message, const Duration(seconds: 2));
+          _refresh(result as FlightBooking, event == null);
         }
       });
   }
 
   Map<int, Widget> _buildCalendarSwitches(BuildContext context) {
     final textStyle = !isCupertino(context)
-        ? TextStyle(fontWeight: FontWeight.bold)
+        ? const TextStyle(fontWeight: FontWeight.bold)
         : null;
     return {
       0: Text(AppLocalizations.of(context)!.bookFlight_view_schedule, style: textStyle),
@@ -388,7 +387,6 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
             borderColor: Colors.grey,
             selectedColor: Colors.deepOrangeAccent,
             unselectedColor: Colors.white,
-            borderRadius: 32.0,
             onSegmentChosen: _changeView,
           ),
         )
@@ -407,16 +405,16 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       showNavigationArrow: false,
       showDatePickerButton: false,
       showCurrentTimeIndicator: true,
-      monthViewSettings: MonthViewSettings(
+      monthViewSettings: const MonthViewSettings(
         showAgenda: true,
       ),
-      timeSlotViewSettings: TimeSlotViewSettings(
+      timeSlotViewSettings: const TimeSlotViewSettings(
         // TODO from locale
         timeFormat: 'HH',
         startHour: 5,
         endHour: 22,
       ),
-      scheduleViewSettings: ScheduleViewSettings(
+      scheduleViewSettings: const ScheduleViewSettings(
           monthHeaderSettings: MonthHeaderSettings(
             // TODO customize this
             height: 70,
@@ -441,14 +439,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
                     : double.infinity,
                 width: double.infinity,
                 alignment: Alignment.center,
-                child: CircularProgressIndicator(
+                child: const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(Colors.blue)
                 )
             );
           },
         );
       },
-      onTap: (calendarTapDetails) async => _onTapCalendar(context, appConfig, calendarTapDetails),
+      onTap: (calendarTapDetails) => _onTapCalendar(context, appConfig, calendarTapDetails),
       onViewChanged: (ViewChangedDetails details) {
         _changeVisibleDates(details.visibleDates);
       },
@@ -491,28 +489,28 @@ class FlightBookingDataSource extends CalendarDataSource {
 
   @override
   Future<void> handleLoadMore(DateTime startDate, DateTime endDate) async {
-    List<FlightBooking> added = [];
-    List<FlightBooking> removed = [];
-    List<FlightBooking> changed = [];
+    final List<FlightBooking> added = [];
+    final List<FlightBooking> removed = [];
+    final List<FlightBooking> changed = [];
 
-    print('Loading more events from ' + startDate.toIso8601String() + ' to ' + endDate.toIso8601String());
+    print('Loading more events from ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
     try {
       // FIXME trick to avoid race conditions with setState called by _changeVisibleDates
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
 
       // TODO maybe load a few days before and after if currently in schedule view?
-      final events = await _service.search(_calendarId, startDate, endDate.add(Duration(days: 1))).timeout(Duration(seconds: 3));
-      print('EVENTS: ' + events.toString());
+      final events = await _service.search(_calendarId, startDate, endDate.add(const Duration(days: 1))).timeout(const Duration(seconds: 3));
+      print('EVENTS: $events');
 
       // changed events
       changed.addAll(events
         .where((FlightBooking f) {
           final FlightBooking? otherEvent = appointments!
-              .firstWhere((e) => e == f, orElse: () => null);
+              .firstWhere((e) => e == f, orElse: () => null) as FlightBooking?;
           return otherEvent != null ? !otherEvent.equals(f) : false;
         })
       );
-      if (changed.length > 0) {
+      if (changed.isNotEmpty) {
         changed.forEach(appointments!.remove);
         notifyListeners(CalendarDataSourceAction.remove, changed);
         appointments!.addAll(changed);
@@ -532,11 +530,11 @@ class FlightBookingDataSource extends CalendarDataSource {
       appointments!.addAll(added);
       removed.forEach(appointments!.remove);
 
-      print('ADDED: ' + added.toString());
-      print('REMOVED: ' + removed.toString());
-      print('CHANGED: ' + changed.toString());
+      print('ADDED: $added');
+      print('REMOVED: $removed');
+      print('CHANGED: $changed');
       notifyListeners(CalendarDataSourceAction.add, added);
-      if (removed.length > 0) {
+      if (removed.isNotEmpty) {
         notifyListeners(CalendarDataSourceAction.remove, removed);
       }
     }

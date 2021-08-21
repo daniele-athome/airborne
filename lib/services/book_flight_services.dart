@@ -49,7 +49,7 @@ class BookFlightCalendarService {
       client.listEvents(calendarId as String, event.from, event.to).then((events) =>
         events.items!
           .where((gcalendar.Event e) => e.id != event.id)
-          .length > 0
+          .isNotEmpty
       ),
     );
   }

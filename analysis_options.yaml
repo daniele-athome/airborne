@@ -1,0 +1,12 @@
+include: package:lint/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - lib/generated/**
+    # messy code
+    - lib/screens/flight_log/**
+
+linter:
+  rules:
+    avoid_redundant_argument_values: false
+    avoid_positional_boolean_parameters: false

@@ -31,12 +31,12 @@ class PilotSelectScreen extends StatelessWidget {
         ));
   }
 
-  _confirmPilot(BuildContext context, AppConfig appConfig, String name) {
+  void _confirmPilot(BuildContext context, AppConfig appConfig, String name) {
     appConfig.pilotName = name;
     Navigator.of(context, rootNavigator: true).pushReplacementNamed('/');
   }
 
-  _choosePilot(BuildContext context, AppConfig appConfig, String name) {
+  void _choosePilot(BuildContext context, AppConfig appConfig, String name) {
     showPlatformDialog(
       context: context,
       builder: (_context) => PlatformAlertDialog(
@@ -47,17 +47,17 @@ class PilotSelectScreen extends StatelessWidget {
         content: Text('Dici di essere ' + name + '.'),
         actions: <Widget>[
           PlatformDialogAction(
+            onPressed: () => Navigator.pop(_context),
             // TODO i18n
             child: Text('Cancel'),
-            onPressed: () => Navigator.pop(_context),
           ),
           PlatformDialogAction(
-            // TODO i18n
-            child: Text('OK'),
             onPressed: () {
               Navigator.pop(_context);
               _confirmPilot(context, appConfig, name);
             },
+            // TODO i18n
+            child: Text('OK'),
           ),
         ],
       ),

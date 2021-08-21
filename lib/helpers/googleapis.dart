@@ -3,7 +3,7 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 
 class GoogleServiceAccountService {
-  static const SCOPES = [
+  static const scopes = [
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/calendar.events',
     'https://www.googleapis.com/auth/spreadsheets',
@@ -19,7 +19,7 @@ class GoogleServiceAccountService {
 
   Future<http.Client> getAuthenticatedClient() {
     if (_client == null || _client!.credentials.accessToken.hasExpired) {
-      return clientViaServiceAccount(_serviceAccount, SCOPES)
+      return clientViaServiceAccount(_serviceAccount, scopes)
           .then((AuthClient client) {
         _client = client;
         return client;
@@ -32,7 +32,7 @@ class GoogleServiceAccountService {
 }
 
 class GoogleCalendarService {
-  static const _DEFAULT_TIMEOUT = const Duration(seconds: 15);
+  static const _defaultTimeout = Duration(seconds: 15);
 
   late final http.Client _client;
   late final CalendarApi _api;
@@ -47,19 +47,19 @@ class GoogleCalendarService {
       // FIXME toUtc is a workaround
       timeMin: timeMin.toUtc(),
       timeMax: timeMax.toUtc(),
-    ).timeout(_DEFAULT_TIMEOUT);
+    ).timeout(_defaultTimeout);
   }
 
   Future<Event> insertEvent(String calendarId, Event event) {
-    return _api.events.insert(event, calendarId).timeout(_DEFAULT_TIMEOUT);
+    return _api.events.insert(event, calendarId).timeout(_defaultTimeout);
   }
 
   Future<Event> updateEvent(String calendarId, String eventId, Event event) {
-    return _api.events.update(event, calendarId, eventId).timeout(_DEFAULT_TIMEOUT);
+    return _api.events.update(event, calendarId, eventId).timeout(_defaultTimeout);
   }
 
   Future<void> deleteEvent(String calendarId, String eventId) {
-    return _api.events.delete(calendarId, eventId).timeout(_DEFAULT_TIMEOUT);
+    return _api.events.delete(calendarId, eventId).timeout(_defaultTimeout);
   }
 
 }

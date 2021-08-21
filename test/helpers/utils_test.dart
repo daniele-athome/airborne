@@ -7,9 +7,9 @@ import 'package:timezone/timezone.dart';
 void main() {
   test('getExceptionMessage', () {
     expect(getExceptionMessage(Exception("test message")), "test message");
-    final osError = OSError("os error message");
-    expect(getExceptionMessage(SocketException("ciaone", osError: osError)), "os error message");
-    expect(getExceptionMessage(SocketException("ciaone")), "unknown");
+    const osError = OSError("os error message");
+    expect(getExceptionMessage(const SocketException("ciaone", osError: osError)), "os error message");
+    expect(getExceptionMessage(const SocketException("ciaone")), "unknown");
   });
 
   test('getSunTimes', () {

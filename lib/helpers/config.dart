@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/data/latest.dart' as tzData;
+import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/standalone.dart' as tz;
 
 import 'aircraft_data.dart';
@@ -11,7 +11,7 @@ class AppConfig {
 
   AircraftData? _currentAircraft;
 
-  init() async {
+  Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
 
     if (_currentAircraftId != null) {
@@ -21,14 +21,14 @@ class AppConfig {
         currentAircraft = aircraftReader.toAircraftData();
       }
       catch (e) {
-        print('Error loading current aircraft, cleaning everything ('+e.toString()+')');
+        print('Error loading current aircraft, cleaning everything ($e)');
         _currentAircraftId = null;
         // a bit drastic maybe...
         deleteAllAircrafts();
       }
     }
 
-    tzData.initializeTimeZones();
+    tz_data.initializeTimeZones();
   }
 
   bool get admin {
@@ -36,15 +36,15 @@ class AppConfig {
   }
 
   String get googleServiceAccountJson {
-    return _currentAircraft!.backendInfo['google_api_service_account']!;
+    return _currentAircraft!.backendInfo['google_api_service_account']! as String;
   }
 
   String get googleApiKey {
-    return _currentAircraft!.backendInfo['google_api_key']!;
+    return _currentAircraft!.backendInfo['google_api_key']! as String;
   }
 
   String get googleCalendarId {
-    return _currentAircraft!.backendInfo['google_calendar_id']!;
+    return _currentAircraft!.backendInfo['google_calendar_id']! as String;
   }
 
   double get locationLatitude {
@@ -81,16 +81,16 @@ class AppConfig {
     }
   }
 
-  AircraftData? get currentAircraft => this._currentAircraft;
+  AircraftData? get currentAircraft => _currentAircraft;
 
   set currentAircraft(AircraftData? data) {
     if (data != null) {
-      print('Switching aircraft: ' + data.callSign);
+      print('Switching aircraft: ${data.callSign}');
     }
     else {
       print('Selecting no aircraft');
     }
-    this._currentAircraft = data;
+    _currentAircraft = data;
     _currentAircraftId = data?.id;
   }
 

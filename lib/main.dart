@@ -66,16 +66,16 @@ class _MyAppState extends State<MyApp> {
       builder: (context, appConfig, child) => PlatformApp(
         onGenerateTitle: (BuildContext context) =>
             AppLocalizations.of(context)!.appName,
-        localizationsDelegates: [
+        localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
           SfGlobalLocalizations.delegate,
         ],
-        supportedLocales: [
-          const Locale('en', ''),
-          const Locale('it', ''),
+        supportedLocales: const [
+          Locale('en', ''),
+          Locale('it', ''),
         ],
         // TEST
         locale: const Locale('it', ''),
@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
 class MainNavigation extends StatefulWidget {
   final AppConfig appConfig;
 
-  MainNavigation(this.appConfig);
+  const MainNavigation(this.appConfig);
 
   @override
   _MainNavigationState createState() => _MainNavigationState();
@@ -113,9 +113,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   void initState() {
-    _tabController = PlatformTabController(
-      initialIndex: 0,
-    );
+    _tabController = PlatformTabController();
     _googleServiceAccount = GoogleServiceAccountService(
         json: widget.appConfig.googleServiceAccountJson
     );

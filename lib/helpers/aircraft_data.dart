@@ -30,7 +30,7 @@ class AircraftData {
   });
 
   File getPilotAvatar(String name) {
-    return File(path.join(this.dataPath!.path, 'avatar-' + name.toLowerCase() + '.jpg'));
+    return File(path.join(dataPath!.path, 'avatar-${name.toLowerCase()}.jpg'));
   }
 
 }
@@ -47,13 +47,13 @@ class AircraftDataReader {
   /// Also loads metadata.
   Future<bool> validate() async {
     // FIXME in-memory operations - fine for small files, but it needs to change
-    final bytes = await this.dataFile.readAsBytes();
-    final archive;
+    final bytes = await dataFile.readAsBytes();
+    final Archive archive;
     try {
       archive = ZipDecoder().decodeBytes(bytes, verify: true);
     }
     catch (e) {
-      print('Not a valid zip file: ' + e.toString());
+      print('Not a valid zip file: $e');
       return false;
     }
 
@@ -69,7 +69,7 @@ class AircraftDataReader {
       metadata = json.decode(String.fromCharCodes(jsonData)) as Map<String, dynamic>;
     }
     catch(e) {
-      print('aircraft.json is not valid JSON: ' + e.toString());
+      print('aircraft.json is not valid JSON: $e');
       return false;
     }
 
@@ -91,7 +91,7 @@ class AircraftDataReader {
   /// Opens an aircraft data file and extract contents in a temporary directory.
   Future<Directory> open() async {
     if (metadata != null && metadata!['path'] != null) {
-      return metadata!['path'];
+      return metadata!['path'] as Directory;
     }
 
     final baseDir = await getTemporaryDirectory();
@@ -101,7 +101,7 @@ class AircraftDataReader {
       await directory.create(recursive: true);
 
       // FIXME in-memory operations - fine for small files, but it needs to change
-      final bytes = await this.dataFile.readAsBytes();
+      final bytes = await dataFile.readAsBytes();
       final archive = ZipDecoder().decodeBytes(bytes, verify: true);
 
       for (final file in archive.files) {
@@ -119,22 +119,22 @@ class AircraftDataReader {
       metadata = json.decode(jsonData) as Map<String, dynamic>;
     }
     catch(e) {
-      print('aircraft.json is not valid JSON: ' + e.toString());
-      throw FormatException('Not a valid aircraft archive.');
+      print('aircraft.json is not valid JSON: $e');
+      throw const FormatException('Not a valid aircraft archive.');
     }
 
     // aircraft picture
     final aircraftPicFile = File(path.join(directory.path, 'aircraft.jpg'));
     if (!(await aircraftPicFile.exists())) {
       print('aircraft.jpg is missing');
-      throw FormatException('Not a valid aircraft archive.');
+      throw const FormatException('Not a valid aircraft archive.');
     }
 
     // pilot avatars
-    for (var pilot in List<String>.from(metadata!['pilot_names'])) {
-      if (!(await File(path.join(directory.path, 'avatar-' + pilot.toLowerCase() + '.jpg')).exists())) {
-        print('pilot avatar for ' + pilot + ' is missing');
-        throw FormatException('Not a valid aircraft archive.');
+    for (final pilot in List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>)) {
+      if (!(await File(path.join(directory.path, 'avatar-${pilot.toLowerCase()}.jpg')).exists())) {
+        print('pilot avatar for $pilot is missing');
+        throw const FormatException('Not a valid aircraft archive.');
       }
     }
 
@@ -145,15 +145,15 @@ class AircraftDataReader {
 
   AircraftData toAircraftData() {
     return AircraftData(
-      dataPath: metadata!['path'],
-      id: metadata!['aircraft_id'],
-      callSign: metadata!['callsign'],
-      backendInfo: metadata!['backend_info'],
-      pilotNames: List<String>.from(metadata!['pilot_names']),
-      locationLatitude: metadata!['location']?['latitude'],
-      locationLongitude: metadata!['location']?['longitude'],
-      locationTimeZone: metadata!['location']?['timezone'],
-      admin: metadata!['admin'] != null ? metadata!['admin'] : false,
+      dataPath: metadata!['path'] as Directory,
+      id: metadata!['aircraft_id'] as String,
+      callSign: metadata!['callsign'] as String,
+      backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
+      pilotNames: List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>),
+      locationLatitude: metadata!['location']?['latitude'] as double,
+      locationLongitude: metadata!['location']?['longitude'] as double,
+      locationTimeZone: metadata!['location']?['timezone'] as String,
+      admin: metadata!['admin'] != null && metadata!['admin'] as bool,
     );
   }
 
@@ -164,15 +164,15 @@ Future<File> addAircraftDataFile(AircraftDataReader reader) async {
   final baseDir = await getApplicationSupportDirectory();
   final directory = Directory(path.join(baseDir.path, 'aircrafts'));
   await directory.create(recursive: true);
-  final filename = path.join(directory.path, reader.metadata!['aircraft_id'] + '.zip');
-  await deleteAircraftCache(reader.metadata!['aircraft_id']);
+  final filename = path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
+  await deleteAircraftCache(reader.metadata!['aircraft_id'] as String);
   return reader.dataFile.copy(filename);
 }
 
 /// Loads an aircraft data file into the cache.
 Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   final baseDir = await getApplicationSupportDirectory();
-  final dataFile = File(path.join(baseDir.path, 'aircrafts', aircraftId + '.zip'));
+  final dataFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'));
   final reader = AircraftDataReader(dataFile: dataFile);
   await reader.open();
   return reader;

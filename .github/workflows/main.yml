@@ -37,6 +37,9 @@ jobs:
           flutter pub get
           flutter config --enable-linux-desktop
 
+      - name: Analyze code
+        run: flutter analyze .
+
       - name: Run tests
         run: flutter test -r expanded
 

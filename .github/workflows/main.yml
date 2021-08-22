@@ -73,7 +73,12 @@ jobs:
       - name: Run tests
         run: flutter test -r expanded
 
-      - name: Build Android application
+      - name: Build Android application (debug)
+        if: github.ref != 'refs/heads/release'
+        run: flutter build appbundle --debug
+
+      - name: Build Android application (release)
+        if: github.ref == 'refs/heads/release'
         run: flutter build appbundle --release
 
       - name: Prepare for deploy

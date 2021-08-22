@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 
-import 'package:flutter/foundation.dart' as Foundation;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +23,9 @@ import 'screens/pilot_select/pilot_select_screen.dart';
 final Logger _log = Logger("main");
 
 Future<void> main() async {
-  Logger.root.level = Foundation.kReleaseMode ? Level.INFO : Level.ALL;
+  Logger.root.level = kReleaseMode ? Level.INFO : Level.ALL;
   Logger.root.onRecord.listen((record) {
-    if (Foundation.kReleaseMode) {
+    if (kReleaseMode) {
       debugPrint('${record.time} ${record.level.name} ${record.loggerName} - ${record.message}');
       if (record.error != null) {
         debugPrint(record.error.toString());

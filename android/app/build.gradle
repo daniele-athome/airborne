@@ -38,6 +38,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resConfigs "en", "it"
         // TODO import from Flutter code or config?
         resValue "string", "app_name", "Airborne"
     }

@@ -99,4 +99,4 @@ jobs:
         run: flutter test -r expanded
 
       - name: Build iOS application
-      - run: flutter build ios --release --no-codesign
+        run: flutter build ios --release --no-codesign

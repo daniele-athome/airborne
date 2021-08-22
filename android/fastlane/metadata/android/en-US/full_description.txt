@@ -1,0 +1,6 @@
+Group logistics and organization for aircraft owners. Features:
+
+* Book flights
+* Log book
+
+All data is stored in a Google Calendar and a Google Sheet created by the user.

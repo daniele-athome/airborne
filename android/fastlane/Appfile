@@ -1,0 +1,2 @@
+json_key_file("fastlane/googleplay-developer-key.json")
+package_name("it.casaricci.airborne")

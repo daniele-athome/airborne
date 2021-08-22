@@ -144,22 +144,20 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       material: (_, __) => MaterialScaffoldData(
         floatingActionButton: fab,
       ),
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 12,
-            ),
-            _buildViewSelector(context),
-            const SizedBox(
-              height: 12,
-            ),
-            Expanded(
-              child: _buildCalendar(context, _appConfig),
-            ),
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(
+            height: 12,
+          ),
+          _buildViewSelector(context),
+          const SizedBox(
+            height: 12,
+          ),
+          Expanded(
+            child: _buildCalendar(context, _appConfig),
+          ),
+        ],
       ),
     );
   }

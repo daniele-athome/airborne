@@ -77,6 +77,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDate, appConfig.locationTimeZone);
     final SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDate, appConfig.locationTimeZone);
 
+    // ignore: avoid_unnecessary_containers
     return Container(
       // TODO color: backgroundColor,
       child: Material(
@@ -589,20 +590,17 @@ class _PilotSelectListState extends State<_PilotSelectList> {
       );
     }
     else {
-      return Container(
-        width: double.infinity,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: widget.pilotNames.map((e) => ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-            leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
-            title: Text(e),
-            onTap: () {
-              _selectedIndex = widget.pilotNames.indexOf(e);
-              widget.onSelection(e);
-            },
-          )).toList(growable: false),
-        ),
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: widget.pilotNames.map((e) => ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+          title: Text(e),
+          onTap: () {
+            _selectedIndex = widget.pilotNames.indexOf(e);
+            widget.onSelection(e);
+          },
+        )).toList(growable: false),
       );
     }
   }

@@ -12,24 +12,24 @@ class PilotSelectScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-        appBar: PlatformAppBar(
-          title: Text(AppLocalizations.of(context)!.pilotSelect_title),
-          automaticallyImplyLeading: false,
-        ),
-        body: Container(
-          child: Consumer<AppConfig>(
-              builder: (context, appConfig, child) => ListView(
-                    children: appConfig
-                        .pilotNames
-                        .map((name) => Material(child: ListTile(
-                          leading: CircleAvatar(backgroundImage: appConfig.getPilotAvatar(name)),
-                          title: Text(name),
-                          onTap: () {
-                            _choosePilot(context, appConfig, name);
-                          },
-                        ))).toList(growable: false),
-                  )),
-        ));
+      appBar: PlatformAppBar(
+        title: Text(AppLocalizations.of(context)!.pilotSelect_title),
+        automaticallyImplyLeading: false,
+      ),
+      body: Consumer<AppConfig>(
+        builder: (context, appConfig, child) => ListView(
+          children: appConfig
+            .pilotNames
+            .map((name) => Material(child: ListTile(
+              leading: CircleAvatar(backgroundImage: appConfig.getPilotAvatar(name)),
+              title: Text(name),
+              onTap: () {
+                _choosePilot(context, appConfig, name);
+              },
+            ))).toList(growable: false),
+        )
+      )
+    );
   }
 
   void _confirmPilot(BuildContext context, AppConfig appConfig, String name) {

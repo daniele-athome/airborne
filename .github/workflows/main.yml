@@ -74,4 +74,29 @@ jobs:
         run: flutter test -r expanded
 
       - name: Build Android application
-        run: flutter build apk
+        run: flutter build apk --release
+
+  ios:
+    runs-on: macos-latest
+    # TODO environment: ???
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Flutter environment
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '2.2.3'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze .
+
+      - name: Run tests
+        run: flutter test -r expanded
+
+      - name: Build iOS application
+      - run: flutter build ios --release --no-codesign

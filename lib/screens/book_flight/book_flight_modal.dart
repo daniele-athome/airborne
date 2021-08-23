@@ -378,10 +378,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       ),
     ).then((value) {
       if (value != null) {
-        // FIXME prevent FutureProgressDialog bug
-        if (!isCupertino(context)) {
-          Navigator.of(context).pop(value);
-        }
+        Navigator.of(context).pop(value);
       }
     });
   }

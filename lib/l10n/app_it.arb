@@ -23,7 +23,7 @@
 
   "bookFlightModal_title_create": "Prenota",
   "bookFlightModal_title_edit": "Modifica",
-  "bookFlightModal_button_save": "Salve",
+  "bookFlightModal_button_save": "Salva",
   "bookFlightModal_button_delete": "Elimina",
   "bookFlightModal_hint_notes": "Note",
   "bookFlightModal_error_notOwnBooking_edit": "La prenotazione non è tua, non puoi modificarla.",

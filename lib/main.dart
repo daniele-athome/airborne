@@ -53,7 +53,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // TEST
-  debugDefaultTargetPlatformOverride = TargetPlatform.android;
+  //debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   Intl.systemLocale = 'it_IT';
 
   // we need configuration to be loaded so we block here

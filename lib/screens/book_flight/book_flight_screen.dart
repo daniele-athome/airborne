@@ -103,7 +103,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         ),
       );
       trailingAction = PlatformIconButton(
-        onPressed: () async => _bookFlight(context, _appConfig, null),
+        onPressed: () => _bookFlight(context, _appConfig, null),
         icon: Icon(CupertinoIcons.airplane,
           color: CupertinoColors.systemRed,
           semanticLabel: AppLocalizations.of(context)!.button_bookFlight,
@@ -125,7 +125,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         ),
       );
       fab = FloatingActionButton(
-        onPressed: () async => _bookFlight(context, _appConfig, null),
+        onPressed: () => _bookFlight(context, _appConfig, null),
         tooltip: AppLocalizations.of(context)!.button_bookFlight,
         child: const Icon(Icons.airplanemode_active_sharp),
         // TODO colors

@@ -42,6 +42,7 @@
 
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",
+  "addAircraft_label_address": "Address",
   "addAircraft_hint_address": "Aircraft data address",
   "addAircraft_hint_password": "Password",
   "addAircraft_button_install": "Install",

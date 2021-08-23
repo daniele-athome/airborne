@@ -35,9 +35,21 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(AppLocalizations.of(context)!.addAircraft_title),
+        trailingActions: isCupertino(context)? <Widget>[
+          Consumer<AppConfig>(
+            builder: (context, appConfig, child) => PlatformButton(
+              onPressed: () => _downloadData(appConfig),
+              cupertino: (_, __) => CupertinoButtonData(
+                // workaround for https://github.com/flutter/flutter/issues/32701
+                padding: EdgeInsets.zero,
+              ),
+              child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
+            ),
+          )
+        ]: [],
       ),
       body: Container(
-        padding: const EdgeInsets.all(20),
+        padding: isCupertino(context) ? EdgeInsets.zero : const EdgeInsets.all(20),
         child: Consumer<AppConfig>(
           builder: (context, appConfig, child) => _buildForm(context, appConfig),
         ),
@@ -144,57 +156,78 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     }
   }
 
+  List<Widget> _buildFormSections(BuildContext context, AppConfig appConfig) =>
+      <Widget>[
+        if (!isCupertino(context)) Text(AppLocalizations.of(context)!.addAircraft_text1,
+            style: const TextStyle(fontSize: 16)),
+        if (!isCupertino(context)) const SizedBox(
+          height: 5,
+        ),
+        PlatformTextFormField(
+          keyboardType: TextInputType.url,
+          material: (context, platform) => MaterialTextFormFieldData(
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.addAircraft_hint_address,
+            ),
+          ),
+          cupertino: (context, platform) => CupertinoTextFormFieldData(
+            prefix: Text(AppLocalizations.of(context)!.addAircraft_label_address),
+            placeholder: AppLocalizations.of(context)!.addAircraft_hint_address,
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
+          ),
+          onSaved: (newValue) => _aircraftUrl = newValue,
+          validator: (String? value) {
+            if (value == null || value.isEmpty || !isURL(value, protocols: ['http', 'https'], requireProtocol: true)) {
+              return AppLocalizations.of(context)!.addAircraft_error_invalid_address;
+            }
+            return null;
+          },
+        ),
+        PlatformTextFormField(
+          obscureText: true,
+          enableSuggestions: false,
+          keyboardType: TextInputType.visiblePassword,
+          onSaved: (newValue) => _aircraftPassword = newValue,
+          material: (context, platform) => MaterialTextFormFieldData(
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
+            ),
+          ),
+          cupertino: (context, platform) => CupertinoTextFormFieldData(
+            prefix: Text(AppLocalizations.of(context)!.addAircraft_hint_password),
+            placeholder: AppLocalizations.of(context)!.addAircraft_hint_password,
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
+          ),
+        ),
+        if (!isCupertino(context)) const SizedBox(
+          height: 10,
+        ),
+        if (!isCupertino(context)) PlatformButton(
+          onPressed: () => _downloadData(appConfig),
+          child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
+        ),
+      ];
+
+  Widget _buildMaterialForm(BuildContext context, AppConfig appConfig) =>
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _buildFormSections(context, appConfig)
+    );
+
+  Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) =>
+    CupertinoFormSection(
+      header: Text(AppLocalizations.of(context)!.addAircraft_text1,
+          // FIXME setting the color manually
+          style: const TextStyle(fontSize: 18, color: CupertinoColors.label)),
+      children: _buildFormSections(context, appConfig),
+    );
+
   Widget _buildForm(BuildContext context, AppConfig appConfig) =>
     Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(AppLocalizations.of(context)!.addAircraft_text1,
-            style: const TextStyle(fontSize: 16)),
-          const SizedBox(
-            height: 5,
-          ),
-          PlatformTextFormField(
-            material: (context, platform) => MaterialTextFormFieldData(
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.addAircraft_hint_address,
-              ),
-            ),
-            cupertino: (context, platform) => CupertinoTextFormFieldData(
-            ),
-            onSaved: (newValue) => _aircraftUrl = newValue,
-            validator: (String? value) {
-              if (value == null || value.isEmpty || !isURL(value, protocols: ['http', 'https'], requireProtocol: true)) {
-                return AppLocalizations.of(context)!.addAircraft_error_invalid_address;
-              }
-              return null;
-            },
-          ),
-          PlatformTextFormField(
-            obscureText: true,
-            enableSuggestions: false,
-            keyboardType: TextInputType.visiblePassword,
-            onSaved: (newValue) => _aircraftPassword = newValue,
-            material: (context, platform) => MaterialTextFormFieldData(
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
-              ),
-            ),
-            cupertino: (context, platform) => CupertinoTextFormFieldData(
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          PlatformButton(
-            onPressed: () => _downloadData(appConfig),
-            child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
-            //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
-          ),
-        ],
-      )
+      child: isCupertino(context) ?
+        _buildCupertinoForm(context, appConfig) :
+        _buildMaterialForm(context, appConfig)
     );
-
 
 }

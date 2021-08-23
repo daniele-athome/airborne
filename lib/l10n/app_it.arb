@@ -39,6 +39,7 @@
 
   "addAircraft_title": "Configura aereo",
   "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",
+  "addAircraft_label_address": "Indirizzo",
   "addAircraft_hint_address": "Indirizzo aereo",
   "addAircraft_hint_password": "Password",
   "addAircraft_button_install": "Installa",

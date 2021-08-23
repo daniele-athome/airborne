@@ -4,13 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 
 import '../../helpers/aircraft_data.dart';
 import '../../helpers/config.dart';
+import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/utils.dart';
 
 final Logger _log = Logger((AircraftData).toString());
@@ -38,7 +38,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         trailingActions: isCupertino(context)? <Widget>[
           Consumer<AppConfig>(
             builder: (context, appConfig, child) => PlatformButton(
-              onPressed: () => _downloadData(appConfig),
+              onPressed: () => _downloadData(context, appConfig),
               cupertino: (_, __) => CupertinoButtonData(
                 // workaround for https://github.com/flutter/flutter/issues/32701
                 padding: EdgeInsets.zero,
@@ -57,8 +57,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  void _showError(String text) {
-    showPlatformDialog(
+  Future<void> _showError(String text) {
+    return showPlatformDialog<void>(
       context: context,
       builder: (_context) => PlatformAlertDialog(
         title: Text(AppLocalizations.of(context)!.dialog_title_error),
@@ -75,43 +75,45 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  void _downloadData(AppConfig appConfig) {
+  void _downloadData(BuildContext context, AppConfig appConfig) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      final userpass = _aircraftPassword;
+      String? username;
+      String? password;
+      if (userpass != null) {
+        final separator = userpass.indexOf(':');
+        if (separator >= 0) {
+          username = userpass.substring(0, separator);
+          password = userpass.substring(separator + 1);
+        }
+      }
+      final downloadTask = downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).then((value) async {
+        _log.finest(value);
+        return _validateAndStoreAircraft(value, appConfig);
+      }).then((AircraftData? aircraftData) {
+        if (aircraftData != null) {
+          // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
+          // probably FutureProgressDialog popping the navigator has something to do with it
+          Future.delayed(Duration.zero, () {
+            appConfig.currentAircraft = aircraftData;
+            Navigator.of(context, rootNavigator: true)
+                .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
+          });
+        }
+        return aircraftData;
+      }).catchError((error, StackTrace? stacktrace) {
+        _log.info('DOWNLOAD ERROR', error, stacktrace);
+        // TODO analyze exception somehow (e.g. TimeoutException)
+        Future.delayed(Duration.zero, () => _showError(getExceptionMessage(error)));
+        return null;
+      });
 
       showPlatformDialog(
         context: context,
         builder: (context) {
-          final userpass = _aircraftPassword;
-          String? username;
-          String? password;
-          if (userpass != null) {
-            final separator = userpass.indexOf(':');
-            if (separator >= 0) {
-              username = userpass.substring(0, separator);
-              password = userpass.substring(separator + 1);
-            }
-          }
-          return FutureProgressDialog(
-            downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).then((value) async {
-              _log.finest(value);
-              final aircraftData = await _validateAndStoreAircraft(value, appConfig);
-              if (aircraftData != null) {
-                // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
-                // probably FutureProgressDialog popping the navigator has something to do with it
-                WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                  appConfig.currentAircraft = aircraftData;
-                  Navigator.of(context, rootNavigator: true)
-                      .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
-                });
-              }
-            }).catchError((error, StackTrace? stacktrace) {
-              _log.info('DOWNLOAD ERROR', error, stacktrace);
-              // TODO analyze exception somehow (e.g. TimeoutException)
-              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                _showError(getExceptionMessage(error));
-              });
-            }),
+          return FutureProgressDialog(downloadTask,
             message: Text(AppLocalizations.of(context)!.addAircraft_dialog_downloading),
           );
         },
@@ -143,17 +145,17 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       }
       catch (e, stacktrace) {
         _log.warning('Error storing aircraft data file', e, stacktrace);
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          _showError(AppLocalizations.of(context)!.addAircraft_error_storing);
-        });
+        if (mounted) {
+          return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_storing), stacktrace);
+        }
       }
     }
     else {
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-        _showError(AppLocalizations.of(context)!.addAircraft_error_invalid_datafile);
-      });
-      return null;
+      if (mounted) {
+        return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_invalid_datafile));
+      }
     }
+    return null;
   }
 
   List<Widget> _buildFormSections(BuildContext context, AppConfig appConfig) =>
@@ -203,7 +205,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           height: 10,
         ),
         if (!isCupertino(context)) PlatformButton(
-          onPressed: () => _downloadData(appConfig),
+          onPressed: () => _downloadData(context, appConfig),
           child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
         ),
       ];

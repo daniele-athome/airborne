@@ -29,7 +29,6 @@ dependencies:
     sdk: flutter
   flutter_platform_widgets: ^1.9.5
   fluttertoast: ^8.0.8
-  future_progress_dialog: ^0.2.0
   googleapis: ^4.0.0
   googleapis_auth: ^1.1.0
   intl: ^0.17.0

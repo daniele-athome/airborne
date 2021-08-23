@@ -5,13 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
 import '../../helpers/config.dart';
+import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
 import '../../services/book_flight_services.dart';

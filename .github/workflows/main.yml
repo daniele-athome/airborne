@@ -42,9 +42,27 @@ jobs:
       - name: Run tests
         run: flutter test -r expanded
 
-      - name: Build Linux application
+      - name: Build Linux application (debug)
         run: |
-          flutter build linux
+          flutter build linux --debug
+
+      - name: Archive debug build
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-bundle-debug
+          path: |
+            build/linux/x64/debug/bundle/
+
+      - name: Build Linux application (release)
+        run: |
+          flutter build linux --release
+
+      - name: Archive release build
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-bundle-release
+          path: |
+            build/linux/x64/release/bundle/
 
   android:
     runs-on: ubuntu-latest

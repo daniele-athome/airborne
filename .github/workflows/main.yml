@@ -11,6 +11,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  flutter_version: '2.2.3'
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   linux:
@@ -24,7 +27,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: '2.2.3'
+          flutter-version: ${{ flutter_version }}
 
       - name: Install system libraries
         run: |
@@ -64,6 +67,52 @@ jobs:
           path: |
             build/linux/x64/release/bundle/
 
+  windows:
+    runs-on: windows-latest
+    # TODO environment: ???
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Flutter environment
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ flutter_version }}
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          flutter config --enable-windows-desktop
+
+      - name: Analyze code
+        run: flutter analyze .
+
+      - name: Run tests
+        run: flutter test -r expanded
+
+      - name: Build Windows application (debug)
+        run: |
+          flutter build windows --debug
+
+      - name: Archive debug build
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-bundle-debug
+          path: |
+            build/windows/x64/debug/bundle/
+
+      - name: Build Windows application (release)
+        run: |
+          flutter build windows --release
+
+      - name: Archive release build
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-bundle-release
+          path: |
+            build/windows/x64/release/bundle/
+
   android:
     runs-on: ubuntu-latest
     # TODO environment: ???
@@ -80,7 +129,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: '2.2.3'
+          flutter-version: ${{ flutter_version }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -140,7 +189,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: '2.2.3'
+          flutter-version: ${{ flutter_version }}
 
       - name: Install dependencies
         run: flutter pub get

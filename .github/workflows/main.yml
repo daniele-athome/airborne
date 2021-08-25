@@ -27,7 +27,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: ${{ flutter_version }}
+          flutter-version: ${{ env.flutter_version }}
 
       - name: Install system libraries
         run: |
@@ -78,7 +78,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: ${{ flutter_version }}
+          flutter-version: ${{ env.flutter_version }}
 
       - name: Install dependencies
         run: |
@@ -129,7 +129,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: ${{ flutter_version }}
+          flutter-version: ${{ env.flutter_version }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -189,7 +189,7 @@ jobs:
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: ${{ flutter_version }}
+          flutter-version: ${{ env.flutter_version }}
 
       - name: Install dependencies
         run: flutter pub get

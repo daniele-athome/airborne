@@ -100,7 +100,7 @@ jobs:
         with:
           name: windows-bundle-debug
           path: |
-            build/windows/x64/debug/bundle/
+            build/windows/runner/debug/
 
       - name: Build Windows application (release)
         run: |
@@ -111,7 +111,7 @@ jobs:
         with:
           name: windows-bundle-release
           path: |
-            build/windows/x64/release/bundle/
+            build/windows/runner/release/
 
   android:
     runs-on: ubuntu-latest

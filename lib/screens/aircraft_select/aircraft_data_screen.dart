@@ -219,8 +219,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) =>
     CupertinoFormSection(
       header: Text(AppLocalizations.of(context)!.addAircraft_text1,
-          // FIXME setting the color manually
-          style: const TextStyle(fontSize: 18, color: CupertinoColors.label)),
+          // FIXME workaround for https://github.com/flutter/flutter/issues/48438
+          style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 18)),
       children: _buildFormSections(context, appConfig),
     );
 

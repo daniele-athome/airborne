@@ -5,6 +5,7 @@ analyzer:
     - lib/generated/**
     # messy code
     - lib/screens/flight_log/**
+    - lib/screens/about/**
 
 linter:
   rules:

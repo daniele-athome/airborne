@@ -15,6 +15,7 @@ import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 import 'helpers/config.dart';
 import 'helpers/googleapis.dart';
+import 'screens/about/about_screen.dart';
 import 'screens/aircraft_select/aircraft_data_screen.dart';
 import 'screens/book_flight/book_flight_screen.dart';
 import 'screens/flight_log/flight_log_screen.dart';
@@ -159,7 +160,8 @@ class _MainNavigationState extends State<MainNavigation> {
         );
       case 1:
         return FlightLogScreen();
-      // TODO info
+      case 2:
+        return AboutScreen();
       default:
         throw UnsupportedError('Unsupported tab');
     }

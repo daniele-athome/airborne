@@ -252,8 +252,14 @@ class _BookFlightModalState extends State<BookFlightModal> {
   @override
   Widget build(BuildContext context) {
     List<Widget> trailingActions;
+    Widget? leadingAction;
 
     if (isCupertino(context)) {
+      leadingAction = CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text(AppLocalizations.of(context)!.bookFlightModal_button_close),
+      );
       trailingActions = [PlatformButton(
         onPressed: () => _onSave(context),
         cupertino: (_, __) => CupertinoButtonData(
@@ -264,6 +270,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       )];
     }
     else {
+      leadingAction = null;
       trailingActions = [
         PlatformIconButton(
           onPressed: () => _onSave(context),
@@ -292,6 +299,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           AppLocalizations.of(context)!.bookFlightModal_title_edit :
           AppLocalizations.of(context)!.bookFlightModal_title_create
         ),
+        leading: leadingAction,
         trailingActions: trailingActions,
       ),
       body: Padding(

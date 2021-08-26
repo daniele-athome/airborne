@@ -27,6 +27,7 @@
   "bookFlightModal_title_create": "Book flight",
   "bookFlightModal_title_edit": "Edit",
   "bookFlightModal_button_save": "Save",
+  "bookFlightModal_button_close": "Close",
   "bookFlightModal_button_delete": "Delete",
   "bookFlightModal_hint_notes": "Notes",
   "bookFlightModal_error_notOwnBooking_edit": "Flight is not yours, you cannot modify it.",

@@ -54,7 +54,7 @@ Future<void> main() async {
 
   // TEST
   //debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-  Intl.systemLocale = 'it_IT';
+  //Intl.systemLocale = 'it_IT';
 
   // we need configuration to be loaded so we block here
   // it's just assets reading anyway so it won't take long

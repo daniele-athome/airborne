@@ -63,7 +63,12 @@ void showToast(FToast fToast, String text, Duration duration) {
       child: Text(text),
     ),
     toastDuration: duration,
-    gravity: ToastGravity.BOTTOM,
+    positionedToastBuilder: (context, child) => Positioned(
+      bottom: 50.0 * MediaQuery.of(context).devicePixelRatio + 50.0,
+      left: 24.0,
+      right: 24.0,
+      child: child
+    ),
   );
 }
 

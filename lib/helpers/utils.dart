@@ -8,6 +8,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
 
+const double kPortraitToolbarHeight = kToolbarHeight;
+// per Material specs, toolbar in landscape should be 48dp
+const double kLandscapeToolbarHeight = 48;
+
 String getExceptionMessage(dynamic error) {
   if (error is LocationNotFoundException) {
     return error.msg;

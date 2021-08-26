@@ -140,6 +140,10 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         trailingActions: [
           trailingAction,
         ],
+        material: (context, platform) => MaterialAppBarData(
+          toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
+            kPortraitToolbarHeight : kLandscapeToolbarHeight,
+        ),
       ),
       material: (_, __) => MaterialScaffoldData(
         floatingActionButton: fab,

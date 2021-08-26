@@ -43,6 +43,10 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
           trailingActions: [
             //trailingAction,
           ],
+          material: (context, platform) => MaterialAppBarData(
+            toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
+            kPortraitToolbarHeight : kLandscapeToolbarHeight,
+          ),
         ),
         material: (_, __) => MaterialScaffoldData(
           //floatingActionButton: fab,

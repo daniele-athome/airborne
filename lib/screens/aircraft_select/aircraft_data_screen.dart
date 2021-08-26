@@ -47,6 +47,10 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             ),
           )
         ]: [],
+        material: (context, platform) => MaterialAppBarData(
+          toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
+            kPortraitToolbarHeight : kLandscapeToolbarHeight,
+        ),
       ),
       body: Container(
         padding: isCupertino(context) ? EdgeInsets.zero : const EdgeInsets.all(20),

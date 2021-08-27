@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
           Locale('it', ''),
         ],
         // TEST
-        locale: const Locale('it', ''),
+        //locale: const Locale('it', ''),
         initialRoute: _getInitialRoute(appConfig),
         routes: <String, WidgetBuilder>{
           '/': (context) => MainNavigation(appConfig),

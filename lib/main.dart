@@ -104,10 +104,7 @@ class _MyAppState extends State<MyApp> {
           GlobalCupertinoLocalizations.delegate,
           SfGlobalLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('en', ''),
-          Locale('it', ''),
-        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         // TEST
         //locale: const Locale('it', ''),
         initialRoute: _getInitialRoute(appConfig),

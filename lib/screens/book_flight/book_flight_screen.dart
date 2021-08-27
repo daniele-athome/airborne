@@ -393,12 +393,13 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   Widget _buildCalendar(BuildContext context, AppConfig appConfig) {
+    final firstDayOfWeekIndex = MaterialLocalizations.of(context).firstDayOfWeekIndex;
     return SfCalendar(
       key: ValueKey(_dataSource),
       controller: _calendarController,
       // TODO from locale
       appointmentTimeTextFormat: 'HH:mm',
-      firstDayOfWeek: MaterialLocalizations.of(context).firstDayOfWeekIndex,
+      firstDayOfWeek: firstDayOfWeekIndex == 0 ? 7 : firstDayOfWeekIndex,
       headerHeight: 0,
       showNavigationArrow: false,
       showDatePickerButton: false,

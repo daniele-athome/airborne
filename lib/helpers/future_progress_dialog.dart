@@ -1,12 +1,15 @@
 // Stateful version of future_progress_dialog.
 // Future callbacks were interfering with the stateless nature of the old version.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-const _defaultDecoration = BoxDecoration(
-  color: Colors.white,
+Decoration _defaultDecoration(BuildContext context) => BoxDecoration(
+  // FIXME Cupertino: large border with a different color
+  color: isCupertino(context) ? CupertinoTheme.of(context).scaffoldBackgroundColor : Theme.of(context).dialogBackgroundColor,
   shape: BoxShape.rectangle,
-  borderRadius: BorderRadius.all(Radius.circular(10)),
+  borderRadius: const BorderRadius.all(Radius.circular(10)),
 );
 
 class FutureProgressDialog extends StatefulWidget {
@@ -71,7 +74,7 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
           height: 100,
           width: 100,
           alignment: Alignment.center,
-          decoration: widget.decoration ?? _defaultDecoration,
+          decoration: widget.decoration ?? _defaultDecoration(context),
           child: widget.progress ?? const CircularProgressIndicator(),
         ),
       );
@@ -79,7 +82,7 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
       content = Container(
         height: 100,
         padding: const EdgeInsets.all(20),
-        decoration: widget.decoration ?? _defaultDecoration,
+        decoration: widget.decoration ?? _defaultDecoration(context),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           widget.progress ?? const CircularProgressIndicator(),
@@ -89,10 +92,12 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
       );
     }
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      child: Opacity(
+    return PlatformAlertDialog(
+      material: (context, platform) => MaterialAlertDialogData(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      content: Opacity(
         opacity: widget.opacity,
         child: content,
       ),

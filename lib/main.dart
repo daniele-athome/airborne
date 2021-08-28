@@ -115,11 +115,20 @@ class _MyAppState extends State<MyApp> {
         },
         debugShowCheckedModeBanner: false,
         material: (_, __) => MaterialAppData(
+          // TEST
+          //themeMode: ThemeMode.dark,
           theme: ThemeData(
+            brightness: Brightness.light,
             primarySwatch: Colors.deepOrange,
           ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.deepOrange,
+          )
         ),
         cupertino: (_, __) => CupertinoAppData(
+          // TEST
+          //theme: const CupertinoThemeData(brightness: Brightness.dark),
           // TODO
         ),
       ));

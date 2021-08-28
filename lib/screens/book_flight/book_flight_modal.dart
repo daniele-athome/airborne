@@ -73,7 +73,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
   }
 
   // FIXME use AppConfig state instance
-  Widget _getEventEditor(BuildContext context, AppConfig appConfig, Color defaultColor) {
+  Widget _getEventEditor(BuildContext context, AppConfig appConfig) {
     final SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDate, appConfig.locationTimeZone);
     final SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDate, appConfig.locationTimeZone);
 
@@ -89,9 +89,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
               leading: CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
               title: Text(
                 _pilotName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
-                  color: defaultColor,
                 ),
               ),
               onTap: () => _onTapPilot(context, appConfig),
@@ -210,9 +209,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
             ListTile(
               // FIXME TextField inside ListTile caused enter key to act as onPressed
               contentPadding: const EdgeInsets.all(5),
-              leading: Icon(
+              leading: const Icon(
                 Icons.subject,
-                color: defaultColor,
               ),
               title: TextField(
                 controller: TextEditingController(text: _notes),
@@ -222,10 +220,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 },
                 keyboardType: TextInputType.multiline,
                 maxLines: 3,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: defaultColor,
-                    fontWeight: FontWeight.w400),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400
+                ),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
@@ -306,7 +304,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
         child: Stack(
           children: <Widget>[
-            _getEventEditor(context, _appConfig, Colors.black87)
+            _getEventEditor(context, _appConfig)
           ],
         ),
       ),
@@ -728,6 +726,9 @@ class _SunTimesListTile extends StatelessWidget {
     required this.sunset,
   }) : super(key: key);
 
+  Color? _getIconColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? null : Colors.black45;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -737,13 +738,12 @@ class _SunTimesListTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // TODO theme
-            const Icon(Icons.wb_sunny, color: Colors.black45),
+            Icon(Icons.wb_sunny, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
             // TODO locale
             Text(DateFormat('HH:mm').format(sunrise), style: Theme.of(context).textTheme.subtitle1),
             SizedBox(width: MediaQuery.of(context).size.width * 0.2, height: 0),
-            const Icon(Icons.nightlight_round, color: Colors.black45),
+            Icon(Icons.nightlight_round, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
             // TODO locale
             Text(DateFormat('HH:mm').format(sunset), style: Theme.of(context).textTheme.subtitle1),

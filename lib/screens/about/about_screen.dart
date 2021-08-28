@@ -10,9 +10,12 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return const Text('TODO');
+    return Center(
+      child: const Text('Under construction.'),
+    );
   }
+
 }

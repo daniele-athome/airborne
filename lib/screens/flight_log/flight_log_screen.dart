@@ -21,15 +21,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Container(
-      child: ListView(
-        children: [
-          const Text('07/06/2021'),
-          const Text('06/06/2021'),
-          const Text('05/06/2021'),
-          const Text('04/06/2021'),
-        ],
-      ),
+    return Center(
+      child: const Text('Under construction.'),
     );
   }
 

@@ -881,7 +881,7 @@ class _SunTimesListTile extends StatelessWidget {
 
     return Container(
       padding: isCupertino(context) ?
-        const EdgeInsetsDirectional.fromSTEB(15, 6, 15, 6) :
+        const EdgeInsetsDirectional.fromSTEB(15, 2, 15, 10) :
         const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
       child: Align(
         alignment: Alignment.centerRight,

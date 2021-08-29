@@ -144,10 +144,6 @@ jobs:
         if: github.ref != 'refs/heads/release'
         run: flutter build appbundle --debug
 
-      - name: Build Android application (release)
-        if: github.ref == 'refs/heads/release'
-        run: flutter build appbundle --release
-
       - name: Prepare for deploy
         if: github.ref == 'refs/heads/release'
         env:
@@ -157,6 +153,10 @@ jobs:
           cd android
           openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in fastlane/googleplay-developer-key.json.enc -out fastlane/googleplay-developer-key.json -d
           openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in fastlane/androidkey.jks.enc -out fastlane/androidkey.jks -d
+
+      - name: Build Android application (release)
+        if: github.ref == 'refs/heads/release'
+        run: flutter build appbundle --release
 
       - name: Setup Ruby environment
         if: github.ref == 'refs/heads/release'

@@ -339,7 +339,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           },
         ),
         Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 10, 20),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
           child: _SunTimesListTile(sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
         ),
         const Divider(

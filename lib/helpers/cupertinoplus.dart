@@ -8,7 +8,7 @@ const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding =
     EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 20.0, 6.0);
 
 /// Margin between form sections.
-const double kDefaultCupertinoFormSectionMargin = 32.0;
+const double kDefaultCupertinoFormSectionMargin = 28.0;
 
 /// Top margin for the first [CupertinoFormSection]
 const double kDefaultCupertinoFormTopMargin = kDefaultCupertinoFormSectionMargin / 2;

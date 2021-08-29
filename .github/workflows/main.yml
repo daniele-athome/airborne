@@ -176,7 +176,7 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           cd android
-          fastlane deploy_internal
+          fastlane deploy_beta
 
   ios:
     runs-on: macos-latest

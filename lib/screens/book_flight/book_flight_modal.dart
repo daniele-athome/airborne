@@ -331,17 +331,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
             ),
           ),
         ),
-        if (_isEditing && isCupertino(context)) const SizedBox(
-          height: 20,
-        ),
-        // TODO some margin
-        if (_isEditing && isCupertino(context)) PlatformButton(
-          onPressed: () => _onDelete(context),
-          color: CupertinoColors.destructiveRed,
-          cupertino: (_, __) => CupertinoButtonData(),
-          child: Text(AppLocalizations.of(context)!.bookFlightModal_button_delete),
-          //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
-        ),
       ],
     );
   }

@@ -251,7 +251,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 child: CupertinoButton(
                   onPressed: () => _onDelete(context),
                   child: Text(AppLocalizations.of(context)!.bookFlightModal_button_delete,
-                    style: const TextStyle(color: CupertinoColors.destructiveRed),),
+                    style: const TextStyle(color: CupertinoColors.destructiveRed),
+                  ),
                 ),
               ),
             ],

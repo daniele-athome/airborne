@@ -4,8 +4,19 @@ import 'package:intl/intl.dart';
 
 import 'utils.dart';
 
+const double kDefaultCupertinoFormRowStartPadding = 20.0;
+
 const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding =
-    EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 20.0, 6.0);
+    EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 6.0);
+
+const EdgeInsetsGeometry kDefaultCupertinoFormRowWithHelperPadding =
+EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 12.0);
+
+const EdgeInsetsGeometry kDefaultCupertinoFormRowHorizontalPadding =
+    EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding);
+
+const EdgeInsetsGeometry kDefaultCupertinoFormRowVerticalPadding =
+    EdgeInsets.symmetric(vertical: 6.0);
 
 /// Margin between form sections.
 const double kDefaultCupertinoFormSectionMargin = 28.0;
@@ -41,8 +52,8 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   CupertinoDateTimeFormFieldRow({
     Key? key,
     this.prefix,
-    this.padding,
     this.controller,
+    this.helper,
     DateTime? initialValue,
     ValueChanged<DateTime>? onChanged,
     FormFieldSetter<DateTime>? onSaved,
@@ -102,25 +113,33 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
           return CupertinoFormRowContainer(
             child: CupertinoFormRow(
               prefix: prefix,
-              padding: padding,
+              padding: const EdgeInsetsDirectional.fromSTEB(kDefaultCupertinoFormRowStartPadding, 0, 0, 0),
+              helper: helper,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   // TODO tap color effect
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: onTapDateHandler,
-                    child: Text(
-                      // TODO locale
-                      field.value != null ? DateFormat('EEE, dd/MM/yyyy').format(field.value!) : '',
+                    child: Padding(
+                      padding: helper != null ? kDefaultCupertinoFormRowWithHelperPadding : kDefaultCupertinoFormRowPadding,
+                      child: Text(
+                        // TODO locale
+                        field.value != null ? DateFormat('EEE, dd/MM/yyyy').format(field.value!) : '',
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 20),
                   // TODO tap color effect
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: onTapTimeHandler,
-                    child: Text(
-                      // TODO locale
-                      field.value != null ? DateFormat('HH:mm').format(field.value!) : '',
+                    child: Padding(
+                      padding: helper != null ? kDefaultCupertinoFormRowWithHelperPadding : kDefaultCupertinoFormRowPadding,
+                      child: Text(
+                        // TODO locale
+                        field.value != null ? DateFormat('HH:mm').format(field.value!) : '',
+                      ),
                     ),
                   ),
                 ],
@@ -132,9 +151,9 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
 
   final Widget? prefix;
 
-  final EdgeInsetsGeometry? padding;
-
   final DateTimePickerController? controller;
+
+  final Widget? helper;
 
   @override
   _CupertinoDateTimeFormFieldRowState createState() =>

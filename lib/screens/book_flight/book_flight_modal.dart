@@ -209,20 +209,20 @@ class _BookFlightModalState extends State<BookFlightModal> {
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         CupertinoFormSection(children: <Widget>[
+          // start date/time
           CupertinoDateTimeFormFieldRow(
-            padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
+            helper: _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
             onChanged: (value) => _onStartDateChanged(value, true),
             controller: _startDateController,
           ),
-          // TODO sunrise/sunset for start date
+          // end date/time
           CupertinoDateTimeFormFieldRow(
-            padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_end),
+            helper: _SunTimesListTile(sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
             onChanged: (value) => _onEndDateChanged(value, true),
             controller: _endDateController,
           ),
-          // TODO sunrise/sunset for end date
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         CupertinoFormSection(children: <Widget>[
@@ -436,6 +436,11 @@ class _BookFlightModalState extends State<BookFlightModal> {
         ),
         leading: leadingAction,
         trailingActions: trailingActions,
+      ),
+      cupertino: (context, platform) => CupertinoPageScaffoldData(
+        // FIXME not using the right color probably, but scaffoldBackgroundColor is plain white :(
+        backgroundColor: CupertinoTheme.of(context).brightness == Brightness.dark ?
+            null : CupertinoTheme.of(context).barBackgroundColor,
       ),
       body: Stack(
         children: <Widget>[
@@ -860,27 +865,37 @@ class _SunTimesListTile extends StatelessWidget {
     required this.sunset,
   }) : super(key: key);
 
-  Color? _getIconColor(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark ? null : Colors.black45;
+  Color? _getIconColor(BuildContext context) => (isCupertino(context)
+              ? CupertinoTheme.of(context).brightness
+              : Theme.of(context).brightness) ==
+          Brightness.dark
+      ? null
+      : Colors.black45;
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = isCupertino(context) ?
+      CupertinoTheme.of(context).textTheme.textStyle :
+      Theme.of(context).textTheme.subtitle1;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
+      padding: isCupertino(context) ?
+        const EdgeInsetsDirectional.fromSTEB(15, 6, 15, 6) :
+        const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
       child: Align(
         alignment: Alignment.centerRight,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: isCupertino(context) ? MainAxisAlignment.start : MainAxisAlignment.end,
           children: [
             Icon(Icons.wb_sunny, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
             // TODO locale
-            Text(DateFormat('HH:mm').format(sunrise), style: Theme.of(context).textTheme.subtitle1),
+            Text(DateFormat('HH:mm').format(sunrise), style: textStyle),
             SizedBox(width: MediaQuery.of(context).size.width * 0.2, height: 0),
             Icon(Icons.nightlight_round, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
             // TODO locale
-            Text(DateFormat('HH:mm').format(sunset), style: Theme.of(context).textTheme.subtitle1),
+            Text(DateFormat('HH:mm').format(sunset), style: textStyle),
           ],
         ),
       ),

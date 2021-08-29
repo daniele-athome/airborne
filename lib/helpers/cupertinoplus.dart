@@ -49,7 +49,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   }) :
       super(
         key: key,
-        initialValue: initialValue ?? DateTime.now(),
+        initialValue: controller?.value ?? initialValue ?? DateTime.now(),
         onSaved: onSaved,
         builder: (FormFieldState<DateTime> field) {
           void onTapDateHandler() {

@@ -82,32 +82,96 @@ class _BookFlightModalState extends State<BookFlightModal> {
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
   }
 
-  void _onStartDateChanged(DateTime? date) {
+  void _onStartDateChanged(DateTime? date, bool time) {
     if (date != null && date != _startDate) {
       setState(() {
-        final Duration difference =
-        _endDate.difference(_startDate);
-        // TODO time zone
+        final Duration dateDifference =
+          _endDate.difference(_startDate);
         _startDate = DateTime(
-            date.year,
-            date.month,
-            date.day,
-            _startTime.hour,
-            _startTime.minute
+          date.year,
+          date.month,
+          date.day,
+          _startTime.hour,
+          _startTime.minute
         );
-        _endDate = _startDate.add(difference);
+        _endDate = _startDate.add(dateDifference);
         _endTime = TimeOfDay(
           hour: _endDate.hour,
           minute: _endDate.minute,
         );
-        print(_endDate);
+
+        if (time) {
+          _startTime = TimeOfDay(
+            hour: date.hour,
+            minute: date.minute
+          );
+          final Duration timeDifference =
+          _endDate.difference(_startDate);
+          _startDate = DateTime(
+            _startDate.year,
+            _startDate.month,
+            _startDate.day,
+            _startTime.hour,
+            _startTime.minute,
+          );
+          _endDate = _startDate.add(timeDifference);
+          _endTime = TimeOfDay(
+            hour: _endDate.hour,
+            minute: _endDate.minute
+          );
+        }
+
         _endDateController.value = _endDate;
       });
     }
   }
 
-  void _onEndDateChanged(DateTime? date) {
+  void _onEndDateChanged(DateTime? date, bool time) {
+    if (date != null && date != _endDate) {
+      setState(() {
+        final Duration dateDifference =
+        _endDate.difference(_startDate);
+        _endDate = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          _endTime.hour,
+          _endTime.minute,
+        );
+        if (_endDate.isBefore(_startDate)) {
+          _startDate = _endDate.subtract(dateDifference);
+          _startTime = TimeOfDay(
+            hour: _startDate.hour,
+            minute: _startDate.minute
+          );
+          _startDateController.value = _startDate;
+        }
 
+        if (time) {
+          _endTime = TimeOfDay(
+            hour: date.hour,
+            minute: date.minute
+          );
+          final Duration timeDifference =
+          _endDate.difference(_startDate);
+          _endDate = DateTime(
+            _endDate.year,
+            _endDate.month,
+            _endDate.day,
+            _endTime.hour,
+            _endTime.minute,
+          );
+          if (_endDate.isBefore(_startDate)) {
+            _startDate = _endDate.subtract(timeDifference);
+            _startTime = TimeOfDay(
+              hour: _startDate.hour,
+              minute: _startDate.minute
+            );
+            _startDateController.value = _startDate;
+          }
+        }
+      });
+    }
   }
 
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig, SunTimes startSunTimes, SunTimes endSunTimes) {
@@ -122,8 +186,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             child: CupertinoFormRow(
               padding: kDefaultCupertinoFormRowPadding,
               prefix: Text(
-                // TODO i18n
-                'Pilot',
+                AppLocalizations.of(context)!.bookFlightModal_label_pilot,
                 style: const TextStyle(
                   fontSize: 20,
                 ),
@@ -148,19 +211,15 @@ class _BookFlightModalState extends State<BookFlightModal> {
         CupertinoFormSection(children: <Widget>[
           CupertinoDateTimeFormFieldRow(
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('Start'),
-            initialValue: _startDate,
-            onChanged: _onStartDateChanged,
+            prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
+            onChanged: (value) => _onStartDateChanged(value, true),
             controller: _startDateController,
           ),
           // TODO sunrise/sunset for start date
           CupertinoDateTimeFormFieldRow(
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('End'),
-            initialValue: _endDate,
-            onChanged: _onEndDateChanged,
+            prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_end),
+            onChanged: (value) => _onEndDateChanged(value, true),
             controller: _endDateController,
           ),
           // TODO sunrise/sunset for end date
@@ -168,6 +227,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
+            // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
             controller: TextEditingController(text: _notes),
             // TODO cursorColor: widget.model.backgroundColor,
             onChanged: (String value) {
@@ -224,7 +284,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         _DateTimeListTile(
           selectedDate: _startDate,
           selectedTime: _startTime,
-          onDateSelected: _onStartDateChanged,
+          onDateSelected: (date) => _onStartDateChanged(date, false),
           onTimeSelected: (time) {
             if (time != null && time != _startTime) {
               setState(() {
@@ -253,28 +313,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           selectedDate: _endDate,
           selectedTime: _endTime,
           showIcon: false,
-          onDateSelected: (date) {
-            if (date != null && date != _endDate) {
-              setState(() {
-                final Duration difference =
-                _endDate.difference(_startDate);
-                // TODO time zone
-                _endDate = DateTime(
-                  date.year,
-                  date.month,
-                  date.day,
-                  _endTime.hour,
-                  _endTime.minute,
-                );
-                if (_endDate.isBefore(_startDate)) {
-                  _startDate = _endDate.subtract(difference);
-                  _startTime = TimeOfDay(
-                      hour: _startDate.hour,
-                      minute: _startDate.minute);
-                }
-              });
-            }
-          },
+          onDateSelected: (date) => _onEndDateChanged(date, false),
           onTimeSelected: (time) {
             if (time != null && time != _endTime) {
               setState(() {
@@ -708,6 +747,7 @@ class _PilotSelectListState extends State<_PilotSelectList> {
 
 }
 
+// FIXME refactor into widget + controller (e.g. like a text field)
 class _DateTimeListTile extends StatelessWidget {
   final DateTime selectedDate;
   final TimeOfDay selectedTime;

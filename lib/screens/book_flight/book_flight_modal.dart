@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart';
 
 import '../../helpers/config.dart';
+import '../../helpers/cupertinoplus.dart';
 import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
@@ -33,11 +34,18 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   // event data
   late String _pilotName;
+  @Deprecated('Use _startDateController')
   late DateTime _startDate;
+  @Deprecated('Use _startDateController')
   late TimeOfDay _startTime;
+  @Deprecated('Use _endDateController')
   late DateTime _endDate;
+  @Deprecated('Use _endDateController')
   late TimeOfDay _endTime;
   String? _notes;
+
+  final DateTimePickerController _startDateController = DateTimePickerController(null);
+  final DateTimePickerController _endDateController = DateTimePickerController(null);
 
   late BookFlightCalendarService _service;
   late AppConfig _appConfig;
@@ -66,10 +74,276 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _updateEventData() {
     _pilotName = widget.event.pilotName;
     _notes = widget.event.notes;
+    _startDateController.value = widget.event.from;
     _startDate = widget.event.from;
     _endDate = widget.event.to;
+    _endDateController.value = widget.event.to;
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
+  }
+
+  void _onStartDateChanged(DateTime? date) {
+    if (date != null && date != _startDate) {
+      setState(() {
+        final Duration difference =
+        _endDate.difference(_startDate);
+        // TODO time zone
+        _startDate = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            _startTime.hour,
+            _startTime.minute
+        );
+        _endDate = _startDate.add(difference);
+        _endTime = TimeOfDay(
+          hour: _endDate.hour,
+          minute: _endDate.minute,
+        );
+        print(_endDate);
+        _endDateController.value = _endDate;
+      });
+    }
+  }
+
+  void _onEndDateChanged(DateTime? date) {
+
+  }
+
+  Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig, SunTimes startSunTimes, SunTimes endSunTimes) {
+    return Column(
+      children: [
+        const SizedBox(height: kDefaultCupertinoFormTopMargin),
+        CupertinoFormSection(children: <Widget>[
+          // TODO selected color
+          GestureDetector(
+            onTap: () => _onTapPilot(context, appConfig),
+            behavior: HitTestBehavior.opaque,
+            child: CupertinoFormRow(
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(
+                // TODO i18n
+                'Pilot',
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    _pilotName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
+                ],
+              ),
+            ),
+          ),
+        ]),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        CupertinoFormSection(children: <Widget>[
+          CupertinoDateTimeFormFieldRow(
+            padding: kDefaultCupertinoFormRowPadding,
+            // TODO i18n
+            prefix: const Text('Start'),
+            initialValue: _startDate,
+            onChanged: _onStartDateChanged,
+            controller: _startDateController,
+          ),
+          // TODO sunrise/sunset for start date
+          CupertinoDateTimeFormFieldRow(
+            padding: kDefaultCupertinoFormRowPadding,
+            // TODO i18n
+            prefix: const Text('End'),
+            initialValue: _endDate,
+            onChanged: _onEndDateChanged,
+            controller: _endDateController,
+          ),
+          // TODO sunrise/sunset for end date
+        ]),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        CupertinoFormSection(children: <Widget>[
+          CupertinoTextFormFieldRow(
+            controller: TextEditingController(text: _notes),
+            // TODO cursorColor: widget.model.backgroundColor,
+            onChanged: (String value) {
+              _notes = value;
+            },
+            keyboardType: TextInputType.multiline,
+            minLines: 3,
+            maxLines: 3,
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w400
+            ),
+            placeholder: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+          ),
+        ]),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        CupertinoFormSection(children: <Widget>[
+          Row(
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                  onPressed: () => _onDelete(context),
+                  child: Text(AppLocalizations.of(context)!.bookFlightModal_button_delete,
+                    style: const TextStyle(color: CupertinoColors.destructiveRed),),
+                ),
+              ),
+            ],
+          )
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildMaterialForm(BuildContext context, AppConfig appConfig, SunTimes startSunTimes, SunTimes endSunTimes) {
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        ListTile(
+          contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+          leading: CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
+          title: Text(
+            _pilotName,
+            style: const TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          onTap: () => _onTapPilot(context, appConfig),
+        ),
+        const Divider(
+          height: 1.0,
+          thickness: 1,
+        ),
+        // start date/time
+        _DateTimeListTile(
+          selectedDate: _startDate,
+          selectedTime: _startTime,
+          onDateSelected: _onStartDateChanged,
+          onTimeSelected: (time) {
+            if (time != null && time != _startTime) {
+              setState(() {
+                _startTime = time;
+                final Duration difference =
+                _endDate.difference(_startDate);
+                // TODO time zone
+                _startDate = DateTime(
+                  _startDate.year,
+                  _startDate.month,
+                  _startDate.day,
+                  _startTime.hour,
+                  _startTime.minute,
+                );
+                _endDate = _startDate.add(difference);
+                _endTime = TimeOfDay(
+                    hour: _endDate.hour,
+                    minute: _endDate.minute);
+              });
+            }
+          },
+        ),
+        _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
+        // end date/time
+        _DateTimeListTile(
+          selectedDate: _endDate,
+          selectedTime: _endTime,
+          showIcon: false,
+          onDateSelected: (date) {
+            if (date != null && date != _endDate) {
+              setState(() {
+                final Duration difference =
+                _endDate.difference(_startDate);
+                // TODO time zone
+                _endDate = DateTime(
+                  date.year,
+                  date.month,
+                  date.day,
+                  _endTime.hour,
+                  _endTime.minute,
+                );
+                if (_endDate.isBefore(_startDate)) {
+                  _startDate = _endDate.subtract(difference);
+                  _startTime = TimeOfDay(
+                      hour: _startDate.hour,
+                      minute: _startDate.minute);
+                }
+              });
+            }
+          },
+          onTimeSelected: (time) {
+            if (time != null && time != _endTime) {
+              setState(() {
+                _endTime = time;
+                final Duration difference =
+                _endDate.difference(_startDate);
+                // TODO time zone
+                _endDate = DateTime(
+                  _endDate.year,
+                  _endDate.month,
+                  _endDate.day,
+                  _endTime.hour,
+                  _endTime.minute,
+                );
+                if (_endDate.isBefore(_startDate)) {
+                  _startDate = _endDate.subtract(difference);
+                  _startTime = TimeOfDay(
+                      hour: _startDate.hour,
+                      minute: _startDate.minute);
+                }
+              });
+            }
+          },
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(0, 0, 10, 20),
+          child: _SunTimesListTile(sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
+        ),
+        const Divider(
+          height: 1.0,
+          thickness: 1,
+        ),
+        ListTile(
+          // FIXME TextField inside ListTile caused enter key to act as onPressed
+          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          leading: const Icon(
+            Icons.subject,
+          ),
+          title: TextField(
+            controller: TextEditingController(text: _notes),
+            // TODO cursorColor: widget.model.backgroundColor,
+            onChanged: (String value) {
+              _notes = value;
+            },
+            keyboardType: TextInputType.multiline,
+            maxLines: 3,
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w400
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+            ),
+          ),
+        ),
+        if (_isEditing && isCupertino(context)) const SizedBox(
+          height: 20,
+        ),
+        // TODO some margin
+        if (_isEditing && isCupertino(context)) PlatformButton(
+          onPressed: () => _onDelete(context),
+          color: CupertinoColors.destructiveRed,
+          cupertino: (_, __) => CupertinoButtonData(),
+          child: Text(AppLocalizations.of(context)!.bookFlightModal_button_delete),
+          //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
+        ),
+      ],
+    );
   }
 
   // FIXME use AppConfig state instance
@@ -77,174 +351,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDate, appConfig.locationTimeZone);
     final SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDate, appConfig.locationTimeZone);
 
-    // ignore: avoid_unnecessary_containers
-    return Container(
-      // TODO color: backgroundColor,
-      child: Material(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            ListTile(
-              contentPadding: const EdgeInsets.fromLTRB(5, 0, 5, 5),
-              leading: CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
-              title: Text(
-                _pilotName,
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              onTap: () => _onTapPilot(context, appConfig),
-            ),
-            const Divider(
-              height: 1.0,
-              thickness: 1,
-            ),
-            // start date/time
-            _DateTimeListTile(
-              selectedDate: _startDate,
-              selectedTime: _startTime,
-              onDateSelected: (date) {
-                if (date != null && date != _startDate) {
-                  setState(() {
-                    final Duration difference =
-                    _endDate.difference(_startDate);
-                    // TODO time zone
-                    _startDate = DateTime(
-                        date.year,
-                        date.month,
-                        date.day,
-                        _startTime.hour,
-                        _startTime.minute
-                    );
-                    _endDate = _startDate.add(difference);
-                    _endTime = TimeOfDay(
-                      hour: _endDate.hour,
-                      minute: _endDate.minute,
-                    );
-                  });
-                }
-              },
-              onTimeSelected: (time) {
-                if (time != null && time != _startTime) {
-                  setState(() {
-                    _startTime = time;
-                    final Duration difference =
-                    _endDate.difference(_startDate);
-                    // TODO time zone
-                    _startDate = DateTime(
-                        _startDate.year,
-                        _startDate.month,
-                        _startDate.day,
-                        _startTime.hour,
-                        _startTime.minute,
-                    );
-                    _endDate = _startDate.add(difference);
-                    _endTime = TimeOfDay(
-                        hour: _endDate.hour,
-                        minute: _endDate.minute);
-                  });
-                }
-              },
-            ),
-            _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
-            // end date/time
-            _DateTimeListTile(
-              selectedDate: _endDate,
-              selectedTime: _endTime,
-              showIcon: false,
-              onDateSelected: (date) {
-                if (date != null && date != _endDate) {
-                  setState(() {
-                    final Duration difference =
-                    _endDate.difference(_startDate);
-                    // TODO time zone
-                    _endDate = DateTime(
-                        date.year,
-                        date.month,
-                        date.day,
-                        _endTime.hour,
-                        _endTime.minute,
-                    );
-                    if (_endDate.isBefore(_startDate)) {
-                      _startDate = _endDate.subtract(difference);
-                      _startTime = TimeOfDay(
-                          hour: _startDate.hour,
-                          minute: _startDate.minute);
-                    }
-                  });
-                }
-              },
-              onTimeSelected: (time) {
-                if (time != null && time != _endTime) {
-                  setState(() {
-                    _endTime = time;
-                    final Duration difference =
-                    _endDate.difference(_startDate);
-                    // TODO time zone
-                    _endDate = DateTime(
-                        _endDate.year,
-                        _endDate.month,
-                        _endDate.day,
-                        _endTime.hour,
-                        _endTime.minute,
-                    );
-                    if (_endDate.isBefore(_startDate)) {
-                      _startDate = _endDate.subtract(difference);
-                      _startTime = TimeOfDay(
-                          hour: _startDate.hour,
-                          minute: _startDate.minute);
-                    }
-                  });
-                }
-              },
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-              child: _SunTimesListTile(sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
-            ),
-            const Divider(
-              height: 1.0,
-              thickness: 1,
-            ),
-            ListTile(
-              // FIXME TextField inside ListTile caused enter key to act as onPressed
-              contentPadding: const EdgeInsets.all(5),
-              leading: const Icon(
-                Icons.subject,
-              ),
-              title: TextField(
-                controller: TextEditingController(text: _notes),
-                // TODO cursorColor: widget.model.backgroundColor,
-                onChanged: (String value) {
-                  _notes = value;
-                },
-                keyboardType: TextInputType.multiline,
-                maxLines: 3,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400
-                ),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
-                ),
-              ),
-            ),
-            if (_isEditing && isCupertino(context)) const SizedBox(
-              height: 20,
-            ),
-            // TODO some margin
-            if (_isEditing && isCupertino(context)) PlatformButton(
-              onPressed: () => _onDelete(context),
-              color: CupertinoColors.destructiveRed,
-              cupertino: (_, __) => CupertinoButtonData(),
-              child: Text(AppLocalizations.of(context)!.bookFlightModal_button_delete),
-              //cupertinoFilled: (_, __) => CupertinoFilledButtonData(),
-            ),
-          ],
-        )
-      ),
-    );
+    return isCupertino(context) ?
+      _buildCupertinoForm(context, appConfig, startSunTimes, endSunTimes) :
+      _buildMaterialForm(context, appConfig, startSunTimes, endSunTimes);
   }
 
   @override
@@ -300,13 +409,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
         leading: leadingAction,
         trailingActions: trailingActions,
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-        child: Stack(
-          children: <Widget>[
-            _getEventEditor(context, _appConfig)
-          ],
-        ),
+      body: Stack(
+        children: <Widget>[
+          _getEventEditor(context, _appConfig)
+        ],
       ),
     );
   }
@@ -636,10 +742,9 @@ class _DateTimeListTile extends StatelessWidget {
         Expanded(
           flex: 7,
           child: ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+            contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
             leading: showIcon ? const Icon(
               Icons.access_time,
-              //color: defaultColor,
             ) : const Text(''),
             title: Text(
               // TODO locale
@@ -674,7 +779,7 @@ class _DateTimeListTile extends StatelessWidget {
         Expanded(
           flex: 3,
           child: ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+            contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
             title: Text(
               // TODO locale
               DateFormat('HH:mm').format(selectedDate),

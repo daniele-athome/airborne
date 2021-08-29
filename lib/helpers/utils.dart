@@ -98,3 +98,8 @@ Future<File> downloadToFile(String url, String filename, String? username, Strin
     return Future.error(Exception('Download error (${response.statusCode})'));
   }
 }
+
+/// A basic controller for date and time pickers.
+class DateTimePickerController extends ValueNotifier<DateTime?> {
+  DateTimePickerController(DateTime? value) : super(value);
+}

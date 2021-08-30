@@ -627,6 +627,11 @@ class _BookFlightModalState extends State<BookFlightModal> {
         appBar: PlatformAppBar(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot),
         ),
+        cupertino: (context, platform) => CupertinoPageScaffoldData(
+          // FIXME not using the right color probably, but scaffoldBackgroundColor is plain white :(
+          backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.dark ?
+          null : CupertinoTheme.of(context).barBackgroundColor,
+        ),
         body: _PilotSelectList(
           pilotNames: items,
           selectedName: _pilotName,

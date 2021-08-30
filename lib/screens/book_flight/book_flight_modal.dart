@@ -440,7 +440,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
         // FIXME not using the right color probably, but scaffoldBackgroundColor is plain white :(
-        backgroundColor: CupertinoTheme.of(context).brightness == Brightness.dark ?
+        backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.dark ?
             null : CupertinoTheme.of(context).barBackgroundColor,
       ),
       body: Stack(
@@ -866,10 +866,8 @@ class _SunTimesListTile extends StatelessWidget {
     required this.sunset,
   }) : super(key: key);
 
-  Color? _getIconColor(BuildContext context) => (isCupertino(context)
-              ? CupertinoTheme.of(context).brightness
-              : Theme.of(context).brightness) ==
-          Brightness.dark
+  Color? _getIconColor(BuildContext context) =>
+      MediaQuery.of(context).platformBrightness == Brightness.dark
       ? null
       : Colors.black45;
 

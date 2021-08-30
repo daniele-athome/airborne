@@ -24,6 +24,13 @@ const double kDefaultCupertinoFormSectionMargin = 34.0;
 /// Top margin for the first [CupertinoFormSection]
 const double kDefaultCupertinoFormTopMargin = kDefaultCupertinoFormSectionMargin / 2;
 
+/// A trick for making the background of dialogs a little darker when in light mode.
+CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(BuildContext context) =>
+  CupertinoDynamicColor.withBrightness(
+    color: CupertinoTheme.of(context).barBackgroundColor,
+    darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
+  );
+
 /// A standard-sized container for a [CupertinoFormRow] child.
 class CupertinoFormRowContainer extends StatelessWidget {
   const CupertinoFormRowContainer({
@@ -96,7 +103,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
               context: field.context,
               builder: (context, child) => Theme(
                   data: MediaQuery.of(context).platformBrightness == Brightness.dark ?
-                  ThemeData.dark() : ThemeData.light(),
+                    ThemeData.dark() : ThemeData.light(),
                   child: child!
               ),
               initialTime: TimeOfDay(

@@ -442,9 +442,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         trailingActions: trailingActions,
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
-        // FIXME not using the right color probably, but scaffoldBackgroundColor is plain white :(
-        backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.dark ?
-            null : CupertinoTheme.of(context).barBackgroundColor,
+        backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
       body: Stack(
         children: <Widget>[
@@ -628,9 +626,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot),
         ),
         cupertino: (context, platform) => CupertinoPageScaffoldData(
-          // FIXME not using the right color probably, but scaffoldBackgroundColor is plain white :(
-          backgroundColor: MediaQuery.of(context).platformBrightness == Brightness.dark ?
-          null : CupertinoTheme.of(context).barBackgroundColor,
+          backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
         ),
         body: _PilotSelectList(
           pilotNames: items,
@@ -693,14 +689,7 @@ class _PilotSelectList extends StatefulWidget {
 
 class _PilotSelectListState extends State<_PilotSelectList> {
 
-  late int _selectedIndex;
   late AppConfig _appConfig;
-
-  @override
-  void initState() {
-    _selectedIndex = widget.pilotNames.indexOf(widget.selectedName);
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
@@ -718,7 +707,6 @@ class _PilotSelectListState extends State<_PilotSelectList> {
           CupertinoFormSection(
             children: widget.pilotNames.map((e) => GestureDetector(
               onTap: () {
-                _selectedIndex = widget.pilotNames.indexOf(e);
                 widget.onSelection(e);
                 Navigator.of(context).pop();
               },
@@ -738,45 +726,6 @@ class _PilotSelectListState extends State<_PilotSelectList> {
           ),
         ],
       );
-
-      // TODO round corners
-      final children = widget.pilotNames.map((e) => Text(e)).toList(growable: false);
-      return Container(
-          height: 250,
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CupertinoPicker(
-                    // TODO height?
-                    itemExtent: 30,
-                    backgroundColor: Colors.white70,
-                    magnification: 1.1,
-                    scrollController: FixedExtentScrollController(initialItem: _selectedIndex),
-                    onSelectedItemChanged: (index) => _selectedIndex = index,
-                    children: children,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: CupertinoButton.filled(
-                      onPressed: () {
-                        widget.onSelection(widget.pilotNames[_selectedIndex]);
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(AppLocalizations.of(context)!.dialog_button_ok),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )
-      );
     }
     else {
       return Column(
@@ -786,7 +735,6 @@ class _PilotSelectListState extends State<_PilotSelectList> {
           leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
           title: Text(e),
           onTap: () {
-            _selectedIndex = widget.pilotNames.indexOf(e);
             widget.onSelection(e);
           },
         )).toList(growable: false),

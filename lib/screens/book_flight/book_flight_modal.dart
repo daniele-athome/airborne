@@ -622,18 +622,25 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _onTapPilot(BuildContext context, AppConfig appConfig) {
     final items = appConfig.pilotNames;
     if (isCupertino(context)) {
-      showCupertinoModalPopup(
-        context: context,
-        semanticsDismissible: true,
-        builder: (_context) => _PilotSelectList(
-            pilotNames: items,
-            selectedName: _pilotName,
-            onSelection: (selected) {
-              setState(() {
-                _pilotName = selected;
-              });
-            }),
+      Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
+        iosContentPadding: true,
+        appBar: PlatformAppBar(
+          title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot),
+        ),
+        body: _PilotSelectList(
+          pilotNames: items,
+          selectedName: _pilotName,
+          onSelection: (selected) {
+            setState(() {
+              _pilotName = selected;
+            });
+          }),
       );
+
+      Navigator.of(context, rootNavigator: true)
+          .push(CupertinoPageRoute(
+            builder: pageRouteBuilder,
+          ));
     }
     else {
       showPlatformDialog(
@@ -698,9 +705,37 @@ class _PilotSelectListState extends State<_PilotSelectList> {
 
   @override
   Widget build(BuildContext context) {
-    final children = widget.pilotNames.map((e) => Text(e)).toList(growable: false);
     if (isCupertino(context)) {
+      final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
+      return Column(
+        children: [
+          const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+          CupertinoFormSection(
+            children: widget.pilotNames.map((e) => GestureDetector(
+              onTap: () {
+                _selectedIndex = widget.pilotNames.indexOf(e);
+                widget.onSelection(e);
+                Navigator.of(context).pop();
+              },
+              child: CupertinoFormRowContainer(
+                child: Padding(
+                  padding: kDefaultCupertinoFormRowPadding,
+                  child: Row(
+                    children: [
+                      CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+                      const SizedBox(width: 14),
+                      Expanded(child: Text(e, style: textStyle)),
+                    ],
+                  ),
+                ),
+              ),
+            )).toList(growable: false),
+          ),
+        ],
+      );
+
       // TODO round corners
+      final children = widget.pilotNames.map((e) => Text(e)).toList(growable: false);
       return Container(
           height: 250,
           padding: const EdgeInsets.all(10),

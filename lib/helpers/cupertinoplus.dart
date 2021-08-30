@@ -110,6 +110,8 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
             });
           }
 
+          final TextStyle textStyle = CupertinoTheme.of(field.context).textTheme.textStyle;
+
           return CupertinoFormRowContainer(
             child: CupertinoFormRow(
               prefix: prefix,
@@ -127,6 +129,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                       child: Text(
                         // TODO locale
                         field.value != null ? DateFormat('EEE, dd/MM/yyyy').format(field.value!) : '',
+                        style: textStyle,
                       ),
                     ),
                   ),
@@ -139,6 +142,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                       child: Text(
                         // TODO locale
                         field.value != null ? DateFormat('HH:mm').format(field.value!) : '',
+                        style: textStyle,
                       ),
                     ),
                   ),

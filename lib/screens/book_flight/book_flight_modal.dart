@@ -175,6 +175,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
   }
 
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig, SunTimes startSunTimes, SunTimes endSunTimes) {
+    // FIXME workaround https://github.com/flutter/flutter/issues/48438
+    final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
+
     return Column(
       children: [
         const SizedBox(height: kDefaultCupertinoFormTopMargin),
@@ -187,7 +190,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
               padding: kDefaultCupertinoFormRowPadding,
               prefix: Text(
                 AppLocalizations.of(context)!.bookFlightModal_label_pilot,
-                style: const TextStyle(
+                style: textStyle.copyWith(
                   fontSize: 20,
                 ),
               ),
@@ -196,7 +199,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 children: [
                   Text(
                     _pilotName,
-                    style: const TextStyle(
+                    style: textStyle.copyWith(
                       fontSize: 20,
                     ),
                   ),

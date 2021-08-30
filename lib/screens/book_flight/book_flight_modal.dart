@@ -182,31 +182,27 @@ class _BookFlightModalState extends State<BookFlightModal> {
       children: [
         const SizedBox(height: kDefaultCupertinoFormTopMargin),
         CupertinoFormSection(children: <Widget>[
-          // TODO selected color
-          GestureDetector(
-            onTap: () => _onTapPilot(context, appConfig),
-            behavior: HitTestBehavior.opaque,
-            child: CupertinoFormRow(
-              padding: kDefaultCupertinoFormRowPadding,
-              prefix: Text(
-                AppLocalizations.of(context)!.bookFlightModal_label_pilot,
-                style: textStyle.copyWith(
-                  fontSize: 20,
-                ),
+          CupertinoFormButtonRow(
+            onPressed: () => _onTapPilot(context, appConfig),
+            padding: kDefaultCupertinoFormRowPadding,
+            prefix: Text(
+              AppLocalizations.of(context)!.bookFlightModal_label_pilot,
+              style: textStyle.copyWith(
+                fontSize: 20,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    _pilotName,
-                    style: textStyle.copyWith(
-                      fontSize: 20,
-                    ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  _pilotName,
+                  style: textStyle.copyWith(
+                    fontSize: 20,
                   ),
-                  const SizedBox(width: 14),
-                  CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
-                ],
-              ),
+                ),
+                const SizedBox(width: 14),
+                CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
+              ],
             ),
           ),
         ]),
@@ -705,21 +701,18 @@ class _PilotSelectListState extends State<_PilotSelectList> {
         children: [
           const SizedBox(height: kDefaultCupertinoFormSectionMargin),
           CupertinoFormSection(
-            children: widget.pilotNames.map((e) => GestureDetector(
-              onTap: () {
+            children: widget.pilotNames.map((e) => CupertinoFormButtonRow(
+              onPressed: () {
                 widget.onSelection(e);
                 Navigator.of(context).pop();
               },
               child: CupertinoFormRowContainer(
-                child: Padding(
-                  padding: kDefaultCupertinoFormRowPadding,
-                  child: Row(
-                    children: [
-                      CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
-                      const SizedBox(width: 14),
-                      Expanded(child: Text(e, style: textStyle)),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+                    const SizedBox(width: 14),
+                    Expanded(child: Text(e, style: textStyle)),
+                  ],
                 ),
               ),
             )).toList(growable: false),

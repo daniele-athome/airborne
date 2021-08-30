@@ -66,6 +66,11 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
           void onTapDateHandler() {
             showDatePicker(
               context: field.context,
+              builder: (context, child) => Theme(
+                  data: MediaQuery.of(context).platformBrightness == Brightness.dark ?
+                    ThemeData.dark() : ThemeData.light(),
+                  child: child!
+              ),
               initialDate: field.value!,
               firstDate: DateTime(1900),
               lastDate: DateTime(2100),
@@ -89,6 +94,11 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
           void onTapTimeHandler() {
             showTimePicker(
               context: field.context,
+              builder: (context, child) => Theme(
+                  data: MediaQuery.of(context).platformBrightness == Brightness.dark ?
+                  ThemeData.dark() : ThemeData.light(),
+                  child: child!
+              ),
               initialTime: TimeOfDay(
                 hour: field.value!.hour,
                 minute: field.value!.minute,

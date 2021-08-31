@@ -1,0 +1,5 @@
+app_identifier("it.casaricci.airborne")
+# App Store Connect Team ID
+itc_team_id("123442641")
+# Developer Portal Team ID
+team_id("B28D3RZ5CA")

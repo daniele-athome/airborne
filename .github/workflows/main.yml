@@ -209,7 +209,7 @@ jobs:
           APPSTORE_APIKEY: ${{ secrets.IOS_APPSTORE_APIKEY }}
         run: |
           cd ios
-          echo "${APPSTORE_APIKEY}" | base64 -d >fastlane/AuthKey.r8
+          echo "${APPSTORE_APIKEY}" | base64 -d >fastlane/AuthKey.p8
 
       - name: Setup Ruby environment
         if: github.ref == 'refs/heads/release'

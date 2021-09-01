@@ -1,0 +1,6 @@
+Logistica e organizzazione di gruppo per proprietari di aereo. Funzioni:
+
+* Prenotazione volo
+* Log book
+
+I dati sono consultabili in un Google Calendar e un Google Sheet creati dall'utente.

@@ -34,6 +34,7 @@ platform :ios do
     )
     build_app(scheme: "Runner")
     upload_to_app_store(
+        force: true,
         submit_for_review: true,
         submission_information: {
            add_id_info_uses_idfa: false,

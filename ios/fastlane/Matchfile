@@ -1,0 +1,9 @@
+git_url("git@github.com:daniele-athome/airborne-deploy.git")
+git_branch("ios")
+
+storage_mode("git")
+
+type("development")
+
+# TODO shouldn't this be personal?
+username(ENV["MATCH_APPSTORE_USERNAME"])

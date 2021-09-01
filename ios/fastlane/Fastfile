@@ -17,15 +17,16 @@ default_platform(:ios)
 
 platform :ios do
   desc "Push a new release build to the App Store"
-  lane :release do
-    #build_app(scheme: "Runner")
+  lane :deploy_production do
     app_store_connect_api_key(
         key_id: "W5LZR27YRG",
         issuer_id: "e078f710-8cef-4b37-a9b4-67b1550dd0e5",
-        key_filepath: "./fastlane/AuthKey_W5LZR27YRG.p8",
+        key_filepath: "./fastlane/AuthKey.p8",
         #duration: 1200, # optional (maximum 1200)
         in_house: false
     )
+    sync_code_signing(type: "appstore")
+    build_app(scheme: "Runner")
     upload_to_app_store(
         submit_for_review: true,
         submission_information: {

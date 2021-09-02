@@ -71,7 +71,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: android-bundle-release
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/release
 
       - name: Prepare for deploy
         env:

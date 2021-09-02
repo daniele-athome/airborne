@@ -122,7 +122,7 @@ void main() {
     });
   },
       // FIXME PathProviderPlatform mock doesn't work on macOS
-      testOn: '!mac-os');
+      testOn: '!ios');
 }
 
 Future<File> _createExampleValidAircraftData() {

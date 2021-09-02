@@ -125,6 +125,7 @@ void main() {
       testOn: '!ios',
       onPlatform: {
         "ios": const Skip("FIXME PathProviderPlatform mock doesn't work on macOS"),
+        "mac-os": const Skip("FIXME PathProviderPlatform mock doesn't work on macOS"),
       });
 }
 

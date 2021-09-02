@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: android-bundle-release
-          path: build/app/outputs/bundle/release/app.aab
+          path: build/app/outputs/bundle/release/app-release.aab
 
   deploy:
     needs: test-build

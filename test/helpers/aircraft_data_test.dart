@@ -67,10 +67,6 @@ void main() {
 
   group('Testing aircraft data file opening', () {
     setUp(() {
-      final baseDir = Directory('.testdata');
-      if (baseDir.existsSync()) {
-        baseDir.deleteSync(recursive: true);
-      }
       PathProviderPlatform.instance = MockPathProviderPlatform();
     });
 
@@ -98,8 +94,10 @@ void main() {
       final reader = AircraftDataReader(dataFile: goodZipFile);
       await reader.open();
       final storedFile = await addAircraftDataFile(reader);
-      expect(storedFile.path, '.testdata/appdata/aircrafts/a1234.zip');
-      expect(File('.testdata/appdata/aircrafts/a1234.zip').existsSync(), true);
+      final baseDir = (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir;
+      final actualPath = path.join(baseDir, 'appdata', 'aircrafts', 'a1234.zip');
+      expect(storedFile.path, actualPath);
+      expect(File(actualPath).existsSync(), true);
     });
 
     test('Loading existing aircraft should extract data in temp directory', () async {
@@ -197,7 +195,7 @@ class MockPathProviderPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {
 
-  final String baseDir = '.testdata';
+  final String baseDir = '.testdata${Random().nextInt(100)}';
 
   @override
   Future<String> getTemporaryPath() async {

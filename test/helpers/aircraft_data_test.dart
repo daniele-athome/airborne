@@ -67,7 +67,10 @@ void main() {
 
   group('Testing aircraft data file opening', () {
     setUp(() {
-      Directory('.testdata').deleteSync(recursive: true);
+      final baseDir = Directory('.testdata');
+      if (baseDir.existsSync()) {
+        baseDir.deleteSync(recursive: true);
+      }
       PathProviderPlatform.instance = MockPathProviderPlatform();
     });
 

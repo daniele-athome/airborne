@@ -195,6 +195,7 @@ class MockPathProviderPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {
 
+  // FIXME not really deterministic
   final String baseDir = '.testdata${Random().nextInt(100)}';
 
   @override

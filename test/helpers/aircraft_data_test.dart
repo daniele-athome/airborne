@@ -67,7 +67,9 @@ void main() {
 
   group('Testing aircraft data file opening', () {
     setUp(() {
+      print('SETTING UP MOCK PATH PROVIDER');
       PathProviderPlatform.instance = MockPathProviderPlatform();
+      print('CURRENT PATH PROVIDER: ${PathProviderPlatform.instance}');
     });
 
     // TODO some tests for bad cases here would be nice

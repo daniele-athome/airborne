@@ -1,10 +1,12 @@
-name: linux
+name: windows
 
 on:
   push:
     branches: [ master, release ]
   pull_request:
     branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
@@ -12,7 +14,7 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -21,7 +23,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
@@ -39,7 +41,7 @@ jobs:
 
   build:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -48,41 +50,36 @@ jobs:
         uses: actions/cache@v1
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
         with:
           flutter-version: ${{ env.flutter_version }}
 
-      - name: Install system libraries
-        run: |
-          sudo apt-get update
-          sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev
-
       - name: Install dependencies
         run: |
           flutter pub get
-          flutter config --enable-linux-desktop
+          flutter config --enable-windows-desktop
 
-      - name: Build Linux application (debug)
+      - name: Build Windows application (debug)
         run: |
-          flutter build linux --debug
+          flutter build windows --debug
 
       - name: Archive debug build
         uses: actions/upload-artifact@v2
         with:
-          name: linux-bundle-debug
+          name: windows-bundle-debug
           path: |
-            build/linux/x64/debug/bundle/
+            build/windows/runner/debug/
 
-      - name: Build Linux application (release)
+      - name: Build Windows application (release)
         run: |
-          flutter build linux --release
+          flutter build windows --release
 
       - name: Archive release build
         uses: actions/upload-artifact@v2
         with:
-          name: linux-bundle-release
+          name: windows-bundle-release
           path: |
-            build/linux/x64/release/bundle/
+            build/windows/runner/release/

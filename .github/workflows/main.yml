@@ -16,52 +16,6 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  windows:
-    runs-on: windows-latest
-    # TODO environment: ???
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Setup Flutter environment
-        uses: subosito/flutter-action@v1
-        with:
-          flutter-version: ${{ env.flutter_version }}
-
-      - name: Install dependencies
-        run: |
-          flutter pub get
-          flutter config --enable-windows-desktop
-
-      - name: Analyze code
-        run: flutter analyze .
-
-      - name: Run tests
-        run: flutter test -r expanded
-
-      - name: Build Windows application (debug)
-        run: |
-          flutter build windows --debug
-
-      - name: Archive debug build
-        uses: actions/upload-artifact@v2
-        with:
-          name: windows-bundle-debug
-          path: |
-            build/windows/runner/debug/
-
-      - name: Build Windows application (release)
-        run: |
-          flutter build windows --release
-
-      - name: Archive release build
-        uses: actions/upload-artifact@v2
-        with:
-          name: windows-bundle-release
-          path: |
-            build/windows/runner/release/
-
   android:
     runs-on: ubuntu-latest
     # TODO environment: ???

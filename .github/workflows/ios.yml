@@ -30,7 +30,7 @@ jobs:
         run: flutter analyze .
 
       - name: Run tests
-        run: flutter test -r expanded
+        run: flutter test -j 1 -r expanded
 
       - name: Build iOS application
         run: flutter build ios --release --no-codesign

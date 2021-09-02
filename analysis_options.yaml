@@ -5,6 +5,7 @@ analyzer:
     deprecated_member_use_from_same_package: ignore
   exclude:
     - lib/generated/**
+    - '**/*.mocks.dart'
     # messy code
     - lib/screens/flight_log/**
     - lib/screens/about/**

@@ -67,13 +67,7 @@ void main() {
 
   group('Testing aircraft data file opening', () {
     setUp(() {
-      print('SETTING UP MOCK PATH PROVIDER');
       PathProviderPlatform.instance = MockPathProviderPlatform();
-      print('CURRENT PATH PROVIDER: ${PathProviderPlatform.instance}');
-      // This is required because we manually register the Linux path provider when on the Linux platform.
-      // Will be removed when automatic registration of dart plugins is implemented.
-      // See this issue https://github.com/flutter/flutter/issues/52267 for details
-      disablePathProviderPlatformOverride = true;
     });
 
     // TODO some tests for bad cases here would be nice
@@ -126,8 +120,9 @@ void main() {
       expect(File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(), true);
       expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(), true);
     });
-  });
-
+  },
+      // FIXME PathProviderPlatform mock doesn't work on macOS
+      testOn: '!mac-os');
 }
 
 Future<File> _createExampleValidAircraftData() {

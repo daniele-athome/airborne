@@ -11,17 +11,12 @@ env:
   flutter_version: '2.2.3'
 
 jobs:
-  test:
+  # Since Fastlane also builds, there is no way to split jobs without sacrificing build time
+  test-build-deploy:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v1
-        with:
-          path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
@@ -37,56 +32,12 @@ jobs:
       - name: Run tests
         run: flutter test -r expanded
 
-  build:
-    needs: test
-    if: github.ref != 'refs/heads/release'
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v1
-        with:
-          path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
-
-      - name: Setup Flutter environment
-        uses: subosito/flutter-action@v1
-        with:
-          flutter-version: ${{ env.flutter_version }}
-
-      - name: Install dependencies
-        run: flutter pub get
-
       - name: Build iOS application
+        if: github.ref != 'refs/heads/release'
         run: flutter build ios --release --no-codesign
 
-  # To simplify build configuration, we let Fastlane do the build too
-  # So running the build twice is a waste of time.
-  build-deploy:
-    needs: test
-    if: github.ref == 'refs/heads/release'
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v1
-        with:
-          path: /Users/runner/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
-
-      - name: Setup Flutter environment
-        uses: subosito/flutter-action@v1
-        with:
-          flutter-version: ${{ env.flutter_version }}
-
-      - name: Install dependencies
-        run: flutter pub get
-
       - name: Prepare for deploy
+        if: github.ref == 'refs/heads/release'
         env:
           APPSTORE_APIKEY: ${{ secrets.IOS_APPSTORE_APIKEY }}
         run: |
@@ -94,14 +45,17 @@ jobs:
           echo "${APPSTORE_APIKEY}" | base64 -d >fastlane/AuthKey.p8
 
       - name: Setup Ruby environment
+        if: github.ref == 'refs/heads/release'
         uses: actions/setup-ruby@v1
         with:
           ruby-version: '2.6'
 
       - name: Install Fastlane
+        if: github.ref == 'refs/heads/release'
         run: gem install fastlane -N
 
       - name: Build and deploy to App Store
+        if: github.ref == 'refs/heads/release'
         env:
           MATCH_APPSTORE_USERNAME: ${{ secrets.IOS_MATCH_APPSTORE_USERNAME }}
           MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}

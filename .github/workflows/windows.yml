@@ -11,17 +11,11 @@ env:
   flutter_version: '2.2.3'
 
 jobs:
-  test:
+  test-build:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v1
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v1
@@ -37,47 +31,25 @@ jobs:
       - name: Run tests
         run: flutter test -r expanded
 
-  build:
-    needs: test
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v1
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}-${{ hashFiles('**/pubspec.lock') }}
-
-      - name: Setup Flutter environment
-        uses: subosito/flutter-action@v1
-        with:
-          flutter-version: ${{ env.flutter_version }}
-
-      - name: Install dependencies
-        run: |
-          flutter pub get
-          flutter config --enable-windows-desktop
+      - name: Configure Flutter for Windows
+        run: flutter config --enable-windows-desktop
 
       - name: Build Windows application (debug)
-        run: |
-          flutter build windows --debug
+        run: flutter build windows --debug
 
       - name: Archive debug build
+        if: github.ref == 'refs/heads/release'
         uses: actions/upload-artifact@v2
         with:
           name: windows-bundle-debug
-          path: |
-            build/windows/runner/debug/
+          path: build/windows/runner/debug/
 
       - name: Build Windows application (release)
-        run: |
-          flutter build windows --release
+        run: flutter build windows --release
 
       - name: Archive release build
+        if: github.ref == 'refs/heads/release'
         uses: actions/upload-artifact@v2
         with:
           name: windows-bundle-release
-          path: |
-            build/windows/runner/release/
+          path: build/windows/runner/release/

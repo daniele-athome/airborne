@@ -1,0 +1,90 @@
+name: linux
+
+on:
+  push:
+    branches: [ master, release ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  flutter_version: '2.2.3'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v1
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+
+      - name: Setup Flutter environment
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.flutter_version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze .
+
+      - name: Run tests
+        run: flutter test -r expanded
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v1
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+
+      - name: Setup Flutter environment
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: ${{ env.flutter_version }}
+
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          flutter config --enable-linux-desktop
+
+      - name: Build Linux application (debug)
+        run: |
+          flutter build linux --debug
+
+      - name: Archive debug build
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-bundle-debug
+          path: |
+            build/linux/x64/debug/bundle/
+
+      - name: Build Linux application (release)
+        run: |
+          flutter build linux --release
+
+      - name: Archive release build
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-bundle-release
+          path: |
+            build/linux/x64/release/bundle/

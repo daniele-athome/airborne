@@ -4,7 +4,11 @@ import 'package:airborne/helpers/utils.dart';
 import 'package:test/test.dart';
 import 'package:timezone/timezone.dart';
 
+import '../test_init.dart';
+
 void main() {
+  testInit();
+
   test('getExceptionMessage', () {
     expect(getExceptionMessage(Exception("test message")), "test message");
     const osError = OSError("os error message");

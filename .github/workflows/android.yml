@@ -60,6 +60,9 @@ jobs:
         with:
           flutter-version: ${{ env.flutter_version }}
 
+      - name: Install dependencies
+        run: flutter pub get
+
       - name: Build Android application (debug)
         if: github.ref != 'refs/heads/release'
         run: flutter build appbundle --debug

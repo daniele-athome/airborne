@@ -63,7 +63,9 @@ void main() {
     });
 
     // TODO other bad cases (e.g. missing pilot avatars, missing backend_info (which one?), missing aircraft picture)
-  });
+  },
+      // FIXME PathProviderPlatform mock doesn't work on macOS
+      testOn: '!mac-os');
 
   group('Testing aircraft data file opening', () {
     setUp(() {
@@ -122,11 +124,7 @@ void main() {
     });
   },
       // FIXME PathProviderPlatform mock doesn't work on macOS
-      testOn: '!ios',
-      onPlatform: {
-        "ios": const Skip("FIXME PathProviderPlatform mock doesn't work on macOS"),
-        "mac-os": const Skip("FIXME PathProviderPlatform mock doesn't work on macOS"),
-      });
+      testOn: '!mac-os');
 }
 
 Future<File> _createExampleValidAircraftData() {

@@ -416,7 +416,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
               shadows: [
                 Shadow(
                   color: Color(0x77000000),
-                  offset: Offset(2, 2),
+                  offset: Offset(1.5, 2),
                   blurRadius: 1.0,
                 ),
               ]

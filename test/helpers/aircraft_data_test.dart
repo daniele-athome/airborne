@@ -13,8 +13,13 @@ import 'package:test/test.dart';
 
 void main() {
   group('Testing aircraft data file validation', () {
+    setUp(() {
+      PathProviderPlatform.instance = MockPathProviderPlatform();
+    });
+
     test('A corrupted zip file should not pass validation', () async {
       final tmpDir = await getTemporaryDirectory();
+      tmpDir.createSync(recursive: true);
       final badZipFile = File(path.join(tmpDir.path, 'aircraft_test_${Random().nextInt(1000)}.zip'));
       // damaged zip
       badZipFile.writeAsStringSync("PK###BAD ZIP FILE");
@@ -63,9 +68,7 @@ void main() {
     });
 
     // TODO other bad cases (e.g. missing pilot avatars, missing backend_info (which one?), missing aircraft picture)
-  },
-      // FIXME PathProviderPlatform mock doesn't work on macOS
-      testOn: '!mac-os');
+  });
 
   group('Testing aircraft data file opening', () {
     setUp(() {
@@ -122,9 +125,7 @@ void main() {
       expect(File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(), true);
       expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(), true);
     });
-  },
-      // FIXME PathProviderPlatform mock doesn't work on macOS
-      testOn: '!mac-os');
+  });
 }
 
 Future<File> _createExampleValidAircraftData() {

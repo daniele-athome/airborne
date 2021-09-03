@@ -182,7 +182,8 @@ Future<File> _createAircraftFileWithData({
   final zipFile = File(path.join(tmpDir.path, '$filenameWithoutExtension.zip'));
 
   final encoder = ZipEncoder();
-  encoder.startEncode(OutputFileStream(zipFile.path));
+  final zipOutput = OutputFileStream(zipFile.path);
+  encoder.startEncode(zipOutput);
 
   if (jsonData != null) {
     encoder.addFile(ArchiveFile.stream(
@@ -200,6 +201,7 @@ Future<File> _createAircraftFileWithData({
   }
 
   encoder.endEncode();
+  zipOutput.close();
 
   return zipFile;
 }

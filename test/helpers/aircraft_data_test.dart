@@ -16,6 +16,10 @@ void main() {
     setUp(() {
       PathProviderPlatform.instance = MockPathProviderPlatform();
     });
+    tearDown(() {
+      Directory((PathProviderPlatform.instance as MockPathProviderPlatform).baseDir)
+          .deleteSync(recursive: true);
+    });
 
     test('A corrupted zip file should not pass validation', () async {
       final tmpDir = await getTemporaryDirectory();
@@ -73,6 +77,10 @@ void main() {
   group('Testing aircraft data file opening', () {
     setUp(() {
       PathProviderPlatform.instance = MockPathProviderPlatform();
+    });
+    tearDown(() {
+      Directory((PathProviderPlatform.instance as MockPathProviderPlatform).baseDir)
+          .deleteSync(recursive: true);
     });
 
     // TODO some tests for bad cases here would be nice

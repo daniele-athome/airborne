@@ -170,6 +170,7 @@ Future<File> _createAircraftFileWithData({
     Map<String, List<int>>? pilotAvatarsPicData,
   }) async {
   final tmpDir = await getTemporaryDirectory();
+  tmpDir.createSync(recursive: true);
   final zipFile = File(path.join(tmpDir.path, '$filenameWithoutExtension.zip'));
 
   final encoder = ZipEncoder();

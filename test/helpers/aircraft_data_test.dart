@@ -211,7 +211,7 @@ class MockPathProviderPlatform extends Mock
     implements PathProviderPlatform {
 
   // FIXME not really deterministic
-  final String baseDir = '.testdata${Random().nextInt(100)}';
+  final String baseDir = '.testdata${Random().nextInt(1000)}';
 
   @override
   Future<String> getTemporaryPath() async {

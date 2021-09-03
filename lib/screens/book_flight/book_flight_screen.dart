@@ -392,6 +392,41 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     );
   }
 
+  Widget _scheduleViewBuilder(BuildContext buildContext, ScheduleViewMonthHeaderDetails details) {
+    final dateStr = DateFormat('MMMM yyyy').format(details.date);
+    final text = dateStr[0].toUpperCase() + dateStr.substring(1);
+    return Stack(
+      children: <Widget>[
+        Image(
+            image: ExactAssetImage('assets/images/month_${details.date.month}.png'),
+            fit: BoxFit.cover,
+            width: details.bounds.width,
+            height: details.bounds.height),
+        Positioned(
+          left: 55,
+          right: 0,
+          top: 20,
+          bottom: 0,
+          child: Text(
+            text,
+            // TODO dark theme?
+            style: const TextStyle(
+              fontSize: 18,
+              color: Colors.black,
+              shadows: [
+                Shadow(
+                  color: Color(0x77000000),
+                  offset: Offset(2, 2),
+                  blurRadius: 1.0,
+                ),
+              ]
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget _buildCalendar(BuildContext context, AppConfig appConfig) {
     final firstDayOfWeekIndex = MaterialLocalizations.of(context).firstDayOfWeekIndex;
     return SfCalendar(
@@ -413,13 +448,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         startHour: 5,
         endHour: 22,
       ),
-      scheduleViewSettings: const ScheduleViewSettings(
-          monthHeaderSettings: MonthHeaderSettings(
-            // TODO customize this
-            height: 70,
-            backgroundColor: Colors.grey,
-          )
-      ),
+      scheduleViewMonthHeaderBuilder: _scheduleViewBuilder,
       // TODO other configurations (e.g. time of day range)
       dataSource: _dataSource,
       loadMoreWidgetBuilder: (BuildContext context, LoadMoreCallback loadMoreEvents) {

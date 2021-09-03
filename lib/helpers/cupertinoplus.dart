@@ -27,7 +27,9 @@ const double kDefaultCupertinoFormTopMargin = kDefaultCupertinoFormSectionMargin
 /// A trick for making the background of dialogs a little darker when in light mode.
 CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(BuildContext context) =>
   CupertinoDynamicColor.withBrightness(
-    color: CupertinoTheme.of(context).barBackgroundColor,
+    //color: CupertinoTheme.of(context).barBackgroundColor,
+    // FIXME non-transparent version of the above color, since it was causing problems with page transitions
+    color: const Color(0xFFEDEEEE),
     darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
   );
 

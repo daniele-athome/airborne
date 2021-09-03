@@ -118,7 +118,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         context: context,
         builder: (context) {
           return FutureProgressDialog(downloadTask,
-            message: Text(AppLocalizations.of(context)!.addAircraft_dialog_downloading),
+            message: isCupertino(context) ? null :
+              Text(AppLocalizations.of(context)!.addAircraft_dialog_downloading),
           );
         },
       ).then((value) async {

@@ -517,7 +517,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
             _showError(getExceptionMessage(error));
           });
         }),
-        message: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
+        message: isCupertino(context) ? null :
+          Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
     ).then((value) {
       if (value != null) {
@@ -555,7 +556,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
             _showError(getExceptionMessage(error));
           });
         }),
-        message: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
+        message: isCupertino(context) ? null :
+          Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
     ).then((value) {
       if (value != null) {

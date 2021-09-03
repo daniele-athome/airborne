@@ -5,12 +5,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-Decoration _defaultDecoration(BuildContext context) => BoxDecoration(
-  // FIXME Cupertino: large border with a different color
-  color: isCupertino(context) ? CupertinoTheme.of(context).scaffoldBackgroundColor : Theme.of(context).dialogBackgroundColor,
-  shape: BoxShape.rectangle,
-  borderRadius: const BorderRadius.all(Radius.circular(10)),
-);
+import 'cupertinoplus.dart';
+
+Decoration _defaultDecoration(BuildContext context) => isCupertino(context) ?
+  BoxDecoration(
+    color: kCupertinoDialogScaffoldBackgroundColor(context),
+    shape: BoxShape.rectangle,
+    borderRadius: const BorderRadius.all(Radius.circular(10)),
+  ) :
+  BoxDecoration(
+    color: Theme.of(context).dialogBackgroundColor,
+    shape: BoxShape.rectangle,
+    borderRadius: const BorderRadius.all(Radius.circular(10)),
+  );
 
 class FutureProgressDialog extends StatefulWidget {
 
@@ -68,40 +75,84 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
 
   Widget _buildDialog(BuildContext context) {
     Widget content;
-    if (widget.message == null) {
-      content = Center(
-        child: Container(
+
+    if (isCupertino(context)) {
+      if (widget.message == null) {
+        content = Center(
+          child: Container(
+            height: 100,
+            width: 100,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(20),
+            decoration: widget.decoration ?? _defaultDecoration(context),
+            child: widget.progress ?? const CupertinoActivityIndicator(
+              radius: 24,
+            ),
+          ),
+        );
+      }
+      else {
+        content = Center(
+          child: Container(
+            height: 120,
+            constraints: BoxConstraints.loose(const Size(200, 150)),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(20),
+            decoration: widget.decoration ?? _defaultDecoration(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                widget.progress ?? const CupertinoActivityIndicator(
+                  radius: 24,
+                ),
+                const SizedBox(height: 10),
+                _buildText(context),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // no dialog needed
+      return content;
+    }
+    else {
+      if (widget.message == null) {
+        content = Center(
+          child: Container(
+            height: 100,
+            width: 100,
+            alignment: Alignment.center,
+            decoration: widget.decoration ?? _defaultDecoration(context),
+            child: widget.progress ?? const CircularProgressIndicator(),
+          ),
+        );
+      }
+      else {
+        content = Container(
           height: 100,
-          width: 100,
-          alignment: Alignment.center,
+          padding: const EdgeInsets.all(20),
           decoration: widget.decoration ?? _defaultDecoration(context),
-          child: widget.progress ?? const CircularProgressIndicator(),
+          child:
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+            widget.progress ?? const CircularProgressIndicator(),
+            const SizedBox(width: 20),
+            _buildText(context)
+          ]),
+        );
+      }
+
+      return PlatformAlertDialog(
+        material: (context, platform) => MaterialAlertDialogData(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        content: Opacity(
+          opacity: widget.opacity,
+          child: content,
         ),
       );
-    } else {
-      content = Container(
-        height: 100,
-        padding: const EdgeInsets.all(20),
-        decoration: widget.decoration ?? _defaultDecoration(context),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          widget.progress ?? const CircularProgressIndicator(),
-          const SizedBox(width: 20),
-          _buildText(context)
-        ]),
-      );
     }
-
-    return PlatformAlertDialog(
-      material: (context, platform) => MaterialAlertDialogData(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      content: Opacity(
-        opacity: widget.opacity,
-        child: content,
-      ),
-    );
   }
 
   Widget _buildText(BuildContext context) {

@@ -11,6 +11,7 @@ import 'package:validators/validators.dart';
 
 import '../../helpers/aircraft_data.dart';
 import '../../helpers/config.dart';
+import '../../helpers/cupertinoplus.dart';
 import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/utils.dart';
 
@@ -33,7 +34,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      iosContentPadding: true,
+      // because we have a listview adding its own padding...
+      iosContentPadding: false,
       appBar: PlatformAppBar(
         title: Text(AppLocalizations.of(context)!.addAircraft_title),
         trailingActions: isCupertino(context)? <Widget>[
@@ -53,11 +55,11 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             kPortraitToolbarHeight : kLandscapeToolbarHeight,
         ),
       ),
-      body: Container(
-        padding: isCupertino(context) ? EdgeInsets.zero : const EdgeInsets.all(20),
-        child: Consumer<AppConfig>(
-          builder: (context, appConfig, child) => _buildForm(context, appConfig),
-        ),
+      cupertino: (context, platform) => CupertinoPageScaffoldData(
+        backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
+      ),
+      body: Consumer<AppConfig>(
+        builder: (context, appConfig, child) => _buildForm(context, appConfig),
       ),
     );
   }
@@ -227,17 +229,23 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       ];
 
   Widget _buildMaterialForm(BuildContext context, AppConfig appConfig) =>
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    ListView(
+      padding: const EdgeInsets.all(20),
       children: _buildFormSections(context, appConfig)
     );
 
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) =>
-    CupertinoFormSection(
-      header: Text(AppLocalizations.of(context)!.addAircraft_text1,
-          // FIXME workaround for https://github.com/flutter/flutter/issues/48438
-          style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 18)),
-      children: _buildFormSections(context, appConfig),
+    ListView(
+      children: [
+        CupertinoFormSection(
+          header: Text(AppLocalizations.of(context)!.addAircraft_text1,
+            // FIXME workaround for https://github.com/flutter/flutter/issues/48438
+            // FIXME background color is not consistent with scaffold background color (of course)
+            style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 18)
+          ),
+          children: _buildFormSections(context, appConfig),
+        ),
+      ],
     );
 
   Widget _buildForm(BuildContext context, AppConfig appConfig) =>

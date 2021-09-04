@@ -37,7 +37,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   late FlightBookingDataSource _dataSource;
   List<DateTime> _visibleDates = [];
   late AppConfig _appConfig;
-  late GoogleServiceAccountService _googleServiceAccountService;
+  late BookFlightCalendarService _calendarService;
 
   static const List<CalendarView> _calendarViews = [
     CalendarView.schedule,
@@ -60,14 +60,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   @override
   void didChangeDependencies() {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
-    _googleServiceAccountService = Provider.of<GoogleServiceAccountService>(context, listen: false);
+    _calendarService = Provider.of<BookFlightCalendarService>(context, listen: false);
     _rebuildData();
     super.didChangeDependencies();
   }
 
   void _rebuildData() {
     _dataSource = FlightBookingDataSource(_appConfig.googleCalendarId,
-      BookFlightCalendarService(_googleServiceAccountService), (error) {
+      _calendarService, (error) {
         _log.warning('Error fetching data', error);
         final String message;
         // TODO specialize exceptions (e.g. network errors, others...)
@@ -328,7 +328,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     }
 
     Widget pageRouteBuilder(BuildContext context) => Provider.value(
-      value: BookFlightCalendarService(_googleServiceAccountService),
+      value: _calendarService,
       child: BookFlightModal(model),
     );
 

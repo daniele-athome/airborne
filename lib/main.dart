@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:airborne/services/book_flight_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -146,13 +147,15 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   late PlatformTabController _tabController;
-  late GoogleServiceAccountService _googleServiceAccount;
+  late BookFlightCalendarService _bookFlightCalendarService;
 
   @override
   void initState() {
     _tabController = PlatformTabController();
-    _googleServiceAccount = GoogleServiceAccountService(
+    _bookFlightCalendarService = BookFlightCalendarService(
+      GoogleServiceAccountService(
         json: widget.appConfig.googleServiceAccountJson
+      ),
     );
     super.initState();
   }
@@ -161,7 +164,7 @@ class _MainNavigationState extends State<MainNavigation> {
     switch (index) {
       case 0:
         return Provider.value(
-          value: _googleServiceAccount,
+          value: _bookFlightCalendarService,
           child: BookFlightScreen(),
         );
       case 1:

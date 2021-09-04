@@ -510,18 +510,17 @@ class _BookFlightModalState extends State<BookFlightModal> {
           return _service.createBooking(_appConfig.googleCalendarId, event);
         }
       }
+    }).catchError((error, StackTrace stacktrace) {
+      _log.warning('SAVE ERROR', error, stacktrace);
+      // TODO analyze exception somehow (e.g. TimeoutException)
+      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        _showError(getExceptionMessage(error));
+      });
     });
 
     showPlatformDialog(
       context: context,
-      builder: (context) => FutureProgressDialog(
-        task.catchError((error, StackTrace stacktrace) {
-          _log.warning('SAVE ERROR', error, stacktrace);
-          // TODO analyze exception somehow (e.g. TimeoutException)
-          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-            _showError(getExceptionMessage(error));
-          });
-        }),
+      builder: (context) => FutureProgressDialog(task,
         message: isCupertino(context) ? null :
           Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
@@ -549,18 +548,18 @@ class _BookFlightModalState extends State<BookFlightModal> {
   }
 
   void _doDelete(BuildContext context) {
-    final Future task = _service.deleteBooking(_appConfig.googleCalendarId, widget.event);
+    final Future task = _service.deleteBooking(_appConfig.googleCalendarId, widget.event)
+      .catchError((error, StackTrace stacktrace) {
+        _log.warning('DELETE ERROR', error, stacktrace);
+        // TODO analyze exception somehow (e.g. TimeoutException)
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          _showError(getExceptionMessage(error));
+        });
+      });
 
     showPlatformDialog(
       context: context,
-      builder: (context) => FutureProgressDialog(
-        task.catchError((error, StackTrace stacktrace) {
-          _log.warning('DELETE ERROR', error, stacktrace);
-          // TODO analyze exception somehow (e.g. TimeoutException)
-          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-            _showError(getExceptionMessage(error));
-          });
-        }),
+      builder: (context) => FutureProgressDialog(task,
         message: isCupertino(context) ? null :
           Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),

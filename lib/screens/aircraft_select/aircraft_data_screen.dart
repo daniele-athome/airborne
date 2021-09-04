@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -93,26 +94,36 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           password = userpass.substring(separator + 1);
         }
       }
-      final downloadTask = downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true).then((value) async {
-        _log.finest(value);
-        return _validateAndStoreAircraft(value, appConfig);
-      }).then((AircraftData? aircraftData) {
-        if (aircraftData != null) {
-          // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
-          // probably FutureProgressDialog popping the navigator has something to do with it
-          Future.delayed(Duration.zero, () {
-            appConfig.currentAircraft = aircraftData;
-            Navigator.of(context, rootNavigator: true)
-                .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
-          });
-        }
-        return aircraftData;
-      }).catchError((error, StackTrace? stacktrace) {
-        _log.info('DOWNLOAD ERROR', error, stacktrace);
-        // TODO analyze exception somehow (e.g. TimeoutException)
-        Future.delayed(Duration.zero, () => _showError(getExceptionMessage(error)));
-        return null;
-      });
+      final downloadTask = downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true)
+        .timeout(kNetworkRequestTimeout)
+        .then((value) async {
+          _log.finest(value);
+          return _validateAndStoreAircraft(value, appConfig);
+        }).then((AircraftData? aircraftData) {
+          if (aircraftData != null) {
+            // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
+            // probably FutureProgressDialog popping the navigator has something to do with it
+            Future.delayed(Duration.zero, () {
+              appConfig.currentAircraft = aircraftData;
+              Navigator.of(context, rootNavigator: true)
+                  .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
+            });
+          }
+          return aircraftData;
+        }).catchError((error, StackTrace? stacktrace) {
+          _log.info('DOWNLOAD ERROR', error, stacktrace);
+          // TODO specialize exceptions (e.g. network errors, others...)
+          final String message;
+          if (error is TimeoutException) {
+            message = AppLocalizations.of(context)!.error_generic_network_timeout;
+          }
+          else {
+            message = getExceptionMessage(error);
+          }
+
+          Future.delayed(Duration.zero, () => _showError(message));
+          return null;
+        });
 
       showPlatformDialog(
         context: context,

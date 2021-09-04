@@ -15,6 +15,8 @@
   "button_goToday": "Today",
   "button_bookFlight": "Book",
 
+  "error_generic_network_timeout": "Server did not respond.",
+
   "bookFlight_view_schedule": "Schedule",
   "bookFlight_view_month": "Month",
   "bookFlight_view_week": "Week",

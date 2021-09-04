@@ -69,9 +69,16 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     _dataSource = FlightBookingDataSource(_appConfig.googleCalendarId,
       BookFlightCalendarService(_googleServiceAccountService), (error) {
         _log.warning('Error fetching data', error);
-        // TODO analyze exception somehow (e.g. TimeoutException)
+        final String message;
+        // TODO specialize exceptions (e.g. network errors, others...)
+        if (error is TimeoutException) {
+          message = AppLocalizations.of(context)!.error_generic_network_timeout;
+        }
+        else {
+          message = getExceptionMessage(error);
+        }
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          _showError(getExceptionMessage(error), null, _retryFetchData);
+          _showError(message, null, _retryFetchData);
         });
       }
     );
@@ -551,7 +558,8 @@ class FlightBookingDataSource extends CalendarDataSource {
       await Future.delayed(const Duration(milliseconds: 500));
 
       // TODO maybe load a few days before and after if currently in schedule view?
-      final events = await _service.search(_calendarId, startDate, endDate.add(const Duration(days: 1))).timeout(const Duration(seconds: 3));
+      final events = await _service.search(_calendarId, startDate, endDate.add(const Duration(days: 1)))
+        .timeout(kNetworkRequestTimeout);
       _log.finest('EVENTS: $events');
 
       // changed events

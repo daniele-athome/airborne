@@ -10,10 +10,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
 
-// https://github.com/flutter/flutter/issues/6983
-// terrible hack (I'm not even handling the text size)
+/// Network request timeout used throughout the app.
+const Duration kNetworkRequestTimeout = Duration(seconds: 15);
+
+/// https://github.com/flutter/flutter/issues/6983
+/// terrible hack (I'm not even handling the text size)
 const double kPortraitToolbarHeight = kToolbarHeight;
-// per Material specs, toolbar in landscape should be 48dp
+/// per Material specs, toolbar in landscape should be 48dp
 const double kLandscapeToolbarHeight = 48;
 
 Brightness getBrightness(BuildContext context) => isCupertino(context) ?

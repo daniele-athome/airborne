@@ -12,6 +12,8 @@
   "button_goToday": "Oggi",
   "button_bookFlight": "Prenota",
 
+  "error_generic_network_timeout": "Il server non risponde.",
+
   "bookFlight_view_schedule": "Agenda",
   "bookFlight_view_month": "Mese",
   "bookFlight_view_week": "Settimana",

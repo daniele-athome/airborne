@@ -13,6 +13,7 @@ import 'package:timezone/timezone.dart';
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/future_progress_dialog.dart';
+import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
 import '../../services/book_flight_services.dart';
@@ -178,9 +179,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
     // FIXME workaround https://github.com/flutter/flutter/issues/48438
     final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
 
-    return Column(
+    return ListView(
       children: [
-        const SizedBox(height: kDefaultCupertinoFormTopMargin),
+        const SizedBox(height: kDefaultCupertinoFormTopBottomMargin),
         CupertinoFormSection(children: <Widget>[
           CupertinoFormButtonRow(
             onPressed: () => _onTapPilot(context, appConfig),
@@ -257,6 +258,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             ],
           )
         ]),
+        const SizedBox(height: kDefaultCupertinoFormTopBottomMargin),
       ],
     );
   }
@@ -428,7 +430,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
     }
 
     return PlatformScaffold(
-      iosContentPadding: true,
+      // because we have a listview adding its own padding...
+      iosContentPadding: false,
       appBar: PlatformAppBar(
         title: Text(_isEditing ?
           AppLocalizations.of(context)!.bookFlightModal_title_edit :
@@ -619,19 +622,22 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final items = appConfig.pilotNames;
     if (isCupertino(context)) {
       Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
-        iosContentPadding: true,
+        // because we have a listview adding its own padding...
+        iosContentPadding: false,
         appBar: PlatformAppBar(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot),
         ),
         cupertino: (context, platform) => CupertinoPageScaffoldData(
           backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
         ),
-        body: _PilotSelectList(
+        body: PilotSelectList(
           pilotNames: items,
           selectedName: _pilotName,
+          avatarProvider: (name) => appConfig.getPilotAvatar(name),
           onSelection: (selected) {
             setState(() {
               _pilotName = selected;
+              Navigator.of(context).pop();
             });
           }),
       );
@@ -647,10 +653,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
         builder: (_context) => PlatformAlertDialog(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
               style: const TextStyle(fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
-            child: _PilotSelectList(
+          content: SizedBox(
+            width: double.minPositive,
+            child: PilotSelectList(
               pilotNames: items,
               selectedName: _pilotName,
+              avatarProvider: (name) => appConfig.getPilotAvatar(name),
               onSelection: (selected) {
                 setState(() {
                   _pilotName = selected;
@@ -666,77 +674,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
       );
     }
   }
-}
-
-/// TODO export this into a generic pilot selection popup widget (remember to handle the non-pilot too)
-class _PilotSelectList extends StatefulWidget {
-  final List<String> pilotNames;
-  final String selectedName;
-  final Function(String selected) onSelection;
-
-  const _PilotSelectList({
-    Key? key,
-    required this.pilotNames,
-    required this.selectedName,
-    required this.onSelection
-  }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => _PilotSelectListState();
-}
-
-class _PilotSelectListState extends State<_PilotSelectList> {
-
-  late AppConfig _appConfig;
-
-  @override
-  void didChangeDependencies() {
-    _appConfig = Provider.of<AppConfig>(context, listen: false);
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (isCupertino(context)) {
-      final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
-      return Column(
-        children: [
-          const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-          CupertinoFormSection(
-            children: widget.pilotNames.map((e) => CupertinoFormButtonRow(
-              onPressed: () {
-                widget.onSelection(e);
-                Navigator.of(context).pop();
-              },
-              child: CupertinoFormRowContainer(
-                child: Row(
-                  children: [
-                    CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
-                    const SizedBox(width: 14),
-                    Expanded(child: Text(e, style: textStyle)),
-                  ],
-                ),
-              ),
-            )).toList(growable: false),
-          ),
-        ],
-      );
-    }
-    else {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: widget.pilotNames.map((e) => ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
-          title: Text(e),
-          onTap: () {
-            widget.onSelection(e);
-          },
-        )).toList(growable: false),
-      );
-    }
-  }
-
 }
 
 // FIXME refactor into widget + controller (e.g. like a text field)

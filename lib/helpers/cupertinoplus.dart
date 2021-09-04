@@ -21,8 +21,8 @@ const EdgeInsetsGeometry kDefaultCupertinoFormRowVerticalPadding =
 /// Margin between form sections.
 const double kDefaultCupertinoFormSectionMargin = 34.0;
 
-/// Top margin for the first [CupertinoFormSection]
-const double kDefaultCupertinoFormTopMargin = kDefaultCupertinoFormSectionMargin / 2;
+/// Top and bottom margins for the first and last [CupertinoFormSection]
+const double kDefaultCupertinoFormTopBottomMargin = kDefaultCupertinoFormSectionMargin / 2;
 
 /// A trick for making the background of dialogs a little darker when in light mode.
 CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(BuildContext context) =>

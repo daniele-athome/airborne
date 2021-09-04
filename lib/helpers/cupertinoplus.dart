@@ -210,7 +210,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
             showDatePicker(
               context: field.context,
               builder: (context, child) => Theme(
-                  data: MediaQuery.of(context).platformBrightness == Brightness.dark ?
+                  data: getBrightness(context) == Brightness.dark ?
                     ThemeData.dark() : ThemeData.light(),
                   child: child!
               ),
@@ -238,7 +238,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
             showTimePicker(
               context: field.context,
               builder: (context, child) => Theme(
-                  data: MediaQuery.of(context).platformBrightness == Brightness.dark ?
+                  data: getBrightness(context) == Brightness.dark ?
                     ThemeData.dark() : ThemeData.light(),
                   child: child!
               ),

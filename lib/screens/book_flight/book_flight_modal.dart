@@ -853,7 +853,7 @@ class _SunTimesListTile extends StatelessWidget {
   }) : super(key: key);
 
   Color? _getIconColor(BuildContext context) =>
-      MediaQuery.of(context).platformBrightness == Brightness.dark
+      getBrightness(context) == Brightness.dark
       ? null
       : Colors.black45;
 

@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +15,10 @@ import 'package:timezone/timezone.dart';
 const double kPortraitToolbarHeight = kToolbarHeight;
 // per Material specs, toolbar in landscape should be 48dp
 const double kLandscapeToolbarHeight = 48;
+
+Brightness getBrightness(BuildContext context) => isCupertino(context) ?
+    CupertinoTheme.of(context).brightness ?? MediaQuery.of(context).platformBrightness
+    : Theme.of(context).brightness;
 
 String getExceptionMessage(dynamic error) {
   if (error is LocationNotFoundException) {

@@ -478,12 +478,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
                 });
               }
               return Container(
-                  height: _calendarController.view ==
-                      CalendarView.schedule
-                      ? 50
-                      : double.infinity,
+                  height: double.infinity,
                   width: double.infinity,
-                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(10),
+                  alignment: _calendarController.view ==
+                    // ugly trick to get alignment decided by SfCalendar. Don't do this at home!!
+                    CalendarView.schedule? context.findAncestorWidgetOfExactType<Container>()!.alignment :
+                    Alignment.center,
+                  color: getModalBarrierColor(context),
                   child: isCupertino(context) ?
                     const CupertinoActivityIndicator(
                       radius: 20,

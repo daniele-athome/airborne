@@ -19,6 +19,14 @@ const double kLandscapeToolbarHeight = 48;
 Brightness getBrightness(BuildContext context) => isCupertino(context) ?
     CupertinoTheme.brightnessOf(context) : Theme.of(context).brightness;
 
+Color getModalBarrierColor(BuildContext context) => isCupertino(context) ?
+  // from cupertino/dialog.dart:_kDialogColor
+  const CupertinoDynamicColor.withBrightness(
+    color: Color(0xCCF2F2F2),
+    darkColor: Color(0xBF1E1E1E),
+  ).resolveFrom(context) :
+  Colors.black54;
+
 String getExceptionMessage(dynamic error) {
   if (error is LocationNotFoundException) {
     return error.msg;

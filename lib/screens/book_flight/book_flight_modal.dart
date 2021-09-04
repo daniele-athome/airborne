@@ -22,7 +22,9 @@ final Logger _log = Logger((FlightBooking).toString());
 
 class BookFlightModal extends StatefulWidget {
 
-  const BookFlightModal(this.event);
+  const BookFlightModal(this.event, {
+    Key? key
+  }) : super(key: key);
 
   final FlightBooking event;
 

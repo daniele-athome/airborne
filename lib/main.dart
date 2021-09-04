@@ -124,7 +124,7 @@ class _MyAppState extends State<MyApp> {
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             primarySwatch: Colors.deepOrange,
-          )
+          ),
         ),
         cupertino: (_, __) => CupertinoAppData(
           // TEST

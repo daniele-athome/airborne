@@ -3,7 +3,6 @@
 // Do not manually edit this file.
 
 import 'dart:async' as _i6;
-import 'dart:ui' as _i7;
 
 import 'package:airborne/helpers/aircraft_data.dart' as _i5;
 import 'package:airborne/helpers/config.dart' as _i4;
@@ -23,8 +22,6 @@ class _FakeLocation_0 extends _i1.Fake implements _i2.Location {}
 
 class _FakeImageProvider_1<T extends Object> extends _i1.Fake
     implements _i3.ImageProvider<T> {}
-
-class _FakeType_2 extends _i1.Fake implements Type {}
 
 /// A class which mocks [AppConfig].
 ///
@@ -99,35 +96,6 @@ class MockAppConfig extends _i1.Mock implements _i4.AppConfig {
   void removeAircraft(String? id) =>
       super.noSuchMethod(Invocation.method(#removeAircraft, [id]),
           returnValueForMissingStub: null);
-  @override
-  String toString() => super.toString();
-}
-
-/// A class which mocks [LocalizationsDelegate].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockLocalizationsDelegate<T> extends _i1.Mock
-    implements _i3.LocalizationsDelegate<T> {
-  MockLocalizationsDelegate() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  Type get type =>
-      (super.noSuchMethod(Invocation.getter(#type), returnValue: _FakeType_2())
-          as Type);
-  @override
-  bool isSupported(_i7.Locale? locale) =>
-      (super.noSuchMethod(Invocation.method(#isSupported, [locale]),
-          returnValue: false) as bool);
-  @override
-  _i6.Future<T> load(_i7.Locale? locale) =>
-      (super.noSuchMethod(Invocation.method(#load, [locale]),
-          returnValue: Future<T>.value(null)) as _i6.Future<T>);
-  @override
-  bool shouldReload(_i3.LocalizationsDelegate<T>? old) =>
-      (super.noSuchMethod(Invocation.method(#shouldReload, [old]),
-          returnValue: false) as bool);
   @override
   String toString() => super.toString();
 }

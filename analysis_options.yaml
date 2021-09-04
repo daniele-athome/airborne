@@ -9,6 +9,7 @@ analyzer:
     # messy code
     - lib/screens/flight_log/**
     - lib/screens/about/**
+    - test_driver/**
 
 linter:
   rules:

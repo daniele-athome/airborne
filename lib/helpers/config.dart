@@ -10,12 +10,13 @@ final Logger _log = Logger((AppConfig).toString());
 
 class AppConfig {
 
-  late SharedPreferences _prefs;
+  @protected
+  late SharedPreferences prefs;
 
   AircraftData? _currentAircraft;
 
   Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
 
     if (_currentAircraftId != null) {
       // load current aircraft
@@ -72,15 +73,15 @@ class AppConfig {
   }
 
   String? get _currentAircraftId {
-    return _prefs.getString('currentAircraft');
+    return prefs.getString('currentAircraft');
   }
 
   set _currentAircraftId(String? value) {
     if (value != null) {
-      _prefs.setString('currentAircraft', value);
+      prefs.setString('currentAircraft', value);
     }
     else {
-      _prefs.remove('currentAircraft');
+      prefs.remove('currentAircraft');
     }
   }
 
@@ -115,15 +116,15 @@ class AppConfig {
   }
 
   String? get pilotName {
-    return _prefs.getString('pilotName');
+    return prefs.getString('pilotName');
   }
 
   set pilotName(String? value) {
     if (value != null) {
-      _prefs.setString('pilotName', value);
+      prefs.setString('pilotName', value);
     }
     else {
-      _prefs.remove('pilotName');
+      prefs.remove('pilotName');
     }
   }
 

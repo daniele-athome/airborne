@@ -139,7 +139,17 @@ class _MyAppState extends State<MyApp> {
 class MainNavigation extends StatefulWidget {
   final AppConfig appConfig;
 
-  const MainNavigation(this.appConfig);
+  final BookFlightCalendarService? bookFlightCalendarService;
+  // TODO other services one day...
+
+  const MainNavigation(this.appConfig) :
+        bookFlightCalendarService = null;
+
+  /// Mainly for integration testing.
+  @visibleForTesting
+  const MainNavigation.withServices(this.appConfig, {
+    this.bookFlightCalendarService,
+  });
 
   @override
   _MainNavigationState createState() => _MainNavigationState();
@@ -152,11 +162,12 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   void initState() {
     _tabController = PlatformTabController();
-    _bookFlightCalendarService = BookFlightCalendarService(
-      GoogleServiceAccountService(
-        json: widget.appConfig.googleServiceAccountJson
-      ),
-    );
+    _bookFlightCalendarService = widget.bookFlightCalendarService ??
+      BookFlightCalendarService(
+        GoogleServiceAccountService(
+          json: widget.appConfig.googleServiceAccountJson
+        ),
+      );
     super.initState();
   }
 

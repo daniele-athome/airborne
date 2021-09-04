@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -39,7 +41,11 @@ class AircraftData {
 }
 
 class AircraftDataReader {
-  final File dataFile;
+  // for main constructor
+  File? dataFile;
+  // for fromBytes constructor
+  Uint8List? dataBytes;
+  String? dataFilename;
 
   Map<String, dynamic>? metadata;
 
@@ -47,10 +53,17 @@ class AircraftDataReader {
     required this.dataFile,
   });
 
+  /// Mainly for integration testing.
+  @visibleForTesting
+  AircraftDataReader.fromBytes({
+    required this.dataBytes,
+    required this.dataFilename,
+  });
+
   /// Also loads metadata.
   Future<bool> validate() async {
     // FIXME in-memory operations - fine for small files, but it needs to change
-    final bytes = await dataFile.readAsBytes();
+    final bytes = dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
     final Archive archive;
     try {
       archive = ZipDecoder().decodeBytes(bytes, verify: true);
@@ -98,13 +111,14 @@ class AircraftDataReader {
     }
 
     final baseDir = await getTemporaryDirectory();
-    final directory = Directory(path.join(baseDir.path, 'aircrafts', path.basenameWithoutExtension(dataFile.path)));
+    final directory = Directory(path.join(baseDir.path, 'aircrafts', path
+        .basenameWithoutExtension(dataFile != null ? dataFile!.path : dataFilename!)));
     final exists = await directory.exists();
     if (!exists) {
       await directory.create(recursive: true);
 
       // FIXME in-memory operations - fine for small files, but it needs to change
-      final bytes = await dataFile.readAsBytes();
+      final bytes = dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
       final archive = ZipDecoder().decodeBytes(bytes, verify: true);
 
       for (final file in archive.files) {
@@ -164,12 +178,15 @@ class AircraftDataReader {
 
 /// Add an aircraft data file to a local data store for long-term storage.
 Future<File> addAircraftDataFile(AircraftDataReader reader) async {
+  if (reader.dataFile == null) {
+    throw UnimplementedError('Running in a test??');
+  }
   final baseDir = await getApplicationSupportDirectory();
   final directory = Directory(path.join(baseDir.path, 'aircrafts'));
   await directory.create(recursive: true);
   final filename = path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
   await deleteAircraftCache(reader.metadata!['aircraft_id'] as String);
-  return reader.dataFile.copy(filename);
+  return reader.dataFile!.copy(filename);
 }
 
 /// Loads an aircraft data file into the cache.

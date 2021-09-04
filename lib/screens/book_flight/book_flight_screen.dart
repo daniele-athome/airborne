@@ -409,14 +409,28 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
           bottom: 0,
           child: Text(
             text,
-            // TODO dark theme?
             style: const TextStyle(
-              fontSize: 18,
-              color: Colors.black,
+              fontSize: 20,
+              color: Colors.white,
               shadows: [
                 Shadow(
-                  color: Color(0x77000000),
-                  offset: Offset(1.5, 2),
+                  color: Colors.black,
+                  offset: Offset(0, 0.1),
+                  blurRadius: 1.0,
+                ),
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(0.1, 0),
+                  blurRadius: 1.0,
+                ),
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(0, -0.1),
+                  blurRadius: 1.0,
+                ),
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(-0.1, 0),
                   blurRadius: 1.0,
                 ),
               ]
@@ -429,55 +443,59 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
 
   Widget _buildCalendar(BuildContext context, AppConfig appConfig) {
     final firstDayOfWeekIndex = MaterialLocalizations.of(context).firstDayOfWeekIndex;
-    return SfCalendar(
-      key: ValueKey(_dataSource),
-      controller: _calendarController,
-      // TODO from locale
-      appointmentTimeTextFormat: 'HH:mm',
-      firstDayOfWeek: firstDayOfWeekIndex == 0 ? 7 : firstDayOfWeekIndex,
-      headerHeight: 0,
-      showNavigationArrow: false,
-      showDatePickerButton: false,
-      showCurrentTimeIndicator: true,
-      monthViewSettings: const MonthViewSettings(
-        showAgenda: true,
-      ),
-      timeSlotViewSettings: const TimeSlotViewSettings(
+    return Theme(
+      data: getBrightness(context) == Brightness.dark ?
+        ThemeData.dark() : ThemeData.light(),
+      child: SfCalendar(
+        key: ValueKey(_dataSource),
+        controller: _calendarController,
         // TODO from locale
-        timeFormat: 'HH',
-        startHour: 5,
-        endHour: 22,
+        appointmentTimeTextFormat: 'HH:mm',
+        firstDayOfWeek: firstDayOfWeekIndex == 0 ? 7 : firstDayOfWeekIndex,
+        headerHeight: 0,
+        showNavigationArrow: false,
+        showDatePickerButton: false,
+        showCurrentTimeIndicator: true,
+        monthViewSettings: const MonthViewSettings(
+          showAgenda: true,
+        ),
+        timeSlotViewSettings: const TimeSlotViewSettings(
+          // TODO from locale
+          timeFormat: 'HH',
+          startHour: 5,
+          endHour: 22,
+        ),
+        scheduleViewMonthHeaderBuilder: _scheduleViewBuilder,
+        // TODO other configurations (e.g. time of day range)
+        dataSource: _dataSource,
+        loadMoreWidgetBuilder: (BuildContext context, LoadMoreCallback loadMoreEvents) {
+          return FutureBuilder<void>(
+            future: loadMoreEvents(),
+            builder: (context, snapShot) {
+              if (snapShot.connectionState == ConnectionState.waiting) {
+                WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                  _hideError();
+                });
+              }
+              return Container(
+                  height: _calendarController.view ==
+                      CalendarView.schedule
+                      ? 50
+                      : double.infinity,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(Colors.blue)
+                  )
+              );
+            },
+          );
+        },
+        onTap: (calendarTapDetails) => _onTapCalendar(context, appConfig, calendarTapDetails),
+        onViewChanged: (ViewChangedDetails details) {
+          _changeVisibleDates(details.visibleDates);
+        },
       ),
-      scheduleViewMonthHeaderBuilder: _scheduleViewBuilder,
-      // TODO other configurations (e.g. time of day range)
-      dataSource: _dataSource,
-      loadMoreWidgetBuilder: (BuildContext context, LoadMoreCallback loadMoreEvents) {
-        return FutureBuilder<void>(
-          future: loadMoreEvents(),
-          builder: (context, snapShot) {
-            if (snapShot.connectionState == ConnectionState.waiting) {
-              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                _hideError();
-              });
-            }
-            return Container(
-                height: _calendarController.view ==
-                    CalendarView.schedule
-                    ? 50
-                    : double.infinity,
-                width: double.infinity,
-                alignment: Alignment.center,
-                child: const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.blue)
-                )
-            );
-          },
-        );
-      },
-      onTap: (calendarTapDetails) => _onTapCalendar(context, appConfig, calendarTapDetails),
-      onViewChanged: (ViewChangedDetails details) {
-        _changeVisibleDates(details.visibleDates);
-      },
     );
   }
 

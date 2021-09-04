@@ -17,8 +17,7 @@ const double kPortraitToolbarHeight = kToolbarHeight;
 const double kLandscapeToolbarHeight = 48;
 
 Brightness getBrightness(BuildContext context) => isCupertino(context) ?
-    CupertinoTheme.of(context).brightness ?? MediaQuery.of(context).platformBrightness
-    : Theme.of(context).brightness;
+    CupertinoTheme.brightnessOf(context) : Theme.of(context).brightness;
 
 String getExceptionMessage(dynamic error) {
   if (error is LocationNotFoundException) {

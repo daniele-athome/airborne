@@ -484,9 +484,13 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
                       : double.infinity,
                   width: double.infinity,
                   alignment: Alignment.center,
-                  child: const CircularProgressIndicator(
+                  child: isCupertino(context) ?
+                    const CupertinoActivityIndicator(
+                      radius: 20,
+                    ) :
+                    const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(Colors.blue)
-                  )
+                    ),
               );
             },
           );

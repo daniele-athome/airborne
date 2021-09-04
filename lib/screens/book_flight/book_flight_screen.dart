@@ -303,6 +303,18 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       final selectedAppointment = calendarTapDetails.appointments![0] as FlightBooking;
       _bookFlight(context, appConfig, selectedAppointment);
     }
+    else if ((_calendarController.view == CalendarView.week || _calendarController.view == CalendarView.day) &&
+        calendarTapDetails.date != null && calendarTapDetails.targetElement == CalendarElement.calendarCell) {
+      // TODO look for conflicting events and fit the new event to avoid conflicts (before and after)
+      final newAppointment = FlightBooking(
+        null,
+        appConfig.pilotName!,
+        TZDateTime.from(calendarTapDetails.date!, appConfig.locationTimeZone),
+        TZDateTime.from(calendarTapDetails.date!.add(const Duration(hours: 1)), appConfig.locationTimeZone),
+        null,
+      );
+      _bookFlight(context, appConfig, newAppointment);
+    }
   }
 
   void _bookFlight(BuildContext context, AppConfig appConfig, FlightBooking? event) {

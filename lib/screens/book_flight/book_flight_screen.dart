@@ -481,6 +481,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   // TODO test sizes on different resolutions and screen densities
+  // TODO handle multiday events (especially in month view)
   Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
     final event = details.appointments.first as FlightBooking;
 

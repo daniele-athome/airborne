@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -496,25 +498,32 @@ class _BookFlightModalState extends State<BookFlightModal> {
       _notes,
     );
 
-    final Future task = _service.bookingConflicts(_appConfig.googleCalendarId, event).then((conflict) {
-      if (conflict) {
-        throw Exception(AppLocalizations.of(context)!.bookFlightModal_error_timeConflict);
-      }
-      else {
-        if (_isEditing) {
-          return _service.updateBooking(_appConfig.googleCalendarId, event);
+    final Future task = _service.bookingConflicts(_appConfig.googleCalendarId, event)
+      .timeout(kNetworkRequestTimeout)
+      .then((conflict) {
+        if (conflict) {
+          throw Exception(AppLocalizations.of(context)!.bookFlightModal_error_timeConflict);
         }
         else {
-          return _service.createBooking(_appConfig.googleCalendarId, event);
+          return (_isEditing ? _service.updateBooking(_appConfig.googleCalendarId, event) :
+              _service.createBooking(_appConfig.googleCalendarId, event))
+            .timeout(kNetworkRequestTimeout);
         }
-      }
-    }).catchError((error, StackTrace stacktrace) {
-      _log.warning('SAVE ERROR', error, stacktrace);
-      // TODO analyze exception somehow (e.g. TimeoutException)
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-        _showError(getExceptionMessage(error));
+      })
+      .catchError((error, StackTrace stacktrace) {
+        _log.warning('SAVE ERROR', error, stacktrace);
+        final String message;
+        // TODO specialize exceptions (e.g. network errors, others...)
+        if (error is TimeoutException) {
+          message = AppLocalizations.of(context)!.error_generic_network_timeout;
+        }
+        else {
+          message = getExceptionMessage(error);
+        }
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          _showError(message);
+        });
       });
-    });
 
     showPlatformDialog(
       context: context,

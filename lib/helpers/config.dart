@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/standalone.dart' as tz;
 
 import 'aircraft_data.dart';
@@ -31,8 +30,6 @@ class AppConfig {
         deleteAllAircrafts();
       }
     }
-
-    tz_data.initializeTimeZones();
   }
 
   bool get admin {

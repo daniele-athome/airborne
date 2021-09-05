@@ -13,6 +13,7 @@ import 'package:intl/intl_standalone.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'helpers/config.dart';
 import 'helpers/googleapis.dart';
@@ -53,6 +54,8 @@ Future<void> main() async {
   await findSystemLocale();
   // TODO do we need this?
   WidgetsFlutterBinding.ensureInitialized();
+  // initialize timezone data
+  tz_data.initializeTimeZones();
 
   // TEST
   //debugDefaultTargetPlatformOverride = TargetPlatform.iOS;

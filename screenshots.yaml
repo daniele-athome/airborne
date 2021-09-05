@@ -1,0 +1,16 @@
+tests:
+  - test_driver/screenshots.dart
+
+staging: ./.screenshots
+
+locales:
+  - en-US
+  - it-IT
+
+devices:
+  android:
+    Nexus 5X:
+      orientation:
+        - Portrait
+
+frame: false

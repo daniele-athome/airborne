@@ -117,6 +117,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         ),
       );
       trailingAction = PlatformIconButton(
+        key: const Key('button_bookFlight'),
         onPressed: () => _bookFlight(context, _appConfig, null),
         icon: Icon(CupertinoIcons.airplane,
           color: CupertinoColors.systemRed,
@@ -139,6 +140,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         ),
       );
       fab = FloatingActionButton(
+        key: const Key('button_bookFlight'),
         onPressed: () => _bookFlight(context, _appConfig, null),
         tooltip: AppLocalizations.of(context)!.button_bookFlight,
         child: const Icon(Icons.airplanemode_active_sharp),
@@ -398,10 +400,10 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         ? const TextStyle(fontWeight: FontWeight.bold)
         : null;
     return {
-      0: Text(AppLocalizations.of(context)!.bookFlight_view_schedule, style: textStyle),
-      1: Text(AppLocalizations.of(context)!.bookFlight_view_month, style: textStyle),
-      2: Text(AppLocalizations.of(context)!.bookFlight_view_week, style: textStyle),
-      3: Text(AppLocalizations.of(context)!.bookFlight_view_day, style: textStyle),
+      0: Text(AppLocalizations.of(context)!.bookFlight_view_schedule, key: const Key("button_bookFlight_view_schedule"), style: textStyle),
+      1: Text(AppLocalizations.of(context)!.bookFlight_view_month, key: const Key("button_bookFlight_view_month"), style: textStyle),
+      2: Text(AppLocalizations.of(context)!.bookFlight_view_week, key: const Key("button_bookFlight_view_week"), style: textStyle),
+      3: Text(AppLocalizations.of(context)!.bookFlight_view_day, key: const Key("button_bookFlight_view_day"), style: textStyle),
     };
   }
 

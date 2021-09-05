@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/models/book_flight_models.dart';
+import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -17,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart';
+
+import 'screenshots_data.dart';
 
 Future<void> main() async {
   enableFlutterDriverExtension();
@@ -102,9 +104,13 @@ class MainNavigationApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           // TEST
           //locale: const Locale('it', ''),
-          home: app.MainNavigation.withServices(appConfig,
-            bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
-          ),
+          initialRoute: 'pilot-select',
+          routes: <String, WidgetBuilder>{
+            '/': (context) => app.MainNavigation.withServices(appConfig,
+              bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
+            ),
+            'pilot-select': (context) => PilotSelectScreen(),
+          },
           debugShowCheckedModeBanner: false,
           material: (_, __) => MaterialAppData(
             // TEST
@@ -134,12 +140,13 @@ class FakeAppConfig extends AppConfig {
   Future<void> init() async {
     prefs = FakeSharedPreferences({
       'currentAircraft': 'a1234',
-      'pilotName': 'Anna',
+      //'pilotName': 'Anna',
     });
 
-    final dataFile = File('test_driver/screenshots_data.zip');
+    //final dataFile = File('test_driver/screenshots_data.zip');
     final reader = AircraftDataReader.fromBytes(
-      dataBytes: dataFile.readAsBytesSync(),
+      //dataBytes: dataFile.readAsBytesSync(),
+      dataBytes: kScreenshotsData,
       dataFilename: 'a1234.zip',
     );
     await reader.open();

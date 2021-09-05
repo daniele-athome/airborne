@@ -53,6 +53,9 @@ dev_dependencies:
     sdk: flutter
   lint: any
   mockito: any
+  screenshots:
+    git:
+      url: https://github.com/xal/screenshots
   test: any
 
 # For information on the generic Dart part of this file, see the

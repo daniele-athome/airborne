@@ -500,6 +500,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.0.0"
+  pub_cache:
+    dependency: transitive
+    description:
+      name: pub_cache
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   pub_semver:
     dependency: transitive
     description:
@@ -514,6 +521,22 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  resource_portable:
+    dependency: transitive
+    description:
+      name: resource_portable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
+  screenshots:
+    dependency: "direct dev"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: b855c90dd78a4e5db447d003dddb84021db9411c
+      url: "https://github.com/xal/screenshots"
+    source: git
+    version: "2.2.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -729,6 +752,24 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  tool_base:
+    dependency: transitive
+    description:
+      path: "."
+      ref: master
+      resolved-ref: eaefa8a5d502331e90ee02d0549df5f156fa12f9
+      url: "https://github.com/adrienbaron/tool_base.git"
+    source: git
+    version: "2.0.0"
+  tool_mobile:
+    dependency: transitive
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "23b303d953676f80eb8d8c15f99b9a8d1a29c988"
+      url: "https://github.com/felixgabler/tool_mobile.git"
+    source: git
+    version: "1.9.5+1"
   typed_data:
     dependency: transitive
     description:

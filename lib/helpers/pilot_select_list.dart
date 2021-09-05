@@ -25,8 +25,8 @@ class PilotSelectList extends StatelessWidget {
     if (isCupertino(context)) {
       final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
       return ListView(
+        padding: kDefaultCupertinoFormMargin,
         children: [
-          const SizedBox(height: kDefaultCupertinoFormTopBottomMargin),
           CupertinoFormSection(
             children: pilotNames.map((e) => CupertinoFormButtonRow(
               onPressed: () {
@@ -43,7 +43,6 @@ class PilotSelectList extends StatelessWidget {
               ),
             )).toList(growable: false),
           ),
-          const SizedBox(height: kDefaultCupertinoFormTopBottomMargin),
         ],
       );
     }

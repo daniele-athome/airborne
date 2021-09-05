@@ -182,8 +182,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
 
     return ListView(
+      padding: kDefaultCupertinoFormMargin,
       children: [
-        const SizedBox(height: kDefaultCupertinoFormTopBottomMargin),
         CupertinoFormSection(children: <Widget>[
           CupertinoFormButtonRow(
             onPressed: () => _onTapPilot(context, appConfig),
@@ -260,7 +260,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
             ],
           )
         ]),
-        const SizedBox(height: kDefaultCupertinoFormTopBottomMargin),
       ],
     );
   }
@@ -432,8 +431,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     }
 
     return PlatformScaffold(
-      // because we have a listview adding its own padding...
-      iosContentPadding: false,
+      iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(_isEditing ?
           AppLocalizations.of(context)!.bookFlightModal_title_edit :
@@ -623,8 +621,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final items = appConfig.pilotNames;
     if (isCupertino(context)) {
       Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
-        // because we have a listview adding its own padding...
-        iosContentPadding: false,
+        iosContentPadding: true,
         appBar: PlatformAppBar(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot),
         ),

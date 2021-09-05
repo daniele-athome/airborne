@@ -15,8 +15,7 @@ class PilotSelectScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      // because we have a listview adding its own padding...
-      iosContentPadding: false,
+      iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(AppLocalizations.of(context)!.pilotSelect_title),
         automaticallyImplyLeading: false,

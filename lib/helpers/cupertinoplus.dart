@@ -21,8 +21,11 @@ const EdgeInsetsGeometry kDefaultCupertinoFormRowVerticalPadding =
 /// Margin between form sections.
 const double kDefaultCupertinoFormSectionMargin = 34.0;
 
-/// Top and bottom margins for the first and last [CupertinoFormSection]
-const double kDefaultCupertinoFormTopBottomMargin = kDefaultCupertinoFormSectionMargin / 2;
+/// Top and bottom margins for the first and last [CupertinoFormSection] (use as padding for the ListView)
+const kDefaultCupertinoFormMargin = EdgeInsets.only(
+  top: kDefaultCupertinoFormSectionMargin / 2,
+  bottom: kDefaultCupertinoFormSectionMargin,
+);
 
 /// A trick for making the background of dialogs a little darker when in light mode.
 CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(BuildContext context) =>

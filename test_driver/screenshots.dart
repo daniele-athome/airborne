@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
@@ -14,10 +15,13 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/timezone.dart';
 
 Future<void> main() async {
   enableFlutterDriverExtension();
 
+  tz_data.initializeTimeZones();
   final appConfig = FakeAppConfig();
   await appConfig.init();
 
@@ -29,9 +33,53 @@ Future<void> main() async {
   );
 }
 
-List<FlightBooking> generateFakeEvents() {
-  // TODO generate some random events within the current month so they appear immediately
-  return [];
+/// Generates some random events within the current month so they appear immediately.
+List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
+  const startHour = 5;
+  const endHour = 22;
+  const fakeNotes = <String>[
+    'Elba',
+    'Roundtrip NYC',
+    'LIRU',
+    'London Heathrow',
+    'Flight school',
+    'Anyone with me?',
+  ];
+  
+  final now = DateTime.now();
+  // matches with the one in the zip file
+  final location = getLocation('Europe/Rome');
+  final startDate = TZDateTime.from(DateTime(now.year, now.month, now.day), location).subtract(const Duration(days: 30));
+  final endDate = TZDateTime.from(DateTime(now.year, now.month, now.day), location).add(const Duration(days: 30));
+  TZDateTime currentDate = startDate;
+  final events = <FlightBooking>[];
+  final random = Random();
+  while (currentDate.isBefore(endDate)) {
+    // 40% chance of having events on any given day
+    final numEvents = random.nextInt(100 ~/ 40) == 0 ? (random.nextInt(4) + 1) : 0;
+    int currentHour = startHour;
+    int numDayEvents = 0;
+    while (currentHour < endHour && numDayEvents < numEvents) {
+      int eventHours;
+      do {
+        // retry until we get a reasonable time of day
+        eventHours = random.nextInt(4) + 1;
+      } while ((currentHour + eventHours) > endHour);
+
+      events.add(FlightBooking(
+        'EVENT-${random.nextInt(10000000)}',
+        pilotNames[random.nextInt(pilotNames.length)],
+        currentDate.add(Duration(hours: currentHour)),
+        currentDate.add(Duration(hours: currentHour + eventHours)),
+        random.nextBool() ? fakeNotes[random.nextInt(fakeNotes.length)] : null,
+      ));
+      currentHour += eventHours + random.nextInt(4);
+      numDayEvents++;
+    }
+
+    currentDate = currentDate.add(const Duration(days: 1));
+  }
+  return events;
 }
 
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
@@ -55,7 +103,7 @@ class MainNavigationApp extends StatelessWidget {
           // TEST
           //locale: const Locale('it', ''),
           home: app.MainNavigation.withServices(appConfig,
-            bookFlightCalendarService: FakeCalendarService(generateFakeEvents()),
+            bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
           ),
           debugShowCheckedModeBanner: false,
           material: (_, __) => MaterialAppData(
@@ -230,8 +278,9 @@ class FakeCalendarService implements BookFlightCalendarService {
 
   @override
   Future<Iterable<FlightBooking>> search(Object calendarId, DateTime timeMin, DateTime timeMax) {
-    // TODO return events filtered by given datetimes
-    return Future.value([]);
+    return Future.value(events.where((element) =>
+      (element.from.isAfter(timeMin) || element.from == timeMin) && (element.to.isBefore(timeMax) || element.to == timeMax)
+    ));
   }
 
   @override

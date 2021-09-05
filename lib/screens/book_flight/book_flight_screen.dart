@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -20,6 +21,13 @@ import '../../services/book_flight_services.dart';
 import 'book_flight_modal.dart';
 
 final Logger _log = Logger((FlightBooking).toString());
+
+// TODO find suitable colors (especially for light brightness)
+const _kEventBackgroundColor = Colors.blue;
+const _kEventBackgroundDarkColor = Colors.blue;
+
+Color _resolveEventBackgroundColor(BuildContext context) =>
+    getBrightness(context) == Brightness.dark ? _kEventBackgroundDarkColor : _kEventBackgroundColor;
 
 class BookFlightScreen extends StatefulWidget {
   @override
@@ -459,6 +467,91 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     );
   }
 
+  // TODO test sizes on different resolutions and screen densities
+  Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
+    final event = details.appointments.first as FlightBooking;
+
+    if (_calendarController.view == CalendarView.schedule || _calendarController.view == CalendarView.month) {
+      // TODO locale
+      String timeText = '${DateFormat('HH:mm').format(event.from)} - ${DateFormat('HH:mm').format(event.to)}';
+      if (event.notes != null) {
+        timeText += ' (${event.notes})';
+      }
+      return DefaultTextStyle(
+        style: const TextStyle(fontSize: 13),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            // TODO boxShadow: [BoxShadow(color: Color(0x77000000), offset: Offset(3, 3), blurRadius: 2.0)],
+            color: _resolveEventBackgroundColor(context),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(event.pilotName)),
+              const SizedBox(width: 6),
+              // the Flexible is to make the ellipsis work
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(event.pilotName),
+                    Text(timeText,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    else {
+      return DefaultTextStyle(
+        style: const TextStyle(fontSize: 12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: _resolveEventBackgroundColor(context),
+          ),
+          padding: _calendarController.view == CalendarView.day ?
+            const EdgeInsets.symmetric(vertical: 4, horizontal: 6) :
+            const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 10,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(event.pilotName),
+                    if (_calendarController.view == CalendarView.day && event.notes != null && event.notes!.isNotEmpty)
+                      Text(event.notes!, overflow: TextOverflow.ellipsis),
+                  ],
+                ),
+              ),
+              if (_calendarController.view == CalendarView.day)
+                Expanded(
+                  flex: 5,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    // TODO locale
+                    child: Text('${DateFormat('HH:mm').format(
+                      event.from)} - ${DateFormat('HH:mm').format(event.to)}',
+                    style: const TextStyle(fontSize: 14)),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
   Widget _buildCalendar(BuildContext context, AppConfig appConfig) {
     final firstDayOfWeekIndex = MaterialLocalizations.of(context).firstDayOfWeekIndex;
     return Theme(
@@ -474,6 +567,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         showNavigationArrow: false,
         showDatePickerButton: false,
         showCurrentTimeIndicator: true,
+        appointmentBuilder: _appointmentBuilder,
         monthViewSettings: const MonthViewSettings(
           showAgenda: true,
         ),

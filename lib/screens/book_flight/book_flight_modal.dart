@@ -556,11 +556,19 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   void _doDelete(BuildContext context) {
     final Future task = _service.deleteBooking(_appConfig.googleCalendarId, widget.event)
+      .timeout(kNetworkRequestTimeout)
       .catchError((error, StackTrace stacktrace) {
         _log.warning('DELETE ERROR', error, stacktrace);
-        // TODO analyze exception somehow (e.g. TimeoutException)
+        final String message;
+        // TODO specialize exceptions (e.g. network errors, others...)
+        if (error is TimeoutException) {
+          message = AppLocalizations.of(context)!.error_generic_network_timeout;
+        }
+        else {
+          message = getExceptionMessage(error);
+        }
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          _showError(getExceptionMessage(error));
+          _showError(message);
         });
       });
 

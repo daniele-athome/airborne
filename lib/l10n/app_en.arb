@@ -21,6 +21,21 @@
   "bookFlight_view_month": "Month",
   "bookFlight_view_week": "Week",
   "bookFlight_view_day": "Day",
+  "bookFlight_span_days": "Day {current} / {total}",
+  "@bookFlight_span_days": {
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "4"
+      }
+    }
+  },
   "bookFlight_button_error_retry": "Retry",
   "bookFlight_message_flight_added": "Flight booked successfully.",
   "bookFlight_message_flight_canceled": "Flight canceled successfully.",

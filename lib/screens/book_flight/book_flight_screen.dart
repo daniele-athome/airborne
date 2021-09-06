@@ -487,6 +487,24 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   Widget _appointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
     final event = details.appointments.first as FlightBooking;
 
+    // event spanning multiple days
+    final eventStartDate = DateTime(event.from.year, event.from.month, event.from.day);
+    final eventEndDate = DateTime(event.to.year, event.to.month, event.to.day);
+    final multiDayEvent = eventEndDate.isAfter(details.date) || eventStartDate.isBefore(details.date);
+    int thisDay = 0;
+    int spanDays = 0;
+    if (multiDayEvent) {
+      // TODO handle events spanning multiple weeks
+      final DateTime today = (_calendarController.view == CalendarView.day) ?
+        _visibleDates[0] : details.date;
+      thisDay = today.difference(eventStartDate).inDays + 1;
+      spanDays = eventEndDate.difference(eventStartDate).inDays + 1;
+    }
+    String eventText = event.pilotName;
+    if (multiDayEvent && _calendarController.view != CalendarView.week) {
+      eventText += ' (${AppLocalizations.of(context)!.bookFlight_span_days(thisDay, spanDays)})';
+    }
+
     if (_calendarController.view == CalendarView.schedule || _calendarController.view == CalendarView.month) {
       // TODO locale
       String timeText = '${DateFormat('HH:mm').format(event.from)} - ${DateFormat('HH:mm').format(event.to)}';
@@ -508,24 +526,55 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
               CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(event.pilotName)),
               const SizedBox(width: 6),
               // the Flexible is to make the ellipsis work
-              Flexible(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(event.pilotName),
+                    Text(eventText),
                     Text(timeText,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
+              if (multiDayEvent && thisDay < spanDays) const Align(
+                alignment: Alignment.centerRight,
+                child: Text('»',
+                  style: TextStyle(fontSize: 26)
+                ),
+              )
             ],
           ),
         ),
       );
     }
     else {
+      if (multiDayEvent) {
+        // this should span in the hour view, but I don't think it's supported by SfCalendar
+        return DefaultTextStyle(
+          style: const TextStyle(fontSize: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: _resolveEventBackgroundColor(context),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Row(
+              children: [
+                Expanded(child: Text(eventText)),
+                // FIXME doesn't work for event spanning multiple weeks
+                if (_calendarController.view != CalendarView.week && thisDay < spanDays)
+                  const Text('»',
+                    // FIXME not sure using height is the right way to do this
+                    style: TextStyle(fontSize: 18, height: 0.9),
+                  )
+              ],
+            ),
+          )
+        );
+      }
+
       return DefaultTextStyle(
         style: const TextStyle(fontSize: 12),
         child: Container(
@@ -544,7 +593,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(event.pilotName),
+                    Text(eventText),
                     if (_calendarController.view == CalendarView.day && event.notes != null && event.notes!.isNotEmpty)
                       Text(event.notes!, overflow: TextOverflow.ellipsis),
                   ],
@@ -585,6 +634,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         showCurrentTimeIndicator: true,
         appointmentBuilder: _appointmentBuilder,
         monthViewSettings: const MonthViewSettings(
+          agendaItemHeight: 50,
           showAgenda: true,
         ),
         timeSlotViewSettings: const TimeSlotViewSettings(
@@ -594,6 +644,9 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
           endHour: 22,
         ),
         scheduleViewMonthHeaderBuilder: _scheduleViewBuilder,
+        scheduleViewSettings: const ScheduleViewSettings(
+          appointmentItemHeight: 50,
+        ),
         // TODO other configurations (e.g. time of day range)
         dataSource: _dataSource,
         loadMoreWidgetBuilder: (BuildContext context, LoadMoreCallback loadMoreEvents) {

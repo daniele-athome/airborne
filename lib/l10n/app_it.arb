@@ -18,6 +18,7 @@
   "bookFlight_view_month": "Mese",
   "bookFlight_view_week": "Settimana",
   "bookFlight_view_day": "Giorno",
+  "bookFlight_span_days": "Giorno {current} / {total}",
   "bookFlight_button_error_retry": "Riprova",
   "bookFlight_message_flight_added": "Prenotazione effettuata.",
   "bookFlight_message_flight_canceled": "Prenotazione cancellata.",

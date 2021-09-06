@@ -44,8 +44,7 @@ platform :ios do
         #skip_binary_upload: true,
         skip_app_version_update: false,
         skip_metadata: false,
-        # TODO screenshots
-        skip_screenshots: true
+        skip_screenshots: false
     )
   end
 end

@@ -12,6 +12,7 @@ import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
@@ -23,6 +24,7 @@ import 'screenshots_data.dart';
 Future<void> main() async {
   enableFlutterDriverExtension();
 
+  await findSystemLocale();
   tz_data.initializeTimeZones();
   final appConfig = FakeAppConfig();
   await appConfig.init();

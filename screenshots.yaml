@@ -9,8 +9,19 @@ locales:
 
 devices:
   android:
+    # phone
     Nexus 5X:
       orientation:
+        - Portrait
+    # sevenInch
+    Nexus 6P:
+      orientation:
+        # FIXME doesn't work yet - LandscapeLeft
+        - Portrait
+    # tenInch
+    Nexus 9:
+      orientation:
+        # FIXME doesn't work yet - LandscapeLeft
         - Portrait
 
 frame: false

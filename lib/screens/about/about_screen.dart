@@ -32,8 +32,9 @@ class _AboutScreenState extends State<AboutScreen> {
                 image: _appConfig.aircraftPicture,
               ),
             ),
-            Positioned.fill(bottom: -10, child:
-              Align(
+            Positioned.fill(
+              bottom: -10,
+              child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   height: 30.0,

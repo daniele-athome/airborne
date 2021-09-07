@@ -39,8 +39,8 @@ dependencies:
   provider: 6.0.0
   shared_preferences: 2.0.7
   solar_calculator: 1.0.2
-  syncfusion_flutter_calendar: 19.2.59
-  syncfusion_localizations: 19.2.59
+  syncfusion_flutter_calendar: 19.2.60
+  syncfusion_localizations: 19.2.60
   # can't update to 0.8.0 because its forced by syncfusion_flutter_calendar
   timezone: 0.7.0
   validators: 3.0.0

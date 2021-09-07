@@ -26,7 +26,6 @@ void main() {
     );
 
   group('Single aircraft data screen tests', () {
-    // TODO
     testWidgets('An invalid URI in address field should not validate', (tester) async {
       await tester.pumpWidget(createSkeletonApp());
       await tester.enterText(
@@ -34,7 +33,6 @@ void main() {
               widget.keyboardType == TextInputType.url), "NOT_VALID_URI");
       await tester.tap(
           find.byWidgetPredicate((widget) => widget is PlatformButton &&
-              // TODO localized string?
               (widget.child! as Text).data == 'Install')
       );
       await tester.pumpAndSettle();

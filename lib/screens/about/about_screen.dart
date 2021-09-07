@@ -39,9 +39,9 @@ class _AboutScreenState extends State<AboutScreen> {
                 child: Container(
                   height: 30.0,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.grey,
                         offset: Offset(0.0, -2.0),
@@ -64,10 +64,6 @@ class _AboutScreenState extends State<AboutScreen> {
         )),
         //AboutListTile(),
       ],
-    );
-
-    return Center(
-      child: const Text('Under construction.'),
     );
   }
 }

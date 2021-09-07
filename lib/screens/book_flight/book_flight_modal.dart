@@ -238,6 +238,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
               _notes = value;
             },
             keyboardType: TextInputType.multiline,
+            textCapitalization: TextCapitalization.sentences,
             minLines: 3,
             maxLines: 3,
             style: const TextStyle(
@@ -363,7 +364,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onChanged: (String value) {
               _notes = value;
             },
+            // workaround for https://github.com/flutter/flutter/pull/82671
+            focusNode: FocusNode(
+              onKey: (_, __) => KeyEventResult.skipRemainingHandlers,
+            ),
             keyboardType: TextInputType.multiline,
+            textCapitalization: TextCapitalization.sentences,
             maxLines: 3,
             style: const TextStyle(
                 fontSize: 18,

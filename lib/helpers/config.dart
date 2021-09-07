@@ -69,6 +69,10 @@ class AppConfig {
     return FileImage(_currentAircraft!.getPilotAvatar(name));
   }
 
+  ImageProvider get aircraftPicture {
+    return FileImage(_currentAircraft!.aircraftPicture);
+  }
+
   String? get _currentAircraftId {
     return prefs.getString('currentAircraft');
   }

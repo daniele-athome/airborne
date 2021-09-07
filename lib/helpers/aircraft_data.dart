@@ -38,6 +38,10 @@ class AircraftData {
     return File(path.join(dataPath!.path, 'avatar-${name.toLowerCase()}.jpg'));
   }
 
+  File get aircraftPicture {
+    return File(path.join(dataPath!.path, 'aircraft.jpg'));
+  }
+
 }
 
 class AircraftDataReader {

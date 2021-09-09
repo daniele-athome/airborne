@@ -57,6 +57,7 @@ dev_dependencies:
     sdk: flutter
   lint: any
   mockito: any
+  pubspec_generator:
   screenshots:
     git:
       url: https://github.com/xal/screenshots

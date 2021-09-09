@@ -1,0 +1,17 @@
+targets:
+  $default:
+    sources:
+      - $package$
+      - lib/$lib$
+      - lib/**.dart
+      - test/**.dart
+      - test_driver/**.dart
+      - pubspec.yaml
+    builders:
+      pubspec_generator|pubspecBuilder:
+        options:
+          output: lib/pubspec.yaml.g.dart
+      mockito|mockBuilder:
+        generate_for:
+          - test/**.dart
+          - test_driver/**.dart

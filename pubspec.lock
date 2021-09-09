@@ -556,6 +556,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  pubspec_generator:
+    dependency: "direct dev"
+    description:
+      name: pubspec_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   pubspec_parse:
     dependency: transitive
     description:

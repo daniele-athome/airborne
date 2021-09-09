@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
+import '../../pubspec.yaml.g.dart';
 
 // TODO final Logger _log = Logger((AboutScreen).toString());
 

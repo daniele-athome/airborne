@@ -2,13 +2,14 @@
 // in airborne/test/screens/aircraft_select/aircraft_data_screen_test.dart.
 // Do not manually edit this file.
 
-import 'dart:async' as _i6;
+import 'dart:async' as _i7;
 
-import 'package:airborne/helpers/aircraft_data.dart' as _i5;
-import 'package:airborne/helpers/config.dart' as _i4;
-import 'package:flutter/widgets.dart' as _i3;
+import 'package:airborne/helpers/aircraft_data.dart' as _i6;
+import 'package:airborne/helpers/config.dart' as _i5;
+import 'package:flutter/widgets.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:timezone/standalone.dart' as _i2;
+import 'package:shared_preferences/shared_preferences.dart' as _i2;
+import 'package:timezone/standalone.dart' as _i3;
 
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
@@ -18,19 +19,30 @@ import 'package:timezone/standalone.dart' as _i2;
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: unnecessary_parenthesis
 
-class _FakeLocation_0 extends _i1.Fake implements _i2.Location {}
+class _FakeSharedPreferences_0 extends _i1.Fake
+    implements _i2.SharedPreferences {}
 
-class _FakeImageProvider_1<T extends Object> extends _i1.Fake
-    implements _i3.ImageProvider<T> {}
+class _FakeLocation_1 extends _i1.Fake implements _i3.Location {}
+
+class _FakeImageProvider_2<T extends Object> extends _i1.Fake
+    implements _i4.ImageProvider<T> {}
 
 /// A class which mocks [AppConfig].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAppConfig extends _i1.Mock implements _i4.AppConfig {
+class MockAppConfig extends _i1.Mock implements _i5.AppConfig {
   MockAppConfig() {
     _i1.throwOnMissingStub(this);
   }
 
+  @override
+  _i2.SharedPreferences get prefs =>
+      (super.noSuchMethod(Invocation.getter(#prefs),
+          returnValue: _FakeSharedPreferences_0()) as _i2.SharedPreferences);
+  @override
+  set prefs(_i2.SharedPreferences? _prefs) =>
+      super.noSuchMethod(Invocation.setter(#prefs, _prefs),
+          returnValueForMissingStub: null);
   @override
   bool get admin =>
       (super.noSuchMethod(Invocation.getter(#admin), returnValue: false)
@@ -56,40 +68,45 @@ class MockAppConfig extends _i1.Mock implements _i4.AppConfig {
           .noSuchMethod(Invocation.getter(#locationLongitude), returnValue: 0.0)
       as double);
   @override
-  _i2.Location get locationTimeZone =>
+  _i3.Location get locationTimeZone =>
       (super.noSuchMethod(Invocation.getter(#locationTimeZone),
-          returnValue: _FakeLocation_0()) as _i2.Location);
+          returnValue: _FakeLocation_1()) as _i3.Location);
   @override
   List<String> get pilotNames => (super
           .noSuchMethod(Invocation.getter(#pilotNames), returnValue: <String>[])
       as List<String>);
   @override
-  set currentAircraft(_i5.AircraftData? data) =>
+  _i4.ImageProvider<Object> get aircraftPicture =>
+      (super.noSuchMethod(Invocation.getter(#aircraftPicture),
+              returnValue: _FakeImageProvider_2<Object>())
+          as _i4.ImageProvider<Object>);
+  @override
+  set currentAircraft(_i6.AircraftData? data) =>
       super.noSuchMethod(Invocation.setter(#currentAircraft, data),
           returnValueForMissingStub: null);
   @override
-  List<_i5.AircraftData> get aircrafts =>
+  List<_i6.AircraftData> get aircrafts =>
       (super.noSuchMethod(Invocation.getter(#aircrafts),
-          returnValue: <_i5.AircraftData>[]) as List<_i5.AircraftData>);
+          returnValue: <_i6.AircraftData>[]) as List<_i6.AircraftData>);
   @override
   set pilotName(String? value) =>
       super.noSuchMethod(Invocation.setter(#pilotName, value),
           returnValueForMissingStub: null);
   @override
-  _i6.Future<void> init() => (super.noSuchMethod(Invocation.method(#init, []),
+  _i7.Future<void> init() => (super.noSuchMethod(Invocation.method(#init, []),
       returnValue: Future<void>.value(),
-      returnValueForMissingStub: Future<void>.value()) as _i6.Future<void>);
+      returnValueForMissingStub: Future<void>.value()) as _i7.Future<void>);
   @override
-  _i3.ImageProvider<Object> getPilotAvatar(String? name) =>
+  _i4.ImageProvider<Object> getPilotAvatar(String? name) =>
       (super.noSuchMethod(Invocation.method(#getPilotAvatar, [name]),
-              returnValue: _FakeImageProvider_1<Object>())
-          as _i3.ImageProvider<Object>);
+              returnValue: _FakeImageProvider_2<Object>())
+          as _i4.ImageProvider<Object>);
   @override
-  void addAircraft(_i5.AircraftData? data) =>
+  void addAircraft(_i6.AircraftData? data) =>
       super.noSuchMethod(Invocation.method(#addAircraft, [data]),
           returnValueForMissingStub: null);
   @override
-  void updateAircraft(_i5.AircraftData? data) =>
+  void updateAircraft(_i6.AircraftData? data) =>
       super.noSuchMethod(Invocation.method(#updateAircraft, [data]),
           returnValueForMissingStub: null);
   @override

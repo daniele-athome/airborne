@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
@@ -54,16 +55,62 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+        // TODO i18n
+        const HeaderListTile('Aeromobile', first: true),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           // TODO i18n
-          child: Text('Aeromobile', style: Theme.of(context).textTheme.headline5),
+          title: const Text('Marche'),
+          trailing: Text(_appConfig.currentAircraft!.callSign,
+            style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold),
+          ),
         ),
-        ...List.generate(20, (index) => ListTile(
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          // TODO i18n
+          title: const Text('Hangar'),
+          trailing: Text('TODO hangar',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          // TODO go to maps button
+        ),
+        // TODO i18n
+        const HeaderListTile('Piloti'),
+        ..._appConfig.pilotNames.map((e) => ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+          title: Text(e),
+        )).toList(growable: false),
+        // TODO i18n
+        HeaderListTile(AppLocalizations.of(context)!.appName),
+        // TEST
+        ...List.generate(10, (index) => ListTile(
           title: Text('Item $index'),
         )),
         //AboutListTile(),
       ],
     );
   }
+}
+
+class HeaderListTile extends StatelessWidget {
+
+  const HeaderListTile(this.text, {
+    Key? key,
+    this.first = false,
+  }) : super(key: key);
+
+  /// The text to be displayed.
+  final String text;
+  /// True if this is the first header of the list.
+  final bool first;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: first ? const EdgeInsets.fromLTRB(20, 0, 20, 10) : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Text(text, style: Theme.of(context).textTheme.headline5),
+    );
+  }
+
 }

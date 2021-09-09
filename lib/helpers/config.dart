@@ -26,6 +26,7 @@ class AppConfig {
       catch (e) {
         _log.info('Error loading current aircraft, cleaning everything ($e)');
         _currentAircraftId = null;
+        pilotName = null;
         // a bit drastic maybe...
         deleteAllAircrafts();
       }

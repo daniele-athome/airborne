@@ -7,7 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
-import '../../pubspec.yaml.g.dart';
+import '../../pubspec.yaml.g.dart' as pubspec;
 
 // TODO final Logger _log = Logger((AboutScreen).toString());
 
@@ -130,8 +130,7 @@ class _AboutScreenState extends State<AboutScreen> {
           title: const Text('Codice sorgente'),
           // TODO i18n
           subtitle: const Text("Vai al codice sorgente dell'app"),
-          // TODO open source code page
-          onTap: () => true,
+          onTap: () => openUrl(context, pubspec.homepage),
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -143,8 +142,7 @@ class _AboutScreenState extends State<AboutScreen> {
           title: const Text('Segnala problema'),
           // TODO i18n
           subtitle: const Text("Apri un bug per segnalare un problema con l'app"),
-          // TODO open issues page
-          onTap: () => true,
+          onTap: () => openUrl(context, pubspec.issueTracker),
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),

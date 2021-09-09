@@ -465,7 +465,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     if (_isEditing) {
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != widget.event.pilotName) {
-          _showError(AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_edit);
+          showError(context, AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_edit);
           return;
         }
       }
@@ -486,7 +486,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     else {
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != _pilotName) {
-          _showError(AppLocalizations.of(context)!.bookFlightModal_error_bookingForOthers);
+          showError(context, AppLocalizations.of(context)!.bookFlightModal_error_bookingForOthers);
           return;
         }
       }
@@ -528,7 +528,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           message = getExceptionMessage(error);
         }
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          _showError(message);
+          showError(context, message);
         });
       });
 
@@ -548,7 +548,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _onDelete(BuildContext context) {
     if (!_appConfig.admin) {
       if (_appConfig.pilotName != widget.event.pilotName) {
-        _showError(AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_delete);
+        showError(context, AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_delete);
         return;
       }
     }
@@ -576,7 +576,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           message = getExceptionMessage(error);
         }
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-          _showError(message);
+          showError(context, message);
         });
       });
 
@@ -591,24 +591,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
         Navigator.of(context, rootNavigator: true).pop(value);
       }
     });
-  }
-
-  void _showError(String text) {
-    showPlatformDialog(
-      context: context,
-      builder: (_context) => PlatformAlertDialog(
-        title: Text(AppLocalizations.of(context)!.dialog_title_error),
-        content: Text(text),
-        actions: <Widget>[
-          PlatformDialogAction(
-            onPressed: () {
-              Navigator.pop(_context);
-            },
-            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
-          ),
-        ],
-      ),
-    );
   }
 
   // TODO use AppConfig state instance

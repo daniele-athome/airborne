@@ -64,24 +64,6 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  Future<void> _showError(String text) {
-    return showPlatformDialog<void>(
-      context: context,
-      builder: (_context) => PlatformAlertDialog(
-        title: Text(AppLocalizations.of(context)!.dialog_title_error),
-        content: Text(text),
-        actions: <Widget>[
-          PlatformDialogAction(
-            onPressed: () {
-              Navigator.pop(_context);
-            },
-            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _downloadData(BuildContext context, AppConfig appConfig) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -123,7 +105,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             message = getExceptionMessage(error);
           }
 
-          Future.delayed(Duration.zero, () => _showError(message));
+          Future.delayed(Duration.zero, () => showError(context, message));
           return null;
         });
 

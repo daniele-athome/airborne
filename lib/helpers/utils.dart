@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Network request timeout used throughout the app.
 const Duration kNetworkRequestTimeout = Duration(seconds: 15);
@@ -93,6 +94,33 @@ void showToast(FToast fToast, String text, Duration duration) {
       child: child
     ),
   );
+}
+
+Future<void> showError(BuildContext context, String text) {
+  return showPlatformDialog<void>(
+    context: context,
+    builder: (_context) => PlatformAlertDialog(
+      title: Text(AppLocalizations.of(context)!.dialog_title_error),
+      content: Text(text),
+      actions: <Widget>[
+        PlatformDialogAction(
+          onPressed: () {
+            Navigator.pop(_context);
+          },
+          child: Text(AppLocalizations.of(context)!.dialog_button_ok),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<bool> openUrl(BuildContext context, String url) async {
+  return launch(url)
+    .catchError((_) {
+      // TODO i18n
+      showError(context, 'Cannot open a browser.');
+      return false;
+  });
 }
 
 Future<T?> showConfirm<T>({

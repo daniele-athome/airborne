@@ -47,6 +47,7 @@ dependencies:
   syncfusion_localizations: 19.2.60
   # can't update to 0.8.0 because its forced by syncfusion_flutter_calendar
   timezone: 0.7.0
+  url_launcher: 6.0.10
   validators: 3.0.0
 
 dev_dependencies:

@@ -1,5 +1,8 @@
 name: airborne
 description: Minimal aircraft management app for small groups
+homepage: https://github.com/daniele-athome/airborne
+issue_tracker: https://github.com/daniele-athome/airborne/issues
+repository: https://github.com/daniele-athome/airborne.git
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.

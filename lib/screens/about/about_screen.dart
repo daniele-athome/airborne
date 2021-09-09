@@ -41,7 +41,7 @@ class _AboutScreenState extends State<AboutScreen> {
       },
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -89,8 +89,14 @@ class _AboutScreenState extends State<AboutScreen> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           // TODO i18n
           subtitle: const Text('Hangar'),
-          title: Text('TODO hangar',
+          title: Text(_appConfig.locationName,
             style: Theme.of(context).textTheme.headline6,
+          ),
+          trailing: IconButton(
+            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            // TODO i18n
+            tooltip: 'Open in maps',
+            icon: const Icon(Icons.open_in_new),
           ),
           // TODO go to maps button
         ),
@@ -156,11 +162,6 @@ class _AboutScreenState extends State<AboutScreen> {
           subtitle: const Text('Per cambiare aereo e riscaricare i dati'),
           onTap: () => _onLogout(context),
         ),
-        // TEST
-        ...List.generate(10, (index) => ListTile(
-          title: Text('Item $index'),
-        )),
-        //AboutListTile(),
       ],
     );
   }

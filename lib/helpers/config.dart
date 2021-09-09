@@ -49,6 +49,10 @@ class AppConfig {
     return _currentAircraft!.backendInfo['google_calendar_id']! as String;
   }
 
+  String get locationName {
+    return _currentAircraft!.locationName;
+  }
+
   double get locationLatitude {
     return _currentAircraft!.locationLatitude;
   }
@@ -59,6 +63,11 @@ class AppConfig {
 
   tz.Location get locationTimeZone {
     return tz.getLocation(_currentAircraft!.locationTimeZone);
+  }
+
+  String get locationUrl {
+    // TODO constant? Format? Whatever?
+    return 'https://www.google.com/maps/search/?api=1&query=$locationLatitude,$locationLongitude';
   }
 
   // TODO handle non-pilot user "(prove tecniche)"

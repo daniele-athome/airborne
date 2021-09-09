@@ -17,6 +17,7 @@ class AircraftData {
   final String callSign;
   final Map<String, dynamic> backendInfo;
   final List<String> pilotNames;
+  final String locationName;
   final double locationLatitude;
   final double locationLongitude;
   final String locationTimeZone;
@@ -28,6 +29,7 @@ class AircraftData {
     required this.callSign,
     required this.backendInfo,
     required this.pilotNames,
+    required this.locationName,
     required this.locationLatitude,
     required this.locationLongitude,
     required this.locationTimeZone,
@@ -171,6 +173,7 @@ class AircraftDataReader {
       callSign: metadata!['callsign'] as String,
       backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
       pilotNames: List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>),
+      locationName: metadata!['location']?['name'] as String,
       locationLatitude: metadata!['location']?['latitude'] as double,
       locationLongitude: metadata!['location']?['longitude'] as double,
       locationTimeZone: metadata!['location']?['timezone'] as String,

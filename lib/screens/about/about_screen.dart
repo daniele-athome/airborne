@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:logging/logging.dart';
+// TODO import 'package:logging/logging.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
 
-final Logger _log = Logger((AboutScreen).toString());
+// TODO final Logger _log = Logger((AboutScreen).toString());
 
 class AboutScreen extends StatefulWidget {
   @override
@@ -60,16 +61,16 @@ class _AboutScreenState extends State<AboutScreen> {
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           // TODO i18n
-          title: const Text('Marche'),
-          trailing: Text(_appConfig.currentAircraft!.callSign,
+          subtitle: const Text('Marche'),
+          title: Text(_appConfig.currentAircraft!.callSign,
             style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           // TODO i18n
-          title: const Text('Hangar'),
-          trailing: Text('TODO hangar',
+          subtitle: const Text('Hangar'),
+          title: Text('TODO hangar',
             style: Theme.of(context).textTheme.headline6,
           ),
           // TODO go to maps button
@@ -81,8 +82,64 @@ class _AboutScreenState extends State<AboutScreen> {
           leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
           title: Text(e),
         )).toList(growable: false),
-        // TODO i18n
         HeaderListTile(AppLocalizations.of(context)!.appName),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.info),
+          ),
+          // TODO i18n
+          subtitle: const Text('Versione'),
+          title: FutureBuilder(
+            future: PackageInfo.fromPlatform(),
+            initialData: null,
+            builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
+              snapshot.connectionState == ConnectionState.done ?
+              '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+                  : '',
+            ),
+          ),
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.all_inclusive),
+          ),
+          // TODO i18n
+          title: const Text('Codice sorgente'),
+          // TODO i18n
+          subtitle: const Text("Vai al codice sorgente dell'app"),
+          // TODO open source code page
+          onTap: () => true,
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.bug_report, color: Colors.red),
+          ),
+          // TODO i18n
+          title: const Text('Segnala problema'),
+          // TODO i18n
+          subtitle: const Text("Apri un bug per segnalare un problema con l'app"),
+          // TODO open issues page
+          onTap: () => true,
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.logout, color: Colors.blue),
+          ),
+          // TODO i18n
+          title: const Text('Disconnetti aereo'),
+          // TODO i18n
+          subtitle: const Text('Per cambiare aereo e riscaricare i dati'),
+          // TODO disconnect aircraft
+          onTap: () => true,
+        ),
         // TEST
         ...List.generate(10, (index) => ListTile(
           title: Text('Item $index'),

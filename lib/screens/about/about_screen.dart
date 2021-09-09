@@ -1,3 +1,4 @@
+import 'package:airborne/helpers/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,6 +10,7 @@ import '../../helpers/config.dart';
 
 // TODO final Logger _log = Logger((AboutScreen).toString());
 
+// TODO convert to stateless widget if using only AppConfig
 class AboutScreen extends StatefulWidget {
   @override
   _AboutScreenState createState() => _AboutScreenState();
@@ -21,6 +23,22 @@ class _AboutScreenState extends State<AboutScreen> {
   void didChangeDependencies() {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
     super.didChangeDependencies();
+  }
+
+  void _onLogout(BuildContext context) {
+    showConfirm(
+      context: context,
+      // TODO i18n
+      title: "Disconnettere l'aereo?",
+        // TODO i18n
+      text: "Dovrai immettere di nuovo l'indirizzo dei dati dell'aereo.",
+      destructiveOk: true,
+      okCallback: () {
+        _appConfig.pilotName = null;
+        _appConfig.currentAircraft = null;
+        Navigator.of(context, rootNavigator: true).popAndPushNamed('aircraft-data');
+      },
+    );
   }
 
   @override
@@ -129,16 +147,15 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: const SizedBox(
+          leading: SizedBox(
             height: double.infinity,
-            child: Icon(Icons.logout, color: Colors.blue),
+            child: Icon(Icons.logout, color: Colors.blue.shade600),
           ),
           // TODO i18n
           title: const Text('Disconnetti aereo'),
           // TODO i18n
           subtitle: const Text('Per cambiare aereo e riscaricare i dati'),
-          // TODO disconnect aircraft
-          onTap: () => true,
+          onTap: () => _onLogout(context),
         ),
         // TEST
         ...List.generate(10, (index) => ListTile(

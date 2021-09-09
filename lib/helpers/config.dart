@@ -93,6 +93,7 @@ class AppConfig {
       _log.fine('Switching aircraft: ${data.callSign}');
     }
     else {
+      // TODO maybe delete the temp folder?
       _log.fine('Selecting no aircraft');
     }
     _currentAircraft = data;

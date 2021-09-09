@@ -473,7 +473,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
         // TODO allow pilot change but only to the non-pilot
 
         if (_pilotName != widget.event.pilotName) {
-          _showConfirm(
+          showConfirm(
+            context: context,
             text: AppLocalizations.of(context)!.bookFlightModal_dialog_changePilot_message,
             title: AppLocalizations.of(context)!.bookFlightModal_dialog_changePilot_title,
             okCallback: () => _doSave(context)
@@ -552,11 +553,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
       }
     }
 
-    _showConfirm(
-     text: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_message,
-     title: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_title,
-     okCallback: () => _doDelete(context),
-     destructiveOk: true,
+    showConfirm(
+      context: context,
+      text: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_message,
+      title: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_title,
+      okCallback: () => _doDelete(context),
+      destructiveOk: true,
     );
   }
 
@@ -602,36 +604,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onPressed: () {
               Navigator.pop(_context);
             },
-            child: Text(AppLocalizations.of(context)!.dialog_button_ok),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showConfirm({
-    required String text,
-    required String title,
-    required void Function() okCallback,
-    bool destructiveOk = false
-  }) {
-    showPlatformDialog(
-      context: context,
-      builder: (_context) => PlatformAlertDialog(
-        title: Text(title),
-        content: Text(text),
-        actions: <Widget>[
-          PlatformDialogAction(
-            onPressed: () => Navigator.pop(_context),
-            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
-          ),
-          PlatformDialogAction(
-            onPressed: () {
-              Navigator.pop(_context);
-              okCallback();
-            },
-            // TODO destructiveOk for material
-            cupertino: (_, __) => CupertinoDialogActionData(isDestructiveAction: destructiveOk),
             child: Text(AppLocalizations.of(context)!.dialog_button_ok),
           ),
         ],

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' as path;
@@ -90,6 +91,37 @@ void showToast(FToast fToast, String text, Duration duration) {
       left: 24.0,
       right: 24.0,
       child: child
+    ),
+  );
+}
+
+Future<T?> showConfirm<T>({
+  required BuildContext context,
+  required String text,
+  required String title,
+  required void Function() okCallback,
+  bool destructiveOk = false
+}) {
+  return showPlatformDialog<T>(
+    context: context,
+    builder: (_context) => PlatformAlertDialog(
+      title: Text(title),
+      content: Text(text),
+      actions: <Widget>[
+        PlatformDialogAction(
+          onPressed: () => Navigator.pop(_context),
+          child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
+        ),
+        PlatformDialogAction(
+          onPressed: () {
+            Navigator.pop(_context);
+            okCallback();
+          },
+          // TODO destructiveOk for material
+          cupertino: (_, __) => CupertinoDialogActionData(isDestructiveAction: destructiveOk),
+          child: Text(AppLocalizations.of(context)!.dialog_button_ok),
+        ),
+      ],
     ),
   );
 }

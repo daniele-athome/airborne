@@ -490,13 +490,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     // event spanning multiple days
     final eventStartDate = DateTime(event.from.year, event.from.month, event.from.day);
     final eventEndDate = DateTime(event.to.year, event.to.month, event.to.day);
-    final multiDayEvent = eventEndDate.isAfter(details.date) || eventStartDate.isBefore(details.date);
+    final currentDate = DateTime(details.date.year, details.date.month, details.date.day);
+    final multiDayEvent = eventEndDate.isAfter(currentDate) || eventStartDate.isBefore(currentDate);
     int thisDay = 0;
     int spanDays = 0;
     if (multiDayEvent) {
       // TODO handle events spanning multiple weeks
       final DateTime today = (_calendarController.view == CalendarView.day) ?
-        _visibleDates[0] : details.date;
+        _visibleDates[0] : currentDate;
       thisDay = today.difference(eventStartDate).inDays + 1;
       spanDays = eventEndDate.difference(eventStartDate).inDays + 1;
     }

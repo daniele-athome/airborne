@@ -49,8 +49,34 @@ class _AboutScreenState extends State<AboutScreen> {
         Stack(
           children: [
             Positioned(
+              // TODO not very good sizing and loading indicator
               child: Image(
                 image: _appConfig.aircraftPicture,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (wasSynchronouslyLoaded) {
+                    return child;
+                  }
+                  return Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 250),
+                      child: AnimatedOpacity(
+                        opacity: frame == null ? 0 : 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOut,
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  return loadingProgress != null ?
+                    Container(
+                      height: 250,
+                      alignment: Alignment.center,
+                      child: const CircularProgressIndicator(),
+                    ) :
+                    child;
+                },
               ),
             ),
             Positioned.fill(

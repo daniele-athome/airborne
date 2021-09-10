@@ -90,8 +90,8 @@ class _AboutScreenState extends State<AboutScreen> {
                     color: Theme.of(context).scaffoldBackgroundColor,
                     boxShadow: const [
                       BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, -2.0),
+                        color: Colors.black54,
+                        offset: Offset(0.0, -1.0),
                         blurRadius: 5.0,
                       ),
                     ],

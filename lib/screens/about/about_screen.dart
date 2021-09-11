@@ -69,7 +69,7 @@ class _AboutScreenState extends State<AboutScreen> {
               children: [
                 Text(_appConfig.locationName),
                 const SizedBox(width: 2),
-                const Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel),
+                Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
               ],
             ),
           ),
@@ -119,7 +119,7 @@ class _AboutScreenState extends State<AboutScreen> {
             padding: kDefaultCupertinoFormRowPadding,
             // TODO i18n
             prefix: const Text('Codice sorgente'),
-            child: const Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel),
+            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
         ),
         CupertinoFormRowContainer(
@@ -128,7 +128,7 @@ class _AboutScreenState extends State<AboutScreen> {
             padding: kDefaultCupertinoFormRowPadding,
             // TODO i18n
             prefix: const Text('Segnala problema'),
-            child: const Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel),
+            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
         ),
       ],

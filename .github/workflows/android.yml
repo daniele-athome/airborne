@@ -92,4 +92,4 @@ jobs:
       - name: Deploy to Google Play
         run: |
           cd android
-          fastlane deploy_beta
+          fastlane deploy_production

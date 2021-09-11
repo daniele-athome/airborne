@@ -39,4 +39,12 @@ platform :android do
         metadata_path: "fastlane/metadata/android",
         aab: "../build/app/outputs/bundle/release/app-release.aab")
   end
+
+  desc "Deploy a new version to Google Play production testing track"
+  lane :deploy_production do
+    upload_to_play_store(
+        track: 'production',
+        metadata_path: "fastlane/metadata/android",
+        aab: "../build/app/outputs/bundle/release/app-release.aab")
+  end
 end

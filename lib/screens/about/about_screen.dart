@@ -60,11 +60,18 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
         ),
         CupertinoFormRowContainer(
-          child: CupertinoFormRow(
+          child: CupertinoFormButtonRow(
+            onPressed: () => openUrl(context, _appConfig.locationUrl),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: const Text('Hangar'),
-            child: Text(_appConfig.locationName),
-            // TODO: add go to maps button as trailing action
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(_appConfig.locationName),
+                const SizedBox(width: 2),
+                const Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel),
+              ],
+            ),
           ),
         ),
       ],

@@ -82,5 +82,21 @@
         "example": "Daniele"
       }
     }
-  }
+  },
+
+  "about_aircraft_info": "Aircraft",
+  "about_aircraft_callsign": "Call Sign",
+  "about_aircraft_hangar": "Hangar",
+  "about_aircraft_hangar_open_maps": "Open in maps",
+  "about_aircraft_pilots": "Pilots",
+  "about_app_version": "Version",
+  "about_app_homepage": "Source code",
+  "about_app_homepage_subtitle": "Go to the app source code",
+  "about_app_issues": "Report issue",
+  "about_app_issues_subtitle": "Open a bug to report an issue with the app",
+  "about_app_disconnect_aircraft": "Disconnect aircraft",
+  "about_app_disconnect_aircraft_subtitle": "For switching to another aircraft or download aircraft data again",
+
+  "about_disconnect_confirm_title": "Disconnect aircraft?",
+  "about_disconnect_confirm_message": "You will need to provide aircraft data address again."
 }

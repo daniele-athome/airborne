@@ -32,10 +32,8 @@ class _AboutScreenState extends State<AboutScreen> {
   void _onLogout(BuildContext context) {
     showConfirm(
       context: context,
-      // TODO i18n
-      title: "Disconnettere l'aereo?",
-        // TODO i18n
-      text: "Dovrai immettere di nuovo l'indirizzo dei dati dell'aereo.",
+      title: AppLocalizations.of(context)!.about_disconnect_confirm_title,
+      text: AppLocalizations.of(context)!.about_disconnect_confirm_message,
       destructiveOk: true,
       okCallback: () {
         _appConfig.pilotName = null;
@@ -47,14 +45,12 @@ class _AboutScreenState extends State<AboutScreen> {
 
   List<Widget> _buildCupertinoItems(BuildContext context) => [
     CupertinoFormSection(
-      // TODO i18n
-      header: Text('Aeromobile'.toUpperCase()),
+      header: Text(AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
       children: [
         CupertinoFormRowContainer(
           child: CupertinoFormRow(
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('Marche'),
+            prefix: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
             child: Text(_appConfig.currentAircraft!.callSign,
               style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontWeight: FontWeight.bold)),
           ),
@@ -63,7 +59,7 @@ class _AboutScreenState extends State<AboutScreen> {
           child: CupertinoFormButtonRow(
             onPressed: () => openUrl(context, _appConfig.locationUrl),
             padding: kDefaultCupertinoFormRowPadding,
-            prefix: const Text('Hangar'),
+            prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -77,8 +73,7 @@ class _AboutScreenState extends State<AboutScreen> {
       ],
     ),
     CupertinoFormSection(
-      // TODO i18n
-      header: Text('Piloti'.toUpperCase()),
+      header: Text(AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
       children: [
         ..._appConfig.pilotNames.map((e) => CupertinoFormRowContainer(
           child: Padding(
@@ -100,8 +95,7 @@ class _AboutScreenState extends State<AboutScreen> {
         CupertinoFormRowContainer(
           child: CupertinoFormRow(
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('Versione'),
+            prefix: Text(AppLocalizations.of(context)!.about_app_version),
             child: FutureBuilder(
               future: PackageInfo.fromPlatform(),
               initialData: null,
@@ -117,8 +111,7 @@ class _AboutScreenState extends State<AboutScreen> {
           child: CupertinoFormButtonRow(
             onPressed: () => openUrl(context, pubspec.homepage),
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('Codice sorgente'),
+            prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
             child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
         ),
@@ -126,8 +119,7 @@ class _AboutScreenState extends State<AboutScreen> {
           child: CupertinoFormButtonRow(
             onPressed: () => openUrl(context, pubspec.issueTracker),
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('Segnala problema'),
+            prefix: Text(AppLocalizations.of(context)!.about_app_issues),
             child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
         ),
@@ -140,9 +132,8 @@ class _AboutScreenState extends State<AboutScreen> {
           Expanded(
             child: CupertinoButton(
               onPressed: () => _onLogout(context),
-              // TODO i18n
-              child: const Text('Disconnetti aereo',
-                style: TextStyle(color: CupertinoColors.destructiveRed),
+              child: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft,
+                style: const TextStyle(color: CupertinoColors.destructiveRed),
               ),
             ),
           ),
@@ -152,32 +143,27 @@ class _AboutScreenState extends State<AboutScreen> {
   ];
 
   List<Widget> _buildMaterialItems(BuildContext context) => [
-    // TODO i18n
-    const HeaderListTile('Aeromobile', first: true),
+    HeaderListTile(AppLocalizations.of(context)!.about_aircraft_info, first: true),
     ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      // TODO i18n
-      subtitle: const Text('Marche'),
+      subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
       title: Text(_appConfig.currentAircraft!.callSign,
         style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold),
       ),
     ),
     ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      // TODO i18n
-      subtitle: const Text('Hangar'),
+      subtitle: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
       title: Text(_appConfig.locationName,
         style: Theme.of(context).textTheme.headline6,
       ),
       trailing: IconButton(
         onPressed: () => openUrl(context, _appConfig.locationUrl),
-        // TODO i18n
-        tooltip: 'Open in maps',
+        tooltip: AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
         icon: const Icon(Icons.open_in_new),
       ),
     ),
-    // TODO i18n
-    const HeaderListTile('Piloti'),
+    HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
     ..._appConfig.pilotNames.map((e) => ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
@@ -190,8 +176,7 @@ class _AboutScreenState extends State<AboutScreen> {
         height: double.infinity,
         child: Icon(Icons.info),
       ),
-      // TODO i18n
-      subtitle: const Text('Versione'),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_version),
       title: FutureBuilder(
         future: PackageInfo.fromPlatform(),
         initialData: null,
@@ -208,10 +193,8 @@ class _AboutScreenState extends State<AboutScreen> {
         height: double.infinity,
         child: Icon(Icons.all_inclusive),
       ),
-      // TODO i18n
-      title: const Text('Codice sorgente'),
-      // TODO i18n
-      subtitle: const Text("Vai al codice sorgente dell'app"),
+      title: Text(AppLocalizations.of(context)!.about_app_homepage),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_homepage_subtitle),
       onTap: () => openUrl(context, pubspec.homepage),
     ),
     ListTile(
@@ -220,10 +203,8 @@ class _AboutScreenState extends State<AboutScreen> {
         height: double.infinity,
         child: Icon(Icons.bug_report, color: Colors.red),
       ),
-      // TODO i18n
-      title: const Text('Segnala problema'),
-      // TODO i18n
-      subtitle: const Text("Apri un bug per segnalare un problema con l'app"),
+      title: Text(AppLocalizations.of(context)!.about_app_issues),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
       onTap: () => openUrl(context, pubspec.issueTracker),
     ),
     ListTile(
@@ -232,10 +213,8 @@ class _AboutScreenState extends State<AboutScreen> {
         height: double.infinity,
         child: Icon(Icons.logout, color: Colors.blue.shade600),
       ),
-      // TODO i18n
-      title: const Text('Disconnetti aereo'),
-      // TODO i18n
-      subtitle: const Text('Per cambiare aereo e riscaricare i dati'),
+      title: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft_subtitle),
       onTap: () => _onLogout(context),
     ),
   ];

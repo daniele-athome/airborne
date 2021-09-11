@@ -57,5 +57,21 @@
 
   "pilotSelect_title": "Chi sei?",
   "pilotSelect_confirm_title": "Confermi?",
-  "pilotSelect_confirm_message": "Dici di essere {name}."
+  "pilotSelect_confirm_message": "Dici di essere {name}.",
+
+  "about_aircraft_info": "Aeromobile",
+  "about_aircraft_callsign": "Marche",
+  "about_aircraft_hangar": "Hangar",
+  "about_aircraft_hangar_open_maps": "Apri in mappe",
+  "about_aircraft_pilots": "Piloti",
+  "about_app_version": "Versione",
+  "about_app_homepage": "Codice sorgente",
+  "about_app_homepage_subtitle": "Vai al codice sorgente dell'app",
+  "about_app_issues": "Segnala problema",
+  "about_app_issues_subtitle": "Apri un bug per segnalare un problema con l'app",
+  "about_app_disconnect_aircraft": "Disconnetti aereo",
+  "about_app_disconnect_aircraft_subtitle": "Per cambiare aereo e riscaricare i dati",
+
+  "about_disconnect_confirm_title": "Disconnettere l'aereo?",
+  "about_disconnect_confirm_message": "Dovrai immettere di nuovo l'indirizzo dei dati dell'aereo."
 }

@@ -106,9 +106,42 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ),
         ),
-        // TODO version info and buttons
+        CupertinoFormRowContainer(
+          child: CupertinoFormButtonRow(
+            onPressed: () => openUrl(context, pubspec.homepage),
+            padding: kDefaultCupertinoFormRowPadding,
+            // TODO i18n
+            prefix: const Text('Codice sorgente'),
+            child: const Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel),
+          ),
+        ),
+        CupertinoFormRowContainer(
+          child: CupertinoFormButtonRow(
+            onPressed: () => openUrl(context, pubspec.issueTracker),
+            padding: kDefaultCupertinoFormRowPadding,
+            // TODO i18n
+            prefix: const Text('Segnala problema'),
+            child: const Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel),
+          ),
+        ),
       ],
     ),
+    const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+    CupertinoFormSection(children: <Widget>[
+      Row(
+        children: [
+          Expanded(
+            child: CupertinoButton(
+              onPressed: () => _onLogout(context),
+              // TODO i18n
+              child: const Text('Disconnetti aereo',
+                style: TextStyle(color: CupertinoColors.destructiveRed),
+              ),
+            ),
+          ),
+        ],
+      )
+    ]),
   ];
 
   List<Widget> _buildMaterialItems(BuildContext context) => [

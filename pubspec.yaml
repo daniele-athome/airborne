@@ -35,16 +35,16 @@ dependencies:
   googleapis: 4.0.0
   googleapis_auth: 1.1.0
   intl: 0.17.0
-  logging: 1.0.1
+  logging: 1.0.2
   material_segmented_control: 3.1.2
   package_info_plus: 1.0.6
   path: 1.8.0
-  path_provider: 2.0.3
+  path_provider: 2.0.5
   provider: 6.0.0
-  shared_preferences: 2.0.7
+  shared_preferences: 2.0.8
   solar_calculator: 1.0.2
-  syncfusion_flutter_calendar: 19.2.60
-  syncfusion_localizations: 19.2.60
+  syncfusion_flutter_calendar: 19.2.62
+  syncfusion_localizations: 19.2.62
   # can't update to 0.8.0 because its forced by syncfusion_flutter_calendar
   timezone: 0.7.0
   url_launcher: 6.0.10
@@ -54,6 +54,7 @@ dev_dependencies:
   build_runner:
   flutter_driver:
     sdk: flutter
+  flutter_lints: any
   flutter_test:
     sdk: flutter
   lint: any

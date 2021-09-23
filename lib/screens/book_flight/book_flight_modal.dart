@@ -58,15 +58,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
   bool get _isEditing => widget.event.id != null;
 
   @override
-  void initState() {
-    _updateEventData();
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     _service = Provider.of<BookFlightCalendarService>(context);
     _appConfig = Provider.of<AppConfig>(context, listen: false);
+    _updateEventData();
     super.didChangeDependencies();
   }
 
@@ -79,10 +74,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _updateEventData() {
     _pilotName = widget.event.pilotName;
     _notes = widget.event.notes;
-    _startDateController.value = widget.event.from;
-    _startDate = widget.event.from;
-    _endDate = widget.event.to;
-    _endDateController.value = widget.event.to;
+    _startDateController.value = widget.event.tzFrom(_appConfig.locationTimeZone);
+    _startDate = widget.event.tzFrom(_appConfig.locationTimeZone);
+    _endDate = widget.event.tzTo(_appConfig.locationTimeZone);
+    _endDateController.value = widget.event.tzTo(_appConfig.locationTimeZone);
     _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
     _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
   }
@@ -500,8 +495,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final event = FlightBooking(
       widget.event.id,
       _pilotName,
-      TZDateTime.from(_startDate, _appConfig.locationTimeZone),
-      TZDateTime.from(_endDate, _appConfig.locationTimeZone),
+      TZDateTime.from(_startDate, _appConfig.locationTimeZone).toUtc(),
+      TZDateTime.from(_endDate, _appConfig.locationTimeZone).toUtc(),
       _notes,
     );
 

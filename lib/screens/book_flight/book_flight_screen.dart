@@ -508,7 +508,8 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
 
     if (_calendarController.view == CalendarView.schedule || _calendarController.view == CalendarView.month) {
       // TODO locale
-      String timeText = '${DateFormat('HH:mm').format(event.from)} - ${DateFormat('HH:mm').format(event.to)}';
+      String timeText = '${DateFormat('HH:mm').format(event.tzFrom(_appConfig.locationTimeZone))} -'
+          ' ${DateFormat('HH:mm').format(event.tzTo(_appConfig.locationTimeZone))}';
       if (event.notes != null) {
         timeText += ' (${event.notes})';
       }
@@ -607,7 +608,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
                     alignment: Alignment.topRight,
                     // TODO locale
                     child: Text('${DateFormat('HH:mm').format(
-                      event.from)} - ${DateFormat('HH:mm').format(event.to)}',
+                      event.tzFrom(_appConfig.locationTimeZone))} - ${DateFormat('HH:mm').format(event.tzTo(_appConfig.locationTimeZone))}',
                     style: const TextStyle(fontSize: 14)),
                   ),
                 ),
@@ -634,6 +635,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         showDatePickerButton: false,
         showCurrentTimeIndicator: true,
         appointmentBuilder: _appointmentBuilder,
+        timeZone: appConfig.locationTimeZone.name,
         monthViewSettings: const MonthViewSettings(
           agendaItemHeight: 50,
           showAgenda: true,

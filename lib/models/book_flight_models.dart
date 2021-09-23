@@ -10,6 +10,14 @@ class FlightBooking {
   TZDateTime to;
   String? notes;
 
+  TZDateTime tzFrom(Location location) {
+    return TZDateTime.from(from, location);
+  }
+
+  TZDateTime tzTo(Location location) {
+    return TZDateTime.from(to, location);
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

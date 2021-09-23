@@ -22,7 +22,7 @@ void main() {
           GlobalCupertinoLocalizations.delegate,
         ],
         locale: const Locale('en'),
-        home: _provideAppConfigForSampleAircraft(SetAircraftDataScreen())
+        home: _provideAppConfigForSampleAircraft(const SetAircraftDataScreen())
     );
 
   group('Single aircraft data screen tests', () {

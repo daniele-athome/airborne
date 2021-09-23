@@ -32,7 +32,7 @@ Future<void> main() async {
   runApp(
     Provider<AppConfig>.value(
       value: appConfig,
-      builder: (_, __) => MainNavigationApp(),
+      builder: (_, __) => const MainNavigationApp(),
     ),
   );
 }
@@ -89,6 +89,7 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
 // Another way could be by accepting a few constructor parameters...
 class MainNavigationApp extends StatelessWidget {
+  const MainNavigationApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +112,7 @@ class MainNavigationApp extends StatelessWidget {
             '/': (context) => app.MainNavigation.withServices(appConfig,
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
             ),
-            'pilot-select': (context) => PilotSelectScreen(),
+            'pilot-select': (context) => const PilotSelectScreen(),
           },
           debugShowCheckedModeBanner: false,
           material: (_, __) => MaterialAppData(

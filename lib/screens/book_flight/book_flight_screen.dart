@@ -30,6 +30,8 @@ Color _resolveEventBackgroundColor(BuildContext context) =>
     getBrightness(context) == Brightness.dark ? _kEventBackgroundDarkColor : _kEventBackgroundColor;
 
 class BookFlightScreen extends StatefulWidget {
+  const BookFlightScreen({Key? key}) : super(key: key);
+
   @override
   _BookFlightScreenState createState() => _BookFlightScreenState();
 }
@@ -424,7 +426,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
             children: _buildCalendarSwitches(context),
             selectionIndex: _currentCalendarSwitch,
             borderColor: Colors.grey,
-            selectedColor: Theme.of(context).accentColor,
+            selectedColor: Theme.of(context).colorScheme.secondary,
             unselectedColor: Theme.of(context).dialogBackgroundColor,
             onSegmentChosen: _changeView,
           ),

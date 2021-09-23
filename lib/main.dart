@@ -69,12 +69,14 @@ Future<void> main() async {
   runApp(
     Provider.value(
       value: appConfig,
-      builder: (_, __) => MyApp(),
+      builder: (_, __) => const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -114,8 +116,8 @@ class _MyAppState extends State<MyApp> {
         initialRoute: _getInitialRoute(appConfig),
         routes: <String, WidgetBuilder>{
           '/': (context) => MainNavigation(appConfig),
-          'pilot-select': (context) => PilotSelectScreen(),
-          'aircraft-data': (context) => SetAircraftDataScreen(),
+          'pilot-select': (context) => const PilotSelectScreen(),
+          'aircraft-data': (context) => const SetAircraftDataScreen(),
         },
         debugShowCheckedModeBanner: false,
         material: (_, __) => MaterialAppData(
@@ -145,14 +147,16 @@ class MainNavigation extends StatefulWidget {
   final BookFlightCalendarService? bookFlightCalendarService;
   // TODO other services one day...
 
-  const MainNavigation(this.appConfig) :
-        bookFlightCalendarService = null;
+  const MainNavigation(this.appConfig, {Key? key})
+      : bookFlightCalendarService = null,
+        super(key: key);
 
   /// Mainly for integration testing.
   @visibleForTesting
   const MainNavigation.withServices(this.appConfig, {
+    Key? key,
     this.bookFlightCalendarService,
-  });
+  }) : super(key: key);
 
   @override
   _MainNavigationState createState() => _MainNavigationState();
@@ -179,12 +183,12 @@ class _MainNavigationState extends State<MainNavigation> {
       case 0:
         return Provider.value(
           value: _bookFlightCalendarService,
-          child: BookFlightScreen(),
+          child: const BookFlightScreen(),
         );
       case 1:
         return FlightLogScreen();
       case 2:
-        return AboutScreen();
+        return const AboutScreen();
       default:
         throw UnsupportedError('Unsupported tab');
     }

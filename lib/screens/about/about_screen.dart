@@ -16,6 +16,8 @@ import '../../pubspec.yaml.g.dart' as pubspec;
 
 // TODO convert to stateless widget if using only AppConfig
 class AboutScreen extends StatefulWidget {
+  const AboutScreen({Key? key}) : super(key: key);
+
   @override
   _AboutScreenState createState() => _AboutScreenState();
 }

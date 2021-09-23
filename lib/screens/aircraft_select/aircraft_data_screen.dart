@@ -18,6 +18,7 @@ import '../../helpers/utils.dart';
 final Logger _log = Logger((AircraftData).toString());
 
 class SetAircraftDataScreen extends StatefulWidget {
+  const SetAircraftDataScreen({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SetAircraftDataScreenState();

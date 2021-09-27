@@ -29,6 +29,8 @@ const _kEventBackgroundDarkColor = Colors.blue;
 Color _resolveEventBackgroundColor(BuildContext context) =>
     getBrightness(context) == Brightness.dark ? _kEventBackgroundDarkColor : _kEventBackgroundColor;
 
+const _kEventDefaultDuration = const Duration(hours: 1);
+
 class BookFlightScreen extends StatefulWidget {
   const BookFlightScreen({Key? key}) : super(key: key);
 
@@ -345,11 +347,11 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   void _bookFlight(BuildContext context, AppConfig appConfig, FlightBooking? event) {
     final FlightBooking model;
     if (event == null) {
-      // TODO startDate = tomorrow 12:00
-      final date = TZDateTime.now(appConfig.locationTimeZone);
+      // start date is tomorrow 12:00
+      DateTime now = DateTime.now();
+      final date = TZDateTime(appConfig.locationTimeZone, now.year, now.month, now.day).add(const Duration(days: 1, hours: 12));
       final dateFrom = date;
-      // TODO use constant for default duration
-      final dateTo = date.add(const Duration(hours: 1));
+      final dateTo = date.add(_kEventDefaultDuration);
 
       model = FlightBooking(
         null,

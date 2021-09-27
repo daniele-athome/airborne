@@ -465,8 +465,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
         }
       }
       else {
-        // TODO allow pilot change but only to the non-pilot
-
         if (_pilotName != widget.event.pilotName) {
           showConfirm(
             context: context,

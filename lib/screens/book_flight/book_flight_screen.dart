@@ -29,7 +29,7 @@ const _kEventBackgroundDarkColor = Colors.blue;
 Color _resolveEventBackgroundColor(BuildContext context) =>
     getBrightness(context) == Brightness.dark ? _kEventBackgroundDarkColor : _kEventBackgroundColor;
 
-const _kEventDefaultDuration = const Duration(hours: 1);
+const _kEventDefaultDuration = Duration(hours: 1);
 
 class BookFlightScreen extends StatefulWidget {
   const BookFlightScreen({Key? key}) : super(key: key);

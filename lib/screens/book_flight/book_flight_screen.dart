@@ -306,8 +306,8 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     });
   }
 
-  /// Only in month view: go to day view on selected date
-  // TODO let the user navigate the views quickly (e.g. long press on month box in agenda view should bring the user to month view)
+  /// Only in month view: go to day view on selected date.
+  /// Only in schedule view: go to month view for selected month.
   void _onLongPressCalendaer(BuildContext context, AppConfig appConfig, CalendarLongPressDetails calendarLongPressDetails) {
     if (calendarLongPressDetails.targetElement == CalendarElement.calendarCell &&
         _calendarController.view == CalendarView.month) {
@@ -315,6 +315,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         _calendarController.selectedDate = calendarLongPressDetails.date;
         _calendarController.displayDate = calendarLongPressDetails.date;
         _calendarController.view = CalendarView.day;
+      });
+    }
+    else if (calendarLongPressDetails.targetElement == CalendarElement.header &&
+        _calendarController.view == CalendarView.schedule) {
+      setState(() {
+        _calendarController.selectedDate = calendarLongPressDetails.date;
+        _calendarController.displayDate = calendarLongPressDetails.date;
+        _calendarController.view = CalendarView.month;
       });
     }
   }

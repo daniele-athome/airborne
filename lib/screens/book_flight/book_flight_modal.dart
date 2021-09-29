@@ -212,6 +212,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           CupertinoDateTimeFormFieldRow(
             prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
             helper: _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
+            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
             onChanged: (value) => _onStartDateChanged(value, true),
             controller: _startDateController,
           ),
@@ -219,6 +220,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           CupertinoDateTimeFormFieldRow(
             prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_end),
             helper: _SunTimesListTile(sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
+            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
             onChanged: (value) => _onEndDateChanged(value, true),
             controller: _endDateController,
           ),

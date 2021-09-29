@@ -3,6 +3,7 @@
 
   "dialog_button_ok": "OK",
   "dialog_button_cancel": "Annulla",
+  "dialog_button_done": "Chiudi",
   "dialog_title_error": "Errore",
 
   "mainNav_bookFlight": "Prenota",

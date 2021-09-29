@@ -200,6 +200,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     this.prefix,
     this.controller,
     this.helper,
+    required this.doneButtonText,
     DateTime? initialValue,
     ValueChanged<DateTime>? onChanged,
     FormFieldSetter<DateTime>? onSaved,
@@ -210,60 +211,88 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
         onSaved: onSaved,
         builder: (FormFieldState<DateTime> field) {
           void onTapDateHandler() {
-            showDatePicker(
+            showCupertinoModalPopup(
               context: field.context,
-              builder: (context, child) => Theme(
-                  data: getBrightness(context) == Brightness.dark ?
-                    ThemeData.dark() : ThemeData.light(),
-                  child: child!
+              builder: (context) => Container(
+                height: 300,
+                color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CupertinoButton(
+                          child: Text(doneButtonText),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.date,
+                        onDateTimeChanged: (value) {
+                          final newValue = DateTime(
+                            value.year,
+                            value.month,
+                            value.day,
+                            field.value!.hour,
+                            field.value!.minute,
+                          );
+                          field.didChange(newValue);
+                          if (onChanged != null) {
+                            onChanged(newValue);
+                          }
+                        },
+                        initialDateTime: field.value,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              initialDate: field.value!,
-              firstDate: DateTime(1900),
-              lastDate: DateTime(2100),
-            ).then((value) {
-              if (value != null) {
-                final newValue = DateTime(
-                  value.year,
-                  value.month,
-                  value.day,
-                  field.value!.hour,
-                  field.value!.minute,
-                );
-                field.didChange(newValue);
-                if (onChanged != null) {
-                  onChanged(newValue);
-                }
-              }
-            });
+            );
           }
 
           void onTapTimeHandler() {
-            showTimePicker(
+            showCupertinoModalPopup(
               context: field.context,
-              builder: (context, child) => Theme(
-                  data: getBrightness(context) == Brightness.dark ?
-                    ThemeData.dark() : ThemeData.light(),
-                  child: child!
+              builder: (context) => Container(
+                height: 300,
+                color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CupertinoButton(
+                          child: Text(doneButtonText),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.time,
+                        onDateTimeChanged: (value) {
+                          final newValue = DateTime(
+                            field.value!.year,
+                            field.value!.month,
+                            field.value!.day,
+                            value.hour,
+                            value.minute,
+                          );
+                          field.didChange(newValue);
+                          if (onChanged != null) {
+                            onChanged(newValue);
+                          }
+                        },
+                        use24hFormat: true,
+                        initialDateTime: field.value,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              initialTime: TimeOfDay(
-                hour: field.value!.hour,
-                minute: field.value!.minute,
-              ),
-            ).then((value) {
-              if (value != null) {
-                final newValue = DateTime(
-                  field.value!.year,
-                  field.value!.month,
-                  field.value!.day,
-                  value.hour,
-                  value.minute,
-                );
-                field.didChange(newValue);
-                if (onChanged != null) {
-                  onChanged(newValue);
-                }
-              }
-            });
+            );
           }
 
           final TextStyle textStyle = CupertinoTheme.of(field.context).textTheme.textStyle;
@@ -314,6 +343,8 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   final DateTimePickerController? controller;
 
   final Widget? helper;
+
+  final String doneButtonText;
 
   @override
   _CupertinoDateTimeFormFieldRowState createState() =>

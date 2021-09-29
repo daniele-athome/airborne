@@ -6,6 +6,7 @@
 
   "dialog_button_ok": "OK",
   "dialog_button_cancel": "Cancel",
+  "dialog_button_done": "Done",
   "dialog_title_error": "Error",
 
   "mainNav_bookFlight": "Bookings",

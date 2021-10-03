@@ -9,7 +9,7 @@ import 'cupertinoplus.dart';
 
 Decoration _defaultDecoration(BuildContext context) => isCupertino(context) ?
   BoxDecoration(
-    color: kCupertinoDialogScaffoldBackgroundColor(context),
+    color: kCupertinoDialogScaffoldBackgroundColor(context).resolveFrom(context),
     shape: BoxShape.rectangle,
     borderRadius: const BorderRadius.all(Radius.circular(10)),
   ) :

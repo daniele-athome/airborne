@@ -223,74 +223,79 @@ class _AboutScreenState extends State<AboutScreen> {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: isCupertino(context) ? CupertinoColors.systemGroupedBackground.resolveFrom(context) :
-      Theme.of(context).scaffoldBackgroundColor,
-      child: ListView(
-        children: [
-          Stack(
-            children: [
-              Positioned(
-                // TODO not very good sizing and loading indicator
-                child: Image(
-                  image: _appConfig.aircraftPicture,
-                  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                    if (wasSynchronouslyLoaded) {
-                      return child;
-                    }
-                    return Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minHeight: 250),
-                        child: AnimatedOpacity(
-                          opacity: frame == null ? 0 : 1,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeOut,
-                          child: child,
-                        ),
+    final list = ListView(
+      children: [
+        Stack(
+          children: [
+            Positioned(
+              // TODO not very good sizing and loading indicator
+              child: Image(
+                image: _appConfig.aircraftPicture,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (wasSynchronouslyLoaded) {
+                    return child;
+                  }
+                  return Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 250),
+                      child: AnimatedOpacity(
+                        opacity: frame == null ? 0 : 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOut,
+                        child: child,
                       ),
-                    );
-                  },
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                    return loadingProgress != null ?
-                      Container(
-                        height: 250,
-                        alignment: Alignment.center,
-                        child: const CircularProgressIndicator.adaptive(),
-                      ) :
-                      child;
-                  },
-                ),
-              ),
-              Positioned.fill(
-                bottom: -10,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 30.0,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
-                      // TODO is this the right color? I'm getting confused...
-                      color: isCupertino(context) ? CupertinoColors.systemGroupedBackground.resolveFrom(context) :
-                        Theme.of(context).scaffoldBackgroundColor,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black54,
-                          offset: Offset(0.0, -1.0),
-                          blurRadius: 5.0,
-                        ),
-                      ],
                     ),
+                  );
+                },
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  return loadingProgress != null ?
+                  Container(
+                    height: 250,
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator.adaptive(),
+                  ) :
+                  child;
+                },
+              ),
+            ),
+            Positioned.fill(
+              bottom: -10,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 30.0,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
+                    // TODO is this the right color? I'm getting confused...
+                    color: isCupertino(context) ? CupertinoColors.systemGroupedBackground.resolveFrom(context) :
+                    Theme.of(context).scaffoldBackgroundColor,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black54,
+                        offset: Offset(0.0, -1.0),
+                        blurRadius: 5.0,
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-          ...isCupertino(context) ?
-            _buildCupertinoItems(context) :
-            _buildMaterialItems(context),
-        ],
-      ),
+            ),
+          ],
+        ),
+        ...isCupertino(context) ?
+        _buildCupertinoItems(context) :
+        _buildMaterialItems(context),
+      ],
     );
+    return isCupertino(context) ?
+      Container(
+        color: CupertinoColors.systemGroupedBackground.resolveFrom(context),
+        child: list,
+      ) :
+      Ink(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: list,
+      );
   }
 }
 

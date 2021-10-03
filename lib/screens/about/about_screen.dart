@@ -45,104 +45,108 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  List<Widget> _buildCupertinoItems(BuildContext context) => [
-    CupertinoFormSection(
-      header: Text(AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
-      children: [
-        CupertinoFormRowContainer(
-          child: CupertinoFormRow(
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
-            child: Text(_appConfig.currentAircraft!.callSign,
-              style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontWeight: FontWeight.bold)),
-          ),
-        ),
-        CupertinoFormRowContainer(
-          child: CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, _appConfig.locationUrl),
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(_appConfig.locationName),
-                const SizedBox(width: 2),
-                Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
-              ],
-            ),
-          ),
-        ),
-      ],
-    ),
-    CupertinoFormSection(
-      header: Text(AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
-      children: [
-        ..._appConfig.pilotNames.map((e) => CupertinoFormRowContainer(
-          child: Padding(
-            padding: kDefaultCupertinoFormRowPadding,
-            child: Row(
-              children: [
-                CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
-                const SizedBox(width: 14),
-                Expanded(child: Text(e)),
-              ],
-            ),
-          ),
-        )),
-      ],
-    ),
-    CupertinoFormSection(
-      header: Text(AppLocalizations.of(context)!.appName.toUpperCase()),
-      children: [
-        CupertinoFormRowContainer(
-          child: CupertinoFormRow(
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(AppLocalizations.of(context)!.about_app_version),
-            child: FutureBuilder(
-              future: PackageInfo.fromPlatform(),
-              initialData: null,
-              builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
-                snapshot.connectionState == ConnectionState.done ?
-                '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
-                    : '',
-              ),
-            ),
-          ),
-        ),
-        CupertinoFormRowContainer(
-          child: CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, pubspec.homepage),
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
-            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
-          ),
-        ),
-        CupertinoFormRowContainer(
-          child: CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, pubspec.issueTracker),
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(AppLocalizations.of(context)!.about_app_issues),
-            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
-          ),
-        ),
-      ],
-    ),
-    const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-    CupertinoFormSection(children: <Widget>[
-      Row(
+  List<Widget> _buildCupertinoItems(BuildContext context) {
+    final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
+    return [
+      CupertinoFormSection(
+        header: Text(AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
         children: [
-          Expanded(
-            child: CupertinoButton(
-              onPressed: () => _onLogout(context),
-              child: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft,
-                style: const TextStyle(color: CupertinoColors.destructiveRed),
+          CupertinoFormRowContainer(
+            child: CupertinoFormRow(
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
+              child: Text(_appConfig.currentAircraft!.callSign,
+                style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+            ),
+          ),
+          CupertinoFormRowContainer(
+            child: CupertinoFormButtonRow(
+              onPressed: () => openUrl(context, _appConfig.locationUrl),
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(_appConfig.locationName, style: textStyle),
+                  const SizedBox(width: 2),
+                  Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+                ],
               ),
             ),
           ),
         ],
-      )
-    ]),
-  ];
+      ),
+      CupertinoFormSection(
+        header: Text(AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
+        children: [
+          ..._appConfig.pilotNames.map((e) => CupertinoFormRowContainer(
+            child: Padding(
+              padding: kDefaultCupertinoFormRowPadding,
+              child: Row(
+                children: [
+                  CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+                  const SizedBox(width: 14),
+                  Expanded(child: Text(e, style: textStyle)),
+                ],
+              ),
+            ),
+          )),
+        ],
+      ),
+      CupertinoFormSection(
+        header: Text(AppLocalizations.of(context)!.appName.toUpperCase()),
+        children: [
+          CupertinoFormRowContainer(
+            child: CupertinoFormRow(
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(AppLocalizations.of(context)!.about_app_version),
+              child: FutureBuilder(
+                future: PackageInfo.fromPlatform(),
+                initialData: null,
+                builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
+                  snapshot.connectionState == ConnectionState.done ?
+                  '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+                      : '',
+                  style: textStyle
+                ),
+              ),
+            ),
+          ),
+          CupertinoFormRowContainer(
+            child: CupertinoFormButtonRow(
+              onPressed: () => openUrl(context, pubspec.homepage),
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
+              child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            ),
+          ),
+          CupertinoFormRowContainer(
+            child: CupertinoFormButtonRow(
+              onPressed: () => openUrl(context, pubspec.issueTracker),
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(AppLocalizations.of(context)!.about_app_issues),
+              child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+      CupertinoFormSection(children: <Widget>[
+        Row(
+          children: [
+            Expanded(
+              child: CupertinoButton(
+                onPressed: () => _onLogout(context),
+                child: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft,
+                  style: const TextStyle(color: CupertinoColors.destructiveRed),
+                ),
+              ),
+            ),
+          ],
+        )
+      ]),
+    ];
+  }
 
   List<Widget> _buildMaterialItems(BuildContext context) => [
     HeaderListTile(AppLocalizations.of(context)!.about_aircraft_info, first: true),

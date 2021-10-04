@@ -157,6 +157,7 @@ Future<T?> showConfirm<T>({
 Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
   final uri = Uri.parse(url);
   final HttpClient httpClient = HttpClient();
+  httpClient.findProxy = HttpClient.findProxyFromEnvironment;
   if (username != null && password != null) {
     httpClient.addCredentials(
         uri, "", HttpClientBasicCredentials(username, password));

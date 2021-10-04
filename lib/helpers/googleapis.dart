@@ -21,6 +21,7 @@ class GoogleServiceAccountService {
     if (_client == null || _client!.credentials.accessToken.hasExpired) {
       return clientViaServiceAccount(_serviceAccount, scopes)
           .then((AuthClient client) {
+        client.findProxy = http.HttpClient.findProxyFromEnvironment;
         _client = client;
         return client;
       });

@@ -24,7 +24,7 @@ class GoogleServiceAccountService {
       // FIXME doesn't work on web platform
       final HttpClient httpClient = HttpClient();
       httpClient.findProxy = HttpClient.findProxyFromEnvironment;
-      return clientViaServiceAccount(_serviceAccount, scopes, baseClient: IOClient(httpClient))
+      return clientViaServiceAccount(_serviceAccount, scopes, baseClient: http.IOClient(httpClient))
           .then((AuthClient client) {
         _client = client;
         return client;

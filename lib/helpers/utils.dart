@@ -154,6 +154,7 @@ Future<T?> showConfirm<T>({
   );
 }
 
+/// FIXME doesn't work on web platform (we should use http package)
 Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
   final uri = Uri.parse(url);
   final HttpClient httpClient = HttpClient();

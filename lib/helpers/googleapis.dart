@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:googleapis/calendar/v3.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart' as http_io;
 
 class GoogleServiceAccountService {
   static const scopes = [
@@ -24,7 +25,7 @@ class GoogleServiceAccountService {
       // FIXME doesn't work on web platform
       final HttpClient httpClient = HttpClient();
       httpClient.findProxy = HttpClient.findProxyFromEnvironment;
-      return clientViaServiceAccount(_serviceAccount, scopes, baseClient: http.IOClient(httpClient))
+      return clientViaServiceAccount(_serviceAccount, scopes, baseClient: http_io.IOClient(httpClient))
           .then((AuthClient client) {
         _client = client;
         return client;

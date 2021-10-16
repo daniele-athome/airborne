@@ -289,14 +289,14 @@ packages:
       name: googleapis
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.1"
+    version: "6.0.0"
   googleapis_auth:
     dependency: "direct main"
     description:
       name: googleapis_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   graphs:
     dependency: transitive
     description:
@@ -751,28 +751,28 @@ packages:
       name: syncfusion_flutter_calendar
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.3.44"
+    version: "19.3.45"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.3.44"
+    version: "19.3.45"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.3.44"
+    version: "19.3.45"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.3.44"
+    version: "19.3.45"
   term_glyph:
     dependency: transitive
     description:

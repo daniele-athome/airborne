@@ -65,6 +65,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
+  // FIXME this code is similar to the one in about_screen.dart
   void _downloadData(BuildContext context, AppConfig appConfig) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -83,16 +84,10 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         .timeout(kNetworkRequestTimeout)
         .then((value) async {
           _log.finest(value);
-          return _validateAndStoreAircraft(value, appConfig);
+          return _validateAndStoreAircraft(value, _aircraftUrl!, appConfig);
         }).then((AircraftData? aircraftData) {
           if (aircraftData != null) {
-            // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
-            // probably FutureProgressDialog popping the navigator has something to do with it
-            Future.delayed(Duration.zero, () {
-              appConfig.currentAircraft = aircraftData;
-              Navigator.of(context, rootNavigator: true)
-                  .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
-            });
+            appConfig.currentAircraft = aircraftData;
           }
           return aircraftData;
         }).catchError((error, StackTrace? stacktrace) {
@@ -131,13 +126,13 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     }
   }
 
-  Future<AircraftData?> _validateAndStoreAircraft(File file, AppConfig appConfig) async {
-    final reader = AircraftDataReader(dataFile: file);
+  Future<AircraftData?> _validateAndStoreAircraft(File file, String url, AppConfig appConfig) async {
+    final reader = AircraftDataReader(dataFile: file, urlFile: null);
     final validation = await reader.validate();
     _log.finest('VALIDATION: $validation');
     if (validation) {
       try {
-        final dataFile = await addAircraftDataFile(reader);
+        final dataFile = await addAircraftDataFile(reader, url);
         _log.finest(dataFile);
         await reader.open();
         final aircraftData = reader.toAircraftData();

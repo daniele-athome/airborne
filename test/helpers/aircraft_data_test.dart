@@ -27,19 +27,19 @@ void main() {
       final badZipFile = File(path.join(tmpDir.path, 'aircraft_test_${Random().nextInt(1000)}.zip'));
       // damaged zip
       badZipFile.writeAsStringSync("PK###BAD ZIP FILE");
-      final reader = AircraftDataReader(dataFile: badZipFile);
+      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
       expect(await reader.validate(), false);
     });
 
     test('A zip file with an invalid aircraft JSON file should not pass validation', () async {
       final badZipFile = await _createAircraftFileWithData(filenameWithoutExtension: 'a1234', jsonData: '{3723;.-\\||}');
-      final reader = AircraftDataReader(dataFile: badZipFile);
+      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
       expect(await reader.validate(), false);
     });
 
     test('A zip file with an aircraft JSON file missing stuff should not pass validation', () async {
       final badZipFile = await _createAircraftFileWithData(filenameWithoutExtension: 'a1234', jsonData: '{"aircraft_id":"a1234","callsign":"A-1234"}');
-      final reader = AircraftDataReader(dataFile: badZipFile);
+      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
       expect(await reader.validate(), false);
     });
 
@@ -67,7 +67,7 @@ void main() {
     "timezone": "Europe/Berlin"
   }
 }''');
-      final reader = AircraftDataReader(dataFile: goodZipFile);
+      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
       expect(await reader.validate(), true);
     });
 
@@ -87,7 +87,7 @@ void main() {
 
     test('Aircraft data should exist in temp directory after open', () async {
       final goodZipFile = await _createExampleValidAircraftData();
-      final reader = AircraftDataReader(dataFile: goodZipFile);
+      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
       final baseDir = await getTemporaryDirectory();
       final directory = Directory(path.join(baseDir.path, 'aircrafts', 'a1234'));
       final actual = await reader.open();
@@ -104,9 +104,9 @@ void main() {
 
     test('Aircraft data should be stored as new aircraft', () async {
       final goodZipFile = await _createExampleValidAircraftData();
-      final reader = AircraftDataReader(dataFile: goodZipFile);
+      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
       await reader.open();
-      final storedFile = await addAircraftDataFile(reader);
+      final storedFile = await addAircraftDataFile(reader, 'http://localhost/a1234.zip');
       final baseDir = (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir;
       final actualPath = path.join(baseDir, 'appdata', 'aircrafts', 'a1234.zip');
       expect(storedFile.path, actualPath);
@@ -115,9 +115,9 @@ void main() {
 
     test('Loading existing aircraft should extract data in temp directory', () async {
       final goodZipFile = await _createExampleValidAircraftData();
-      final reader = AircraftDataReader(dataFile: goodZipFile);
+      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
       await reader.open();
-      await addAircraftDataFile(reader);
+      await addAircraftDataFile(reader, 'http://localhost/a1234.zip');
 
       final loadedReader = await loadAircraft('a1234');
       final baseDir = await getTemporaryDirectory();

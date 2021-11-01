@@ -70,9 +70,13 @@
   "about_app_homepage_subtitle": "Vai al codice sorgente dell'app",
   "about_app_issues": "Segnala problema",
   "about_app_issues_subtitle": "Apri un bug per segnalare un problema con l'app",
+  "about_app_update_aircraft": "Aggiorna aereo",
+  "about_app_update_aircraft_subtitle": "Aggiorna i dati dell'aereo dalla rete",
   "about_app_disconnect_aircraft": "Disconnetti aereo",
   "about_app_disconnect_aircraft_subtitle": "Per cambiare aereo e riscaricare i dati",
 
+  "about_update_password_title": "Aggiorna aereo",
+  "about_update_password_message": "Lascia vuota la password se non serve.",
   "about_disconnect_confirm_title": "Disconnettere l'aereo?",
   "about_disconnect_confirm_message": "Dovrai immettere di nuovo l'indirizzo dei dati dell'aereo."
 }

@@ -21,6 +21,7 @@ class AircraftData {
   final double locationLatitude;
   final double locationLongitude;
   final String locationTimeZone;
+  final String? url;
   final bool admin;
 
   AircraftData({
@@ -33,6 +34,7 @@ class AircraftData {
     required this.locationLatitude,
     required this.locationLongitude,
     required this.locationTimeZone,
+    required this.url,
     this.admin = false,
   });
 
@@ -49,14 +51,17 @@ class AircraftData {
 class AircraftDataReader {
   // for main constructor
   File? dataFile;
+  File? urlFile;
   // for fromBytes constructor
   Uint8List? dataBytes;
   String? dataFilename;
+  String? url;
 
   Map<String, dynamic>? metadata;
 
   AircraftDataReader({
     required this.dataFile,
+    required this.urlFile,
   });
 
   /// Mainly for integration testing.
@@ -64,6 +69,7 @@ class AircraftDataReader {
   AircraftDataReader.fromBytes({
     required this.dataBytes,
     required this.dataFilename,
+    required this.url,
   });
 
   /// Also loads metadata.
@@ -161,6 +167,16 @@ class AircraftDataReader {
       }
     }
 
+    // try to open url file if available
+    try {
+      String? url = urlFile != null ? await urlFile!.readAsString() : this.url;
+      metadata!['url'] = url;
+    }
+    catch (e) {
+      // fail gracefully
+      _log.info("Unable to read url file", e);
+    }
+
     // store path for later use
     metadata!['path'] = directory;
     return directory;
@@ -177,6 +193,7 @@ class AircraftDataReader {
       locationLatitude: metadata!['location']?['latitude'] as double,
       locationLongitude: metadata!['location']?['longitude'] as double,
       locationTimeZone: metadata!['location']?['timezone'] as String,
+      url: metadata!['url'] as String?,
       admin: metadata!['admin'] != null && metadata!['admin'] as bool,
     );
   }
@@ -184,13 +201,19 @@ class AircraftDataReader {
 }
 
 /// Add an aircraft data file to a local data store for long-term storage.
-Future<File> addAircraftDataFile(AircraftDataReader reader) async {
+Future<File> addAircraftDataFile(AircraftDataReader reader, String url) async {
   if (reader.dataFile == null) {
     throw UnimplementedError('Running in a test??');
   }
   final baseDir = await getApplicationSupportDirectory();
   final directory = Directory(path.join(baseDir.path, 'aircrafts'));
   await directory.create(recursive: true);
+
+  // store url in separate file
+  File urlFile = File(path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.url'));
+  await urlFile.writeAsString(url);
+  reader.urlFile = urlFile;
+
   final filename = path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
   await deleteAircraftCache(reader.metadata!['aircraft_id'] as String);
   return reader.dataFile!.copy(filename);
@@ -200,7 +223,11 @@ Future<File> addAircraftDataFile(AircraftDataReader reader) async {
 Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   final baseDir = await getApplicationSupportDirectory();
   final dataFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'));
-  final reader = AircraftDataReader(dataFile: dataFile);
+  final urlFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.url'));
+  final reader = AircraftDataReader(
+    dataFile: dataFile,
+    urlFile: urlFile
+  );
   await reader.open();
   return reader;
 }

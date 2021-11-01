@@ -1,18 +1,24 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-// TODO import 'package:logging/logging.dart';
+import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
+import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/utils.dart';
 import '../../pubspec.yaml.g.dart' as pubspec;
 
-// TODO final Logger _log = Logger((AboutScreen).toString());
+final Logger _log = Logger((AboutScreen).toString());
 
 // TODO convert to stateless widget if using only AppConfig
 class AboutScreen extends StatefulWidget {
@@ -29,6 +35,106 @@ class _AboutScreenState extends State<AboutScreen> {
   void didChangeDependencies() {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
     super.didChangeDependencies();
+  }
+
+  // FIXME this code is similar to the one in aircraft_data_screen.dart
+  void _onRefresh(BuildContext context) {
+    showTextInputDialog(
+      context: context,
+      textFields: [
+        DialogTextField(
+          hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
+          keyboardType: TextInputType.visiblePassword,
+        ),
+      ],
+      title: AppLocalizations.of(context)!.about_update_password_title,
+      message: AppLocalizations.of(context)!.about_update_password_message,
+    ).then((value) {
+      if (value != null) {
+        final userpass = value[0];
+        String? username;
+        String? password;
+        if (userpass.isNotEmpty) {
+          final separator = userpass.indexOf(':');
+          if (separator >= 0) {
+            username = userpass.substring(0, separator);
+            password = userpass.substring(separator + 1);
+          }
+        }
+        final downloadTask = downloadToFile(_appConfig.currentAircraft!.url!, 'aircraft.zip', username, password, true)
+            .timeout(kNetworkRequestTimeout)
+            .then((value) async {
+          _log.finest(value);
+          return _validateAndStoreAircraft(value, _appConfig.currentAircraft!.url!, _appConfig);
+        }).then((AircraftData? aircraftData) {
+          if (aircraftData != null) {
+            _appConfig.currentAircraft = aircraftData;
+          }
+          return aircraftData;
+        }).catchError((error, StackTrace? stacktrace) {
+          _log.info('DOWNLOAD ERROR', error, stacktrace);
+          // TODO specialize exceptions (e.g. network errors, others...)
+          final String message;
+          if (error is TimeoutException) {
+            message = AppLocalizations.of(context)!.error_generic_network_timeout;
+          }
+          else {
+            message = getExceptionMessage(error);
+          }
+
+          Future.delayed(Duration.zero, () => showError(context, message));
+          return null;
+        });
+
+        showPlatformDialog(
+          context: context,
+          builder: (context) {
+            return FutureProgressDialog(downloadTask,
+              message: isCupertino(context) ? null :
+              Text(AppLocalizations.of(context)!.addAircraft_dialog_downloading),
+            );
+          },
+        ).then((value) async {
+          if (value != null) {
+            // TODO maybe notify the user?
+            // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
+            // probably FutureProgressDialog popping the navigator has something to do with it
+            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+              Navigator.of(context, rootNavigator: true)
+                  .pushReplacementNamed('/');
+            });
+          }
+        });
+      }
+    });
+  }
+
+  Future<AircraftData?> _validateAndStoreAircraft(File file, String url, AppConfig appConfig) async {
+    final reader = AircraftDataReader(dataFile: file, urlFile: null);
+    final validation = await reader.validate();
+    _log.finest('VALIDATION: $validation');
+    if (validation) {
+      try {
+        final dataFile = await addAircraftDataFile(reader, url);
+        _log.finest(dataFile);
+        await reader.open();
+        final aircraftData = reader.toAircraftData();
+        appConfig.addAircraft(aircraftData);
+        return aircraftData;
+      }
+      catch (e, stacktrace) {
+        _log.warning('Error storing aircraft data file', e, stacktrace);
+        if (mounted) {
+          return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_storing), stacktrace);
+        }
+      }
+    }
+    else {
+      if (mounted) {
+        return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_invalid_datafile));
+      }
+    }
+    return null;
   }
 
   void _onLogout(BuildContext context) {
@@ -132,6 +238,18 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       const SizedBox(height: kDefaultCupertinoFormSectionMargin),
       CupertinoFormSection(children: <Widget>[
+        if (_appConfig.currentAircraft!.url != null) Row(
+          children: [
+            Expanded(
+              child: CupertinoButton(
+                onPressed: () => _onRefresh(context),
+                child: Text(AppLocalizations.of(context)!.about_app_update_aircraft,
+                  style: const TextStyle(color: CupertinoColors.activeBlue),
+                ),
+              ),
+            ),
+          ],
+        ),
         Row(
           children: [
             Expanded(
@@ -212,6 +330,16 @@ class _AboutScreenState extends State<AboutScreen> {
       title: Text(AppLocalizations.of(context)!.about_app_issues),
       subtitle: Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
       onTap: () => openUrl(context, pubspec.issueTracker),
+    ),
+    if (_appConfig.currentAircraft!.url != null) ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.update, color: Colors.blue.shade600),
+      ),
+      title: Text(AppLocalizations.of(context)!.about_app_update_aircraft),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_update_aircraft_subtitle),
+      onTap: () => _onRefresh(context),
     ),
     ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),

@@ -151,6 +151,7 @@ class FakeAppConfig extends AppConfig {
       //dataBytes: dataFile.readAsBytesSync(),
       dataBytes: kScreenshotsData,
       dataFilename: 'a1234.zip',
+      url: 'http://localhost/a1234.zip',
     );
     await reader.open();
 

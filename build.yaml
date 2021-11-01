@@ -8,7 +8,7 @@ targets:
       - test_driver/**.dart
       - pubspec.yaml
     builders:
-      pubspec_generator|pubspecBuilder:
+      pubspec_generator|pubspec_generator:
         options:
           output: lib/pubspec.yaml.g.dart
       mockito|mockBuilder:

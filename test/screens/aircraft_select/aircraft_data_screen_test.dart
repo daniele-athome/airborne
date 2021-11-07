@@ -32,7 +32,7 @@ void main() {
           find.byWidgetPredicate((widget) => widget is PlatformTextFormField &&
               widget.keyboardType == TextInputType.url), "NOT_VALID_URI");
       await tester.tap(
-          find.byWidgetPredicate((widget) => widget is PlatformButton &&
+          find.byWidgetPredicate((widget) => widget is PlatformElevatedButton &&
               (widget.child! as Text).data == 'Install')
       );
       await tester.pumpAndSettle();

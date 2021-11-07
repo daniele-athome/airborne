@@ -41,9 +41,9 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         title: Text(AppLocalizations.of(context)!.addAircraft_title),
         trailingActions: isCupertino(context)? <Widget>[
           Consumer<AppConfig>(
-            builder: (context, appConfig, child) => PlatformButton(
+            builder: (context, appConfig, child) => PlatformTextButton(
               onPressed: () => _downloadData(context, appConfig),
-              cupertino: (_, __) => CupertinoButtonData(
+              cupertino: (_, __) => CupertinoTextButtonData(
                 // workaround for https://github.com/flutter/flutter/issues/32701
                 padding: EdgeInsets.zero,
               ),
@@ -200,7 +200,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         if (!isCupertino(context)) const SizedBox(
           height: 10,
         ),
-        if (!isCupertino(context)) PlatformButton(
+        if (!isCupertino(context)) PlatformElevatedButton(
           onPressed: () => _downloadData(context, appConfig),
           child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
         ),

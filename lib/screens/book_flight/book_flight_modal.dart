@@ -403,9 +403,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
         onPressed: () => Navigator.of(context).pop(),
         child: Text(AppLocalizations.of(context)!.bookFlightModal_button_close),
       );
-      trailingActions = [PlatformButton(
+      trailingActions = [PlatformTextButton(
         onPressed: () => _onSave(context),
-        cupertino: (_, __) => CupertinoButtonData(
+        cupertino: (_, __) => CupertinoTextButtonData(
           // workaround for https://github.com/flutter/flutter/issues/32701
           padding: EdgeInsets.zero,
         ),

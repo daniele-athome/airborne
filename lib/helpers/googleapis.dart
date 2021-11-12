@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:googleapis/calendar/v3.dart';
+import 'package:googleapis/sheets/v4.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart' as http_io;
@@ -66,6 +67,28 @@ class GoogleCalendarService {
 
   Future<void> deleteEvent(String calendarId, String eventId) {
     return _api.events.delete(calendarId, eventId).timeout(_defaultTimeout);
+  }
+
+}
+
+class GoogleSheetsService {
+  static const _defaultTimeout = Duration(seconds: 15);
+
+  late final http.Client _client;
+  late final SheetsApi _api;
+
+  GoogleSheetsService(http.Client client) {
+    _client = client;
+    _api = SheetsApi(_client);
+  }
+
+  String sheetRange(String sheetName, String range) => "'$sheetName'!$range'";
+
+  Future<ValueRange> getRows(String spreadsheetId, String sheetName, String range) {
+    final sheetRange = this.sheetRange(sheetName, range);
+    return _api.spreadsheets.values.get(spreadsheetId, sheetRange,
+      valueRenderOption: 'UNFORMATTED_VALUE',
+    ).timeout(_defaultTimeout);
   }
 
 }

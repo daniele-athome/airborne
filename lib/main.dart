@@ -168,8 +168,8 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   late PlatformTabController _tabController;
-  late BookFlightCalendarService _bookFlightCalendarService;
-  late FlightLogBookService _flightLogBookService;
+  late BookFlightCalendarService? _bookFlightCalendarService;
+  late FlightLogBookService? _flightLogBookService;
 
   @override
   void initState() {
@@ -178,29 +178,25 @@ class _MainNavigationState extends State<MainNavigation> {
         json: widget.appConfig.googleServiceAccountJson
     );
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
-      BookFlightCalendarService(account, widget.appConfig.googleCalendarId);
+      (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account, widget.appConfig.googleCalendarId) : null);
     _flightLogBookService = widget.flightLogBookService ??
-      FlightLogBookService(account, widget.appConfig.flightlogBackendInfo);
+      (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account, widget.appConfig.flightlogBackendInfo) : null);
     super.initState();
   }
 
   Widget _buildTab(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        return Provider.value(
-          value: _bookFlightCalendarService,
-          child: const BookFlightScreen(),
-        );
-      case 1:
-        return Provider.value(
-          value: _flightLogBookService,
-          child: const FlightLogScreen(),
-        );
-      case 2:
-        return const AboutScreen();
-      default:
-        throw UnsupportedError('Unsupported tab');
-    }
+    // FIXME find a more efficient way to do this
+    return [
+      if (widget.appConfig.hasFeature('book_flight')) () => Provider.value(
+        value: _bookFlightCalendarService,
+        child: const BookFlightScreen(),
+      ),
+      if (widget.appConfig.hasFeature('flight_log')) () => Provider.value(
+        value: _flightLogBookService,
+        child: const FlightLogScreen(),
+      ),
+      () => const AboutScreen(),
+    ][index]();
   }
 
   @override
@@ -211,12 +207,12 @@ class _MainNavigationState extends State<MainNavigation> {
       bodyBuilder: (context, index) => _buildTab(context, index),
       tabController: _tabController,
       items: [
-        BottomNavigationBarItem(
+        if (widget.appConfig.hasFeature('book_flight')) BottomNavigationBarItem(
             icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded),
             label: AppLocalizations.of(context)!.mainNav_bookFlight,
             tooltip: '',
         ),
-        BottomNavigationBarItem(
+        if (widget.appConfig.hasFeature('flight_log')) BottomNavigationBarItem(
             icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp),
             label: AppLocalizations.of(context)!.mainNav_logBook,
             tooltip: '',

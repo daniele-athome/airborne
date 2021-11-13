@@ -33,6 +33,17 @@ class AppConfig {
     }
   }
 
+  bool hasFeature(String feature) {
+    switch (feature) {
+      case 'book_flight':
+        return _currentAircraft!.backendInfo['google_calendar_id'] != null;
+      case 'flight_log':
+        return _currentAircraft!.backendInfo['flightlog'] != null;
+      default:
+        throw Exception('Unknown feature: $feature');
+    }
+  }
+
   bool get admin {
     return _currentAircraft!.admin;
   }
@@ -50,7 +61,8 @@ class AppConfig {
   }
 
   Map<String, String> get flightlogBackendInfo {
-    return _currentAircraft!.backendInfo['flightlog'] as Map<String, String>;
+    return (_currentAircraft!.backendInfo['flightlog'] as Map<String, dynamic>)
+        .map((key, value) => MapEntry(key, value as String));
   }
 
   String get locationName {

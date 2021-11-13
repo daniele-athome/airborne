@@ -7,7 +7,6 @@ analyzer:
     - lib/generated/**
     - '**/*.mocks.dart'
     # messy code
-    - lib/screens/flight_log/**
     #- test_driver/**
 
 linter:

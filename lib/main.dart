@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 
-import 'package:airborne/services/book_flight_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +21,8 @@ import 'screens/aircraft_select/aircraft_data_screen.dart';
 import 'screens/book_flight/book_flight_screen.dart';
 import 'screens/flight_log/flight_log_screen.dart';
 import 'screens/pilot_select/pilot_select_screen.dart';
+import 'services/book_flight_services.dart';
+import 'services/flight_log_services.dart';
 
 final Logger _log = Logger("main");
 
@@ -145,10 +146,12 @@ class MainNavigation extends StatefulWidget {
   final AppConfig appConfig;
 
   final BookFlightCalendarService? bookFlightCalendarService;
+  final FlightLogBookService? flightLogBookService;
   // TODO other services one day...
 
   const MainNavigation(this.appConfig, {Key? key})
       : bookFlightCalendarService = null,
+        flightLogBookService = null,
         super(key: key);
 
   /// Mainly for integration testing.
@@ -156,6 +159,7 @@ class MainNavigation extends StatefulWidget {
   const MainNavigation.withServices(this.appConfig, {
     Key? key,
     this.bookFlightCalendarService,
+    this.flightLogBookService,
   }) : super(key: key);
 
   @override
@@ -165,17 +169,18 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   late PlatformTabController _tabController;
   late BookFlightCalendarService _bookFlightCalendarService;
+  late FlightLogBookService _flightLogBookService;
 
   @override
   void initState() {
     _tabController = PlatformTabController();
+    final account = GoogleServiceAccountService(
+        json: widget.appConfig.googleServiceAccountJson
+    );
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
-      BookFlightCalendarService(
-        GoogleServiceAccountService(
-          json: widget.appConfig.googleServiceAccountJson
-        ),
-         widget.appConfig.googleCalendarId
-      );
+      BookFlightCalendarService(account, widget.appConfig.googleCalendarId);
+    _flightLogBookService = widget.flightLogBookService ??
+      FlightLogBookService(account, widget.appConfig.flightlogBackendInfo);
     super.initState();
   }
 
@@ -187,7 +192,10 @@ class _MainNavigationState extends State<MainNavigation> {
           child: const BookFlightScreen(),
         );
       case 1:
-        return FlightLogScreen();
+        return Provider.value(
+          value: _flightLogBookService,
+          child: const FlightLogScreen(),
+        );
       case 2:
         return const AboutScreen();
       default:

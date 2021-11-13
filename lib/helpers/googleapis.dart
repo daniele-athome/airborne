@@ -92,3 +92,13 @@ class GoogleSheetsService {
   }
 
 }
+
+const _kGsDateBase = 2209161600 / 86400;
+const _kGsDateFactor = 86400000;
+
+/// https://github.com/a-marenkov/gsheets/issues/31
+DateTime dateFromGsheets(String value, {bool localTime = true}) {
+  final date = double.parse(value);
+  final millis = (date - _kGsDateBase) * _kGsDateFactor;
+  return DateTime.fromMillisecondsSinceEpoch(millis.round(), isUtc: localTime);
+}

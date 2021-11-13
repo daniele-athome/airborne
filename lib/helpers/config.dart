@@ -49,6 +49,10 @@ class AppConfig {
     return _currentAircraft!.backendInfo['google_calendar_id']! as String;
   }
 
+  Map<String, String> get flightlogBackendInfo {
+    return _currentAircraft!.backendInfo['flightlog'] as Map<String, String>;
+  }
+
   String get locationName {
     return _currentAircraft!.locationName;
   }

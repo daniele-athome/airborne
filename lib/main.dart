@@ -174,6 +174,7 @@ class _MainNavigationState extends State<MainNavigation> {
         GoogleServiceAccountService(
           json: widget.appConfig.googleServiceAccountJson
         ),
+         widget.appConfig.googleCalendarId
       );
     super.initState();
   }

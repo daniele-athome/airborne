@@ -270,32 +270,32 @@ class FakeCalendarService implements BookFlightCalendarService {
   const FakeCalendarService(this.events);
 
   @override
-  Future<bool> bookingConflicts(Object calendarId, FlightBooking event) {
+  Future<bool> bookingConflicts(FlightBooking event) {
     // should be never called for making screenshots
     throw UnimplementedError();
   }
 
   @override
-  Future<FlightBooking> createBooking(Object calendarId, FlightBooking event) {
+  Future<FlightBooking> createBooking(FlightBooking event) {
     // should be never called for making screenshots
     throw UnimplementedError();
   }
 
   @override
-  Future<DeletedFlightBooking> deleteBooking(Object calendarId, FlightBooking event) {
+  Future<DeletedFlightBooking> deleteBooking(FlightBooking event) {
     // should be never called for making screenshots
     throw UnimplementedError();
   }
 
   @override
-  Future<Iterable<FlightBooking>> search(Object calendarId, DateTime timeMin, DateTime timeMax) {
+  Future<Iterable<FlightBooking>> search(DateTime timeMin, DateTime timeMax) {
     return Future.value(events.where((element) =>
       (element.from.isAfter(timeMin) || element.from == timeMin) && (element.to.isBefore(timeMax) || element.to == timeMax)
     ));
   }
 
   @override
-  Future<Object> updateBooking(Object calendarId, FlightBooking event) {
+  Future<Object> updateBooking(FlightBooking event) {
     // should be never called for making screenshots
     throw UnimplementedError();
   }

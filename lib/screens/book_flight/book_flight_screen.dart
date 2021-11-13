@@ -77,8 +77,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   void _rebuildData() {
-    _dataSource = FlightBookingDataSource(_appConfig.googleCalendarId,
-      _calendarService, (error) {
+    _dataSource = FlightBookingDataSource(_calendarService, (error) {
         _log.warning('Error fetching data', error);
         final String message;
         // TODO specialize exceptions (e.g. network errors, others...)
@@ -705,12 +704,10 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
 }
 
 class FlightBookingDataSource extends CalendarDataSource {
-  late final String _calendarId;
   late BookFlightCalendarService _service;
   late final void Function(dynamic) _onError;
 
-  FlightBookingDataSource(String calendarId, BookFlightCalendarService service, void Function(dynamic) onError) {
-    _calendarId = calendarId;
+  FlightBookingDataSource(BookFlightCalendarService service, void Function(dynamic) onError) {
     _service = service;
     _onError = onError;
     appointments = [];
@@ -748,7 +745,7 @@ class FlightBookingDataSource extends CalendarDataSource {
       await Future.delayed(const Duration(milliseconds: 500));
 
       // TODO maybe load a few days before and after if currently in schedule view?
-      final events = await _service.search(_calendarId, startDate, endDate.add(const Duration(days: 1)))
+      final events = await _service.search(startDate, endDate.add(const Duration(days: 1)))
         .timeout(kNetworkRequestTimeout);
       _log.finest('EVENTS: $events');
 

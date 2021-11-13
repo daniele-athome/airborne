@@ -7,10 +7,12 @@ import '../models/book_flight_models.dart';
 /// A primitive way to abstract the real flight booking service.
 class BookFlightCalendarService {
   late final GoogleServiceAccountService _accountService;
+  late final String _calendarId;
   GoogleCalendarService? _client;
 
-  BookFlightCalendarService(GoogleServiceAccountService accountService) {
+  BookFlightCalendarService(GoogleServiceAccountService accountService, Object calendarId) {
     _accountService = accountService;
+    _calendarId = calendarId as String;
   }
 
   Future<GoogleCalendarService> _ensureService() {
@@ -25,9 +27,9 @@ class BookFlightCalendarService {
     }
   }
 
-  Future<Iterable<FlightBooking>> search(Object calendarId, DateTime timeMin, DateTime timeMax) {
+  Future<Iterable<FlightBooking>> search(DateTime timeMin, DateTime timeMax) {
     return _ensureService().then((client) =>
-      client.listEvents(calendarId as String, timeMin, timeMax).then((events) =>
+      client.listEvents(_calendarId, timeMin, timeMax).then((events) =>
         events.items!
               .where((gcalendar.Event e) => e.summary != null && e.start != null && e.end != null)
               .map((gcalendar.Event e) {
@@ -44,9 +46,9 @@ class BookFlightCalendarService {
     );
   }
 
-  Future<bool> bookingConflicts(Object calendarId, FlightBooking event) {
+  Future<bool> bookingConflicts(FlightBooking event) {
     return _ensureService().then((client) =>
-      client.listEvents(calendarId as String, event.from, event.to).then((events) =>
+      client.listEvents(_calendarId, event.from, event.to).then((events) =>
         events.items!
           .where((gcalendar.Event e) => e.id != event.id)
           .isNotEmpty
@@ -54,7 +56,7 @@ class BookFlightCalendarService {
     );
   }
 
-  Future<FlightBooking> createBooking(Object calendarId, FlightBooking event) {
+  Future<FlightBooking> createBooking(FlightBooking event) {
     return _ensureService().then((client) {
       final gevent = gcalendar.Event();
       gevent.summary = event.pilotName;
@@ -65,7 +67,7 @@ class BookFlightCalendarService {
       gevent.end = gcalendar.EventDateTime();
       gevent.end!.dateTime = event.to;
       return _client!
-          .insertEvent(calendarId as String, gevent)
+          .insertEvent(_calendarId, gevent)
           .then((newEvent) => FlightBooking(
               newEvent.id,
               newEvent.summary!,
@@ -76,7 +78,7 @@ class BookFlightCalendarService {
     });
   }
 
-  Future<Object> updateBooking(Object calendarId, FlightBooking event) {
+  Future<Object> updateBooking(FlightBooking event) {
     return _ensureService().then((client) {
       final gevent = gcalendar.Event();
       gevent.summary = event.pilotName;
@@ -87,7 +89,7 @@ class BookFlightCalendarService {
       gevent.end = gcalendar.EventDateTime();
       gevent.end!.dateTime = event.to;
       return _client!
-          .updateEvent(calendarId as String, event.id!, gevent)
+          .updateEvent(_calendarId, event.id!, gevent)
           .then((newEvent) => FlightBooking(
               newEvent.id,
               newEvent.summary!,
@@ -98,9 +100,9 @@ class BookFlightCalendarService {
     });
   }
 
-  Future<DeletedFlightBooking> deleteBooking(Object calendarId, FlightBooking event) {
+  Future<DeletedFlightBooking> deleteBooking(FlightBooking event) {
     return _ensureService().then((client) {
-      return client.deleteEvent(calendarId as String, event.id!)
+      return client.deleteEvent(_calendarId, event.id!)
           .then((value) => DeletedFlightBooking(event.id!));
     });
   }

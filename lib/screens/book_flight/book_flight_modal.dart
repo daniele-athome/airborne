@@ -500,15 +500,15 @@ class _BookFlightModalState extends State<BookFlightModal> {
       _notes,
     );
 
-    final Future task = _service.bookingConflicts(_appConfig.googleCalendarId, event)
+    final Future task = _service.bookingConflicts(event)
       .timeout(kNetworkRequestTimeout)
       .then((conflict) {
         if (conflict) {
           throw Exception(AppLocalizations.of(context)!.bookFlightModal_error_timeConflict);
         }
         else {
-          return (_isEditing ? _service.updateBooking(_appConfig.googleCalendarId, event) :
-              _service.createBooking(_appConfig.googleCalendarId, event))
+          return (_isEditing ? _service.updateBooking(event) :
+              _service.createBooking(event))
             .timeout(kNetworkRequestTimeout);
         }
       })
@@ -558,7 +558,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
   }
 
   void _doDelete(BuildContext context) {
-    final Future task = _service.deleteBooking(_appConfig.googleCalendarId, widget.event)
+    final Future task = _service.deleteBooking(widget.event)
       .timeout(kNetworkRequestTimeout)
       .catchError((error, StackTrace stacktrace) {
         _log.warning('DELETE ERROR', error, stacktrace);

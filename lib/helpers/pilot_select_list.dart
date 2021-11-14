@@ -35,7 +35,7 @@ class PilotSelectList extends StatelessWidget {
               child: CupertinoFormRowContainer(
                 child: Row(
                   children: [
-                    CircleAvatar(backgroundImage: avatarProvider(e)),
+                    CircleAvatar(foregroundImage: avatarProvider(e)),
                     const SizedBox(width: 14),
                     Expanded(child: Text(e, style: textStyle)),
                   ],
@@ -51,7 +51,7 @@ class PilotSelectList extends StatelessWidget {
         shrinkWrap: true,
         children: pilotNames.map((e) => ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: CircleAvatar(backgroundImage: avatarProvider(e)),
+          leading: CircleAvatar(foregroundImage: avatarProvider(e)),
           title: Text(e),
           onTap: () {
             onSelection(e);

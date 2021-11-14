@@ -201,7 +201,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                   ),
                 ),
                 const SizedBox(width: 14),
-                CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
+                CircleAvatar(foregroundImage: appConfig.getPilotAvatar(_pilotName)),
               ],
             ),
           ),
@@ -270,7 +270,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       children: <Widget>[
         ListTile(
           contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-          leading: CircleAvatar(backgroundImage: appConfig.getPilotAvatar(_pilotName)),
+          leading: CircleAvatar(foregroundImage: appConfig.getPilotAvatar(_pilotName)),
           title: Text(
             _pilotName,
             style: const TextStyle(

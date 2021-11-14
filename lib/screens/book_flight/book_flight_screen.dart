@@ -536,7 +536,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(event.pilotName)),
+              CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(event.pilotName)),
               const SizedBox(width: 6),
               // the Flexible is to make the ellipsis work
               Expanded(

@@ -190,7 +190,7 @@ class _AboutScreenState extends State<AboutScreen> {
               padding: kDefaultCupertinoFormRowPadding,
               child: Row(
                 children: [
-                  CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+                  CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
                   const SizedBox(width: 14),
                   Expanded(child: Text(e, style: textStyle)),
                 ],
@@ -290,7 +290,7 @@ class _AboutScreenState extends State<AboutScreen> {
     HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
     ..._appConfig.pilotNames.map((e) => ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: CircleAvatar(backgroundImage: _appConfig.getPilotAvatar(e)),
+      leading: CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
       title: Text(e),
     )).toList(growable: false),
     HeaderListTile(AppLocalizations.of(context)!.appName),

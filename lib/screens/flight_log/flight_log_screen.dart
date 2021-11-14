@@ -48,7 +48,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         iosContentPadding: true,
         appBar: isCupertino(context) ? null : PlatformAppBar(
           // TODO i18n
-          title: Text('Flight log'),
+          title: Text('Log book'),
           //leading: leadingAction,
           trailingActions: [
             //trailingAction,
@@ -66,7 +66,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
           body: NestedScrollView(
             headerSliverBuilder: (_, __) => [CupertinoSliverNavigationBar(
               // TODO i18n
-              largeTitle: Text('Flight log'),
+              largeTitle: Text('Log book'),
             )],
             body: _buildBody(context)
           )

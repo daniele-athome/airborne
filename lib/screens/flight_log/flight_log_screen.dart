@@ -20,6 +20,7 @@ class FlightLogScreen extends StatefulWidget {
 
 class _FlightLogScreenState extends State<FlightLogScreen> {
 
+  // ignore: unused_field
   late AppConfig _appConfig;
   late FlightLogBookService _logBookService;
 

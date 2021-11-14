@@ -9,6 +9,7 @@ const _kItemsPerPage = 20;
 /// Cell containing the row count.
 const _kSheetCountRange = 'A1';
 /// Data range for appending.
+// ignore: unused_element
 const _kSheetAppendRange = 'A:J';
 
 /// A primitive way to abstract the real log book service.
@@ -41,6 +42,7 @@ class FlightLogBookService {
   _sheetDataRange(first, last) => 'A${first + 2}:J${last + 2}';
 
   /// Convert item ID to sheet row number. +1 is for skipping the header row.
+  // ignore: unused_element
   _itemIdToRowNumber(id) => id + 1;
 
   Future<void> reset() {
@@ -50,6 +52,7 @@ class FlightLogBookService {
           throw const FormatException('No data found on sheet.');
         }
         _lastId = int.parse(value.values![0][0].toString());
+        // ignore: avoid_print
         print('lastId is $_lastId');
       })
     );
@@ -60,11 +63,13 @@ class FlightLogBookService {
       final lastId = _lastId - 1;
       _lastId = max(_lastId - _kItemsPerPage, 0);
       final firstId = _lastId;
+      // ignore: avoid_print
       print('getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
       return client.getRows(_spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId)).then((value) {
         if (value.values == null) {
           throw const FormatException('No data found on sheet.');
         }
+        // ignore: avoid_print
         print(value.values);
         return value.values!.mapIndexed<FlightLogItem>((index, rowData) => FlightLogItem(
           (firstId + index + 1).toString(),

@@ -57,7 +57,9 @@ class _FlightLogListState extends State<FlightLogList> {
       }
     }
     catch (error, stacktrace) {
+      // ignore: avoid_print
       print(error);
+      // ignore: avoid_print
       print(stacktrace);
       _pagingController.error = error;
     }

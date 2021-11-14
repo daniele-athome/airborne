@@ -82,7 +82,7 @@ class GoogleSheetsService {
     _api = SheetsApi(_client);
   }
 
-  String sheetRange(String sheetName, String range) => "'$sheetName'!$range'";
+  String sheetRange(String sheetName, String range) => "'$sheetName'!$range";
 
   Future<ValueRange> getRows(String spreadsheetId, String sheetName, String range) {
     final sheetRange = this.sheetRange(sheetName, range);
@@ -97,8 +97,7 @@ const _kGsDateBase = 2209161600 / 86400;
 const _kGsDateFactor = 86400000;
 
 /// https://github.com/a-marenkov/gsheets/issues/31
-DateTime dateFromGsheets(String value, {bool localTime = true}) {
-  final date = double.parse(value);
-  final millis = (date - _kGsDateBase) * _kGsDateFactor;
+DateTime dateFromGsheets(double value, {bool localTime = true}) {
+  final millis = (value - _kGsDateBase) * _kGsDateFactor;
   return DateTime.fromMillisecondsSinceEpoch(millis.round(), isUtc: localTime);
 }

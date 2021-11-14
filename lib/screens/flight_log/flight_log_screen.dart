@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../helpers/config.dart';
 import '../../helpers/utils.dart';
 import '../../services/flight_log_services.dart';
+import 'flight_log_list.dart';
 
 class FlightLogScreen extends StatefulWidget {
   const FlightLogScreen({Key? key}) : super(key: key);
@@ -36,8 +37,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Center(
-      child: const Text('Under construction.'),
+    return FlightLogList(
+      logBookService: _logBookService,
     );
   }
 

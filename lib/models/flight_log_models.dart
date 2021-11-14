@@ -18,10 +18,10 @@ class FlightLogItem {
   String pilot;
   String origin;
   String destination;
-  int startHour;
-  int endHour;
-  int fuel;
-  double fuelPrice;
+  num startHour;
+  num endHour;
+  int? fuel;
+  num? fuelPrice;
   String? notes;
 
   @override

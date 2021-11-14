@@ -65,17 +65,18 @@ class FlightLogBookService {
         if (value.values == null) {
           throw const FormatException('No data found on sheet.');
         }
+        print(value.values);
         return value.values!.mapIndexed<FlightLogItem>((index, rowData) => FlightLogItem(
           (firstId + index + 1).toString(),
-          dateFromGsheets(rowData[1] as String),
+          dateFromGsheets((rowData[1] as int).toDouble()),
           rowData[2] as String,
-          rowData[3] as String,
-          rowData[4] as String,
-          rowData[5] as int,
-          rowData[6] as int,
-          rowData[7] as int,
-          rowData[8] as double,
-          rowData[9] as String?,
+          rowData[5] as String,
+          rowData[6] as String,
+          rowData[3] as num,
+          rowData[4] as num,
+          rowData.length > 7 && rowData[7] is int ? rowData[7] as int : null,
+          rowData.length > 8 && rowData[8] is num ? rowData[8] as num : null,
+          rowData.length > 9 && rowData[9] is String && (rowData[9] as String).isNotEmpty ? rowData[9] as String? : null,
         ));
       });
     });

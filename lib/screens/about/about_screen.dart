@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +11,7 @@ import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
+import '../../helpers/aircraft_data.dart';
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/future_progress_dialog.dart';

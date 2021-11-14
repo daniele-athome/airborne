@@ -66,8 +66,8 @@ class _FlightLogListState extends State<FlightLogList> {
   }
 
   Future<void> _refresh() async {
-    return widget.logBookService.reset()
-        .then((value) => _pagingController.refresh());
+    _firstTime = true;
+    return Future.sync(() => _pagingController.refresh());
   }
 
   String _buildLocationName(FlightLogItem item) => (item.origin != item.destination) ?

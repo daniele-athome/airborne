@@ -1,4 +1,5 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 
+import '../../helpers/cupertinoplus.dart';
 import '../../models/flight_log_models.dart';
 import '../../services/flight_log_services.dart';
 
@@ -75,9 +77,26 @@ class _FlightLogListState extends State<FlightLogList> {
   String _buildTime(FlightLogItem item) => '${((item.endHour - item.startHour)*60).round().toString()}\'';
 
   Widget _buildListItem(BuildContext context, FlightLogItem item, int index) {
-    final subtitleStyle = Theme.of(context).textTheme.subtitle1!.copyWith(
-      //fontSize: 16,
+    final dateStyle = (isCupertino(context) ?
+      CupertinoTheme.of(context).textTheme.textStyle :
+      Theme.of(context).textTheme.bodyText1!).copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      );
+    final subtitleStyle = isCupertino(context) ?
+      CupertinoTheme.of(context).textTheme.textStyle :
+      Theme.of(context).textTheme.subtitle1!.copyWith(color: Theme.of(context).textTheme.caption!.color);
+    final pilotStyle = (isCupertino(context) ?
+      CupertinoTheme.of(context).textTheme.textStyle :
+      Theme.of(context).textTheme.bodyText1!).copyWith(
+      fontSize: 20,
     );
+    final timeStyle = (isCupertino(context) ?
+    CupertinoTheme.of(context).textTheme.textStyle :
+    Theme.of(context).textTheme.bodyText1!).copyWith(
+      fontSize: 22,
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -91,10 +110,7 @@ class _FlightLogListState extends State<FlightLogList> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(_dateFormatter.format(item.date), style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  )),
+                  child: Text(_dateFormatter.format(item.date), style: dateStyle),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -126,9 +142,7 @@ class _FlightLogListState extends State<FlightLogList> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(item.pilot,style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                    fontSize: 20,
-                  )),
+                  child: Text(item.pilot,style: pilotStyle),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
@@ -139,9 +153,7 @@ class _FlightLogListState extends State<FlightLogList> {
                         padding: EdgeInsets.symmetric(horizontal: 4),
                         child: Icon(Icons.local_gas_station, color: Colors.green, size: 24),
                       ),
-                      Text(_buildTime(item), style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                        fontSize: 22,
-                      )),
+                      Text(_buildTime(item), style: timeStyle),
                     ],
                   ),
                 ),
@@ -159,7 +171,8 @@ class _FlightLogListState extends State<FlightLogList> {
         onRefresh: () => _refresh(),
         child: PagedListView.separated(
           pagingController: _pagingController,
-          separatorBuilder: (context, index) => const Divider(height: 0),
+          separatorBuilder: (context, index) => isCupertino(context) ?
+            buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
           builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
             itemBuilder: _buildListItem,
             // TODO firstPageErrorIndicatorBuilder:

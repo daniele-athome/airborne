@@ -36,6 +36,18 @@ CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(BuildContext conte
     darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
   );
 
+/// From [CupertinoFormSection].
+Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
+  final Color dividerColor = CupertinoColors.separator.resolveFrom(context);
+  final double dividerHeight = 1.0 / MediaQuery.of(context).devicePixelRatio;
+
+  return Container(
+    margin: (shortDivider) ? const EdgeInsetsDirectional.only(start: 15.0) : null,
+    color: dividerColor,
+    height: dividerHeight,
+  );
+}
+
 /// A standard-sized container for a [CupertinoFormRow] child.
 class CupertinoFormRowContainer extends StatelessWidget {
   const CupertinoFormRowContainer({

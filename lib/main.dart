@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         material: (_, __) => MaterialAppData(
           // TEST
-          themeMode: ThemeMode.light,
+          //themeMode: ThemeMode.light,
           theme: ThemeData(
             brightness: Brightness.light,
             primarySwatch: Colors.deepOrange,

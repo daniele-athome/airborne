@@ -66,7 +66,7 @@ class _FlightLogListState extends State<FlightLogList> {
   }
 
   Future<void> _refresh() async {
-    widget.logBookService.reset()
+    return widget.logBookService.reset()
         .then((value) => _pagingController.refresh());
   }
 

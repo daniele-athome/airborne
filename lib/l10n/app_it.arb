@@ -45,6 +45,8 @@
   "bookFlightModal_dialog_delete_message": "Non cancellare prenotazioni altrui senza il consenso del pilota.",
   "bookFlightModal_dialog_selectPilot": "Seleziona pilota",
 
+  "flightLog_title": "Log book",
+
   "addAircraft_title": "Configura aereo",
   "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",
   "addAircraft_label_address": "Indirizzo",

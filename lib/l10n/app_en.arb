@@ -62,6 +62,8 @@
   "bookFlightModal_dialog_delete_message": "Do not delete flights booked by others without the pilot knowing.",
   "bookFlightModal_dialog_selectPilot": "Select pilot",
 
+  "flightLog_title": "Log book",
+
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",
   "addAircraft_label_address": "Address",

@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-// TODO import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -47,12 +47,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
     return PlatformScaffold(
         iosContentPadding: true,
         appBar: isCupertino(context) ? null : PlatformAppBar(
-          // TODO i18n
-          title: Text('Log book'),
-          //leading: leadingAction,
-          trailingActions: [
-            //trailingAction,
-          ],
+          title: Text(AppLocalizations.of(context)!.flightLog_title),
+          // TODO trailingActions: [],
           material: (context, platform) => MaterialAppBarData(
             toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
             kPortraitToolbarHeight : kLandscapeToolbarHeight,
@@ -65,8 +61,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
           body: NestedScrollView(
             headerSliverBuilder: (_, __) => [CupertinoSliverNavigationBar(
-              // TODO i18n
-              largeTitle: Text('Log book'),
+              largeTitle: Text(AppLocalizations.of(context)!.flightLog_title),
             )],
             body: _buildBody(context)
           )

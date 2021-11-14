@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
+import 'package:logging/logging.dart';
 
 import '../models/flight_log_models.dart';
 import '../helpers/googleapis.dart';
@@ -11,6 +12,8 @@ const _kSheetCountRange = 'A1';
 /// Data range for appending.
 // ignore: unused_element
 const _kSheetAppendRange = 'A:J';
+
+final Logger _log = Logger((FlightLogItem).toString());
 
 /// A primitive way to abstract the real log book service.
 class FlightLogBookService {
@@ -52,8 +55,7 @@ class FlightLogBookService {
           throw const FormatException('No data found on sheet.');
         }
         _lastId = int.parse(value.values![0][0].toString());
-        // ignore: avoid_print
-        print('lastId is $_lastId');
+        _log.finest('lastId is $_lastId');
       })
     );
   }
@@ -63,14 +65,12 @@ class FlightLogBookService {
       final lastId = _lastId - 1;
       _lastId = max(_lastId - _kItemsPerPage, 0);
       final firstId = _lastId;
-      // ignore: avoid_print
-      print('getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
+      _log.fine('getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
       return client.getRows(_spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId)).then((value) {
         if (value.values == null) {
           throw const FormatException('No data found on sheet.');
         }
-        // ignore: avoid_print
-        print(value.values);
+        _log.finest(value.values);
         return value.values!.mapIndexed<FlightLogItem>((index, rowData) => FlightLogItem(
           (firstId + index + 1).toString(),
           dateFromGsheets((rowData[1] as int).toDouble()),

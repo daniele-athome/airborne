@@ -6,10 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 
 import '../../helpers/cupertinoplus.dart';
 import '../../models/flight_log_models.dart';
 import '../../services/flight_log_services.dart';
+
+final Logger _log = Logger((FlightLogItem).toString());
 
 class FlightLogList extends StatefulWidget {
   const FlightLogList({
@@ -57,10 +60,7 @@ class _FlightLogListState extends State<FlightLogList> {
       }
     }
     catch (error, stacktrace) {
-      // ignore: avoid_print
-      print(error);
-      // ignore: avoid_print
-      print(stacktrace);
+      _log.warning('error loading log book data', error, stacktrace);
       _pagingController.error = error;
     }
   }

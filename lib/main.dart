@@ -59,7 +59,7 @@ Future<void> main() async {
   tz_data.initializeTimeZones();
 
   // TEST
-  debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  //debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
   //Intl.systemLocale = 'it_IT';
 
   // we need configuration to be loaded so we block here

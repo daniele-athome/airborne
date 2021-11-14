@@ -82,22 +82,23 @@ class _FlightLogListState extends State<FlightLogList> {
     final dateStyle = (isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
       Theme.of(context).textTheme.bodyText1!).copyWith(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        // TODO do we need this? -- fontWeight: FontWeight.bold,
       );
     final subtitleStyle = isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
       Theme.of(context).textTheme.subtitle1!.copyWith(color: Theme.of(context).textTheme.caption!.color);
     final pilotStyle = (isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyText1!).copyWith(
-      fontSize: 20,
-    );
+      Theme.of(context).textTheme.bodyText2!).copyWith(
+        fontSize: 17,
+        // TODO do we need this? -- fontWeight: FontWeight.w300,
+      );
     final timeStyle = (isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle :
-    Theme.of(context).textTheme.bodyText1!).copyWith(
-      fontSize: 22,
-    );
+      CupertinoTheme.of(context).textTheme.textStyle :
+      Theme.of(context).textTheme.bodyText2!).copyWith(
+        fontSize: 20,
+      );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

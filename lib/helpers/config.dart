@@ -119,7 +119,9 @@ class AppConfig {
       _log.fine('Switching aircraft: ${data.callSign}');
     }
     else {
-      // TODO maybe delete the temp folder?
+      if (_currentAircraftId != null) {
+        deleteAircraftCache(_currentAircraftId!);
+      }
       _log.fine('Selecting no aircraft');
     }
     _currentAircraft = data;

@@ -68,7 +68,7 @@ Future<void> main() async {
   final appConfig = AppConfig();
   await appConfig.init();
   runApp(
-    Provider.value(
+    ChangeNotifierProvider.value(
       value: appConfig,
       builder: (_, __) => const MyApp(),
     ),
@@ -181,7 +181,20 @@ class _MainNavigationState extends State<MainNavigation> {
       (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account, widget.appConfig.googleCalendarId) : null);
     _flightLogBookService = widget.flightLogBookService ??
       (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account, widget.appConfig.flightlogBackendInfo) : null);
+    widget.appConfig.addListener(_resetTabController);
     super.initState();
+  }
+
+  void _resetTabController() {
+    if (mounted) {
+      _tabController.setIndex(context, 0);
+    }
+  }
+  
+  @override
+  void dispose() {
+    widget.appConfig.removeListener(_resetTabController);
+    super.dispose();
   }
 
   Widget _buildTab(BuildContext context, int index) {

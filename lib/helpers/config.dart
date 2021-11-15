@@ -7,7 +7,7 @@ import 'aircraft_data.dart';
 
 final Logger _log = Logger((AppConfig).toString());
 
-class AppConfig {
+class AppConfig extends ChangeNotifier {
 
   @protected
   late SharedPreferences prefs;
@@ -126,6 +126,7 @@ class AppConfig {
     }
     _currentAircraft = data;
     _currentAircraftId = data?.id;
+    notifyListeners();
   }
 
   List<AircraftData> get aircrafts {
@@ -156,6 +157,7 @@ class AppConfig {
     else {
       prefs.remove('pilotName');
     }
+    notifyListeners();
   }
 
 }

@@ -96,13 +96,7 @@ class _AboutScreenState extends State<AboutScreen> {
           },
         ).then((value) async {
           if (value != null) {
-            // TODO maybe notify the user?
-            // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
-            // probably FutureProgressDialog popping the navigator has something to do with it
-            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-              Navigator.of(context, rootNavigator: true)
-                  .pushReplacementNamed('/');
-            });
+            // TODO maybe notify the user (e.g. toast)?
           }
         });
       }

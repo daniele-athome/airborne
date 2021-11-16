@@ -41,10 +41,10 @@ void main() {
   });
 }
 
-Provider<AppConfig> _provideAppConfigForSampleAircraft(Widget child) {
+ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft(Widget child) {
   final appConfig = MockAppConfig();
   // TODO stub some stuff
-  return Provider.value(
+  return ChangeNotifierProvider.value(
     value: appConfig,
     builder: (context, __) => child,
   );

@@ -112,11 +112,11 @@ class _FlightLogListState extends State<FlightLogList> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(_dateFormatter.format(item.date), style: dateStyle),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Row(
                     children: [
                       Icon(PlatformIcons(context).locationSolid, color: Colors.red, size: 18),
@@ -126,7 +126,7 @@ class _FlightLogListState extends State<FlightLogList> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Row(
                     children: [
                       Icon(PlatformIcons(context).clockSolid, color: Colors.blue, size: 18),

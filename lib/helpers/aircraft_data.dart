@@ -123,8 +123,7 @@ class AircraftDataReader {
     }
 
     final baseDir = await getTemporaryDirectory();
-    final directory = Directory(path.join(baseDir.path, 'aircrafts', path
-        .basenameWithoutExtension(dataFile != null ? dataFile!.path : dataFilename!)));
+    final directory = Directory(path.join(baseDir.path, 'current_aircraft'));
     final exists = await directory.exists();
     if (!exists) {
       await directory.create(recursive: true);
@@ -215,7 +214,6 @@ Future<File> addAircraftDataFile(AircraftDataReader reader, String url) async {
   reader.urlFile = urlFile;
 
   final filename = path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
-  await deleteAircraftCache(reader.metadata!['aircraft_id'] as String);
   return reader.dataFile!.copy(filename);
 }
 
@@ -232,23 +230,9 @@ Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   return reader;
 }
 
-Future<Directory> deleteAircraftCache(String aircraftId) async {
+Future<Directory> deleteAircraftCache() async {
   final cacheDir = await getTemporaryDirectory();
-  final tmpDirectory = Directory(path.join(cacheDir.path, 'aircrafts', aircraftId));
+  final tmpDirectory = Directory(path.join(cacheDir.path, 'current_aircraft'));
   final exists = await tmpDirectory.exists();
   return exists ? tmpDirectory.delete(recursive: true) as Future<Directory> : Future.value(tmpDirectory);
-}
-
-Future<Directory> deleteAllAircrafts() async {
-  // delete cache
-  final cacheDir = await getTemporaryDirectory();
-  final tmpDirectory = Directory(path.join(cacheDir.path, 'aircrafts'));
-  if (await tmpDirectory.exists()) {
-    await tmpDirectory.delete(recursive: true);
-  }
-  // delete files
-  final baseDir = await getApplicationSupportDirectory();
-  final directory = Directory(path.join(baseDir.path, 'aircrafts'));
-  final exists = await directory.exists();
-  return exists ? directory.delete(recursive: true) as Future<Directory> : Future.value(directory);
 }

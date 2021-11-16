@@ -28,7 +28,7 @@ class AppConfig extends ChangeNotifier {
         _currentAircraftId = null;
         pilotName = null;
         // a bit drastic maybe...
-        deleteAllAircrafts();
+        deleteAircraftCache();
       }
     }
   }
@@ -119,9 +119,7 @@ class AppConfig extends ChangeNotifier {
       _log.fine('Switching aircraft: ${data.callSign}');
     }
     else {
-      if (_currentAircraftId != null) {
-        deleteAircraftCache(_currentAircraftId!);
-      }
+      deleteAircraftCache();
       _log.fine('Selecting no aircraft');
     }
     _currentAircraft = data;

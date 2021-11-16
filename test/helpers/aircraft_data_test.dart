@@ -89,7 +89,7 @@ void main() {
       final goodZipFile = await _createExampleValidAircraftData();
       final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
       final baseDir = await getTemporaryDirectory();
-      final directory = Directory(path.join(baseDir.path, 'aircrafts', 'a1234'));
+      final directory = Directory(path.join(baseDir.path, 'current_aircraft'));
       final actual = await reader.open();
       expect(actual.path, directory.path);
       expect(directory.existsSync(), true);
@@ -121,7 +121,7 @@ void main() {
 
       final loadedReader = await loadAircraft('a1234');
       final baseDir = await getTemporaryDirectory();
-      final directory = Directory(path.join(baseDir.path, 'aircrafts', 'a1234'));
+      final directory = Directory(path.join(baseDir.path, 'current_aircraft'));
       final actual = await loadedReader.open();
       expect(actual.path, directory.path);
       expect(directory.existsSync(), true);

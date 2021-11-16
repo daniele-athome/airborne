@@ -63,9 +63,11 @@ class _AboutScreenState extends State<AboutScreen> {
         }
         final downloadTask = downloadToFile(_appConfig.currentAircraft!.url!, 'aircraft.zip', username, password, true)
             .timeout(kNetworkRequestTimeout)
-            .then((value) async {
-          _log.finest(value);
-          return _validateAndStoreAircraft(value, _appConfig.currentAircraft!.url!, _appConfig);
+            .then((tempfile) async {
+          _log.finest(tempfile);
+          final stored = await _validateAndStoreAircraft(tempfile, _appConfig.currentAircraft!.url!, _appConfig);
+          tempfile.deleteSync();
+          return stored;
         }).then((AircraftData? aircraftData) {
           if (aircraftData != null) {
             _appConfig.currentAircraft = aircraftData;
@@ -111,6 +113,7 @@ class _AboutScreenState extends State<AboutScreen> {
       try {
         final dataFile = await addAircraftDataFile(reader, url);
         _log.finest(dataFile);
+        await deleteAircraftCache();
         await reader.open();
         final aircraftData = reader.toAircraftData();
         appConfig.addAircraft(aircraftData);

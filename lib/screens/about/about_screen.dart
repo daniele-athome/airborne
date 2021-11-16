@@ -45,6 +45,7 @@ class _AboutScreenState extends State<AboutScreen> {
         DialogTextField(
           hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
           keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
         ),
       ],
       title: AppLocalizations.of(context)!.about_update_password_title,

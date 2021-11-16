@@ -174,15 +174,20 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   void initState() {
     _tabController = PlatformTabController();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
     final account = GoogleServiceAccountService(
         json: widget.appConfig.googleServiceAccountJson
     );
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
-      (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account, widget.appConfig.googleCalendarId) : null);
+        (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account, widget.appConfig.googleCalendarId) : null);
     _flightLogBookService = widget.flightLogBookService ??
-      (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account, widget.appConfig.flightlogBackendInfo) : null);
+        (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account, widget.appConfig.flightlogBackendInfo) : null);
     widget.appConfig.addListener(_resetTabController);
-    super.initState();
+    super.didChangeDependencies();
   }
 
   void _resetTabController() {
@@ -214,34 +219,45 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return PlatformTabScaffold(
-      iosContentBottomPadding: true,
-      // appBar is owned by screen
-      bodyBuilder: (context, index) => _buildTab(context, index),
-      tabController: _tabController,
-      items: [
-        if (widget.appConfig.hasFeature('book_flight')) BottomNavigationBarItem(
-            icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded),
-            label: AppLocalizations.of(context)!.mainNav_bookFlight,
-            tooltip: '',
-        ),
-        if (widget.appConfig.hasFeature('flight_log')) BottomNavigationBarItem(
-            icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp),
-            label: AppLocalizations.of(context)!.mainNav_logBook,
-            tooltip: '',
-        ),
-        BottomNavigationBarItem(
-            icon: Icon(PlatformIcons(context).info),
-            label: AppLocalizations.of(context)!.mainNav_about,
-            tooltip: '',
-        ),
-      ],
-      material: (_, __) => MaterialTabScaffoldData(
-        // TODO
+    final items = [
+      if (widget.appConfig.hasFeature('book_flight')) BottomNavigationBarItem(
+        icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded),
+        label: AppLocalizations.of(context)!.mainNav_bookFlight,
+        tooltip: '',
       ),
-      cupertino: (_, __) => CupertinoTabScaffoldData(
-        // TODO
+      if (widget.appConfig.hasFeature('flight_log')) BottomNavigationBarItem(
+        icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp),
+        label: AppLocalizations.of(context)!.mainNav_logBook,
+        tooltip: '',
       ),
-    );
+      BottomNavigationBarItem(
+        icon: Icon(PlatformIcons(context).info),
+        label: AppLocalizations.of(context)!.mainNav_about,
+        tooltip: '',
+      ),
+    ];
+
+    if (items.length >= 2) {
+      return PlatformTabScaffold(
+        iosContentBottomPadding: true,
+        // appBar is owned by screen
+        bodyBuilder: (context, index) => _buildTab(context, index),
+        tabController: _tabController,
+        items: items,
+        material: (_, __) =>
+            MaterialTabScaffoldData(
+              // TODO
+            ),
+        cupertino: (_, __) =>
+            CupertinoTabScaffoldData(
+              // TODO
+            ),
+      );
+    }
+    else {
+      return PlatformScaffold(
+          body: const AboutScreen(),
+      );
+    }
   }
 }

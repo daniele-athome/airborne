@@ -76,7 +76,7 @@ class _FlightLogListState extends State<FlightLogList> {
   String _buildHours(FlightLogItem item) =>
       '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
 
-  String _buildTime(FlightLogItem item) => '${((item.endHour - item.startHour)*60).round().toString()}\'';
+  String _buildTime(FlightLogItem item) => '${((item.endHour - item.startHour)*60).round().toString()}′';
 
   Widget _buildListItem(BuildContext context, FlightLogItem item, int index) {
     final dateStyle = (isCupertino(context) ?

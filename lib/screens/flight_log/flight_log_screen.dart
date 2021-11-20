@@ -57,7 +57,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         ),
         material: (_, __) => MaterialScaffoldData(
           //floatingActionButton: fab,
-          body: _buildBody(context)
+          body: _buildBody(context),
         ),
         cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
           body: NestedScrollView(

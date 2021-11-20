@@ -33,7 +33,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_platform_widgets: 1.10.0
+  flutter_platform_widgets: 1.11.0
   fluttertoast: 8.0.8
   googleapis: 7.0.0
   googleapis_auth: 1.2.0
@@ -45,12 +45,12 @@ dependencies:
   path: 1.8.0
   path_provider: 2.0.7
   provider: 6.0.1
-  shared_preferences: 2.0.8
+  shared_preferences: 2.0.9
   solar_calculator: 1.0.2
-  syncfusion_flutter_calendar: 19.3.53
-  syncfusion_localizations: 19.3.53
+  syncfusion_flutter_calendar: 19.3.54
+  syncfusion_localizations: 19.3.54
   timezone: 0.8.0
-  url_launcher: 6.0.13
+  url_launcher: 6.0.14
   validators: 3.0.0
 
 dev_dependencies:

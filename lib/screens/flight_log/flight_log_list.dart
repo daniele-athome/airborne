@@ -168,23 +168,57 @@ class _FlightLogListState extends State<FlightLogList> {
     );
   }
 
+  /// FIXME using PagedSliverList within a CustomScrollView for Material leads to errors
   @override
-  Widget build(BuildContext context) =>
-      RefreshIndicator(
+  Widget build(BuildContext context) {
+    // TODO test scrolling phytics with no content
+    if (isCupertino(context)) {
+      return CustomScrollView(
+        slivers: <Widget>[
+          CupertinoSliverRefreshControl(
+            onRefresh: () => _refresh(),
+          ),
+          PagedSliverList.separated(
+            pagingController: _pagingController,
+            separatorBuilder: (context, index) => isCupertino(context) ?
+            buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
+            builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
+              itemBuilder: _buildListItem,
+              // TODO firstPageErrorIndicatorBuilder:
+              // TODO firstPageProgressIndicatorBuilder:
+              // TODO noItemsFoundIndicatorBuilder:
+              // TODO noMoreItemsIndicatorBuilder:
+              firstPageProgressIndicatorBuilder: (context) => const CupertinoActivityIndicator(radius: 20),
+              newPageProgressIndicatorBuilder: (context) => const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: CupertinoActivityIndicator(radius: 16),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    else {
+      return RefreshIndicator(
         onRefresh: () => _refresh(),
         child: PagedListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
           pagingController: _pagingController,
           separatorBuilder: (context, index) => isCupertino(context) ?
-            buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
+          buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
           builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
             itemBuilder: _buildListItem,
             // TODO firstPageErrorIndicatorBuilder:
             // TODO firstPageProgressIndicatorBuilder:
             // TODO noItemsFoundIndicatorBuilder:
             // TODO noMoreItemsIndicatorBuilder:
+            // TODO firstPageProgressIndicatorBuilder:
+            // TODO newPageProgressIndicatorBuilder:
           ),
         ),
       );
+    }
+  }
 
   @override
   void dispose() {

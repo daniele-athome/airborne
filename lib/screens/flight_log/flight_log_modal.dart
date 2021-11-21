@@ -182,7 +182,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ),
         // pilot
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           leading: CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(_pilotName)),
           title: Text(_pilotName),
           onTap: () => _onTapPilot(context),
@@ -295,7 +295,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ),
         ListTile(
           // FIXME TextField inside ListTile caused enter key to act as onPressed
-          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           leading: const Icon(
             Icons.subject,
           ),
@@ -557,7 +557,7 @@ class _DateListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       leading: showIcon ? const Icon(
         Icons.access_time,
       ) : const Text(''),

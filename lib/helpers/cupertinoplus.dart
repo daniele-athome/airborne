@@ -48,6 +48,72 @@ Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
   );
 }
 
+/// An [InkWell] equivalent for Cupertino. Simply colors the background of the container.
+class CupertinoInkWell extends StatefulWidget {
+  const CupertinoInkWell({
+    Key? key,
+    required this.child,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final Widget child;
+  final VoidCallback? onPressed;
+
+  bool get enabled => onPressed != null;
+
+  @override
+  State<CupertinoInkWell> createState() => _CupertinoInkWellState();
+}
+
+class _CupertinoInkWellState extends State<CupertinoInkWell> {
+
+  bool _buttonHeldDown = false;
+
+  void _handleTapDown(TapDownDetails event) {
+    if (!_buttonHeldDown) {
+      setState(() {
+        _buttonHeldDown = true;
+      });
+    }
+  }
+
+  void _handleTapUp(TapUpDetails event) {
+    if (_buttonHeldDown) {
+      setState(() {
+        _buttonHeldDown = false;
+      });
+    }
+  }
+
+  void _handleTapCancel() {
+    if (_buttonHeldDown) {
+      setState(() {
+        _buttonHeldDown = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = widget.enabled;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: enabled ? _handleTapDown : null,
+      onTapUp: enabled ? _handleTapUp : null,
+      onTapCancel: enabled ? _handleTapCancel : null,
+      onTap: widget.onPressed,
+      child: Semantics(
+        button: true,
+        child: _buttonHeldDown ? Container(
+          color: CupertinoColors.secondarySystemFill.resolveFrom(context),
+          child: widget.child,
+        ) : widget.child,
+      ),
+    );
+  }
+}
+
 /// A standard-sized container for a [CupertinoFormRow] child.
 class CupertinoFormRowContainer extends StatelessWidget {
   const CupertinoFormRowContainer({
@@ -69,7 +135,7 @@ class CupertinoFormRowContainer extends StatelessWidget {
 }
 
 /// A button-like [CupertinoFormRow]. Heavily inspired by [CupertinoButton].
-/// TODO animate the background color
+/// TODO animate the background color (or even better convert to [CupertinoInkWell])
 class CupertinoFormButtonRow extends StatefulWidget {
 
   const CupertinoFormButtonRow({

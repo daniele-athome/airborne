@@ -100,7 +100,7 @@ class _FlightLogListState extends State<FlightLogList> {
         fontSize: 20,
       );
 
-    return Padding(
+    final listItem = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -166,6 +166,21 @@ class _FlightLogListState extends State<FlightLogList> {
         ],
       ),
     );
+
+    if (isCupertino(context)) {
+      return CupertinoInkWell(
+        // TODO
+        onPressed: () => true,
+        child: listItem,
+      );
+    }
+    else {
+      return InkWell(
+        // TODO
+        onTap: () => true,
+        child: listItem,
+      );
+    }
   }
 
   /// FIXME using PagedSliverList within a CustomScrollView for Material leads to errors

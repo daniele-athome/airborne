@@ -8,8 +8,10 @@ import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
 import '../../helpers/utils.dart';
+import '../../models/flight_log_models.dart';
 import '../../services/flight_log_services.dart';
 import 'flight_log_list.dart';
+import 'flight_log_modal.dart';
 
 class FlightLogScreen extends StatefulWidget {
   const FlightLogScreen({Key? key}) : super(key: key);
@@ -37,9 +39,60 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
     super.didChangeDependencies();
   }
 
+  void _onTapItem(BuildContext context, FlightLogItem item) {
+    _logFlight(context, item);
+  }
+
+  void _logFlight(BuildContext context, FlightLogItem? item) {
+    final FlightLogItem model;
+    if (item == null) {
+      // TODO proper model
+      model = FlightLogItem(
+        null,
+        DateTime.now(),
+        _appConfig.pilotName!,
+        '',
+        '',
+        0,
+        0,
+        null,
+        null,
+        null,
+      );
+    }
+    else {
+      model = item;
+    }
+
+    Widget pageRouteBuilder(BuildContext context) => Provider.value(
+      value: _logBookService,
+      child: FlightLogModal(model),
+    );
+
+    final route = isCupertino(context) ?
+    CupertinoPageRoute(
+      builder: pageRouteBuilder,
+      fullscreenDialog: true,
+    ) :
+    MaterialPageRoute(
+      builder: pageRouteBuilder,
+      fullscreenDialog: true,
+    );
+    Navigator.of(context, rootNavigator: true)
+        .push(route)
+        .then((result) {
+      if (result != null) {
+        // TODO show result toast
+        // TODO refresh list
+      }
+    });
+
+  }
+
   Widget _buildBody(BuildContext context) {
     return FlightLogList(
       logBookService: _logBookService,
+      onTapItem: (context, item) => _onTapItem(context, item),
     );
   }
 

@@ -18,9 +18,11 @@ class FlightLogList extends StatefulWidget {
   const FlightLogList({
     Key? key,
     required this.logBookService,
+    required this.onTapItem,
   })  : super(key: key);
 
   final FlightLogBookService logBookService;
+  final Function(BuildContext context, FlightLogItem item) onTapItem;
 
   @override
   _FlightLogListState createState() => _FlightLogListState();
@@ -169,15 +171,13 @@ class _FlightLogListState extends State<FlightLogList> {
 
     if (isCupertino(context)) {
       return CupertinoInkWell(
-        // TODO
-        onPressed: () => true,
+        onPressed: () => widget.onTapItem(context, item),
         child: listItem,
       );
     }
     else {
       return InkWell(
-        // TODO
-        onTap: () => true,
+        onTap: () => widget.onTapItem(context, item),
         child: listItem,
       );
     }

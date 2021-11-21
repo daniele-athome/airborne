@@ -105,7 +105,11 @@ class _DigitText extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
     alignment: Alignment.center,
-    color: alternate ? Colors.white : Colors.black,
+    color: alternate ? null : Colors.black,
+    decoration: alternate ? BoxDecoration(
+      border: Border.all(color: Colors.black),
+      color: Colors.white,
+    ) : null,
     // TODO test on different screens
     width: 30,
     height: 40,

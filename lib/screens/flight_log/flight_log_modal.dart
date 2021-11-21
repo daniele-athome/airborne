@@ -192,56 +192,22 @@ class _FlightLogModalState extends State<FlightLogModal> {
           thickness: 1,
         ),
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           leading: const Icon(Icons.timer),
           title: DigitDisplayTextField(
             controller: _startHourController,
           ),
-          /*title: TextField(
-            controller: _startHourController,
-            // TODO cursorColor: widget.model.backgroundColor,
-            // workaround for https://github.com/flutter/flutter/pull/82671
-            focusNode: FocusNode(
-              onKey: (_, __) => KeyEventResult.skipRemainingHandlers,
-            ),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            maxLines: 1,
-            style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w400
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              // TODO i18n
-              hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
-            ),
-          ),*/
+          // TODO onTap start hour
+          onTap: () => true,
         ),
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           leading: const Text(''),
           title: DigitDisplayTextField(
             controller: _endHourController,
           ),
-          /*title: TextField(
-            controller: _endHourController,
-            // TODO cursorColor: widget.model.backgroundColor,
-            // workaround for https://github.com/flutter/flutter/pull/82671
-            focusNode: FocusNode(
-              onKey: (_, __) => KeyEventResult.skipRemainingHandlers,
-            ),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            maxLines: 1,
-            style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w400
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              // TODO i18n
-              hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
-            ),
-          ),*/
+          // TODO onTap end hour
+          onTap: () => true,
         ),
         const Divider(
           height: 1.0,

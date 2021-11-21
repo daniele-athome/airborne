@@ -1,5 +1,4 @@
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
+import '../../helpers/digit_display.dart';
 import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';
@@ -33,15 +33,13 @@ class FlightLogModal extends StatefulWidget {
 }
 
 class _FlightLogModalState extends State<FlightLogModal> {
-  final _hoursFormatter = NumberFormat.decimalPattern();
-
   // event data
   late String _pilotName;
   @Deprecated('Use _dateController')
   late DateTime _date;
 
-  late TextEditingController _startHourController;
-  late TextEditingController _endHourController;
+  late DigitDisplayController _startHourController;
+  late DigitDisplayController _endHourController;
   late TextEditingController _originController;
   late TextEditingController _destinationController;
   late DateTimePickerController _dateController;
@@ -76,8 +74,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _pilotName = widget.item.pilotName;
     _originController = TextEditingController(text: widget.item.origin);
     _destinationController = TextEditingController(text: widget.item.destination);
-    _startHourController = TextEditingController(text: _hoursFormatter.format(widget.item.startHour));
-    _endHourController = TextEditingController(text: _hoursFormatter.format(widget.item.endHour));
+    _startHourController = DigitDisplayController(widget.item.startHour);
+    _endHourController = DigitDisplayController(widget.item.endHour);
     _notesController = TextEditingController(text: widget.item.notes);
     _dateController.value = widget.item.date;
     _date = widget.item.date;
@@ -196,7 +194,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ListTile(
           contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
           leading: const Icon(Icons.timer),
-          title: TextField(
+          title: DigitDisplayTextField(
+            controller: _startHourController,
+          ),
+          /*title: TextField(
             controller: _startHourController,
             // TODO cursorColor: widget.model.backgroundColor,
             // workaround for https://github.com/flutter/flutter/pull/82671
@@ -214,12 +215,15 @@ class _FlightLogModalState extends State<FlightLogModal> {
               // TODO i18n
               hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
             ),
-          ),
+          ),*/
         ),
         ListTile(
           contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
           leading: const Text(''),
-          title: TextField(
+          title: DigitDisplayTextField(
+            controller: _endHourController,
+          ),
+          /*title: TextField(
             controller: _endHourController,
             // TODO cursorColor: widget.model.backgroundColor,
             // workaround for https://github.com/flutter/flutter/pull/82671
@@ -237,7 +241,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               // TODO i18n
               hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
             ),
-          ),
+          ),*/
         ),
         const Divider(
           height: 1.0,

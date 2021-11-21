@@ -3,7 +3,7 @@ class FlightLogItem {
   FlightLogItem(
     this.id,
     this.date,
-    this.pilot,
+    this.pilotName,
     this.origin,
     this.destination,
     this.startHour,
@@ -15,7 +15,7 @@ class FlightLogItem {
 
   String? id;
   DateTime date;
-  String pilot;
+  String pilotName;
   String origin;
   String destination;
   num startHour;
@@ -35,7 +35,7 @@ class FlightLogItem {
 
   @override
   String toString() {
-    return 'FlightLogItem{date: $date, pilot: $pilot, destination: $destination, startHour: $startHour, endHour: $endHour}';
+    return 'FlightLogItem{date: $date, pilot: $pilotName, destination: $destination, startHour: $startHour, endHour: $endHour}';
   }
 
 }

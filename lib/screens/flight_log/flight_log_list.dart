@@ -145,7 +145,7 @@ class _FlightLogListState extends State<FlightLogList> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(item.pilot,style: pilotStyle),
+                  child: Text(item.pilotName,style: pilotStyle),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),

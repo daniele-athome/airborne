@@ -50,7 +50,7 @@ dependencies:
   syncfusion_flutter_calendar: 19.3.54
   syncfusion_localizations: 19.3.54
   timezone: 0.8.0
-  url_launcher: 6.0.14
+  url_launcher: 6.0.15
   validators: 3.0.0
 
 dev_dependencies:

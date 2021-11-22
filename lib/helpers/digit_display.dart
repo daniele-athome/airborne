@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
+const double _kDefaultDigitFontSize = 20;
+
 class DigitDisplayTextField extends StatefulWidget {
 
   const DigitDisplayTextField({
     Key? key,
     this.controller,
+    this.fontSize = _kDefaultDigitFontSize,
   }) : super(key: key);
 
   final DigitDisplayController? controller;
+  final double fontSize;
 
   @override
   State<DigitDisplayTextField> createState() => _DigitDisplayTextFieldState();
@@ -37,7 +41,7 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
         decimal = true;
         continue;
       }
-      children.add(SingleDigitText(digit: digit, decimal: decimal));
+      children.add(SingleDigitText(digit: digit, decimal: decimal, fontSize: widget.fontSize));
     }
 
     return Row(
@@ -75,17 +79,20 @@ class SingleDigitText extends StatelessWidget {
     Key? key,
     required this.digit,
     this.decimal = false,
+    this.fontSize = _kDefaultDigitFontSize,
   }) : assert(digit >= 0 && digit <= 9),
         super(key: key);
 
   final int digit;
   final bool decimal;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) =>
       _DigitText(
-          text: digit.toString(),
-          alternate: decimal,
+        text: digit.toString(),
+        alternate: decimal,
+        fontSize: fontSize,
       );
 
 }
@@ -96,10 +103,12 @@ class _DigitText extends StatelessWidget {
     Key? key,
     required this.text,
     this.alternate = false,
+    this.fontSize = _kDefaultDigitFontSize,
   }) : super(key: key);
 
   final String text;
   final bool alternate;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -111,13 +120,13 @@ class _DigitText extends StatelessWidget {
       color: Colors.white,
     ) : null,
     // TODO test on different screens
-    width: 30,
-    height: 40,
+    width: fontSize,
+    height: fontSize + 10,
     child: Text(text,
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'MajorMonoDisplay',
-          fontSize: 30,
+          fontSize: fontSize,
           fontWeight: FontWeight.bold,
           color: alternate ? Colors.black : Colors.white,
         ),

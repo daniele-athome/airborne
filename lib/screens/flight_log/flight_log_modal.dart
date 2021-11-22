@@ -191,22 +191,18 @@ class _FlightLogModalState extends State<FlightLogModal> {
           height: 1.0,
           thickness: 1,
         ),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: const Icon(Icons.timer),
-          title: DigitDisplayTextField(
-            controller: _startHourController,
-          ),
-          // TODO onTap start hour
+        _HourListTile(
+          controller: _startHourController,
+          // TODO i18n
+          hintText: 'Inizio',
+          showIcon: true,
           onTap: () => true,
         ),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: const Text(''),
-          title: DigitDisplayTextField(
-            controller: _endHourController,
-          ),
-          // TODO onTap end hour
+        _HourListTile(
+          controller: _endHourController,
+          // TODO i18n
+          hintText: 'Fine',
+          showIcon: false,
           onTap: () => true,
         ),
         const Divider(
@@ -234,10 +230,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: InputBorder.none,
               // TODO i18n
-              hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+              labelText: 'Partenza',
             ),
           ),
         ),
@@ -265,10 +261,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: InputBorder.none,
               // TODO i18n
-              hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+              labelText: 'Arrivo',
             ),
           ),
         ),
@@ -531,6 +527,41 @@ class _FlightLogModalState extends State<FlightLogModal> {
       );
     }
   }
+}
+
+class _HourListTile extends StatelessWidget {
+  const _HourListTile({
+    Key? key,
+    required this.controller,
+    required this.hintText,
+    this.showIcon = true,
+    this.onTap,
+  }) : super(key: key);
+
+  final DigitDisplayController controller;
+  final String hintText;
+  final bool showIcon;
+  final GestureTapCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: showIcon ? const Icon(Icons.timer) : const Text(''),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // TODO try to replicate InputDecoration floating label text style
+          Text(hintText, style: Theme.of(context).textTheme.caption!),
+          DigitDisplayTextField(
+            controller: controller,
+          ),
+        ],
+      ),
+      onTap: onTap,
+    );
+  }
+
 }
 
 // FIXME refactor into widget + controller (e.g. like a text field)

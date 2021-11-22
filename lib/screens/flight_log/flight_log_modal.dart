@@ -227,10 +227,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
           title: TextField(
             controller: _originController,
             // TODO cursorColor: widget.model.backgroundColor,
-            // workaround for https://github.com/flutter/flutter/pull/82671
-            focusNode: FocusNode(
-              onKey: (_, __) => KeyEventResult.skipRemainingHandlers,
-            ),
             keyboardType: TextInputType.streetAddress,
             textCapitalization: TextCapitalization.words,
             maxLines: 1,
@@ -262,10 +258,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
           title: TextField(
             controller: _destinationController,
             // TODO cursorColor: widget.model.backgroundColor,
-            // workaround for https://github.com/flutter/flutter/pull/82671
-            focusNode: FocusNode(
-              onKey: (_, __) => KeyEventResult.skipRemainingHandlers,
-            ),
             keyboardType: TextInputType.streetAddress,
             textCapitalization: TextCapitalization.words,
             maxLines: 1,

@@ -5,16 +5,39 @@ import 'package:intl/intl.dart';
 
 const double _kDefaultDigitFontSize = 20;
 
+class DigitDisplayFormTextField extends FormField<num> {
+  DigitDisplayFormTextField({
+    Key? key,
+    DigitDisplayController? controller,
+    FormFieldSetter<num>? onSaved,
+    FormFieldValidator<num>? validator,
+    double fontSize = _kDefaultDigitFontSize,
+  }) : super(
+    key: key,
+    onSaved: onSaved,
+    validator: validator,
+    builder: (field) {
+      return DigitDisplayTextField(
+        controller: controller,
+        fontSize: fontSize,
+      );
+    },
+  );
+
+}
+
 class DigitDisplayTextField extends StatefulWidget {
 
   const DigitDisplayTextField({
     Key? key,
     this.controller,
     this.fontSize = _kDefaultDigitFontSize,
+    this.errorText,
   }) : super(key: key);
 
   final DigitDisplayController? controller;
   final double fontSize;
+  final String? errorText;
 
   @override
   State<DigitDisplayTextField> createState() => _DigitDisplayTextFieldState();
@@ -44,9 +67,18 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
       children.add(SingleDigitText(digit: digit, decimal: decimal, fontSize: widget.fontSize));
     }
 
-    return Row(
+    final field = Row(
       children: children,
     );
+    return widget.errorText != null ?
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            field,
+            // TODO text style
+            Text(widget.errorText!),
+          ],
+        ) : field;
   }
 
 }

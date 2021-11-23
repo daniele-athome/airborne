@@ -1,9 +1,9 @@
 # Airborne
 
-![android](https://github.com/daniele-athome/airborne/actions/workflows/android.yml/badge.svg)
-![ios](https://github.com/daniele-athome/airborne/actions/workflows/ios.yml/badge.svg)
-![linux](https://github.com/daniele-athome/airborne/actions/workflows/linux.yml/badge.svg)
-![windows](https://github.com/daniele-athome/airborne/actions/workflows/windows.yml/badge.svg)
+[![android](https://github.com/daniele-athome/airborne/actions/workflows/android.yml/badge.svg)](https://github.com/daniele-athome/airborne/actions/workflows/android.yml)
+[![ios](https://github.com/daniele-athome/airborne/actions/workflows/ios.yml/badge.svg)](https://github.com/daniele-athome/airborne/actions/workflows/ios.yml)
+[![linux](https://github.com/daniele-athome/airborne/actions/workflows/linux.yml/badge.svg)](https://github.com/daniele-athome/airborne/actions/workflows/linux.yml)
+[![windows](https://github.com/daniele-athome/airborne/actions/workflows/windows.yml/badge.svg)](https://github.com/daniele-athome/airborne/actions/workflows/windows.yml)
 
 Minimal aircraft management app for small groups
 

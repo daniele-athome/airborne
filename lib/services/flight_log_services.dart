@@ -25,8 +25,8 @@ class FlightLogBookService {
 
   FlightLogBookService(GoogleServiceAccountService accountService, Object spreadsheetId) {
     _accountService = accountService;
-    _spreadsheetId = (spreadsheetId as Map<String, String>)['spreadsheetId']!;
-    _sheetName = spreadsheetId['sheetName']!;
+    _spreadsheetId = (spreadsheetId as Map<String, String>)['spreadsheet_id']!;
+    _sheetName = spreadsheetId['sheet_name']!;
   }
 
   Future<GoogleSheetsService> _ensureService() {

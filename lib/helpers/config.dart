@@ -38,7 +38,9 @@ class AppConfig extends ChangeNotifier {
       case 'book_flight':
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
-        return _currentAircraft!.backendInfo['flightlog'] != null;
+        return _currentAircraft!.backendInfo['flightlog'] != null
+          // TODO remove this after next release
+          && (_currentAircraft!.backendInfo['flightlog'] as Map<String, dynamic>)['spreadsheet_id'] != null;
       default:
         throw Exception('Unknown feature: $feature');
     }

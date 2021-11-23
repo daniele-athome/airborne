@@ -21,6 +21,7 @@ class AircraftData {
   final double locationLatitude;
   final double locationLongitude;
   final String locationTimeZone;
+  final Map<num, String>? fuelPrices;
   final String? url;
   final bool admin;
 
@@ -34,6 +35,7 @@ class AircraftData {
     required this.locationLatitude,
     required this.locationLongitude,
     required this.locationTimeZone,
+    required this.fuelPrices,
     required this.url,
     this.admin = false,
   });
@@ -181,8 +183,7 @@ class AircraftDataReader {
     return directory;
   }
 
-  AircraftData toAircraftData() {
-    return AircraftData(
+  AircraftData toAircraftData() => AircraftData(
       dataPath: metadata!['path'] as Directory,
       id: metadata!['aircraft_id'] as String,
       callSign: metadata!['callsign'] as String,
@@ -192,10 +193,12 @@ class AircraftDataReader {
       locationLatitude: metadata!['location']?['latitude'] as double,
       locationLongitude: metadata!['location']?['longitude'] as double,
       locationTimeZone: metadata!['location']?['timezone'] as String,
+      fuelPrices: (metadata!['fuel_prices'] != null) ?
+        Map.fromEntries((metadata!['fuel_prices'] as List<dynamic>).map((item) =>
+          MapEntry((item as Map<String, dynamic>)['value'] as num, item['label'] as String))) : null,
       url: metadata!['url'] as String?,
       admin: metadata!['admin'] != null && metadata!['admin'] as bool,
     );
-  }
 
 }
 

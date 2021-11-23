@@ -88,6 +88,15 @@ class AppConfig extends ChangeNotifier {
     return 'https://www.google.com/maps/search/?api=1&query=$locationLatitude,$locationLongitude';
   }
 
+  Map<num, String>? get fuelPrices {
+    return _currentAircraft!.fuelPrices;
+  }
+
+  // TODO read from configuration
+  String get fuelPriceCurrency {
+    return '€';
+  }
+
   // TODO handle non-pilot user "(prove tecniche)"
   List<String> get pilotNames {
     return _currentAircraft!.pilotNames;

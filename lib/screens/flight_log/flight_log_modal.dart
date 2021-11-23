@@ -33,6 +33,8 @@ class FlightLogModal extends StatefulWidget {
 }
 
 class _FlightLogModalState extends State<FlightLogModal> {
+  static final _fuelPriceFormatter = NumberFormat("#####.00");
+
   // event data
   late String _pilotName;
   @Deprecated('Use _dateController')
@@ -90,11 +92,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _destinationController = TextEditingController(text: widget.item.destination);
     _startHourController = DigitDisplayController(widget.item.startHour);
     _endHourController = DigitDisplayController(widget.item.endHour);
-    _fuelController = TextEditingController(text: widget.item.fuel.toString());
+    _fuelController = TextEditingController(text: widget.item.fuel != null ? widget.item.fuel.toString() : '');
     _notesController = TextEditingController(text: widget.item.notes);
     _dateController = DateTimePickerController(widget.item.date);
     _date = widget.item.date;
-    _fuelPrice = widget.item.fuelPrice;
+    _fuelPrice = widget.item.fuelPrice ?? _appConfig.fuelPrices?.keys.first;
   }
 
   void _onDateChanged(DateTime? date, bool time) {
@@ -184,6 +186,25 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   Widget _buildMaterialForm(BuildContext context) {
+    final List<DropdownMenuItem<num>>? fuelPrices;
+    if (_appConfig.fuelPrices != null) {
+      fuelPrices = _appConfig.fuelPrices!.keys.map(
+            (key) => DropdownMenuItem(
+          child: Text('${_appConfig.fuelPrices![key]} (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(key)})'),
+          value: key,
+        ),
+      ).toList();
+      if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
+        fuelPrices.add(DropdownMenuItem(
+          child: Text('${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(widget.item.fuelPrice)}'),
+          value: widget.item.fuelPrice,
+        ));
+      }
+    }
+    else {
+      fuelPrices = null;
+    }
+
     return ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
@@ -290,8 +311,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
           height: 1.0,
           thickness: 1,
         ),
-        // TODO fuel quantity + type/price
-        ListTile(
+        // fuel quantity + type/price
+        if (_appConfig.fuelPrices != null) ListTile(
           contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           leading: const Icon(Icons.local_gas_station),
           title: TextFormField(
@@ -321,11 +342,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               decoration: const InputDecoration(
                 border: InputBorder.none,
               ),
-              items: [
-                // TODO load from aircraft data
-                DropdownMenuItem(child: const Text('Certificata (2.20 €)'), value: 2.2),
-                DropdownMenuItem(child: const Text('Scamuffa (1.40 €)'), value: 1.4),
-              ],
+              items: fuelPrices,
             ),
           ),
         ),

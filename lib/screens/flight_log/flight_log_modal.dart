@@ -37,12 +37,15 @@ class _FlightLogModalState extends State<FlightLogModal> {
   late String _pilotName;
   @Deprecated('Use _dateController')
   late DateTime _date;
+  late num? _fuelPrice;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late DigitDisplayController _startHourController;
   late DigitDisplayController _endHourController;
   late TextEditingController _originController;
   late TextEditingController _destinationController;
   late DateTimePickerController _dateController;
+  late TextEditingController _fuelController;
   late TextEditingController _notesController;
 
   late FlightLogBookService _service;
@@ -52,7 +55,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   @override
   void initState() {
-    _dateController = DateTimePickerController(null);
     super.initState();
   }
 
@@ -70,15 +72,29 @@ class _FlightLogModalState extends State<FlightLogModal> {
     super.didUpdateWidget(oldWidget);
   }
 
+  @override
+  void dispose() {
+    _originController.dispose();
+    _destinationController.dispose();
+    _startHourController.dispose();
+    _endHourController.dispose();
+    _fuelController.dispose();
+    _notesController.dispose();
+    _dateController.dispose();
+    super.dispose();
+  }
+
   void _updateItemData() {
     _pilotName = widget.item.pilotName;
     _originController = TextEditingController(text: widget.item.origin);
     _destinationController = TextEditingController(text: widget.item.destination);
     _startHourController = DigitDisplayController(widget.item.startHour);
     _endHourController = DigitDisplayController(widget.item.endHour);
+    _fuelController = TextEditingController(text: widget.item.fuel.toString());
     _notesController = TextEditingController(text: widget.item.notes);
-    _dateController.value = widget.item.date;
+    _dateController = DateTimePickerController(widget.item.date);
     _date = widget.item.date;
+    _fuelPrice = widget.item.fuelPrice;
   }
 
   void _onDateChanged(DateTime? date, bool time) {
@@ -220,7 +236,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             tooltip: 'Home',
             onPressed: () => _originController.text = _appConfig.locationName,
           ),
-          title: TextField(
+          title: TextFormField(
             controller: _originController,
             // TODO cursorColor: widget.model.backgroundColor,
             keyboardType: TextInputType.streetAddress,
@@ -235,6 +251,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               // TODO i18n
               labelText: 'Partenza',
             ),
+            // TODO validator
           ),
         ),
         const Divider(
@@ -251,7 +268,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             tooltip: 'Home',
             onPressed: () => _destinationController.text = _appConfig.locationName,
           ),
-          title: TextField(
+          title: TextFormField(
             controller: _destinationController,
             // TODO cursorColor: widget.model.backgroundColor,
             keyboardType: TextInputType.streetAddress,
@@ -266,6 +283,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               // TODO i18n
               labelText: 'Arrivo',
             ),
+            // TODO validator
           ),
         ),
         const Divider(
@@ -276,6 +294,40 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ListTile(
           contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           leading: const Icon(Icons.local_gas_station),
+          title: TextFormField(
+            controller: _fuelController,
+            // TODO cursorColor: widget.model.backgroundColor,
+            keyboardType: TextInputType.number,
+            maxLines: 1,
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w400
+            ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              // TODO i18n
+              prefixText: 'litri ',
+            ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
+              // TODO i18n
+              'Numero non valido' : null,
+          ),
+          trailing: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: DropdownButtonFormField<num>(
+              value: _fuelPrice,
+              onChanged: (value) => _fuelPrice = value,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              items: [
+                // TODO load from aircraft data
+                DropdownMenuItem(child: const Text('Certificata (2.20 €)'), value: 2.2),
+                DropdownMenuItem(child: const Text('Scamuffa (1.40 €)'), value: 1.4),
+              ],
+            ),
+          ),
         ),
         const Divider(
           height: 1.0,
@@ -287,7 +339,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           leading: const Icon(
             Icons.subject,
           ),
-          title: TextField(
+          title: TextFormField(
             controller: _notesController,
             // TODO cursorColor: widget.model.backgroundColor,
             // workaround for https://github.com/flutter/flutter/pull/82671
@@ -312,9 +364,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
     );
   }
 
-  Widget _getItemEditor(BuildContext context) => isCupertino(context) ?
-    _buildCupertinoForm(context, _appConfig) :
-    _buildMaterialForm(context);
+  Widget _getItemEditor(BuildContext context) =>
+    Form(
+      key: _formKey,
+      child: isCupertino(context) ?
+      _buildCupertinoForm(context, _appConfig) :
+      _buildMaterialForm(context)
+    );
 
   @override
   Widget build(BuildContext context) {
@@ -553,8 +609,11 @@ class _HourListTile extends StatelessWidget {
         children: [
           // TODO try to replicate InputDecoration floating label text style
           Text(hintText, style: Theme.of(context).textTheme.caption!),
-          DigitDisplayTextField(
+          DigitDisplayFormTextField(
             controller: controller,
+            // TODO i18n
+            validator: (value) => value == null || value == 0 ?
+              'Inserire un orametro valido.' : null,
           ),
         ],
       ),

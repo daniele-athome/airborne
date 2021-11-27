@@ -361,10 +361,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onChanged: (String value) {
               _notes = value;
             },
-            // workaround for https://github.com/flutter/flutter/pull/82671
-            focusNode: FocusNode(
-              onKey: (_, __) => KeyEventResult.skipRemainingHandlers,
-            ),
             keyboardType: TextInputType.multiline,
             textCapitalization: TextCapitalization.sentences,
             maxLines: 3,

@@ -241,7 +241,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
         // TODO identical widget with landing place, just make one with proper parameters
         ListTile(
           contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-          leading: const Icon(Icons.flight_takeoff),
+          leading: const SizedBox(
+              height: double.infinity,
+              child: Icon(Icons.flight_takeoff)
+          ),
           trailing: IconButton(
             icon: const Icon(Icons.home),
             // TODO i18n
@@ -273,7 +276,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
         // landing place
         ListTile(
           contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-          leading: const Icon(Icons.flight_land),
+          leading: const SizedBox(
+              height: double.infinity,
+              child: Icon(Icons.flight_land)
+          ),
           trailing: IconButton(
             icon: const Icon(Icons.home),
             // TODO i18n

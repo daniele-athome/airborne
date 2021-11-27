@@ -23,10 +23,10 @@ class FlightLogBookService {
   GoogleSheetsService? _client;
   int _lastId = 0;
 
-  FlightLogBookService(GoogleServiceAccountService accountService, Object spreadsheetId) {
+  FlightLogBookService(GoogleServiceAccountService accountService, Map<String, String> properties) {
     _accountService = accountService;
-    _spreadsheetId = (spreadsheetId as Map<String, String>)['spreadsheet_id']!;
-    _sheetName = spreadsheetId['sheet_name']!;
+    _spreadsheetId = properties['spreadsheet_id']!;
+    _sheetName = properties['sheet_name']!;
   }
 
   Future<GoogleSheetsService> _ensureService() {

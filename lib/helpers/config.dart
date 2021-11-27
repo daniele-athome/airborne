@@ -38,9 +38,8 @@ class AppConfig extends ChangeNotifier {
       case 'book_flight':
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
-        return _currentAircraft!.backendInfo['flightlog'] != null
-          // TODO remove this after next release
-          && (_currentAircraft!.backendInfo['flightlog'] as Map<String, dynamic>)['spreadsheet_id'] != null;
+        return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] != null &&
+            _currentAircraft!.backendInfo['flightlog_sheet_name'] != null;
       default:
         throw Exception('Unknown feature: $feature');
     }
@@ -63,8 +62,10 @@ class AppConfig extends ChangeNotifier {
   }
 
   Map<String, String> get flightlogBackendInfo {
-    return (_currentAircraft!.backendInfo['flightlog'] as Map<String, dynamic>)
-        .map((key, value) => MapEntry(key, value as String));
+    return {
+      'spreadsheet_id': _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
+      'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
+    };
   }
 
   String get locationName {

@@ -613,7 +613,7 @@ class _HourListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: showIcon ? const Icon(Icons.timer) : const Text(''),
+      leading: showIcon ? const SizedBox(height: double.infinity, child: Icon(Icons.timer)) : const Text(''),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -57,21 +57,25 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   @override
   void initState() {
+    _pilotName = widget.item.pilotName;
+    _originController = TextEditingController(text: widget.item.origin);
+    _destinationController = TextEditingController(text: widget.item.destination);
+    _startHourController = DigitDisplayController(widget.item.startHour);
+    _endHourController = DigitDisplayController(widget.item.endHour);
+    _fuelController = TextEditingController(text: widget.item.fuel != null ? widget.item.fuel.toString() : '');
+    _notesController = TextEditingController(text: widget.item.notes);
+    _dateController = DateTimePickerController(widget.item.date);
+    _date = widget.item.date;
+    _fuelPrice = widget.item.fuelPrice;
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     _service = Provider.of<FlightLogBookService>(context);
-    _appConfig = Provider.of<AppConfig>(context, listen: false);
-    _updateItemData();
+    _appConfig = Provider.of<AppConfig>(context);
+    _fuelPrice ??= _appConfig.fuelPrices?.keys.first;
     super.didChangeDependencies();
-  }
-
-  @override
-  void didUpdateWidget(covariant FlightLogModal oldWidget) {
-    _updateItemData();
-    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -84,19 +88,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _notesController.dispose();
     _dateController.dispose();
     super.dispose();
-  }
-
-  void _updateItemData() {
-    _pilotName = widget.item.pilotName;
-    _originController = TextEditingController(text: widget.item.origin);
-    _destinationController = TextEditingController(text: widget.item.destination);
-    _startHourController = DigitDisplayController(widget.item.startHour);
-    _endHourController = DigitDisplayController(widget.item.endHour);
-    _fuelController = TextEditingController(text: widget.item.fuel != null ? widget.item.fuel.toString() : '');
-    _notesController = TextEditingController(text: widget.item.notes);
-    _dateController = DateTimePickerController(widget.item.date);
-    _date = widget.item.date;
-    _fuelPrice = widget.item.fuelPrice ?? _appConfig.fuelPrices?.keys.first;
   }
 
   void _onDateChanged(DateTime? date, bool time) {

@@ -174,11 +174,18 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   void initState() {
     _tabController = PlatformTabController();
+    widget.appConfig.addListener(_resetTabController);
+    _rebuildServices();
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
+  void didUpdateWidget(covariant MainNavigation oldWidget) {
+    _rebuildServices();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void _rebuildServices() {
     final account = GoogleServiceAccountService(
         json: widget.appConfig.googleServiceAccountJson
     );
@@ -186,7 +193,10 @@ class _MainNavigationState extends State<MainNavigation> {
         (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account, widget.appConfig.googleCalendarId) : null);
     _flightLogBookService = widget.flightLogBookService ??
         (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account, widget.appConfig.flightlogBackendInfo) : null);
-    widget.appConfig.addListener(_resetTabController);
+  }
+
+  @override
+  void didChangeDependencies() {
     super.didChangeDependencies();
   }
 

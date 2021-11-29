@@ -105,25 +105,27 @@ class _FlightLogModalState extends State<FlightLogModal> {
     return ListView(
       padding: kDefaultCupertinoFormMargin,
       children: [
+        // flight date
         CupertinoFormSection(children: <Widget>[
+          CupertinoDateTimeFormFieldRow(
+            // TODO i18n
+            prefix: const Text('Date'),
+            showTime: false,
+            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
+            onChanged: (e) => true,
+            controller: _dateController,
+          ),
           CupertinoFormButtonRow(
             onPressed: () => _onTapPilot(context),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(
               AppLocalizations.of(context)!.bookFlightModal_label_pilot,
-              style: textStyle.copyWith(
-                fontSize: 20,
-              ),
+              style: textStyle,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  _pilotName,
-                  style: textStyle.copyWith(
-                    fontSize: 20,
-                  ),
-                ),
+                Text(_pilotName),
                 const SizedBox(width: 14),
                 CircleAvatar(foregroundImage: appConfig.getPilotAvatar(_pilotName)),
               ],
@@ -131,16 +133,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection(children: <Widget>[
-          // start date/time
-          CupertinoDateTimeFormFieldRow(
-            prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
-            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
-            onChanged: (value) => _onDateChanged(value, true),
-            controller: _dateController,
-          ),
-        ]),
-        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        // TODO start/end hour (in section) + margin
+        // TODO departure/arrival place (in section) + margin
+        // TODO fuel + fuel price (in section?) + margin
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
             // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,

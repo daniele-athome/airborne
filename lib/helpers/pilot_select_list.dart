@@ -32,14 +32,12 @@ class PilotSelectList extends StatelessWidget {
               onPressed: () {
                 onSelection(e);
               },
-              child: CupertinoFormRowContainer(
-                child: Row(
-                  children: [
-                    CircleAvatar(foregroundImage: avatarProvider(e)),
-                    const SizedBox(width: 14),
-                    Expanded(child: Text(e, style: textStyle)),
-                  ],
-                ),
+              child: Row(
+                children: [
+                  CircleAvatar(foregroundImage: avatarProvider(e)),
+                  const SizedBox(width: 14),
+                  Expanded(child: Text(e, style: textStyle)),
+                ],
               ),
             )).toList(growable: false),
           ),

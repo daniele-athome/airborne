@@ -163,19 +163,17 @@ class _AboutScreenState extends State<AboutScreen> {
                 style: textStyle.copyWith(fontWeight: FontWeight.bold)),
             ),
           ),
-          CupertinoFormRowContainer(
-            child: CupertinoFormButtonRow(
-              onPressed: () => openUrl(context, _appConfig.locationUrl),
-              padding: kDefaultCupertinoFormRowPadding,
-              prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(_appConfig.locationName, style: textStyle),
-                  const SizedBox(width: 2),
-                  Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
-                ],
-              ),
+          CupertinoFormButtonRow(
+            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            padding: kDefaultCupertinoFormRowPadding,
+            prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(_appConfig.locationName, style: textStyle),
+                const SizedBox(width: 2),
+                Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+              ],
             ),
           ),
         ],
@@ -216,21 +214,17 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
           ),
-          CupertinoFormRowContainer(
-            child: CupertinoFormButtonRow(
-              onPressed: () => openUrl(context, pubspec.homepage),
-              padding: kDefaultCupertinoFormRowPadding,
-              prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
-              child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
-            ),
+          CupertinoFormButtonRow(
+            onPressed: () => openUrl(context, pubspec.homepage),
+            padding: kDefaultCupertinoFormRowPadding,
+            prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
+            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
-          CupertinoFormRowContainer(
-            child: CupertinoFormButtonRow(
-              onPressed: () => openUrl(context, pubspec.issueTracker),
-              padding: kDefaultCupertinoFormRowPadding,
-              prefix: Text(AppLocalizations.of(context)!.about_app_issues),
-              child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
-            ),
+          CupertinoFormButtonRow(
+            onPressed: () => openUrl(context, pubspec.issueTracker),
+            padding: kDefaultCupertinoFormRowPadding,
+            prefix: Text(AppLocalizations.of(context)!.about_app_issues),
+            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
         ],
       ),

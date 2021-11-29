@@ -196,11 +196,14 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     this.prefix,
     this.controller,
     this.helper,
+    bool showDate = true,
+    bool showTime = true,
     required this.doneButtonText,
     DateTime? initialValue,
     ValueChanged<DateTime>? onChanged,
     FormFieldSetter<DateTime>? onSaved,
   }) :
+      assert(showDate || showTime, 'showDate and showTime cannot be both false!'),
       super(
         key: key,
         initialValue: controller?.value ?? initialValue ?? DateTime.now(),
@@ -293,44 +296,68 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
 
           final TextStyle textStyle = CupertinoTheme.of(field.context).textTheme.textStyle;
 
-          return CupertinoFormRowContainer(
-            child: CupertinoFormRow(
+          // TODO refactor this
+          return showDate != showTime ?
+            CupertinoFormButtonRow(
+              onPressed: showDate ? onTapDateHandler : onTapTimeHandler,
+              padding: kDefaultCupertinoFormRowPadding,
               prefix: prefix,
-              padding: const EdgeInsetsDirectional.fromSTEB(kDefaultCupertinoFormRowStartPadding, 0, 0, 0),
               helper: helper,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // TODO tap color effect
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: onTapDateHandler,
-                    child: Padding(
-                      padding: helper != null ? kDefaultCupertinoFormRowWithHelperPadding : kDefaultCupertinoFormRowPadding,
-                      child: Text(
-                        // TODO locale
-                        field.value != null ? DateFormat('EEE, dd/MM/yyyy').format(field.value!) : '',
-                        style: textStyle,
-                      ),
-                    ),
-                  ),
-                  // TODO tap color effect
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: onTapTimeHandler,
-                    child: Padding(
-                      padding: helper != null ? kDefaultCupertinoFormRowWithHelperPadding : kDefaultCupertinoFormRowPadding,
-                      child: Text(
-                        // TODO locale
-                        field.value != null ? DateFormat('HH:mm').format(field.value!) : '',
-                        style: textStyle,
-                      ),
-                    ),
-                  ),
-                ],
+              child: showDate ? Text(
+                // TODO locale
+                field.value != null ? DateFormat('EEE, dd/MM/yyyy').format(field.value!) : '',
+                style: textStyle,
+              ) : Text(
+                // TODO locale
+                field.value != null ? DateFormat('HH:mm').format(field.value!) : '',
+                style: textStyle,
               ),
-            ),
-          );
+            ) :
+            CupertinoFormRowContainer(
+              child: CupertinoFormRow(
+                prefix: prefix,
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    kDefaultCupertinoFormRowStartPadding, 0, 0, 0),
+                helper: helper,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // TODO tap color effect
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: onTapDateHandler,
+                      child: Padding(
+                        padding: helper != null
+                            ? kDefaultCupertinoFormRowWithHelperPadding
+                            : kDefaultCupertinoFormRowPadding,
+                        child: Text(
+                          // TODO locale
+                          field.value != null ? DateFormat('EEE, dd/MM/yyyy')
+                              .format(field.value!) : '',
+                          style: textStyle,
+                        ),
+                      ),
+                    ),
+                    // TODO tap color effect
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: onTapTimeHandler,
+                      child: Padding(
+                        padding: helper != null
+                            ? kDefaultCupertinoFormRowWithHelperPadding
+                            : kDefaultCupertinoFormRowPadding,
+                        child: Text(
+                          // TODO locale
+                          field.value != null ? DateFormat('HH:mm').format(
+                              field.value!) : '',
+                          style: textStyle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
         },
       );
 

@@ -643,6 +643,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
 }
 
 // FIXME refactor into widget + controller (e.g. like a text field)
+// TODO move to another file?
 class _DateTimeListTile extends StatelessWidget {
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
@@ -745,6 +746,7 @@ class _DateTimeListTile extends StatelessWidget {
 
 }
 
+// TODO move to another file?
 class _SunTimesListTile extends StatelessWidget {
   final DateTime sunrise;
   final DateTime sunset;

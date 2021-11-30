@@ -16,6 +16,7 @@ import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';
 import '../../services/flight_log_services.dart';
+import 'hour_widget.dart';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
@@ -119,6 +120,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             onPressed: () => _onTapPilot(context),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(
+              // TODO i18n
               AppLocalizations.of(context)!.bookFlightModal_label_pilot,
               style: textStyle,
             ),
@@ -133,7 +135,22 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        // TODO start/end hour (in section) + margin
+        // start/end hour
+        CupertinoFormSection(children: <Widget>[
+          CupertinoHourFormRow(
+            controller: _startHourController,
+            // TODO i18n
+            hintText: 'Inizio',
+            onTap: () => true,
+          ),
+          CupertinoHourFormRow(
+            controller: _endHourController,
+            // TODO i18n
+            hintText: 'Fine',
+            onTap: () => true,
+          ),
+        ]),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // TODO departure/arrival place (in section) + margin
         // TODO fuel + fuel price (in section?) + margin
         CupertinoFormSection(children: <Widget>[
@@ -149,6 +166,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
+            // TODO i18n
             placeholder: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
           ),
         ]),
@@ -214,14 +232,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
           height: 1.0,
           thickness: 1,
         ),
-        _HourListTile(
+        HourListTile(
           controller: _startHourController,
           // TODO i18n
           hintText: 'Inizio',
           showIcon: true,
           onTap: () => true,
         ),
-        _HourListTile(
+        HourListTile(
           controller: _endHourController,
           // TODO i18n
           hintText: 'Fine',
@@ -590,45 +608,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 }
 
-class _HourListTile extends StatelessWidget {
-  const _HourListTile({
-    Key? key,
-    required this.controller,
-    required this.hintText,
-    this.showIcon = true,
-    this.onTap,
-  }) : super(key: key);
-
-  final DigitDisplayController controller;
-  final String hintText;
-  final bool showIcon;
-  final GestureTapCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: showIcon ? const SizedBox(height: double.infinity, child: Icon(Icons.timer)) : const Text(''),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // TODO try to replicate InputDecoration floating label text style
-          Text(hintText, style: Theme.of(context).textTheme.caption!),
-          DigitDisplayFormTextField(
-            controller: controller,
-            // TODO i18n
-            validator: (value) => value == null || value == 0 ?
-              'Inserire un orametro valido.' : null,
-          ),
-        ],
-      ),
-      onTap: onTap,
-    );
-  }
-
-}
-
 // FIXME refactor into widget + controller (e.g. like a text field)
+// TODO move to another file?
 class _DateListTile extends StatelessWidget {
   final DateTime selectedDate;
   final Function(DateTime? selected) onDateSelected;

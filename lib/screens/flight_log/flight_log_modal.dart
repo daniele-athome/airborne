@@ -127,7 +127,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(_pilotName),
+                Text(
+                  _pilotName,
+                  style: textStyle,
+                ),
                 const SizedBox(width: 14),
                 CircleAvatar(foregroundImage: appConfig.getPilotAvatar(_pilotName)),
               ],
@@ -151,7 +154,24 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        // TODO departure/arrival place (in section) + margin
+        // departure/arrival place
+        CupertinoFormSection(children: <Widget>[
+          // TODO home location button
+          CupertinoTextFormFieldRow(
+            controller: _originController,
+            // TODO i18n
+            prefix: const Text('Partenza'),
+            textAlign: TextAlign.end,
+          ),
+          // TODO home location button
+          CupertinoTextFormFieldRow(
+            controller: _destinationController,
+            // TODO i18n
+            prefix: const Text('Arrivo'),
+            textAlign: TextAlign.end,
+          ),
+        ]),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // TODO fuel + fuel price (in section?) + margin
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(

@@ -226,6 +226,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             textAlign: TextAlign.end,
             keyboardType: TextInputType.number,
           ),
+          // TODO convert to standalone form row widget (using a controller)
           CupertinoFormButtonRow(
             padding: kDefaultCupertinoFormRowPadding,
             // TODO i18n

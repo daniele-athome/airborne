@@ -99,10 +99,55 @@ class _FlightLogModalState extends State<FlightLogModal> {
     }
   }
 
+  String _buildFuelPriceLabel(num value) => !_appConfig.fuelPrices!.containsKey(value) ?
+      '${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)}' :
+      '${_appConfig.fuelPrices![value]} (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)})';
+
+  void _onCupertinoFuelPricePressed(BuildContext context) {
+    showPlatformModalSheet(
+      context: context,
+      builder: (_) {
+        final List<CupertinoActionSheetAction>? fuelPrices;
+        fuelPrices = _appConfig.fuelPrices!.keys.map(
+              (key) => CupertinoActionSheetAction(
+            child: Text(_buildFuelPriceLabel(key)),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _fuelPrice = key;
+              });
+            },
+          ),
+        ).toList();
+        if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
+          fuelPrices.add(CupertinoActionSheetAction(
+            child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _fuelPrice = widget.item.fuelPrice;
+              });
+            },
+          ));
+        }
+
+        return CupertinoActionSheet(
+          cancelButton: CupertinoActionSheetAction(
+            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(context),
+          ),
+          actions: fuelPrices,
+        );
+      },
+    );
+  }
+
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) {
     // FIXME workaround https://github.com/flutter/flutter/issues/48438
     final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
 
+    // FIXME something wrong with some left/right paddings here
     return ListView(
       padding: kDefaultCupertinoFormMargin,
       children: [
@@ -172,7 +217,29 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        // TODO fuel + fuel price (in section?) + margin
+        // fuel + fuel price
+        if (_appConfig.fuelPrices != null) CupertinoFormSection(children: <Widget>[
+          CupertinoTextFormFieldRow(
+            controller: _fuelController,
+            // TODO i18n
+            prefix: const Text('Benzina (litri)'),
+            textAlign: TextAlign.end,
+            keyboardType: TextInputType.number,
+          ),
+          CupertinoFormButtonRow(
+            padding: kDefaultCupertinoFormRowPadding,
+            // TODO i18n
+            prefix: const Text('Prezzo benzina'),
+            onPressed: () {
+              _onCupertinoFuelPricePressed(context);
+            },
+            child: Text(
+              _fuelPrice != null ? _buildFuelPriceLabel(_fuelPrice!) : '',
+              style: textStyle,
+            ),
+          ),
+        ]),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
             // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
@@ -214,13 +281,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
     if (_appConfig.fuelPrices != null) {
       fuelPrices = _appConfig.fuelPrices!.keys.map(
             (key) => DropdownMenuItem(
-          child: Text('${_appConfig.fuelPrices![key]} (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(key)})'),
+          child: Text(_buildFuelPriceLabel(key)),
           value: key,
         ),
       ).toList();
       if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
         fuelPrices.add(DropdownMenuItem(
-          child: Text('${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(widget.item.fuelPrice)}'),
+          child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
           value: widget.item.fuelPrice,
         ));
       }

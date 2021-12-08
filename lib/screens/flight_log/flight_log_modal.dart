@@ -154,8 +154,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         // flight date
         CupertinoFormSection(children: <Widget>[
           CupertinoDateTimeFormFieldRow(
-            // TODO i18n
-            prefix: const Text('Date'),
+            prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_date),
             showTime: false,
             doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
             onChanged: (e) => true,
@@ -165,8 +164,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             onPressed: () => _onTapPilot(context),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(
-              // TODO i18n
-              AppLocalizations.of(context)!.bookFlightModal_label_pilot,
+              AppLocalizations.of(context)!.flightLogModal_label_pilot,
               style: textStyle,
             ),
             child: Row(
@@ -187,14 +185,12 @@ class _FlightLogModalState extends State<FlightLogModal> {
         CupertinoFormSection(children: <Widget>[
           CupertinoHourFormRow(
             controller: _startHourController,
-            // TODO i18n
-            hintText: 'Inizio',
+            hintText: AppLocalizations.of(context)!.flightLogModal_label_startHour,
             onTap: () => true,
           ),
           CupertinoHourFormRow(
             controller: _endHourController,
-            // TODO i18n
-            hintText: 'Fine',
+            hintText: AppLocalizations.of(context)!.flightLogModal_label_endHour,
             onTap: () => true,
           ),
         ]),
@@ -204,15 +200,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
           // TODO home location button
           CupertinoTextFormFieldRow(
             controller: _originController,
-            // TODO i18n
-            prefix: const Text('Partenza'),
+            prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_origin),
             textAlign: TextAlign.end,
           ),
           // TODO home location button
           CupertinoTextFormFieldRow(
             controller: _destinationController,
-            // TODO i18n
-            prefix: const Text('Arrivo'),
+            prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_destination),
             textAlign: TextAlign.end,
           ),
         ]),
@@ -221,16 +215,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
         if (_appConfig.fuelPrices != null) CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
             controller: _fuelController,
-            // TODO i18n
-            prefix: const Text('Benzina (litri)'),
+            prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_cupertino),
             textAlign: TextAlign.end,
             keyboardType: TextInputType.number,
           ),
           // TODO convert to standalone form row widget (using a controller)
           CupertinoFormButtonRow(
             padding: kDefaultCupertinoFormRowPadding,
-            // TODO i18n
-            prefix: const Text('Prezzo benzina'),
+            prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_price_cupertino),
             onPressed: () {
               _onCupertinoFuelPricePressed(context);
             },
@@ -254,8 +246,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
-            // TODO i18n
-            placeholder: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+            placeholder: AppLocalizations.of(context)!.flightLogModal_hint_notes,
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
@@ -322,15 +313,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ),
         HourListTile(
           controller: _startHourController,
-          // TODO i18n
-          hintText: 'Inizio',
+          hintText: AppLocalizations.of(context)!.flightLogModal_label_startHour,
           showIcon: true,
           onTap: () => true,
         ),
         HourListTile(
           controller: _endHourController,
-          // TODO i18n
-          hintText: 'Fine',
+          hintText: AppLocalizations.of(context)!.flightLogModal_label_endHour,
           showIcon: false,
           onTap: () => true,
         ),
@@ -362,10 +351,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: InputBorder.none,
-              // TODO i18n
-              labelText: 'Partenza',
+              labelText: AppLocalizations.of(context)!.flightLogModal_label_origin,
             ),
             // TODO validator
           ),
@@ -397,10 +385,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: InputBorder.none,
-              // TODO i18n
-              labelText: 'Arrivo',
+              labelText: AppLocalizations.of(context)!.flightLogModal_label_destination,
             ),
             // TODO validator
           ),
@@ -422,10 +409,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 fontSize: 18,
                 fontWeight: FontWeight.w400
             ),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: InputBorder.none,
-              // TODO i18n
-              prefixText: 'litri ',
+              // beware the trailing space, must be added post-i18n
+              prefixText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_material + ' ',
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
@@ -466,8 +453,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              // TODO i18n
-              hintText: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+              hintText: AppLocalizations.of(context)!.flightLogModal_hint_notes,
             ),
           ),
         ),
@@ -492,7 +478,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       leadingAction = CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: () => Navigator.of(context).pop(),
-        child: Text(AppLocalizations.of(context)!.bookFlightModal_button_close),
+        child: Text(AppLocalizations.of(context)!.flightLogModal_button_close),
       );
       trailingActions = [PlatformTextButton(
         onPressed: () => _onSave(context),
@@ -500,7 +486,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           // workaround for https://github.com/flutter/flutter/issues/32701
           padding: EdgeInsets.zero,
         ),
-        child: Text(AppLocalizations.of(context)!.bookFlightModal_button_save),
+        child: Text(AppLocalizations.of(context)!.flightLogModal_button_save),
       )];
     }
     else {
@@ -510,7 +496,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           onPressed: () => _onSave(context),
           icon: const Icon(Icons.check_sharp),
           material: (_, __) => MaterialIconButtonData(
-            tooltip: AppLocalizations.of(context)!.bookFlightModal_button_save,
+            tooltip: AppLocalizations.of(context)!.flightLogModal_button_save,
           ),
         ),
       ];
@@ -519,7 +505,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           onPressed: () => _onDelete(context),
           icon: const Icon(Icons.delete_sharp),
           material: (_, __) => MaterialIconButtonData(
-            tooltip: AppLocalizations.of(context)!.bookFlightModal_button_delete,
+            tooltip: AppLocalizations.of(context)!.flightLogModal_button_delete,
           ),
         ),
         );
@@ -530,8 +516,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
       iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(_isEditing ?
-        AppLocalizations.of(context)!.bookFlightModal_title_edit :
-        AppLocalizations.of(context)!.bookFlightModal_title_create
+        AppLocalizations.of(context)!.flightLogModal_title_edit :
+        AppLocalizations.of(context)!.flightLogModal_title_create
         ),
         leading: leadingAction,
         trailingActions: trailingActions,
@@ -645,7 +631,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
         iosContentPadding: true,
         appBar: PlatformAppBar(
-          title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot),
+          title: Text(AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot),
         ),
         cupertino: (context, platform) => CupertinoPageScaffoldData(
           backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
@@ -671,7 +657,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       showPlatformDialog(
         context: context,
         builder: (_context) => PlatformAlertDialog(
-          title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
+          title: Text(AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
               style: const TextStyle(fontWeight: FontWeight.bold)),
           content: SizedBox(
             width: double.minPositive,

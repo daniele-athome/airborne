@@ -92,17 +92,19 @@ class GoogleSheetsService {
   }
 
   Future<AppendValuesResponse> appendRows(String spreadsheetId, String sheetName, String range, List<List<Object?>> values) {
+    final _range = sheetRange(sheetName, range);
     return _api.spreadsheets.values.append(ValueRange(
-      range: sheetRange(sheetName, range),
+      range: _range,
       values: values,
-    ), spreadsheetId, range, valueInputOption: 'USER_ENTERED');
+    ), spreadsheetId, _range, valueInputOption: 'USER_ENTERED');
   }
 
   Future<UpdateValuesResponse> updateRows(String spreadsheetId, String sheetName, String range, List<List<Object?>> values) {
+    final _range = sheetRange(sheetName, range);
     return _api.spreadsheets.values.update(ValueRange(
-      range: sheetRange(sheetName, range),
+      range: _range,
       values: values,
-    ), spreadsheetId, range, valueInputOption: 'USER_ENTERED');
+    ), spreadsheetId, _range, valueInputOption: 'USER_ENTERED');
   }
 
   Future<BatchUpdateSpreadsheetResponse> deleteRows(String spreadsheetId, String sheetName, int startRow, int endRow) {

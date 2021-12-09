@@ -242,8 +242,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
             placeholder: AppLocalizations.of(context)!.flightLogModal_hint_notes,
           ),
         ]),
-        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection(children: <Widget>[
+        if (_isEditing) const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        if (_isEditing) CupertinoFormSection(children: <Widget>[
           Row(
             children: [
               Expanded(

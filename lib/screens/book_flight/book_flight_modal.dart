@@ -245,8 +245,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
             placeholder: AppLocalizations.of(context)!.bookFlightModal_hint_notes,
           ),
         ]),
-        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection(children: <Widget>[
+        if (_isEditing) const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        if (_isEditing) CupertinoFormSection(children: <Widget>[
           Row(
             children: [
               Expanded(

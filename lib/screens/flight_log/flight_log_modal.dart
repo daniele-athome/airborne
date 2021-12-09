@@ -219,8 +219,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             textAlign: TextAlign.end,
             keyboardType: TextInputType.number,
             validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
-              // TODO i18n
-              'Numero non valido' : null,
+              AppLocalizations.of(context)!.flightLogModal_dialog_error_fuel_invalid_number : null,
           ),
           // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
           CupertinoFormButtonRow(
@@ -340,8 +339,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
           trailing: IconButton(
             icon: const Icon(Icons.home),
-            // TODO i18n
-            tooltip: 'Home',
+            tooltip: AppLocalizations.of(context)!.flightLogModal_label_home,
             onPressed: () => _originController.text = _appConfig.locationName,
           ),
           title: TextFormField(
@@ -374,8 +372,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
           trailing: IconButton(
             icon: const Icon(Icons.home),
-            // TODO i18n
-            tooltip: 'Home',
+            tooltip: AppLocalizations.of(context)!.flightLogModal_label_home,
             onPressed: () => _destinationController.text = _appConfig.locationName,
           ),
           title: TextFormField(
@@ -419,8 +416,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
-              // TODO i18n
-              'Numero non valido' : null,
+              AppLocalizations.of(context)!.flightLogModal_dialog_error_fuel_invalid_number : null,
           ),
           trailing: SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,

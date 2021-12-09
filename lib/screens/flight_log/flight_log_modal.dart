@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/digit_display.dart';
+import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';
@@ -219,7 +222,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             textAlign: TextAlign.end,
             keyboardType: TextInputType.number,
             validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
-              AppLocalizations.of(context)!.flightLogModal_dialog_error_fuel_invalid_number : null,
+              AppLocalizations.of(context)!.flightLogModal_error_fuel_invalid_number : null,
           ),
           // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
           CupertinoFormButtonRow(
@@ -416,7 +419,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
-              AppLocalizations.of(context)!.flightLogModal_dialog_error_fuel_invalid_number : null,
+              AppLocalizations.of(context)!.flightLogModal_error_fuel_invalid_number : null,
           ),
           trailing: SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
@@ -573,26 +576,24 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _onDelete(BuildContext context) {
-    // TODO i18n and all
     if (!_appConfig.admin) {
       if (_appConfig.pilotName != widget.item.pilotName) {
-        showError(context, AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_delete);
+        showError(context, AppLocalizations.of(context)!.flightLogModal_error_notOwnFlight_delete);
         return;
       }
     }
 
     showConfirm(
       context: context,
-      text: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_message,
-      title: AppLocalizations.of(context)!.bookFlightModal_dialog_delete_title,
+      text: AppLocalizations.of(context)!.flightLogModal_dialog_delete_message,
+      title: AppLocalizations.of(context)!.flightLogModal_dialog_delete_title,
       okCallback: () => _doDelete(context),
       destructiveOk: true,
     );
   }
 
   void _doDelete(BuildContext context) {
-    /* TODO
-    final Future task = _service.deleteBooking(widget.event)
+    final Future task = _service.deleteItem(widget.item)
         .timeout(kNetworkRequestTimeout)
         .catchError((error, StackTrace stacktrace) {
       _log.warning('DELETE ERROR', error, stacktrace);
@@ -613,14 +614,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
       context: context,
       builder: (context) => FutureProgressDialog(task,
         message: isCupertino(context) ? null :
-        Text(AppLocalizations.of(context)!.bookFlightModal_dialog_working),
+        Text(AppLocalizations.of(context)!.flightLogModal_dialog_working),
       ),
     ).then((value) {
       if (value != null) {
         Navigator.of(context, rootNavigator: true).pop(value);
       }
     });
-     */
   }
 
   void _onTapPilot(BuildContext context) {

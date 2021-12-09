@@ -91,6 +91,35 @@ class GoogleSheetsService {
     ).timeout(_defaultTimeout);
   }
 
+  Future<BatchUpdateSpreadsheetResponse> deleteRows(String spreadsheetId, String sheetName, int startRow, int endRow) {
+    return _getSheetId(spreadsheetId, sheetName).then((spreadsheet) {
+      final Sheet sheetInfo;
+      try {
+        sheetInfo = spreadsheet.sheets!.firstWhere((element) => element.properties!.title == sheetName);
+      }
+      on StateError catch (_) {
+        throw Exception('Sheet not found: $sheetName');
+      }
+      final request = BatchUpdateSpreadsheetRequest(requests: [
+        Request(
+          deleteDimension: DeleteDimensionRequest(
+            range: DimensionRange(
+              sheetId: sheetInfo.properties!.sheetId,
+              dimension: 'ROWS',
+              startIndex: startRow - 1,
+              endIndex: endRow,
+            ),
+          ),
+        ),
+      ]);
+      return _api.spreadsheets.batchUpdate(request, spreadsheetId);
+    });
+  }
+
+  Future<Spreadsheet> _getSheetId(String spreadsheetId, String sheetName) {
+    return _api.spreadsheets.get(spreadsheetId, $fields: 'sheets.properties');
+  }
+
 }
 
 const _kGsDateBase = 2209161600 / 86400;

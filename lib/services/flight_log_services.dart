@@ -45,7 +45,6 @@ class FlightLogBookService {
   _sheetDataRange(first, last) => 'A${first + 2}:J${last + 2}';
 
   /// Convert item ID to sheet row number. +1 is for skipping the header row.
-  // ignore: unused_element
   _itemIdToRowNumber(id) => id + 1;
 
   Future<void> reset() {
@@ -89,6 +88,21 @@ class FlightLogBookService {
 
   bool hasMoreData() {
     return _lastId > 0;
+  }
+
+  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) {
+    return _ensureService().then((client) {
+      final rowNumber = _itemIdToRowNumber(int.parse(item.id!));
+      return client.deleteRows(_spreadsheetId, _sheetName, rowNumber, rowNumber)
+        .then((response) {
+          if (response.replies != null && response.replies!.length == 1) {
+            return DeletedFlightLogItem(item.id!);
+          }
+          else {
+            throw Exception('Unable to delete flight log item ' + item.id!);
+          }
+        });
+    });
   }
 
 }

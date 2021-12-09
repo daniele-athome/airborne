@@ -39,3 +39,10 @@ class FlightLogItem {
   }
 
 }
+
+class DeletedFlightLogItem extends FlightLogItem {
+  static final DateTime _dummy = DateTime.now();
+
+  // FIXME this _dummy stuff is not nice
+  DeletedFlightLogItem(String id) : super(id, _dummy, "", "", "", 0, 0, null, null, null);
+}

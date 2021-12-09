@@ -82,7 +82,11 @@
   "flightLogModal_label_fuel_price_cupertino": "Fuel price",
   "flightLogModal_hint_notes": "Notes",
   "flightLogModal_dialog_selectPilot": "Select pilot",
-  "flightLogModal_dialog_error_fuel_invalid_number": "Invalid number",
+  "flightLogModal_error_fuel_invalid_number": "Invalid number",
+  "flightLogModal_error_notOwnFlight_delete": "Flight is not yours, you cannot delete it.",
+  "flightLogModal_dialog_delete_title": "Delete?",
+  "flightLogModal_dialog_delete_message": "You are deleting a registered flight. You won't be able to undo this!",
+  "flightLogModal_dialog_working": "Please wait...",
 
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",

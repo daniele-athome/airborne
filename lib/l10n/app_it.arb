@@ -65,7 +65,11 @@
   "flightLogModal_label_fuel_price_cupertino": "Prezzo benzina",
   "flightLogModal_hint_notes": "Note",
   "flightLogModal_dialog_selectPilot": "Seleziona pilota",
-  "flightLogModal_dialog_error_fuel_invalid_number": "Numero non valido",
+  "flightLogModal_error_fuel_invalid_number": "Numero non valido",
+  "flightLogModal_error_notOwnFlight_delete": "Il volo non è tuo, non puoi cancellarlo.",
+  "flightLogModal_dialog_delete_title": "Cancellare?",
+  "flightLogModal_dialog_delete_message": "Stai cancellando un volo registrato. Non potrai recuperarlo!",
+  "flightLogModal_dialog_working": "Un attimo...",
 
   "addAircraft_title": "Configura aereo",
   "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",

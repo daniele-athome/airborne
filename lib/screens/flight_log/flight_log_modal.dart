@@ -359,7 +359,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
               border: InputBorder.none,
               labelText: AppLocalizations.of(context)!.flightLogModal_label_origin,
             ),
-            // TODO validator
           ),
         ),
         const Divider(
@@ -392,7 +391,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
               border: InputBorder.none,
               labelText: AppLocalizations.of(context)!.flightLogModal_label_destination,
             ),
-            // TODO validator
           ),
         ),
         const Divider(
@@ -430,6 +428,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 border: InputBorder.none,
               ),
               items: fuelPrices,
+              validator: (_) => null,
             ),
           ),
         ),
@@ -536,21 +535,37 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _onSave(BuildContext context) {
-    // TODO no validate necessary here?
-  /* TODO
+    if (_startHourController.value.number > _endHourController.value.number) {
+      showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_hourmeter);
+      return;
+    }
+
+    if (_originController.text.trim().isEmpty || _destinationController.text.trim().isEmpty) {
+      showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_locations);
+      return;
+    }
+
+    String fuelValue = _fuelController.text;
+    if (fuelValue.isNotEmpty && int.tryParse(fuelValue) == null) {
+      showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_fuel);
+      return;
+    }
+
     if (_isEditing) {
       if (!_appConfig.admin) {
-        if (_appConfig.pilotName != widget.event.pilotName) {
-          showError(context, AppLocalizations.of(context)!.bookFlightModal_error_notOwnBooking_edit);
+        if (_appConfig.pilotName != widget.item.pilotName) {
+          showError(context, AppLocalizations.of(context)!.flightLogModal_error_notOwnFlight_edit);
           return;
         }
       }
       else {
-        if (_pilotName != widget.event.pilotName) {
+        // TODO no-pilot change validation stuff (see Ionic app)
+
+        if (_pilotName != widget.item.pilotName) {
           showConfirm(
               context: context,
-              text: AppLocalizations.of(context)!.bookFlightModal_dialog_changePilot_message,
-              title: AppLocalizations.of(context)!.bookFlightModal_dialog_changePilot_title,
+              text: AppLocalizations.of(context)!.flightLogModal_dialog_changePilot_message,
+              title: AppLocalizations.of(context)!.flightLogModal_dialog_changePilot_title,
               okCallback: () => _doSave(context)
           );
           return;
@@ -560,7 +575,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
     else {
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != _pilotName) {
-          showError(context, AppLocalizations.of(context)!.bookFlightModal_error_bookingForOthers);
+          showError(context, AppLocalizations.of(context)!.flightLogModal_error_loggingForOthers);
           return;
         }
       }
@@ -568,10 +583,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
     // no reason to stop
     _doSave(context);
- */
   }
 
-  // ignore: unused_element
   void _doSave(BuildContext context) {
     // TODO
   }

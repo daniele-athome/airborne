@@ -297,7 +297,12 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           leading: CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(_pilotName)),
-          title: Text(_pilotName),
+          title: Text(_pilotName,
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w400
+            ),
+          ),
           onTap: () => _onTapPilot(context),
         ),
         const Divider(

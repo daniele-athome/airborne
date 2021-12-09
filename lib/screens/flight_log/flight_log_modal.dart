@@ -41,8 +41,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   // event data
   late String _pilotName;
-  @Deprecated('Use _dateController')
-  late DateTime _date;
   late num? _fuelPrice;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -69,7 +67,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _fuelController = TextEditingController(text: widget.item.fuel != null ? widget.item.fuel.toString() : '');
     _notesController = TextEditingController(text: widget.item.notes);
     _dateController = DateTimePickerController(widget.item.date);
-    _date = widget.item.date;
     _fuelPrice = widget.item.fuelPrice;
     super.initState();
   }
@@ -92,14 +89,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _notesController.dispose();
     _dateController.dispose();
     super.dispose();
-  }
-
-  void _onDateChanged(DateTime? date, bool time) {
-    if (date != null && date != _date) {
-      setState(() {
-        _date = date;
-      });
-    }
   }
 
   String _buildFuelPriceLabel(num value) => !_appConfig.fuelPrices!.containsKey(value) ?
@@ -160,7 +149,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
             prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_date),
             showTime: false,
             doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
-            onChanged: (e) => true,
             controller: _dateController,
           ),
           CupertinoFormButtonRow(
@@ -298,8 +286,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
       children: <Widget>[
         // flight date
         _DateListTile(
-          selectedDate: _date,
-          onDateSelected: (date) => _onDateChanged(date, false),
+          controller: _dateController,
+          onDateSelected: (_) => setState(() {}),
         ),
         const Divider(
           height: 1.0,
@@ -588,9 +576,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
   void _doSave(BuildContext context) {
     final item = FlightLogItem(
       widget.item.id,
-      // FIXME won't work on Material because the date controller isn't used
-      //_dateController.value!,
-      _date,
+      _dateController.value!,
       _pilotName,
       _originController.text,
       _destinationController.text,
@@ -740,14 +726,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
 // FIXME refactor into widget + controller (e.g. like a text field)
 // TODO move to another file?
 class _DateListTile extends StatelessWidget {
-  final DateTime selectedDate;
-  final Function(DateTime? selected) onDateSelected;
+  final DateTimePickerController controller;
+  final Function(DateTime? selected)? onDateSelected;
   final bool showIcon;
 
   const _DateListTile({
     Key? key,
-    required this.onDateSelected,
-    required this.selectedDate,
+    required this.controller,
+    this.onDateSelected,
     this.showIcon = true,
   }) : super(key: key);
 
@@ -760,13 +746,13 @@ class _DateListTile extends StatelessWidget {
       ) : const Text(''),
       title: Text(
         // TODO locale
-        DateFormat('EEE, dd/MM/yyyy').format(selectedDate),
+        controller.value != null ? DateFormat('EEE, dd/MM/yyyy').format(controller.value!) : '',
         textAlign: TextAlign.left,
       ),
       onTap: () async {
         final DateTime? date = await showDatePicker(
           context: context,
-          initialDate: selectedDate,
+          initialDate: controller.value ?? DateTime.now(),
           firstDate: DateTime(1900),
           lastDate: DateTime(2100),
           /* TODO builder: (BuildContext context, Widget? child) {
@@ -784,7 +770,10 @@ class _DateListTile extends StatelessWidget {
                           );
                         }*/
         );
-        onDateSelected(date);
+        if (onDateSelected != null) {
+          controller.value = date;
+          onDateSelected!(date);
+        }
       },
     );
   }

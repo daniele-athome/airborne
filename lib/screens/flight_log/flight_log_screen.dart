@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
@@ -22,6 +23,7 @@ class FlightLogScreen extends StatefulWidget {
 
 class _FlightLogScreenState extends State<FlightLogScreen> {
 
+  late FToast _fToast;
   late FlightLogListController _logBookController;
   late AppConfig _appConfig;
   late FlightLogBookService _logBookService;
@@ -29,6 +31,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   @override
   void initState() {
     super.initState();
+    _fToast = FToast();
+    _fToast.init(context);
     _logBookController = FlightLogListController();
   }
 
@@ -82,12 +86,21 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         .push(route)
         .then((result) {
       if (result != null) {
-        // TODO show result toast
+        final String message;
+        if (item == null) {
+          message = AppLocalizations.of(context)!.flightLog_message_flight_added;
+        }
+        else if (result is DeletedFlightLogItem) {
+          message = AppLocalizations.of(context)!.flightLog_message_flight_canceled;
+        }
+        else {
+          message = AppLocalizations.of(context)!.flightLog_message_flight_updated;
+        }
+        showToast(_fToast, message, const Duration(seconds: 2));
         // refresh list
         _logBookController.markDirty();
       }
     });
-
   }
 
   Widget _buildBody(BuildContext context) {

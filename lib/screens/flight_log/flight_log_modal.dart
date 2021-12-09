@@ -571,6 +571,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
  */
   }
 
+  // ignore: unused_element
   void _doSave(BuildContext context) {
     // TODO
   }

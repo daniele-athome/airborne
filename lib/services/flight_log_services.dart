@@ -107,8 +107,8 @@ class FlightLogBookService {
         item.endHour,
         item.origin,
         item.destination,
-        item.fuel,
-        item.fuel != null ? item.fuelPrice : null,
+        item.fuel ?? '',
+        item.fuel != null ? item.fuelPrice : '',
         item.notes,
       ]
     ];

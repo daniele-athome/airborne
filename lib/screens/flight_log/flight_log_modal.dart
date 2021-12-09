@@ -288,6 +288,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
         _DateListTile(
           controller: _dateController,
           onDateSelected: (_) => setState(() {}),
+          textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w400
+          ),
         ),
         const Divider(
           height: 1.0,
@@ -422,7 +426,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
-              selectedItemBuilder: (context) {
+              /* TODO not ready yet -- selectedItemBuilder: (context) {
                 Widget itemBuilder(String text)  =>
                   Expanded(
                     child: Align(
@@ -441,7 +445,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                   fuelPrices.add(itemBuilder(_buildFuelPriceLabel(widget.item.fuelPrice!)));
                 }
                 return fuelPrices;
-              },
+              },*/
               items: fuelPrices,
               validator: (_) => null,
             ),
@@ -769,12 +773,14 @@ class _DateListTile extends StatelessWidget {
   final DateTimePickerController controller;
   final Function(DateTime? selected)? onDateSelected;
   final bool showIcon;
+  final TextStyle? textStyle;
 
   const _DateListTile({
     Key? key,
     required this.controller,
     this.onDateSelected,
     this.showIcon = true,
+    this.textStyle,
   }) : super(key: key);
 
   @override
@@ -788,6 +794,7 @@ class _DateListTile extends StatelessWidget {
         // TODO locale
         controller.value != null ? DateFormat('EEE, dd/MM/yyyy').format(controller.value!) : '',
         textAlign: TextAlign.left,
+        style: textStyle,
       ),
       onTap: () async {
         final DateTime? date = await showDatePicker(

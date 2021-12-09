@@ -91,6 +91,20 @@ class GoogleSheetsService {
     ).timeout(_defaultTimeout);
   }
 
+  Future<AppendValuesResponse> appendRows(String spreadsheetId, String sheetName, String range, List<List<Object?>> values) {
+    return _api.spreadsheets.values.append(ValueRange(
+      range: sheetRange(sheetName, range),
+      values: values,
+    ), spreadsheetId, range, valueInputOption: 'USER_ENTERED');
+  }
+
+  Future<UpdateValuesResponse> updateRows(String spreadsheetId, String sheetName, String range, List<List<Object?>> values) {
+    return _api.spreadsheets.values.update(ValueRange(
+      range: sheetRange(sheetName, range),
+      values: values,
+    ), spreadsheetId, range, valueInputOption: 'USER_ENTERED');
+  }
+
   Future<BatchUpdateSpreadsheetResponse> deleteRows(String spreadsheetId, String sheetName, int startRow, int endRow) {
     return _getSheetId(spreadsheetId, sheetName).then((spreadsheet) {
       final Sheet sheetInfo;

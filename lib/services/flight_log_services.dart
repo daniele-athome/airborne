@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
 import '../models/flight_log_models.dart';
@@ -10,8 +11,11 @@ const _kItemsPerPage = 20;
 /// Cell containing the row count.
 const _kSheetCountRange = 'A1';
 /// Data range for appending.
-// ignore: unused_element
 const _kSheetAppendRange = 'A:J';
+/// Log timestamp formatter
+final _kTimestampFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+/// Flight date formatter
+final _kDateFormatter = DateFormat('yyyy-MM-dd');
 
 final Logger _log = Logger((FlightLogItem).toString());
 
@@ -47,6 +51,10 @@ class FlightLogBookService {
   /// Convert item ID to sheet row number. +1 is for skipping the header row.
   _itemIdToRowNumber(id) => id + 1;
 
+  /// Convert sheet row number to item ID. -1 is for adding the header row.
+  // ignore: unused_element
+  _rowNumberToItemId(rowNumber) => rowNumber - 1;
+
   Future<void> reset() {
     return _ensureService().then((client) =>
       client.getRows(_spreadsheetId, _sheetName, _kSheetCountRange).then((value) {
@@ -59,8 +67,8 @@ class FlightLogBookService {
     );
   }
 
-  Future<Iterable<FlightLogItem>> fetchItems() {
-    return _ensureService().then((client) {
+  Future<Iterable<FlightLogItem>> fetchItems() =>
+    _ensureService().then((client) {
       final lastId = _lastId - 1;
       _lastId = max(_lastId - _kItemsPerPage, 0);
       final firstId = _lastId;
@@ -84,14 +92,56 @@ class FlightLogBookService {
         ));
       });
     });
-  }
 
   bool hasMoreData() {
     return _lastId > 0;
   }
 
-  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) {
-    return _ensureService().then((client) {
+  List<List<Object?>> _formatRowData(FlightLogItem item) =>
+    [
+      [
+        _kTimestampFormatter.format(DateTime.now()),
+        _kDateFormatter.format(item.date),
+        item.pilotName,
+        item.startHour,
+        item.endHour,
+        item.origin,
+        item.destination,
+        item.fuel,
+        item.fuel != null ? item.fuelPrice : null,
+        item.notes,
+      ]
+    ];
+
+  Future<FlightLogItem> appendItem(FlightLogItem item) =>
+    _ensureService().then((client) =>
+      client.appendRows(_spreadsheetId, _sheetName, _kSheetAppendRange, _formatRowData(item)).then((response) {
+        if (response.tableRange != null && response.tableRange!.isNotEmpty) {
+          // TODO return a copy of item with filled id (parse response.tableRange)
+          return item;
+        }
+        else {
+          throw Exception('Unable to append rows to sheet');
+        }
+      })
+    );
+
+  Future<FlightLogItem> updateItem(FlightLogItem item) =>
+    _ensureService().then((client) {
+      // FIXME does -1 but it's not the same as _rowNumberToItemId
+      final rowNum = int.parse(item.id!) - 1;
+      return client.updateRows(_spreadsheetId, _sheetName, _sheetDataRange(rowNum, rowNum), _formatRowData(item)).then((response) {
+        if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {
+          return item;
+        }
+        else {
+          throw Exception('Unable to append rows to sheet');
+        }
+      });
+    });
+
+  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) =>
+    _ensureService().then((client) {
       final rowNumber = _itemIdToRowNumber(int.parse(item.id!));
       return client.deleteRows(_spreadsheetId, _sheetName, rowNumber, rowNumber)
         .then((response) {
@@ -103,6 +153,5 @@ class FlightLogBookService {
           }
         });
     });
-  }
 
 }

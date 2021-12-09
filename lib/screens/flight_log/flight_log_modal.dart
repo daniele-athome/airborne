@@ -218,8 +218,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
             prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_cupertino),
             textAlign: TextAlign.end,
             keyboardType: TextInputType.number,
+            validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
+              // TODO i18n
+              'Numero non valido' : null,
           ),
-          // TODO convert to standalone form row widget (using a controller)
+          // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
           CupertinoFormButtonRow(
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_price_cupertino),

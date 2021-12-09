@@ -15,6 +15,7 @@
 
   "button_goToday": "Today",
   "button_bookFlight": "Book",
+  "button_logFlight": "Log flight",
 
   "error_generic_network_timeout": "Server did not respond.",
 

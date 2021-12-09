@@ -50,13 +50,13 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   void _logFlight(BuildContext context, FlightLogItem? item) {
     final FlightLogItem model;
     if (item == null) {
-      // TODO proper model
       model = FlightLogItem(
         null,
         DateTime.now(),
         _appConfig.pilotName!,
-        '',
-        '',
+        _appConfig.locationName,
+        _appConfig.locationName,
+        // TODO start and end hour
         0,
         0,
         null,
@@ -117,20 +117,39 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         iosContentPadding: true,
         appBar: isCupertino(context) ? null : PlatformAppBar(
           title: Text(AppLocalizations.of(context)!.flightLog_title),
-          // TODO trailingActions: [],
           material: (context, platform) => MaterialAppBarData(
             toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
             kPortraitToolbarHeight : kLandscapeToolbarHeight,
           ),
         ),
         material: (_, __) => MaterialScaffoldData(
-          //floatingActionButton: fab,
+          floatingActionButton: FloatingActionButton(
+            key: const Key('button_bookFlight'),
+            onPressed: () => _logFlight(context, null),
+            tooltip: AppLocalizations.of(context)!.button_logFlight,
+            child: const Icon(Icons.add),
+            // TODO colors
+          ),
           body: _buildBody(context),
         ),
         cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
           body: NestedScrollView(
             headerSliverBuilder: (_, __) => [CupertinoSliverNavigationBar(
               largeTitle: Text(AppLocalizations.of(context)!.flightLog_title),
+              trailing: PlatformIconButton(
+                key: const Key('button_logFlight'),
+                onPressed: () => _logFlight(context, null),
+                icon: Icon(CupertinoIcons.add,
+                  color: CupertinoColors.systemRed,
+                  semanticLabel: AppLocalizations.of(context)!.button_logFlight,
+                ),
+                // TODO not ready yet
+                //color: CupertinoColors.systemRed,
+                cupertino: (_, __) => CupertinoIconButtonData(
+                  // workaround for https://github.com/flutter/flutter/issues/32701
+                  padding: EdgeInsets.zero,
+                ),
+              ),
             )],
             body: _buildBody(context)
           )

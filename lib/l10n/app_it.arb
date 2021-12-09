@@ -12,6 +12,7 @@
 
   "button_goToday": "Oggi",
   "button_bookFlight": "Prenota",
+  "button_logFlight": "Registra volo",
 
   "error_generic_network_timeout": "Il server non risponde.",
 

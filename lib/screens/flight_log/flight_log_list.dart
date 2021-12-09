@@ -17,10 +17,12 @@ final Logger _log = Logger((FlightLogItem).toString());
 class FlightLogList extends StatefulWidget {
   const FlightLogList({
     Key? key,
+    required this.controller,
     required this.logBookService,
     required this.onTapItem,
   })  : super(key: key);
 
+  final FlightLogListController controller;
   final FlightLogBookService logBookService;
   final Function(BuildContext context, FlightLogItem item) onTapItem;
 
@@ -41,7 +43,17 @@ class _FlightLogListState extends State<FlightLogList> {
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
+    widget.controller.addListener(_refresh);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(FlightLogList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      oldWidget.controller.removeListener(_refresh);
+      widget.controller.addListener(_refresh);
+    }
   }
 
   Future<void> _fetchPage(int pageKey) async {
@@ -238,7 +250,21 @@ class _FlightLogListState extends State<FlightLogList> {
   @override
   void dispose() {
     _pagingController.dispose();
+    widget.controller.removeListener(_refresh);
     super.dispose();
   }
 
+}
+
+class FlightLogListController extends ValueNotifier<FlightLogListState> {
+  FlightLogListController() : super(FlightLogListState());
+
+  void markDirty() {
+    value = FlightLogListState();
+  }
+
+}
+
+@immutable
+class FlightLogListState {
 }

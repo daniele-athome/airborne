@@ -22,14 +22,14 @@ class FlightLogScreen extends StatefulWidget {
 
 class _FlightLogScreenState extends State<FlightLogScreen> {
 
-  // ignore: unused_field
+  late FlightLogListController _logBookController;
   late AppConfig _appConfig;
   late FlightLogBookService _logBookService;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _logBookController = FlightLogListController();
   }
 
   @override
@@ -83,7 +83,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         .then((result) {
       if (result != null) {
         // TODO show result toast
-        // TODO refresh list
+        // refresh list
+        _logBookController.markDirty();
       }
     });
 
@@ -91,6 +92,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
 
   Widget _buildBody(BuildContext context) {
     return FlightLogList(
+      controller: _logBookController,
       logBookService: _logBookService,
       onTapItem: (context, item) => _onTapItem(context, item),
     );

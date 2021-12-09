@@ -60,11 +60,17 @@ class _FlightLogListState extends State<FlightLogList> {
     try {
       if (_firstTime) {
         await widget.logBookService.reset();
-        _firstTime = false;
       }
 
       final items = await widget.logBookService.fetchItems();
       final page = items.toList(growable: false).reversed.toList(growable: false);
+
+      if (_firstTime) {
+        if (page.isNotEmpty) {
+          widget.controller.lastEndHourMeter = page[0].endHour;
+        }
+        _firstTime = false;
+      }
 
       if (widget.logBookService.hasMoreData()) {
         _pagingController.appendPage(page, pageKey + 1);
@@ -257,14 +263,29 @@ class _FlightLogListState extends State<FlightLogList> {
 }
 
 class FlightLogListController extends ValueNotifier<FlightLogListState> {
-  FlightLogListController() : super(FlightLogListState());
+  FlightLogListController() : super(const FlightLogListState());
 
-  void markDirty() {
-    value = FlightLogListState();
+  set lastEndHourMeter(num? number) {
+    value = FlightLogListState(
+      lastEndHourMeter: number,
+    );
+  }
+
+  num? get lastEndHourMeter {
+    return value.lastEndHourMeter;
+  }
+
+  void reset() {
+    value = const FlightLogListState();
   }
 
 }
 
 @immutable
 class FlightLogListState {
+  const FlightLogListState({
+    this.lastEndHourMeter,
+  });
+
+  final num? lastEndHourMeter;
 }

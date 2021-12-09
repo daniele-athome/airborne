@@ -34,6 +34,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
     _fToast = FToast();
     _fToast.init(context);
     _logBookController = FlightLogListController();
+    _logBookController.addListener(_logBookListChanged);
   }
 
   @override
@@ -41,6 +42,24 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
     _logBookService = Provider.of<FlightLogBookService>(context, listen: false);
     super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant FlightLogScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _logBookController.removeListener(_logBookListChanged);
+  }
+
+  void _logBookListChanged() {
+    // FIXME triggering a useless extra build: in theory,
+    // the create button widget should be wrapped and given
+    // the controller so it can listen to changes
+    setState(() {});
   }
 
   void _onTapItem(BuildContext context, FlightLogItem item) {
@@ -98,7 +117,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         }
         showToast(_fToast, message, const Duration(seconds: 2));
         // refresh list
-        _logBookController.markDirty();
+        _logBookController.reset();
       }
     });
   }
@@ -113,6 +132,9 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // hide create button until we have the first (actually last) item of the log
+    bool showCreateButton = _logBookController.lastEndHourMeter != null;
+
     return PlatformScaffold(
         iosContentPadding: true,
         appBar: isCupertino(context) ? null : PlatformAppBar(
@@ -123,20 +145,20 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
           ),
         ),
         material: (_, __) => MaterialScaffoldData(
-          floatingActionButton: FloatingActionButton(
+          floatingActionButton: showCreateButton ? FloatingActionButton(
             key: const Key('button_bookFlight'),
             onPressed: () => _logFlight(context, null),
             tooltip: AppLocalizations.of(context)!.button_logFlight,
             child: const Icon(Icons.add),
             // TODO colors
-          ),
+          ) : null,
           body: _buildBody(context),
         ),
         cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
           body: NestedScrollView(
             headerSliverBuilder: (_, __) => [CupertinoSliverNavigationBar(
               largeTitle: Text(AppLocalizations.of(context)!.flightLog_title),
-              trailing: PlatformIconButton(
+              trailing: showCreateButton ? PlatformIconButton(
                 key: const Key('button_logFlight'),
                 onPressed: () => _logFlight(context, null),
                 icon: Icon(CupertinoIcons.add,
@@ -149,7 +171,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
                   // workaround for https://github.com/flutter/flutter/issues/32701
                   padding: EdgeInsets.zero,
                 ),
-              ),
+              ) : null,
             )],
             body: _buildBody(context)
           )

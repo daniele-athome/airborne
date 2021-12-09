@@ -586,7 +586,49 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _doSave(BuildContext context) {
-    // TODO
+    final item = FlightLogItem(
+      widget.item.id,
+      // FIXME won't work on Material because the date controller isn't used
+      //_dateController.value!,
+      _date,
+      _pilotName,
+      _originController.text,
+      _destinationController.text,
+      _startHourController.number,
+      _endHourController.number,
+      _fuelController.text.isNotEmpty ? int.parse(_fuelController.text) : null,
+      _fuelPrice,
+      _notesController.text,
+    );
+    final Future task = (_isEditing ?
+      _service.updateItem(item) : _service.appendItem(item))
+      .timeout(kNetworkRequestTimeout)
+      .catchError((error, StackTrace stacktrace) {
+        _log.warning('SAVE ERROR', error, stacktrace);
+        final String message;
+        // TODO specialize exceptions (e.g. network errors, others...)
+        if (error is TimeoutException) {
+          message = AppLocalizations.of(context)!.error_generic_network_timeout;
+        }
+        else {
+          message = getExceptionMessage(error);
+        }
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          showError(context, message);
+        });
+      });
+
+    showPlatformDialog(
+      context: context,
+      builder: (context) => FutureProgressDialog(task,
+        message: isCupertino(context) ? null :
+          Text(AppLocalizations.of(context)!.flightLogModal_dialog_working),
+      ),
+    ).then((value) {
+      if (value != null) {
+        Navigator.of(context).pop(value);
+      }
+    });
   }
 
   void _onDelete(BuildContext context) {

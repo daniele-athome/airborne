@@ -39,7 +39,8 @@ class AppConfig extends ChangeNotifier {
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
         return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] != null &&
-            _currentAircraft!.backendInfo['flightlog_sheet_name'] != null;
+            _currentAircraft!.backendInfo['flightlog_sheet_name'] != null &&
+            _currentAircraft!.noPilotName != null;
       default:
         throw Exception('Unknown feature: $feature');
     }
@@ -98,13 +99,18 @@ class AppConfig extends ChangeNotifier {
     return '€';
   }
 
-  // TODO handle non-pilot user "(prove tecniche)"
   List<String> get pilotNames {
     return _currentAircraft!.pilotNames;
   }
 
+  List<String> get pilotNamesWithNoPilot {
+    return [_currentAircraft!.noPilotName!, ..._currentAircraft!.pilotNames];
+  }
+
   ImageProvider getPilotAvatar(String name) {
-    return FileImage(_currentAircraft!.getPilotAvatar(name));
+    return (name == _currentAircraft!.noPilotName ?
+      const AssetImage('assets/images/nopilot_avatar.png') :
+      FileImage(_currentAircraft!.getPilotAvatar(name))) as ImageProvider;
   }
 
   ImageProvider get aircraftPicture {

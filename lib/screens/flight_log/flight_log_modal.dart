@@ -666,8 +666,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _onTapPilot(BuildContext context) {
-    // TODO add "no pilot" pilot
-    final items = _appConfig.pilotNames;
+    final items = _appConfig.pilotNamesWithNoPilot;
     if (isCupertino(context)) {
       Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
         iosContentPadding: true,

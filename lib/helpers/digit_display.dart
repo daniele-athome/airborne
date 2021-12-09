@@ -15,6 +15,7 @@ class DigitDisplayFormTextField extends FormField<num> {
   }) : super(
     key: key,
     onSaved: onSaved,
+    initialValue: controller?.value.number,
     validator: validator,
     builder: (field) {
       return DigitDisplayTextField(

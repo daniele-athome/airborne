@@ -46,6 +46,9 @@
   "bookFlightModal_dialog_selectPilot": "Seleziona pilota",
 
   "flightLog_title": "Log book",
+  "flightLog_message_flight_added": "Volo registrato.",
+  "flightLog_message_flight_canceled": "Volo cancellato.",
+  "flightLog_message_flight_updated": "Volo modificato.",
 
   "flightLogModal_title_create": "Registra",
   "flightLogModal_title_edit": "Modifica",

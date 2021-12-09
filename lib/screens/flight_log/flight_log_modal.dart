@@ -540,19 +540,32 @@ class _FlightLogModalState extends State<FlightLogModal> {
     }
 
     if (_isEditing) {
-      if (!_appConfig.admin) {
+      // allow editing "no pilot" flights to non-admins
+      if (!_appConfig.admin && widget.item.pilotName != _appConfig.noPilotName) {
         if (_appConfig.pilotName != widget.item.pilotName) {
           showError(context, AppLocalizations.of(context)!.flightLogModal_error_notOwnFlight_edit);
           return;
         }
       }
       else {
-        // TODO no-pilot change validation stuff (see Ionic app)
-
         if (_pilotName != widget.item.pilotName) {
+          // non-admin can't change pilot of "no pilot" flights
+          if (!_appConfig.admin && widget.item.pilotName == _appConfig.noPilotName) {
+            showError(context, AppLocalizations.of(context)!.flightLogModal_error_alteringTestFlight);
+            return;
+          }
+
+          final String message;
+          if (_pilotName == _appConfig.noPilotName) {
+            message = AppLocalizations.of(context)!.flightLogModal_dialog_changePilotNoPilot_message;
+          }
+          else {
+            message = AppLocalizations.of(context)!.flightLogModal_dialog_changePilot_message;
+          }
+
           showConfirm(
               context: context,
-              text: AppLocalizations.of(context)!.flightLogModal_dialog_changePilot_message,
+              text: message,
               title: AppLocalizations.of(context)!.flightLogModal_dialog_changePilot_title,
               okCallback: () => _doSave(context)
           );
@@ -561,7 +574,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       }
     }
     else {
-      if (!_appConfig.admin) {
+      if (!_appConfig.admin && _pilotName != _appConfig.noPilotName) {
         if (_appConfig.pilotName != _pilotName) {
           showError(context, AppLocalizations.of(context)!.flightLogModal_error_loggingForOthers);
           return;
@@ -618,7 +631,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _onDelete(BuildContext context) {
-    if (!_appConfig.admin) {
+    // allow deleting "no pilot" flights to non-admins
+    if (!_appConfig.admin && widget.item.pilotName != _appConfig.noPilotName) {
       if (_appConfig.pilotName != widget.item.pilotName) {
         showError(context, AppLocalizations.of(context)!.flightLogModal_error_notOwnFlight_delete);
         return;

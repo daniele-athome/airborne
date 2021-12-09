@@ -412,9 +412,31 @@ class _FlightLogModalState extends State<FlightLogModal> {
             child: DropdownButtonFormField<num>(
               value: _fuelPrice,
               onChanged: (value) => _fuelPrice = value,
+              isDense: false,
               decoration: const InputDecoration(
                 border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
               ),
+              selectedItemBuilder: (context) {
+                Widget itemBuilder(String text)  =>
+                  Expanded(
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(text),
+                        )
+                    ),
+                  );
+
+                final List<Widget> fuelPrices = _appConfig.fuelPrices!.keys.map(
+                      (key) => itemBuilder(_buildFuelPriceLabel(key)),
+                ).toList();
+                if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
+                  fuelPrices.add(itemBuilder(_buildFuelPriceLabel(widget.item.fuelPrice!)));
+                }
+                return fuelPrices;
+              },
               items: fuelPrices,
               validator: (_) => null,
             ),

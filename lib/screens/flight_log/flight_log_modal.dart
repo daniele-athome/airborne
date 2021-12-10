@@ -317,13 +317,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
           controller: _startHourController,
           hintText: AppLocalizations.of(context)!.flightLogModal_label_startHour,
           showIcon: true,
-          onTap: () => true,
         ),
         HourListTile(
           controller: _endHourController,
           hintText: AppLocalizations.of(context)!.flightLogModal_label_endHour,
           showIcon: false,
-          onTap: () => true,
         ),
         const Divider(
           height: 1.0,

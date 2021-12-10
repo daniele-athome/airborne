@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:intl/intl.dart';
 
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/digit_display.dart';
 
-class HourListTile extends StatelessWidget {
+class HourListTile extends StatefulWidget {
   const HourListTile({
     Key? key,
     required this.controller,
@@ -20,27 +23,49 @@ class HourListTile extends StatelessWidget {
   final GestureTapCallback? onTap;
 
   @override
+  State<HourListTile> createState() => _HourListTileState();
+}
+
+class _HourListTileState extends State<HourListTile> {
+
+  _onTap(BuildContext context) {
+    showPlatformDialog(
+      context: context,
+      builder: (_context) => HourMeterDialog(
+        initialValue: widget.controller.number,
+        onCancel: () => Navigator.pop(_context),
+        onConfirm: (value) => Navigator.pop(_context, value),
+      ),
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          widget.controller.number = value;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: showIcon ? const SizedBox(height: double.infinity, child: Icon(Icons.timer)) : const Text(''),
+      leading: widget.showIcon ? const SizedBox(height: double.infinity, child: Icon(Icons.timer)) : const Text(''),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // TODO try to replicate InputDecoration floating label text style
-          Text(hintText, style: Theme.of(context).textTheme.caption!),
+          Text(widget.hintText, style: Theme.of(context).textTheme.caption!),
           DigitDisplayFormTextField(
-            controller: controller,
+            controller: widget.controller,
             // TODO i18n
             validator: (value) => value == null || value == 0 ?
             'Inserire un orametro valido.' : null,
           ),
         ],
       ),
-      onTap: onTap,
+      onTap: widget.onTap ?? () => _onTap(context),
     );
   }
-
 }
 
 class CupertinoHourFormRow extends StatelessWidget {
@@ -78,6 +103,253 @@ class CupertinoHourFormRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+}
+
+// TODO Cupertino style
+class HourMeterDialog extends StatefulWidget {
+  const HourMeterDialog({
+    Key? key,
+    required this.initialValue,
+    this.onConfirm,
+    this.onCancel,
+  }) : super(key: key);
+
+  final num initialValue;
+  final Function(num value)? onConfirm;
+  final Function()? onCancel;
+
+  @override
+  State<HourMeterDialog> createState() => _HourMeterDialogState();
+}
+
+class _HourMeterDigitState {
+  const _HourMeterDigitState({
+    required this.mode,
+  });
+
+  final int mode;
+
+  static const _HourMeterDigitState willReset = _HourMeterDigitState(mode: -1);
+  static const _HourMeterDigitState integralPart = _HourMeterDigitState(mode: 0);
+  static const _HourMeterDigitState fractionalDigit1 = _HourMeterDigitState(mode: 1);
+  static const _HourMeterDigitState fractionalDigit2 = _HourMeterDigitState(mode: 2);
+  static const _HourMeterDigitState ended = _HourMeterDigitState(mode: 9);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is _HourMeterDigitState &&
+          runtimeType == other.runtimeType &&
+          mode == other.mode;
+
+  @override
+  int get hashCode => mode.hashCode;
+}
+
+class _HourMeterDialogState extends State<HourMeterDialog> {
+
+  _HourMeterDigitState _mode = _HourMeterDigitState.willReset;
+  late DigitDisplayController _controller;
+
+  late BorderSide _borderSide;
+  late Color _disabledButtonBackgroundColor;
+  late TextStyle _textStyle;
+
+  @override
+  void initState() {
+    _controller = DigitDisplayController(widget.initialValue);
+    super.initState();
+  }
+
+  _buildNumberButton(String value, {
+    String? text,
+    bool enabled = true,
+  }) =>
+      Expanded(
+        flex: 1,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: TextButton(
+            onPressed: enabled ? () => _onPressed(value) : null,
+            style: TextButton.styleFrom(
+              backgroundColor: enabled ? null : _disabledButtonBackgroundColor,
+              shape: CircleBorder(
+                side: _borderSide,
+              )
+            ),
+            child: Text(text ?? value,
+              style: _textStyle,
+            )
+          ),
+        ),
+      );
+
+  _onPressed(String value) {
+    setState(() {
+      String number;
+      if (_mode == _HourMeterDigitState.willReset) {
+        if (value == '.') {
+          _controller.number = 0;
+          _mode = _HourMeterDigitState.fractionalDigit1;
+          return;
+        }
+        else {
+          number = '';
+          _mode = _HourMeterDigitState.integralPart;
+        }
+      }
+      else {
+        number = _controller.number.toString();
+      }
+      if (_mode == _HourMeterDigitState.integralPart) {
+        if (value == '.') {
+          _mode = _HourMeterDigitState.fractionalDigit1;
+        }
+        else if (number.length < kMaxDisplayIntegerDigits) {
+          number += value;
+          _controller.number = int.parse(number);
+        }
+      }
+      else if (_mode == _HourMeterDigitState.fractionalDigit1) {
+        _controller.number = double.parse(number) + (int.parse(value) * 0.1);
+        _mode = _HourMeterDigitState.fractionalDigit2;
+      }
+      else if (_mode == _HourMeterDigitState.fractionalDigit2) {
+        _controller.number = double.parse(number) + (int.parse(value) * 0.01);
+        _mode = _HourMeterDigitState.ended;
+      }
+    });
+  }
+
+  _onBackspace() {
+    setState(() {
+      if (_mode == _HourMeterDigitState.willReset) {
+        _controller.number = 0;
+        _mode = _HourMeterDigitState.integralPart;
+      }
+      else if (_mode == _HourMeterDigitState.integralPart) {
+        final number = _controller.number.toString();
+        _controller.number = number.length > 1 ? int.parse(number.substring(0, number.length - 1)) : 0;
+      }
+      else if (_mode == _HourMeterDigitState.fractionalDigit1) {
+        _mode = _HourMeterDigitState.integralPart;
+      }
+      else if (_mode == _HourMeterDigitState.fractionalDigit2) {
+        _controller.number = _controller.number.toInt();
+        _mode = _HourMeterDigitState.fractionalDigit1;
+      }
+      else if (_mode == _HourMeterDigitState.ended) {
+        _controller.number = (_controller.number * 10).toInt() / 10;
+        _mode = _HourMeterDigitState.fractionalDigit2;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _borderSide = Divider.createBorderSide(context, width: 3);
+    _disabledButtonBackgroundColor = Theme.of(context).colorScheme.primary;
+    _textStyle = Theme.of(context).textTheme.button!.copyWith(
+      fontSize: Theme.of(context).textTheme.headline5!.fontSize,
+    );
+
+    // some weird way to determine widget size
+    final double width;
+    final double height;
+    final size = MediaQuery.of(context).size;
+    if (size.height > size.width) {
+      height = size.height * 0.4;
+      width = 0;
+    }
+    else {
+      height = double.infinity;
+      width = size.width * 0.4;
+    }
+    return PlatformAlertDialog(
+      // TODO backspace button on the same row
+      title: Row(
+        children: [
+          DigitDisplayTextField(
+            controller: _controller,
+            fontSize: 26,
+          ),
+          IconButton(
+            onPressed: _onBackspace,
+            icon: const Icon(Icons.backspace),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: width,
+        height: height,
+        child: Column(
+          children: [
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildNumberButton('1'),
+                  _buildNumberButton('2'),
+                  _buildNumberButton('3'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildNumberButton('4'),
+                  _buildNumberButton('5'),
+                  _buildNumberButton('6'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildNumberButton('7'),
+                  _buildNumberButton('8'),
+                  _buildNumberButton('9'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildNumberButton('0'),
+                  _buildNumberButton('.',
+                    text: NumberFormat.decimalPattern().symbols.DECIMAL_SEP,
+                    enabled: _mode == _HourMeterDigitState.willReset || _mode == _HourMeterDigitState.integralPart
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        PlatformDialogAction(
+          onPressed: () {
+            if (widget.onCancel != null) {
+              widget.onCancel!();
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
+        ),
+        PlatformDialogAction(
+          onPressed: () {
+            if (widget.onConfirm != null) {
+              widget.onConfirm!(_controller.number);
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.dialog_button_ok),
+        ),
+      ],
     );
   }
 

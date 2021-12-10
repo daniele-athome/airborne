@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
+const int kMaxDisplayIntegerDigits = 5;
 const double _kDefaultDigitFontSize = 20;
 
 class DigitDisplayFormTextField extends FormField<num> {

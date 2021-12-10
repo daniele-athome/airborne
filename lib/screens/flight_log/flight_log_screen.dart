@@ -75,9 +75,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         _appConfig.pilotName!,
         _appConfig.locationName,
         _appConfig.locationName,
-        // TODO start and end hour
-        0,
-        0,
+        _logBookController.lastEndHourMeter ?? 0,
+        _logBookController.lastEndHourMeter ?? 0,
         null,
         null,
         null,

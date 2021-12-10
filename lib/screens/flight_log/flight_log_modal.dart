@@ -817,9 +817,11 @@ class _DateListTile extends StatelessWidget {
                           );
                         }*/
         );
-        if (onDateSelected != null) {
+        if (date != null) {
           controller.value = date;
-          onDateSelected!(date);
+          if (onDateSelected != null) {
+            onDateSelected!(date);
+          }
         }
       },
     );

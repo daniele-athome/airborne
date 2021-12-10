@@ -68,7 +68,7 @@ class _HourListTileState extends State<HourListTile> {
   }
 }
 
-class CupertinoHourFormRow extends StatelessWidget {
+class CupertinoHourFormRow extends StatefulWidget {
   const CupertinoHourFormRow({
     Key? key,
     required this.controller,
@@ -81,22 +81,56 @@ class CupertinoHourFormRow extends StatelessWidget {
   final GestureTapCallback? onTap;
 
   @override
+  State<CupertinoHourFormRow> createState() => _CupertinoHourFormRowState();
+}
+
+class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
+
+  _onPressed(BuildContext context) {
+    Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
+      iosContentPadding: true,
+      appBar: PlatformAppBar(
+        title: Text(widget.hintText),
+      ),
+      cupertino: (context, platform) => CupertinoPageScaffoldData(
+        backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
+      ),
+      body: HourMeterDialog(
+        initialValue: widget.controller.number,
+        onCancel: () => Navigator.pop(context),
+        onConfirm: (value) => Navigator.pop(context, value),
+      ),
+    );
+
+    Navigator.of(context, rootNavigator: true)
+        .push(CupertinoPageRoute(
+      builder: pageRouteBuilder,
+    )).then((value) {
+      if (value != null) {
+        setState(() {
+          widget.controller.number = value;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // FIXME workaround https://github.com/flutter/flutter/issues/48438
     final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
 
     return CupertinoFormButtonRow(
-      onPressed: onTap,
+      onPressed: widget.onTap ?? () => _onPressed(context),
       padding: kDefaultCupertinoFormRowPadding,
       prefix: Text(
-        hintText,
+        widget.hintText,
         style: textStyle,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           DigitDisplayFormTextField(
-            controller: controller,
+            controller: widget.controller,
             // TODO i18n
             validator: (value) => value == null || value == 0 ?
             'Inserire un orametro valido.' : null,
@@ -105,10 +139,8 @@ class CupertinoHourFormRow extends StatelessWidget {
       ),
     );
   }
-
 }
 
-// TODO Cupertino style
 class HourMeterDialog extends StatefulWidget {
   const HourMeterDialog({
     Key? key,
@@ -164,28 +196,29 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     super.initState();
   }
 
+  // TODO Cupertino buttons
   _buildNumberButton(String value, {
     String? text,
     bool enabled = true,
   }) =>
-      Expanded(
-        flex: 1,
-        child: Padding(
-          padding: const EdgeInsets.all(4),
-          child: TextButton(
-            onPressed: enabled ? () => _onPressed(value) : null,
-            style: TextButton.styleFrom(
-              backgroundColor: enabled ? null : _disabledButtonBackgroundColor,
-              shape: CircleBorder(
-                side: _borderSide,
-              )
-            ),
-            child: Text(text ?? value,
-              style: _textStyle,
+    Expanded(
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: TextButton(
+          onPressed: enabled ? () => _onPressed(value) : null,
+          style: TextButton.styleFrom(
+            backgroundColor: enabled ? null : _disabledButtonBackgroundColor,
+            shape: CircleBorder(
+              side: _borderSide,
             )
           ),
+          child: Text(text ?? value,
+            style: _textStyle,
+          )
         ),
-      );
+      ),
+    );
 
   _onPressed(String value) {
     setState(() {
@@ -248,14 +281,57 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _borderSide = Divider.createBorderSide(context, width: 3);
-    _disabledButtonBackgroundColor = Theme.of(context).colorScheme.primary;
-    _textStyle = Theme.of(context).textTheme.button!.copyWith(
-      fontSize: Theme.of(context).textTheme.headline5!.fontSize,
+  Widget _buildNumberPad(BuildContext context) =>
+    Column(
+      // FIXME can't seem to find a way to stretch the rows
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildNumberButton('1'),
+              _buildNumberButton('2'),
+              _buildNumberButton('3'),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildNumberButton('4'),
+              _buildNumberButton('5'),
+              _buildNumberButton('6'),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildNumberButton('7'),
+              _buildNumberButton('8'),
+              _buildNumberButton('9'),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildNumberButton('0'),
+              _buildNumberButton('.',
+                  text: NumberFormat.decimalPattern().symbols.DECIMAL_SEP,
+                  enabled: _mode == _HourMeterDigitState.willReset || _mode == _HourMeterDigitState.integralPart
+              ),
+            ],
+          ),
+        ),
+      ],
     );
 
+  Widget _buildMaterialNumberPad(BuildContext context) {
     // some weird way to determine widget size
     final double width;
     final double height;
@@ -268,8 +344,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       height = double.infinity;
       width = size.width * 0.4;
     }
+
     return PlatformAlertDialog(
-      // TODO backspace button on the same row
       title: Row(
         children: [
           DigitDisplayTextField(
@@ -285,52 +361,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       content: SizedBox(
         width: width,
         height: height,
-        child: Column(
-          children: [
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildNumberButton('1'),
-                  _buildNumberButton('2'),
-                  _buildNumberButton('3'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildNumberButton('4'),
-                  _buildNumberButton('5'),
-                  _buildNumberButton('6'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildNumberButton('7'),
-                  _buildNumberButton('8'),
-                  _buildNumberButton('9'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildNumberButton('0'),
-                  _buildNumberButton('.',
-                    text: NumberFormat.decimalPattern().symbols.DECIMAL_SEP,
-                    enabled: _mode == _HourMeterDigitState.willReset || _mode == _HourMeterDigitState.integralPart
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        child: _buildNumberPad(context),
       ),
       actions: <Widget>[
         PlatformDialogAction(
@@ -351,6 +382,50 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         ),
       ],
     );
+  }
+
+  Widget _buildCupertinoNumberPad(BuildContext context) {
+    return Flex(
+      direction: Axis.vertical,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DigitDisplayTextField(
+              controller: _controller,
+              fontSize: 32,
+            ),
+            CupertinoButton(
+              onPressed: _onBackspace,
+              child: const Icon(Icons.backspace, size: 32),
+            ),
+          ],
+        ),
+        // FIXME can't seem to find a way to stretch the rows
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.all(40),
+            child: _buildNumberPad(context),
+          )
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _borderSide = Divider.createBorderSide(context, width: 3);
+    // TODO Cupertino colors
+    _disabledButtonBackgroundColor = Theme.of(context).colorScheme.primary;
+    _textStyle = Theme.of(context).textTheme.button!.copyWith(
+      fontSize: Theme.of(context).textTheme.headline5!.fontSize,
+    );
+
+    return isCupertino(context) ?
+      _buildCupertinoNumberPad(context) :
+      _buildMaterialNumberPad(context);
   }
 
 }

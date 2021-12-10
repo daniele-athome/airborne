@@ -177,12 +177,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
           CupertinoHourFormRow(
             controller: _startHourController,
             hintText: AppLocalizations.of(context)!.flightLogModal_label_startHour,
-            onTap: () => true,
           ),
           CupertinoHourFormRow(
             controller: _endHourController,
             hintText: AppLocalizations.of(context)!.flightLogModal_label_endHour,
-            onTap: () => true,
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),

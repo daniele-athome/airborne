@@ -86,19 +86,36 @@ class CupertinoHourFormRow extends StatefulWidget {
 
 class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
 
+  late DigitDisplayController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = DigitDisplayController(widget.controller.number);
+  }
+
   _onPressed(BuildContext context) {
-    Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
+    Widget pageRouteBuilder(BuildContext _context) => PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(widget.hintText),
+        trailingActions: [PlatformTextButton(
+          onPressed: () {
+            Navigator.pop(_context, _controller.number);
+          },
+          cupertino: (_, __) => CupertinoTextButtonData(
+            // workaround for https://github.com/flutter/flutter/issues/32701
+            padding: EdgeInsets.zero,
+          ),
+          child: Text(AppLocalizations.of(context)!.dialog_button_done),
+        )],
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
         backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
       body: HourMeterDialog(
         initialValue: widget.controller.number,
-        onCancel: () => Navigator.pop(context),
-        onConfirm: (value) => Navigator.pop(context, value),
+        onConfirm: (value) => _controller.number = value,
       ),
     );
 
@@ -204,13 +221,14 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     Expanded(
       flex: 1,
       child: Padding(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(1),
         child: TextButton(
           onPressed: enabled ? () => _onPressed(value) : null,
           style: TextButton.styleFrom(
             backgroundColor: enabled ? null : _disabledButtonBackgroundColor,
-            shape: CircleBorder(
+            shape: RoundedRectangleBorder(
               side: _borderSide,
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
             )
           ),
           child: Text(text ?? value,
@@ -255,6 +273,9 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         _mode = _HourMeterDigitState.ended;
       }
     });
+    if (mounted && isCupertino(context) && widget.onConfirm != null) {
+      widget.onConfirm!(_controller.number);
+    }
   }
 
   _onBackspace() {
@@ -279,6 +300,9 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         _mode = _HourMeterDigitState.fractionalDigit2;
       }
     });
+    if (mounted && isCupertino(context) && widget.onConfirm != null) {
+      widget.onConfirm!(_controller.number);
+    }
   }
 
   Widget _buildNumberPad(BuildContext context) =>

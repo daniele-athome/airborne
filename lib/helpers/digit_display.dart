@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 const int kMaxDisplayIntegerDigits = 5;
 const double _kDefaultDigitFontSize = 20;
+const EdgeInsetsGeometry _kDefaultDigitPadding = EdgeInsets
+    .symmetric(vertical: 4);
 
 class DigitDisplayFormTextField extends FormField<num> {
   DigitDisplayFormTextField({
@@ -13,6 +15,7 @@ class DigitDisplayFormTextField extends FormField<num> {
     FormFieldSetter<num>? onSaved,
     FormFieldValidator<num>? validator,
     double fontSize = _kDefaultDigitFontSize,
+    EdgeInsetsGeometry padding = _kDefaultDigitPadding,
   }) : super(
     key: key,
     onSaved: onSaved,
@@ -22,6 +25,7 @@ class DigitDisplayFormTextField extends FormField<num> {
       return DigitDisplayTextField(
         controller: controller,
         fontSize: fontSize,
+        padding: padding,
       );
     },
   );
@@ -35,11 +39,13 @@ class DigitDisplayTextField extends StatefulWidget {
     this.controller,
     this.fontSize = _kDefaultDigitFontSize,
     this.errorText,
+    this.padding = _kDefaultDigitPadding,
   }) : super(key: key);
 
   final DigitDisplayController? controller;
   final double fontSize;
   final String? errorText;
+  final EdgeInsetsGeometry padding;
 
   @override
   State<DigitDisplayTextField> createState() => _DigitDisplayTextFieldState();
@@ -66,7 +72,10 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
         decimal = true;
         continue;
       }
-      children.add(SingleDigitText(digit: digit, decimal: decimal, fontSize: widget.fontSize));
+      children.add(Padding(
+        padding: widget.padding,
+        child: SingleDigitText(digit: digit, decimal: decimal, fontSize: widget.fontSize),
+      ));
     }
 
     final field = Row(
@@ -146,7 +155,6 @@ class _DigitText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
     alignment: Alignment.center,
     color: alternate ? null : Colors.black,
     decoration: alternate ? BoxDecoration(

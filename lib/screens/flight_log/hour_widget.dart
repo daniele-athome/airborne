@@ -115,7 +115,7 @@ class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
       ),
       body: HourMeterDialog(
         initialValue: widget.controller.number,
-        onConfirm: (value) => _controller.number = value,
+        onChanged: (value) => _controller.number = value,
       ),
     );
 
@@ -162,11 +162,13 @@ class HourMeterDialog extends StatefulWidget {
   const HourMeterDialog({
     Key? key,
     required this.initialValue,
+    this.onChanged,
     this.onConfirm,
     this.onCancel,
   }) : super(key: key);
 
   final num initialValue;
+  final Function(num value)? onChanged;
   final Function(num value)? onConfirm;
   final Function()? onCancel;
 
@@ -273,8 +275,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         _mode = _HourMeterDigitState.ended;
       }
     });
-    if (mounted && isCupertino(context) && widget.onConfirm != null) {
-      widget.onConfirm!(_controller.number);
+    if (mounted && widget.onChanged != null) {
+      widget.onChanged!(_controller.number);
     }
   }
 
@@ -300,8 +302,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         _mode = _HourMeterDigitState.fractionalDigit2;
       }
     });
-    if (mounted && isCupertino(context) && widget.onConfirm != null) {
-      widget.onConfirm!(_controller.number);
+    if (mounted && widget.onChanged != null) {
+      widget.onChanged!(_controller.number);
     }
   }
 

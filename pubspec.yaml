@@ -45,7 +45,7 @@ dependencies:
   path: 1.8.0
   path_provider: 2.0.8
   provider: 6.0.1
-  shared_preferences: 2.0.10
+  shared_preferences: 2.0.11
   solar_calculator: 1.0.2
   syncfusion_flutter_calendar: 19.3.57
   syncfusion_localizations: 19.3.57

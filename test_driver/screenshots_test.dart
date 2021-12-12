@@ -16,9 +16,9 @@ void main() {
 
   group('Screenshots', () {
     test('Onboarding - Select pilot', () async {
-      await screenshot(driver, config, '04-onboarding-pilotselect');
+      await screenshot(driver, config, '06-onboarding-pilotselect');
       await driver.tap(find.text('Anna'));
-      driver.waitUntilNoTransientCallbacks();
+      await driver.waitUntilNoTransientCallbacks();
       // TODO i18n
       await driver.tap(find.text('OK'));
     });
@@ -34,6 +34,21 @@ void main() {
     test('Book flight - Flight editor', () async {
       await driver.tap(find.byValueKey('button_bookFlight'));
       await screenshot(driver, config, '03-bookflight-flighteditor');
+      await driver.tap(find.byType('CloseButton'));
+      await driver.waitUntilNoTransientCallbacks();
+    });
+
+    test('Log book - List view', () async {
+      await driver.tap(find.byValueKey('nav_flight_log'));
+      await driver.waitUntilNoTransientCallbacks();
+      await screenshot(driver, config, '04-logbook-list');
+    });
+
+    test('Log book - Flight editor', () async {
+      await driver.tap(find.byValueKey('button_logFlight'));
+      await screenshot(driver, config, '05-logbook-flighteditor');
+      await driver.tap(find.byType('CloseButton'));
+      await driver.waitUntilNoTransientCallbacks();
     });
   });
 }

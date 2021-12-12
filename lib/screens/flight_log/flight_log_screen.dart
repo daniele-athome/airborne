@@ -145,7 +145,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
         ),
         material: (_, __) => MaterialScaffoldData(
           floatingActionButton: showCreateButton ? FloatingActionButton(
-            key: const Key('button_bookFlight'),
+            key: const Key('button_logFlight'),
             onPressed: () => _logFlight(context, null),
             tooltip: AppLocalizations.of(context)!.button_logFlight,
             child: const Icon(Icons.add),

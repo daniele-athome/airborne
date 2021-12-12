@@ -232,17 +232,23 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     final items = [
       if (widget.appConfig.hasFeature('book_flight')) BottomNavigationBarItem(
-        icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded),
+        icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded,
+          key: const Key('nav_book_flight'),
+        ),
         label: AppLocalizations.of(context)!.mainNav_bookFlight,
         tooltip: '',
       ),
       if (widget.appConfig.hasFeature('flight_log')) BottomNavigationBarItem(
-        icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp),
+        icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp,
+          key: const Key('nav_flight_log'),
+        ),
         label: AppLocalizations.of(context)!.mainNav_logBook,
         tooltip: '',
       ),
       BottomNavigationBarItem(
-        icon: Icon(PlatformIcons(context).info),
+        icon: Icon(PlatformIcons(context).info,
+          key: const Key('nav_info'),
+        ),
         label: AppLocalizations.of(context)!.mainNav_about,
         tooltip: '',
       ),

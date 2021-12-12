@@ -186,8 +186,6 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _rebuildServices() {
-    print(widget.bookFlightCalendarService);
-    print(widget.flightLogBookService);
     final account = (widget.bookFlightCalendarService == null && widget.flightLogBookService == null) ?
       GoogleServiceAccountService(
           json: widget.appConfig.googleServiceAccountJson

@@ -29,6 +29,7 @@ class HourListTile extends StatefulWidget {
 class _HourListTileState extends State<HourListTile> {
 
   _onTap(BuildContext context) {
+    // TODO use fullscreen dialog for this
     showPlatformDialog(
       context: context,
       builder: (_context) => HourMeterDialog(

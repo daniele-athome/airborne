@@ -54,10 +54,12 @@ class CupertinoInkWell extends StatefulWidget {
     Key? key,
     required this.child,
     required this.onPressed,
+    this.backgroundColor,
   }) : super(key: key);
 
   final Widget child;
   final VoidCallback? onPressed;
+  final Color? backgroundColor;
 
   bool get enabled => onPressed != null;
 
@@ -105,10 +107,10 @@ class _CupertinoInkWellState extends State<CupertinoInkWell> {
       onTap: widget.onPressed,
       child: Semantics(
         button: true,
-        child: _buttonHeldDown ? Container(
-          color: CupertinoColors.secondarySystemFill.resolveFrom(context),
+        child: Container(
+          color: _buttonHeldDown ? CupertinoColors.secondarySystemFill.resolveFrom(context) : widget.backgroundColor,
           child: widget.child,
-        ) : widget.child,
+        ),
       ),
     );
   }

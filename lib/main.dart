@@ -68,7 +68,7 @@ Future<void> main() async {
   final appConfig = AppConfig();
   await appConfig.init();
   runApp(
-    ChangeNotifierProvider.value(
+    ChangeNotifierProvider<AppConfig>.value(
       value: appConfig,
       builder: (_, __) => const MyApp(),
     ),
@@ -186,13 +186,16 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _rebuildServices() {
-    final account = GoogleServiceAccountService(
-        json: widget.appConfig.googleServiceAccountJson
-    );
+    print(widget.bookFlightCalendarService);
+    print(widget.flightLogBookService);
+    final account = (widget.bookFlightCalendarService == null && widget.flightLogBookService == null) ?
+      GoogleServiceAccountService(
+          json: widget.appConfig.googleServiceAccountJson
+      ) : null;
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
-        (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account, widget.appConfig.googleCalendarId) : null);
+        (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account!, widget.appConfig.googleCalendarId) : null);
     _flightLogBookService = widget.flightLogBookService ??
-        (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account, widget.appConfig.flightlogBackendInfo) : null);
+        (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account!, widget.appConfig.flightlogBackendInfo) : null);
   }
 
   @override

@@ -4,8 +4,10 @@ import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/models/book_flight_models.dart';
+import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:airborne/services/book_flight_services.dart';
+import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_driver/driver_extension.dart';
@@ -30,7 +32,7 @@ Future<void> main() async {
   await appConfig.init();
 
   runApp(
-    Provider<AppConfig>.value(
+    ChangeNotifierProvider<AppConfig>.value(
       value: appConfig,
       builder: (_, __) => const MainNavigationApp(),
     ),
@@ -86,6 +88,40 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
   return events;
 }
 
+/// Generates some random log book items.
+List<FlightLogItem> generateFakeLogBookItems(List<String> pilotNames) {
+  const fakePlaces = [
+    'Fly Berlin',
+    'Elba',
+    'NYC',
+    'LIRU',
+    'London',
+  ];
+  final random = Random();
+  double startHour = 2180;
+  double lastDuration = 0.2;
+  double endHour = startHour + lastDuration;
+  return List<FlightLogItem>.generate(30, (index) {
+    final hasFuel = random.nextBool();
+    final item = FlightLogItem(
+      index.toString(),
+      DateTime.now().add(Duration(days: index)),
+      pilotNames[random.nextInt(pilotNames.length)],
+      fakePlaces[random.nextInt(fakePlaces.length)],
+      fakePlaces[random.nextInt(fakePlaces.length)],
+      startHour,
+      endHour,
+      hasFuel ? 20 : null,
+      hasFuel ? 1 : null,
+      null,
+    );
+    startHour = endHour;
+    lastDuration = (random.nextDouble() * 100).toInt() / 100;
+    endHour = startHour + lastDuration;
+    return item;
+  }, growable: false);
+}
+
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
 // Another way could be by accepting a few constructor parameters...
 class MainNavigationApp extends StatelessWidget {
@@ -111,6 +147,7 @@ class MainNavigationApp extends StatelessWidget {
           routes: <String, WidgetBuilder>{
             '/': (context) => app.MainNavigation.withServices(appConfig,
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
+              flightLogBookService: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames)),
             ),
             'pilot-select': (context) => const PilotSelectScreen(),
           },
@@ -297,6 +334,52 @@ class FakeCalendarService implements BookFlightCalendarService {
   @override
   Future<Object> updateBooking(FlightBooking event) {
     // should be never called for making screenshots
+    throw UnimplementedError();
+  }
+
+}
+
+class FakeLogBookService implements FlightLogBookService {
+
+  final Iterable<FlightLogItem> items;
+  bool _fetched = false;
+
+  FakeLogBookService(this.items);
+
+  @override
+  Future<FlightLogItem> appendItem(FlightLogItem item) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Iterable<FlightLogItem>> fetchItems() {
+    if (!_fetched) {
+      _fetched = true;
+      return Future.value(items);
+    }
+    else {
+      return Future.value(List.empty());
+    }
+  }
+
+  @override
+  bool hasMoreData() {
+    return !_fetched;
+  }
+
+  @override
+  Future<void> reset() {
+    _fetched = false;
+    return Future.value();
+  }
+
+  @override
+  Future<FlightLogItem> updateItem(FlightLogItem item) {
     throw UnimplementedError();
   }
 

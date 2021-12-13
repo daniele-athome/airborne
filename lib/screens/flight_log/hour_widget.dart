@@ -28,16 +28,39 @@ class HourListTile extends StatefulWidget {
 
 class _HourListTileState extends State<HourListTile> {
 
+  late DigitDisplayController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = DigitDisplayController(widget.controller.number);
+  }
+
   _onTap(BuildContext context) {
-    // TODO use fullscreen dialog for this
-    showPlatformDialog(
-      context: context,
-      builder: (_context) => HourMeterDialog(
-        initialValue: widget.controller.number,
-        onCancel: () => Navigator.pop(_context),
-        onConfirm: (value) => Navigator.pop(_context, value),
+    Widget pageRouteBuilder(BuildContext _context) => PlatformScaffold(
+      appBar: PlatformAppBar(
+        title: Text(widget.hintText),
+        trailingActions: [PlatformIconButton(
+          onPressed: () {
+            Navigator.pop(_context, _controller.number);
+          },
+          icon: const Icon(Icons.check),
+          material: (_, __) => MaterialIconButtonData(
+            // FIXME maybe another tooltip?
+            tooltip: AppLocalizations.of(context)!.dialog_button_done,
+          ),
+        )],
       ),
-    ).then((value) {
+      body: HourMeterDialog(
+        initialValue: widget.controller.number,
+        onChanged: (value) => _controller.number = value,
+      ),
+    );
+
+    Navigator.of(context, rootNavigator: true)
+        .push(MaterialPageRoute(
+      builder: pageRouteBuilder,
+    )).then((value) {
       if (value != null) {
         setState(() {
           widget.controller.number = value;
@@ -245,8 +268,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       ),
     ) :
     SizedBox(
-      height: sizeFactor / 1.5,
-      width: sizeFactor / 1.5,
+      height: sizeFactor,
+      width: sizeFactor,
       child: TextButton(
         onPressed: enabled ? () => _onPressed(value) : null,
         style: TextButton.styleFrom(
@@ -387,63 +410,37 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
   }
 
   // FIXME not nice on landscape orientation
-  Widget _buildMaterialNumberPad(BuildContext context) {
-    // some weird way to determine widget size
-    final double width;
-    final double height;
-    final size = MediaQuery.of(context).size;
-    if (size.height > size.width) {
-      height = size.height * 0.4;
-      width = 0;
-    }
-    else {
-      height = double.infinity;
-      width = size.width * 0.4;
-    }
-
-    return PlatformAlertDialog(
-      title: Row(
-        children: [
-          DigitDisplayTextField(
-            controller: _controller,
-            fontSize: 26,
-          ),
-          IconButton(
-            // TODO onLongPress should reset the value
-            onPressed: _onBackspace,
-            icon: const Icon(Icons.backspace),
-          ),
-        ],
-      ),
-      content: SizedBox(
-        width: width,
-        height: height,
-        child: _buildNumberPad(context),
-      ),
-      actions: <Widget>[
-        PlatformDialogAction(
-          onPressed: () {
-            if (widget.onCancel != null) {
-              widget.onCancel!();
-            }
-          },
-          child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
+  Widget _buildMaterialNumberPad(BuildContext context) =>
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DigitDisplayTextField(
+              controller: _controller,
+              fontSize: 26,
+            ),
+            IconButton(
+              // TODO onLongPress should reset the value
+              onPressed: _onBackspace,
+              icon: const Icon(Icons.backspace),
+            ),
+          ],
         ),
-        PlatformDialogAction(
-          onPressed: () {
-            if (widget.onConfirm != null) {
-              widget.onConfirm!(_controller.number);
-            }
-          },
-          child: Text(AppLocalizations.of(context)!.dialog_button_ok),
+        Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: _buildNumberPad(context),
+            )
         ),
       ],
     );
-  }
 
   // FIXME not nice on landscape orientation
-  Widget _buildCupertinoNumberPad(BuildContext context) {
-    return Column(
+  Widget _buildCupertinoNumberPad(BuildContext context) =>
+    Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(height: 20),
@@ -469,7 +466,6 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         ),
       ],
     );
-  }
 
   @override
   Widget build(BuildContext context) {

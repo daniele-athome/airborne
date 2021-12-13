@@ -104,10 +104,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               (key) => CupertinoActionSheetAction(
             child: Text(_buildFuelPriceLabel(key)),
             onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _fuelPrice = key;
-              });
+              Navigator.pop(context, key);
             },
           ),
         ).toList();
@@ -115,10 +112,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           fuelPrices.add(CupertinoActionSheetAction(
             child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
             onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _fuelPrice = widget.item.fuelPrice;
-              });
+              Navigator.pop(context, widget.item.fuelPrice);
             },
           ));
         }
@@ -132,7 +126,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
           actions: fuelPrices,
         );
       },
-    );
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          _fuelPrice = value;
+        });
+      }
+    });
   }
 
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) {
@@ -707,6 +707,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _onTapPilot(BuildContext context) {
+    final Future<String?> dialog;
     final items = _appConfig.pilotNamesWithNoPilot;
     if (isCupertino(context)) {
       Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
@@ -718,24 +719,21 @@ class _FlightLogModalState extends State<FlightLogModal> {
           backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
         ),
         body: PilotSelectList(
-            pilotNames: items,
-            selectedName: _pilotName,
-            avatarProvider: (name) => _appConfig.getPilotAvatar(name),
-            onSelection: (selected) {
-              setState(() {
-                _pilotName = selected;
-                Navigator.of(context).pop();
-              });
-            }),
+          pilotNames: items,
+          selectedName: _pilotName,
+          avatarProvider: (name) => _appConfig.getPilotAvatar(name),
+          onSelection: (selected) {
+            Navigator.of(context).pop(selected);
+          }),
       );
 
-      Navigator.of(context, rootNavigator: true)
+      dialog = Navigator.of(context, rootNavigator: true)
           .push(CupertinoPageRoute(
         builder: pageRouteBuilder,
       ));
     }
     else {
-      showPlatformDialog(
+      dialog = showPlatformDialog(
         context: context,
         builder: (_context) => PlatformAlertDialog(
           title: Text(AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
@@ -747,10 +745,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 selectedName: _pilotName,
                 avatarProvider: (name) => _appConfig.getPilotAvatar(name),
                 onSelection: (selected) {
-                  setState(() {
-                    _pilotName = selected;
-                  });
-                  Navigator.of(_context).pop();
+                  Navigator.of(_context).pop(selected);
                 }
             ),
           ),
@@ -760,6 +755,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ),
       );
     }
+
+    dialog.then((value) {
+      if (value != null) {
+        setState(() {
+          _pilotName = value;
+        });
+      }
+    });
   }
 }
 

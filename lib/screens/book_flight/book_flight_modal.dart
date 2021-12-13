@@ -183,7 +183,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       children: [
         CupertinoFormSection(children: <Widget>[
           CupertinoFormButtonRow(
-            onPressed: () => _onTapPilot(context, appConfig),
+            onPressed: () => _onTapPilot(context),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(
               AppLocalizations.of(context)!.bookFlightModal_label_pilot,
@@ -277,7 +277,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
               fontSize: 20,
             ),
           ),
-          onTap: () => _onTapPilot(context, appConfig),
+          onTap: () => _onTapPilot(context),
         ),
         const Divider(
           height: 1.0,
@@ -584,9 +584,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
     });
   }
 
-  // TODO use AppConfig state instance
-  void _onTapPilot(BuildContext context, AppConfig appConfig) {
-    final items = appConfig.pilotNames;
+  void _onTapPilot(BuildContext context) {
+    final Future<String?> dialog;
+    final items = _appConfig.pilotNames;
     if (isCupertino(context)) {
       Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
         iosContentPadding: true,
@@ -597,24 +597,21 @@ class _BookFlightModalState extends State<BookFlightModal> {
           backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
         ),
         body: PilotSelectList(
-          pilotNames: items,
-          selectedName: _pilotName,
-          avatarProvider: (name) => appConfig.getPilotAvatar(name),
-          onSelection: (selected) {
-            setState(() {
-              _pilotName = selected;
-              Navigator.of(context).pop();
-            });
-          }),
+            pilotNames: items,
+            selectedName: _pilotName,
+            avatarProvider: (name) => _appConfig.getPilotAvatar(name),
+            onSelection: (selected) {
+              Navigator.of(context).pop(selected);
+            }),
       );
 
-      Navigator.of(context, rootNavigator: true)
+      dialog = Navigator.of(context, rootNavigator: true)
           .push(CupertinoPageRoute(
-            builder: pageRouteBuilder,
-          ));
+        builder: pageRouteBuilder,
+      ));
     }
     else {
-      showPlatformDialog(
+      dialog = showPlatformDialog(
         context: context,
         builder: (_context) => PlatformAlertDialog(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
@@ -622,15 +619,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
           content: SizedBox(
             width: double.minPositive,
             child: PilotSelectList(
-              pilotNames: items,
-              selectedName: _pilotName,
-              avatarProvider: (name) => appConfig.getPilotAvatar(name),
-              onSelection: (selected) {
-                setState(() {
-                  _pilotName = selected;
-                });
-                Navigator.of(_context).pop();
-              }
+                pilotNames: items,
+                selectedName: _pilotName,
+                avatarProvider: (name) => _appConfig.getPilotAvatar(name),
+                onSelection: (selected) {
+                  Navigator.of(_context).pop(selected);
+                }
             ),
           ),
           material: (context, platform) => MaterialAlertDialogData(
@@ -639,6 +633,14 @@ class _BookFlightModalState extends State<BookFlightModal> {
         ),
       );
     }
+
+    dialog.then((value) {
+      if (value != null) {
+        setState(() {
+            _pilotName = value;
+        });
+      }
+    });
   }
 }
 

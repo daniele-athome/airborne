@@ -395,6 +395,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
     if (isCupertino(context)) {
       leadingAction = CupertinoButton(
+        key: const Key('button_bookFlightModal_close'),
         padding: EdgeInsets.zero,
         onPressed: () => Navigator.of(context).pop(),
         child: Text(AppLocalizations.of(context)!.bookFlightModal_button_close),

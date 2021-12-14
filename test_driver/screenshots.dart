@@ -8,6 +8,7 @@ import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:airborne/services/flight_log_services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_driver/driver_extension.dart';
@@ -24,7 +25,15 @@ import 'package:timezone/timezone.dart';
 import 'screenshots_data.dart';
 
 Future<void> main() async {
-  enableFlutterDriverExtension();
+  enableFlutterDriverExtension(handler: (message) {
+    String? result;
+    switch (message) {
+      case 'getPlatform':
+        result = defaultTargetPlatform.toString();
+        break;
+    }
+    return Future.value(result);
+  });
 
   await findSystemLocale();
   tz_data.initializeTimeZones();

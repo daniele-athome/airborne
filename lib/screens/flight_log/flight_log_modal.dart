@@ -492,6 +492,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
     if (isCupertino(context)) {
       leadingAction = CupertinoButton(
+        key: const Key('button_flightLogModal_close'),
         padding: EdgeInsets.zero,
         onPressed: () => Navigator.of(context).pop(),
         child: Text(AppLocalizations.of(context)!.flightLogModal_button_close),

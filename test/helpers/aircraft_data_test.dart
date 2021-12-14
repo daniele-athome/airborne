@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
-import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;

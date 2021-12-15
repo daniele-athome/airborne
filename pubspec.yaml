@@ -26,6 +26,7 @@ environment:
 dependencies:
   adaptive_dialog: 1.2.0
   archive: 3.1.6
+  auto_size_text: 3.0.0
   collection: 1.15.0
   cupertino_icons: 1.0.4
   flutter:

@@ -1,4 +1,5 @@
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -163,7 +164,12 @@ class _FlightLogListState extends State<FlightLogList> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(item.pilotName,style: pilotStyle),
+                  child: AutoSizeText(item.pilotName,
+                    style: pilotStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),

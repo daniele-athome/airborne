@@ -32,7 +32,7 @@ jobs:
         run: flutter analyze .
 
       - name: Run tests
-        run: flutter test -r expanded
+        run: flutter test --no-pub -r expanded
 
       - name: Install system libraries
         run: |

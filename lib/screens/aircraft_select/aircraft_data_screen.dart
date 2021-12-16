@@ -40,9 +40,9 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       appBar: PlatformAppBar(
         title: Text(AppLocalizations.of(context)!.addAircraft_title),
         trailingActions: isCupertino(context)? <Widget>[
-          Consumer<AppConfig>(
-            builder: (context, appConfig, child) => PlatformTextButton(
-              onPressed: () => _downloadData(context, appConfig),
+          Consumer2<AppConfig, DownloadProvider>(
+            builder: (context, appConfig, downloadProvider, child) => PlatformTextButton(
+              onPressed: () => _downloadData(context, appConfig, downloadProvider),
               cupertino: (_, __) => CupertinoTextButtonData(
                 // workaround for https://github.com/flutter/flutter/issues/32701
                 padding: EdgeInsets.zero,
@@ -66,7 +66,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   }
 
   // FIXME this code is similar to the one in about_screen.dart
-  void _downloadData(BuildContext context, AppConfig appConfig) {
+  void _downloadData(BuildContext context, AppConfig appConfig, DownloadProvider downloadProvider) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -80,7 +80,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           password = userpass.substring(separator + 1);
         }
       }
-      final downloadTask = downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true)
+      final downloadTask = downloadProvider.downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true)
         .timeout(kNetworkRequestTimeout)
         .then((tempfile) async {
           _log.finest(tempfile);
@@ -203,9 +203,11 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         if (!isCupertino(context)) const SizedBox(
           height: 10,
         ),
-        if (!isCupertino(context)) PlatformElevatedButton(
-          onPressed: () => _downloadData(context, appConfig),
-          child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
+        if (!isCupertino(context)) Consumer<DownloadProvider>(
+          builder: (context, downloadProvider, child) => PlatformElevatedButton(
+            onPressed: () => _downloadData(context, appConfig, downloadProvider),
+            child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
+          ),
         ),
       ];
 

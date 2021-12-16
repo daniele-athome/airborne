@@ -29,10 +29,12 @@ class AboutScreen extends StatefulWidget {
 
 class _AboutScreenState extends State<AboutScreen> {
   late AppConfig _appConfig;
+  late DownloadProvider _downloadProvider;
 
   @override
   void didChangeDependencies() {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
+    _downloadProvider = Provider.of<DownloadProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -61,7 +63,7 @@ class _AboutScreenState extends State<AboutScreen> {
             password = userpass.substring(separator + 1);
           }
         }
-        final downloadTask = downloadToFile(_appConfig.currentAircraft!.url!, 'aircraft.zip', username, password, true)
+        final downloadTask = _downloadProvider.downloadToFile(_appConfig.currentAircraft!.url!, 'aircraft.zip', username, password, true)
             .timeout(kNetworkRequestTimeout)
             .then((tempfile) async {
           _log.finest(tempfile);

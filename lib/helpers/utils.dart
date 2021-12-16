@@ -153,26 +153,31 @@ Future<T?> showConfirm<T>({
   );
 }
 
-/// FIXME doesn't work on web platform (we should use http package)
-Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
-  final uri = Uri.parse(url);
-  final HttpClient httpClient = HttpClient();
-  httpClient.findProxy = HttpClient.findProxyFromEnvironment;
-  if (username != null && password != null) {
-    httpClient.addCredentials(
-        uri, "", HttpClientBasicCredentials(username, password));
-  }
-  final request = await httpClient.getUrl(uri);
-  final response = await request.close();
-  if (response.statusCode == 200) {
-    final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());
-    final file = File(path.join(directory.path, filename));
-    return response
-        .pipe(file.openWrite())
-        .then((value) => file);
-  }
-  else {
-    return Future.error(Exception('Download error (${response.statusCode})'));
+class DownloadProvider extends ChangeNotifier {
+  DownloadProvider(this.clientBuilder);
+
+  /// FIXME doesn't work on web platform (we should use http package)
+  final HttpClient Function() clientBuilder;
+
+  Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
+    final uri = Uri.parse(url);
+    HttpClient client = clientBuilder();
+    client.findProxy = HttpClient.findProxyFromEnvironment;
+    if (username != null && password != null) {
+      client.addCredentials(uri, "", HttpClientBasicCredentials(username, password));
+    }
+    final request = await client.getUrl(uri);
+    final response = await request.close();
+    if (response.statusCode == 200) {
+      final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());
+      final file = File(path.join(directory.path, filename));
+      return response
+          .pipe(file.openWrite())
+          .then((value) => file);
+    }
+    else {
+      return Future.error(Exception('Download error (${response.statusCode})'));
+    }
   }
 }
 

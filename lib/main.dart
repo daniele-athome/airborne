@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +16,7 @@ import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'helpers/config.dart';
 import 'helpers/googleapis.dart';
+import 'helpers/utils.dart';
 import 'screens/about/about_screen.dart';
 import 'screens/aircraft_select/aircraft_data_screen.dart';
 import 'screens/book_flight/book_flight_screen.dart';
@@ -67,9 +69,16 @@ Future<void> main() async {
   final appConfig = AppConfig();
   await appConfig.init();
   runApp(
-    ChangeNotifierProvider<AppConfig>.value(
-      value: appConfig,
-      builder: (_, __) => const MyApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppConfig>.value(
+          value: appConfig
+        ),
+        ChangeNotifierProvider<DownloadProvider>(
+          create: (context) => DownloadProvider(() => HttpClient())
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }

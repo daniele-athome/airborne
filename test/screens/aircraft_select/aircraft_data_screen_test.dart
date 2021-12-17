@@ -1,5 +1,7 @@
+import 'dart:io';
 
 import 'package:airborne/helpers/config.dart';
+import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/screens/aircraft_select/aircraft_data_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,7 +23,13 @@ void main() {
           GlobalCupertinoLocalizations.delegate,
         ],
         locale: const Locale('en'),
-        home: _provideAppConfigForSampleAircraft(const SetAircraftDataScreen())
+        home: MultiProvider(
+          providers: [
+            _provideAppConfigForSampleAircraft(),
+            _provideFakeDownloadProvider(),
+          ],
+          child: const SetAircraftDataScreen(),
+        ),
     );
 
   group('Single aircraft data screen tests', () {
@@ -40,11 +48,17 @@ void main() {
   });
 }
 
-ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft(Widget child) {
+ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
   // TODO stub some stuff
-  return ChangeNotifierProvider.value(
+  return ChangeNotifierProvider<AppConfig>.value(
     value: appConfig,
-    builder: (context, __) => child,
+  );
+}
+
+ChangeNotifierProvider<DownloadProvider> _provideFakeDownloadProvider() {
+  // TODO mock http client
+  return ChangeNotifierProvider<DownloadProvider>(
+    create: (context) => DownloadProvider(() => HttpClient())
   );
 }

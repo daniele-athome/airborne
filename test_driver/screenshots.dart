@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
+import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/models/book_flight_models.dart';
 import 'package:airborne/models/flight_log_models.dart';
@@ -40,9 +42,16 @@ Future<void> main() async {
   await appConfig.init();
 
   runApp(
-    ChangeNotifierProvider<AppConfig>.value(
-      value: appConfig,
-      builder: (_, __) => const MainNavigationApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppConfig>.value(
+          value: appConfig
+        ),
+        ChangeNotifierProvider<DownloadProvider>(
+          create: (context) => DownloadProvider(() => HttpClient())
+        ),
+      ],
+      child: const MainNavigationApp(),
     ),
   );
 }

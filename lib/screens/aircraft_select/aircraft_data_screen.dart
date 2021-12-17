@@ -42,6 +42,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         trailingActions: isCupertino(context)? <Widget>[
           Consumer2<AppConfig, DownloadProvider>(
             builder: (context, appConfig, downloadProvider, child) => PlatformTextButton(
+              widgetKey: const Key('aircraft_data_button_install'),
               onPressed: () => _downloadData(context, appConfig, downloadProvider),
               cupertino: (_, __) => CupertinoTextButtonData(
                 // workaround for https://github.com/flutter/flutter/issues/32701
@@ -205,6 +206,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         ),
         if (!isCupertino(context)) Consumer<DownloadProvider>(
           builder: (context, downloadProvider, child) => PlatformElevatedButton(
+            widgetKey: const Key('aircraft_data_button_install'),
             onPressed: () => _downloadData(context, appConfig, downloadProvider),
             child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
           ),

@@ -50,7 +50,7 @@ void main() {
     });
 
     testWidgets('onboarding: select pilot', (WidgetTester tester) async {
-      // TODO we should mock google apis
+      // we should mock google apis, but in this case we won't use it so who cares :)
       nock.cleanAll();
       HttpOverrides.global = null;
 

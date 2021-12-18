@@ -247,6 +247,7 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             Expanded(
               child: CupertinoButton(
+                key: const Key('about_button_disconnect_aircraft'),
                 onPressed: () => _onLogout(context),
                 child: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft,
                   style: const TextStyle(color: CupertinoColors.destructiveRed),
@@ -335,6 +336,7 @@ class _AboutScreenState extends State<AboutScreen> {
       onTap: () => _onRefresh(context),
     ),
     ListTile(
+      key: const Key('about_button_disconnect_aircraft'),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       leading: SizedBox(
         height: double.infinity,

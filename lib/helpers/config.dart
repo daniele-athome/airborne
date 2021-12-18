@@ -34,6 +34,9 @@ class AppConfig extends ChangeNotifier {
   }
 
   bool hasFeature(String feature) {
+    if (_currentAircraft == null) {
+      return false;
+    }
     switch (feature) {
       case 'book_flight':
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;

@@ -124,8 +124,11 @@ class _MyAppState extends State<MyApp> {
         //locale: const Locale('it', ''),
         initialRoute: _getInitialRoute(appConfig),
         routes: <String, WidgetBuilder>{
-          '/': (context) => MainNavigation(appConfig),
-          'pilot-select': (context) => const PilotSelectScreen(),
+          // there is probably a better way to avoid loading the routes...
+          '/': (context) => appConfig.currentAircraft != null ?
+            MainNavigation(appConfig) : const SizedBox.shrink(),
+          'pilot-select': (context) => appConfig.currentAircraft != null ?
+            const PilotSelectScreen() : const SizedBox.shrink(),
           'aircraft-data': (context) => const SetAircraftDataScreen(),
         },
         debugShowCheckedModeBanner: false,

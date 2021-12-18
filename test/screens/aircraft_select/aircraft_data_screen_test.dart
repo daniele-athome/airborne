@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 
 import 'aircraft_data_screen_test.mocks.dart';
 
-@GenerateMocks([AppConfig])
+@GenerateMocks([AppConfig, HttpClient])
 void main() {
   Widget createSkeletonApp() => MaterialApp(
         localizationsDelegates: const [
@@ -38,12 +38,17 @@ void main() {
       await tester.enterText(
           find.byWidgetPredicate((widget) => widget is PlatformTextFormField &&
               widget.keyboardType == TextInputType.url), "NOT_VALID_URI");
-      await tester.tap(
-          find.byWidgetPredicate((widget) => widget is PlatformElevatedButton &&
-              (widget.child! as Text).data == 'Install')
-      );
-      await tester.pumpAndSettle();
+      await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), false);
+    });
+
+    testWidgets('A valid URI in address field should validate', (tester) async {
+      await tester.pumpWidget(createSkeletonApp());
+      await tester.enterText(
+          find.byWidgetPredicate((widget) => widget is PlatformTextFormField &&
+              widget.keyboardType == TextInputType.url), 'http://localhost/a1234.zip');
+      await tester.pump();
+      expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
   });
 }
@@ -57,8 +62,8 @@ ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
 }
 
 ChangeNotifierProvider<DownloadProvider> _provideFakeDownloadProvider() {
-  // TODO mock http client
+  final client = MockHttpClient();
   return ChangeNotifierProvider<DownloadProvider>(
-    create: (context) => DownloadProvider(() => HttpClient())
+    create: (context) => DownloadProvider(() => client)
   );
 }

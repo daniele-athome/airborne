@@ -39,6 +39,8 @@ class BookFlightScreen extends StatefulWidget {
 
 class _BookFlightScreenState extends State<BookFlightScreen> {
 
+  final GlobalKey<ScaffoldMessengerState> _snackbarKey = GlobalKey<ScaffoldMessengerState>();
+
   /// When null, appName will be used.
   String? _appBarTitle;
 
@@ -150,7 +152,7 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
       );
     }
 
-    return PlatformScaffold(
+    final scaffold = PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(_appBarTitle?? AppLocalizations.of(context)!.appName),
@@ -182,6 +184,12 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
         ],
       ),
     );
+
+    return isCupertino(context) ? scaffold :
+        ScaffoldMessenger(
+          key: _snackbarKey,
+          child: scaffold,
+        );
   }
 
   @override
@@ -283,15 +291,14 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
           },
         ),
       );
-      ScaffoldMessenger.of(context)
-        .showSnackBar(snackBar);
+      _snackbarKey.currentState!.showSnackBar(snackBar);
     }
   }
 
   void _hideError() {
     if (!isCupertino(context)) {
       // workaround for possible (?) SnackBar bug (DON'T use clearSnackBars)
-      ScaffoldMessenger.of(context).removeCurrentSnackBar(
+      _snackbarKey.currentState!.removeCurrentSnackBar(
           reason: SnackBarClosedReason.action);
     }
   }

@@ -1,7 +1,5 @@
-
 import 'dart:io';
 
-import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:flutter/material.dart';
@@ -9,27 +7,21 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:nock/nock.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'test_aircraft_data.dart';
+import 'test_utils.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('end-to-end test', () {
-    clearData() async {
-      await deleteAircraftCache();
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-    }
-
+  group('onboarding test', () {
     setUpAll(() async {
-      await clearData();
+      await clearAppData();
       nock.init();
     });
 
     tearDownAll(() async {
-      await clearData();
+      await clearAppData();
       nock.cleanAll();
     });
 
@@ -68,6 +60,48 @@ void main() {
       expect(tester.any(find.byKey(const Key('nav_flight_log'))), true);
       expect(tester.any(find.byKey(const Key('nav_info'))), true);
     });
-
   });
+
+  group('offboarding test', () {
+    setUpAll(() async {
+      await clearAppData();
+      nock.init();
+      // TODO make nock always reply with an error
+
+      setUpDummyAircraft();
+    });
+
+    tearDownAll(() async {
+      await clearAppData();
+      nock.cleanAll();
+    });
+
+    testWidgets('about: disconnect aircraft', (WidgetTester tester) async {
+      app.main();
+
+      // TODO this shouldn't be needed if we mock it to always return an error
+      nock.cleanAll();
+      HttpOverrides.global = null;
+
+      await tester.pumpAndSettle();
+
+      final infoNav = find.byKey(const Key('nav_info'));
+      await waitForWidget(tester, infoNav, 10);
+      await tester.tap(infoNav);
+      await tester.pumpAndSettle();
+
+      final disconnectButton = find.byKey(const Key('about_button_disconnect_aircraft'));
+      await tester.scrollUntilVisible(disconnectButton, 300);
+      await tester.pumpAndSettle();
+      await tester.tap(disconnectButton);
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      // did we return to the aircraft data screen?
+      expect(tester.any(find.byKey(const Key('aircraft_data_button_install'))), true);
+    });
+  });
+
 }

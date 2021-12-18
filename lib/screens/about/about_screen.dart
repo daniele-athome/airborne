@@ -235,6 +235,7 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             Expanded(
               child: CupertinoButton(
+                key: const Key('about_button_update_aircraft'),
                 onPressed: () => _onRefresh(context),
                 child: Text(AppLocalizations.of(context)!.about_app_update_aircraft,
                   style: const TextStyle(color: CupertinoColors.activeBlue),
@@ -326,6 +327,7 @@ class _AboutScreenState extends State<AboutScreen> {
       onTap: () => openUrl(context, pubspec.issueTracker),
     ),
     if (_appConfig.currentAircraft!.url != null) ListTile(
+      key: const Key('about_button_update_aircraft'),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       leading: SizedBox(
         height: double.infinity,

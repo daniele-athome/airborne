@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
@@ -18,11 +17,13 @@ void main() {
     setUpAll(() async {
       await clearAppData();
       nock.init();
+      mockGoogleAuthentication();
+      mockGoogleCalendarApi();
     });
 
     tearDownAll(() async {
       await clearAppData();
-      nock.cleanAll();
+      unmockAllHttp();
     });
 
     testWidgets('onboarding: register aircraft', (WidgetTester tester) async {
@@ -42,10 +43,6 @@ void main() {
     });
 
     testWidgets('onboarding: select pilot', (WidgetTester tester) async {
-      // we should mock google apis, but in this case we won't use it so who cares :)
-      nock.cleanAll();
-      HttpOverrides.global = null;
-
       app.main();
 
       await tester.pumpAndSettle();
@@ -60,28 +57,49 @@ void main() {
       expect(tester.any(find.byKey(const Key('nav_flight_log'))), true);
       expect(tester.any(find.byKey(const Key('nav_info'))), true);
     });
+
+    testWidgets('about: update aircraft', (WidgetTester tester) async {
+      app.main();
+
+      final infoNav = find.byKey(const Key('nav_info'));
+      await waitForWidget(tester, infoNav, 10);
+      await tester.tap(infoNav);
+      await tester.pumpAndSettle();
+
+      final updateButton = find.byKey(const Key('about_button_update_aircraft'));
+      await tester.scrollUntilVisible(updateButton, 300);
+      await tester.pumpAndSettle();
+      await tester.tap(updateButton);
+
+      nock('http://localhost').get('/a1234.zip')
+          .reply(200, kTestAircraftData);
+
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      // FIXME we should actually check that all went well
+      await waitForWidget(tester, infoNav, 10);
+    });
+
   });
 
   group('offboarding test', () {
     setUpAll(() async {
       await clearAppData();
       nock.init();
-      // TODO make nock always reply with an error
-
+      mockGoogleAuthentication();
+      mockGoogleCalendarApi();
       setUpDummyAircraft();
     });
 
     tearDownAll(() async {
       await clearAppData();
-      nock.cleanAll();
+      unmockAllHttp();
     });
 
     testWidgets('about: disconnect aircraft', (WidgetTester tester) async {
       app.main();
-
-      // TODO this shouldn't be needed if we mock it to always return an error
-      nock.cleanAll();
-      HttpOverrides.global = null;
 
       await tester.pumpAndSettle();
 

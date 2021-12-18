@@ -34,10 +34,11 @@ class BookFlightScreen extends StatefulWidget {
   const BookFlightScreen({Key? key}) : super(key: key);
 
   @override
-  _BookFlightScreenState createState() => _BookFlightScreenState();
+  BookFlightScreenState createState() => BookFlightScreenState();
 }
 
-class _BookFlightScreenState extends State<BookFlightScreen> {
+@visibleForTesting
+class BookFlightScreenState extends State<BookFlightScreen> {
 
   final GlobalKey<ScaffoldMessengerState> _snackbarKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -57,6 +58,8 @@ class _BookFlightScreenState extends State<BookFlightScreen> {
     CalendarView.week,
     CalendarView.day,
   ];
+
+  CalendarController get calendarController => _calendarController;
 
   @override
   void initState() {

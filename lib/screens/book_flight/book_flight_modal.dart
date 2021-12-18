@@ -399,6 +399,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         child: Text(AppLocalizations.of(context)!.bookFlightModal_button_close),
       );
       trailingActions = [PlatformTextButton(
+        widgetKey: const Key('button_bookFlightModal_save'),
         onPressed: () => _onSave(context),
         cupertino: (_, __) => CupertinoTextButtonData(
           // workaround for https://github.com/flutter/flutter/issues/32701
@@ -411,6 +412,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       leadingAction = null;
       trailingActions = [
         PlatformIconButton(
+          widgetKey: const Key('button_bookFlightModal_save'),
           onPressed: () => _onSave(context),
           icon: const Icon(Icons.check_sharp),
           material: (_, __) => MaterialIconButtonData(

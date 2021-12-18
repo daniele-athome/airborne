@@ -62,7 +62,7 @@ void main() {
       app.main();
 
       final infoNav = find.byKey(const Key('nav_info'));
-      await waitForWidget(tester, infoNav, 10);
+      expect(await waitForWidget(tester, infoNav, 10), true);
       await tester.tap(infoNav);
       await tester.pumpAndSettle();
 
@@ -79,7 +79,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // FIXME we should actually check that all went well
-      await waitForWidget(tester, infoNav, 10);
+      expect(await waitForWidget(tester, infoNav, 10), true);
     });
 
   });
@@ -104,7 +104,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final infoNav = find.byKey(const Key('nav_info'));
-      await waitForWidget(tester, infoNav, 10);
+      expect(await waitForWidget(tester, infoNav, 10), true);
       await tester.tap(infoNav);
       await tester.pumpAndSettle();
 

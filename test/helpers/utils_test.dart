@@ -9,7 +9,7 @@ void main() {
     expect(getExceptionMessage(Exception("test message")), "test message");
     const osError = OSError("os error message");
     expect(getExceptionMessage(const SocketException("ciaone", osError: osError)), "os error message");
-    expect(getExceptionMessage(const SocketException("ciaone")), "unknown");
+    expect(getExceptionMessage(const SocketException("ciaone")), "ciaone");
   });
 
   test('getSunTimes', () {

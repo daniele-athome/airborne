@@ -349,7 +349,7 @@ class FakeCalendarService implements BookFlightCalendarService {
   }
 
   @override
-  Future<Object> updateBooking(FlightBooking event) {
+  Future<FlightBooking> updateBooking(FlightBooking event) {
     // should be never called for making screenshots
     throw UnimplementedError();
   }

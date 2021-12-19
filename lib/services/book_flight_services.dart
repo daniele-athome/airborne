@@ -78,7 +78,7 @@ class BookFlightCalendarService {
     });
   }
 
-  Future<Object> updateBooking(FlightBooking event) {
+  Future<FlightBooking> updateBooking(FlightBooking event) {
     return _ensureService().then((client) {
       final gevent = gcalendar.Event();
       gevent.summary = event.pilotName;

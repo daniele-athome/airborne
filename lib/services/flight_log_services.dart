@@ -12,8 +12,6 @@ const _kItemsPerPage = 20;
 const _kSheetCountRange = 'A1';
 /// Data range for appending.
 const _kSheetAppendRange = 'A:J';
-/// Log timestamp formatter
-final _kTimestampFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 /// Flight date formatter
 final _kDateFormatter = DateFormat('yyyy-MM-dd');
 
@@ -100,7 +98,7 @@ class FlightLogBookService {
   List<List<Object?>> _formatRowData(FlightLogItem item) =>
     [
       [
-        _kTimestampFormatter.format(DateTime.now()),
+        dateToGsheets(DateTime.now()),
         _kDateFormatter.format(item.date),
         item.pilotName,
         item.startHour,

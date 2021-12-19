@@ -142,6 +142,13 @@ const _kGsDateBase = 2209161600 / 86400;
 const _kGsDateFactor = 86400000;
 
 /// https://github.com/a-marenkov/gsheets/issues/31
+double dateToGsheets(DateTime dateTime, {bool localTime = true}) {
+  final offset = dateTime.millisecondsSinceEpoch / _kGsDateFactor;
+  final shift = localTime ? dateTime.timeZoneOffset.inHours / 24 : 0;
+  return _kGsDateBase + offset + shift;
+}
+
+/// https://github.com/a-marenkov/gsheets/issues/31
 DateTime dateFromGsheets(double value, {bool localTime = true}) {
   final millis = (value - _kGsDateBase) * _kGsDateFactor;
   return DateTime.fromMillisecondsSinceEpoch(millis.round(), isUtc: localTime);

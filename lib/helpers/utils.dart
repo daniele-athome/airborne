@@ -40,7 +40,12 @@ String getExceptionMessage(dynamic error) {
     return (error.osError?.message)?? error.message;
   }
   else {
-    return error.message.toString();
+    try {
+      return error.message.toString();
+    }
+    on NoSuchMethodError catch (_) {
+      return error.toString();
+    }
   }
 }
 

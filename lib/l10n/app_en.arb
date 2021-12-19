@@ -67,6 +67,10 @@
   "flightLog_message_flight_added": "Flight registered successfully.",
   "flightLog_message_flight_canceled": "Flight deleted successfully.",
   "flightLog_message_flight_updated": "Flight saved successfully.",
+  "flightLog_button_error_retry": "Retry",
+  "flightLog_error_noItemsFound": "No registered flights.",
+  "flightLog_error_firstPageIndicator": "Something went wrong.",
+  "flightLog_error_newPageIndicator": "Something went wrong. Tap to retry.",
 
   "flightLogModal_title_create": "Log flight",
   "flightLogModal_title_edit": "Edit flight",

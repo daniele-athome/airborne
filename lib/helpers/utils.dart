@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:airborne/helpers/cupertinoplus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -36,7 +37,7 @@ String getExceptionMessage(dynamic error) {
     return error.msg;
   }
   else if (error is SocketException) {
-    return (error.osError?.message)?? "unknown";
+    return (error.osError?.message)?? error.message;
   }
   else {
     return error.message.toString();
@@ -184,4 +185,156 @@ class DownloadProvider extends ChangeNotifier {
 /// A basic controller for date and time pickers.
 class DateTimePickerController extends ValueNotifier<DateTime?> {
   DateTimePickerController(DateTime? value) : super(value);
+}
+
+/// Basic layout for indicating that an exception occurred.
+/// Forked from [infinite\_scroll\_pagination].
+class FirstPageExceptionIndicator extends StatelessWidget {
+  const FirstPageExceptionIndicator({
+    required this.title,
+    this.message,
+    this.onTryAgain,
+    Key? key,
+  }) : super(key: key);
+
+  final String title;
+  final String? message;
+  final VoidCallback? onTryAgain;
+
+  @override
+  Widget build(BuildContext context) {
+    final message = this.message;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+        child: Column(
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: isCupertino(context) ?
+                CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle :
+                Theme.of(context).textTheme.headline6,
+            ),
+            if (message != null)
+              const SizedBox(
+                height: 16,
+              ),
+            if (message != null)
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: isCupertino(context) ?
+                  CupertinoTheme.of(context).textTheme.textStyle :
+                  Theme.of(context).textTheme.bodyText2,
+              ),
+            if (onTryAgain != null)
+              const SizedBox(
+                height: 48,
+              ),
+            if (onTryAgain != null)
+              SizedBox(
+                height: 50,
+                width: double.infinity,
+                child: isCupertino(context) ?
+                  CupertinoButton.filled(
+                    onPressed: onTryAgain,
+                    child: Text(
+                      AppLocalizations.of(context)!.flightLog_button_error_retry,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ) :
+                  ElevatedButton.icon(
+                    onPressed: onTryAgain,
+                    icon: const Icon(
+                      Icons.refresh,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      AppLocalizations.of(context)!.flightLog_button_error_retry,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Forked from [infinite\_scroll\_pagination].
+class FooterTile extends StatelessWidget {
+  const FooterTile({
+    required this.child,
+    Key? key,
+  }) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(
+      top: 16,
+      bottom: 16,
+    ),
+    child: Center(child: child),
+  );
+}
+
+/// Forked from [infinite\_scroll\_pagination].
+class NewPageErrorIndicator extends StatelessWidget {
+  const NewPageErrorIndicator({
+    Key? key,
+    required this.message,
+    this.onTap,
+  }) : super(key: key);
+  final String message;
+  final VoidCallback? onTap;
+
+  Widget _buildChildWidget(BuildContext context) {
+    return FooterTile(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: isCupertino(context) ?
+              CupertinoTheme.of(context).textTheme.navActionTextStyle :
+              Theme.of(context).textTheme.bodyText2,
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          const Icon(
+            Icons.refresh,
+            size: 16,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCupertinoWidget(BuildContext context) =>
+    CupertinoInkWell(
+      onPressed: onTap,
+      child: _buildChildWidget(context),
+    );
+
+  Widget _buildMaterialWidget(BuildContext context) =>
+    InkWell(
+      onTap: onTap,
+      child: _buildChildWidget(context),
+    );
+
+  @override
+  Widget build(BuildContext context) => isCupertino(context) ?
+    _buildCupertinoWidget(context) : _buildMaterialWidget(context);
 }

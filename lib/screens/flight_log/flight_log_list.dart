@@ -2,12 +2,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
 import '../../helpers/cupertinoplus.dart';
+import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';
 import '../../services/flight_log_services.dart';
 
@@ -205,10 +207,29 @@ class _FlightLogListState extends State<FlightLogList> {
     }
   }
 
+  Widget noItemsFoundIndicator(BuildContext context) =>
+    FirstPageExceptionIndicator(
+      title: AppLocalizations.of(context)!.flightLog_error_noItemsFound,
+      onTryAgain: _refresh,
+    );
+
+  Widget firstPageErrorIndicator(BuildContext context) =>
+    FirstPageExceptionIndicator(
+      title: AppLocalizations.of(context)!.flightLog_error_firstPageIndicator,
+      message: getExceptionMessage(_pagingController.error),
+      onTryAgain: _refresh,
+    );
+
+  Widget newPageErrorIndicator(BuildContext context) =>
+    NewPageErrorIndicator(
+      message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
+      onTap: _pagingController.retryLastFailedRequest,
+    );
+
   /// FIXME using PagedSliverList within a CustomScrollView for Material leads to errors
   @override
   Widget build(BuildContext context) {
-    // TODO test scrolling phytics with no content
+    // TODO test scrolling physics with no content
     if (isCupertino(context)) {
       return CustomScrollView(
         slivers: <Widget>[
@@ -221,10 +242,9 @@ class _FlightLogListState extends State<FlightLogList> {
             buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
             builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
               itemBuilder: _buildListItem,
-              // TODO firstPageErrorIndicatorBuilder:
-              // TODO firstPageProgressIndicatorBuilder:
-              // TODO noItemsFoundIndicatorBuilder:
-              // TODO noMoreItemsIndicatorBuilder:
+              firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
+              newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
+              noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
               firstPageProgressIndicatorBuilder: (context) => const CupertinoActivityIndicator(radius: 20),
               newPageProgressIndicatorBuilder: (context) => const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
@@ -245,12 +265,9 @@ class _FlightLogListState extends State<FlightLogList> {
           buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
           builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
             itemBuilder: _buildListItem,
-            // TODO firstPageErrorIndicatorBuilder:
-            // TODO firstPageProgressIndicatorBuilder:
-            // TODO noItemsFoundIndicatorBuilder:
-            // TODO noMoreItemsIndicatorBuilder:
-            // TODO firstPageProgressIndicatorBuilder:
-            // TODO newPageProgressIndicatorBuilder:
+            firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
+            newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
+            noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
           ),
         ),
       );

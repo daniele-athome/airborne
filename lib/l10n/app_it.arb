@@ -50,6 +50,10 @@
   "flightLog_message_flight_added": "Volo registrato.",
   "flightLog_message_flight_canceled": "Volo cancellato.",
   "flightLog_message_flight_updated": "Volo modificato.",
+  "flightLog_button_error_retry": "Riprova",
+  "flightLog_error_noItemsFound": "Nessun volo registrato.",
+  "flightLog_error_firstPageIndicator": "Qualcosa è andato storto.",
+  "flightLog_error_newPageIndicator": "Qualcosa è andato storto. Tocca per riprovare.",
 
   "flightLogModal_title_create": "Registra",
   "flightLogModal_title_edit": "Modifica",

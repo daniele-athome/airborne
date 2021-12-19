@@ -63,7 +63,8 @@ class _FlightLogListState extends State<FlightLogList> {
         await widget.logBookService.reset();
       }
 
-      final items = await widget.logBookService.fetchItems();
+      final items = widget.logBookService.hasMoreData() ?
+        await widget.logBookService.fetchItems() : <FlightLogItem>[];
       final page = items.toList(growable: false).reversed.toList(growable: false);
 
       if (_firstTime) {

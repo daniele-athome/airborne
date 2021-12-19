@@ -497,7 +497,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       _notes,
     );
 
-    final Future task = _service.bookingConflicts(event)
+    final Future<FlightBooking?> task = _service.bookingConflicts(event)
       .timeout(kNetworkRequestTimeout)
       .then((conflict) {
         if (conflict) {
@@ -509,6 +509,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             .timeout(kNetworkRequestTimeout);
         }
       })
+      .then((value) => Future<FlightBooking?>.value(value))
       .catchError((error, StackTrace stacktrace) {
         _log.warning('SAVE ERROR', error, stacktrace);
         final String message;
@@ -522,6 +523,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
+        return null;
       });
 
     showPlatformDialog(

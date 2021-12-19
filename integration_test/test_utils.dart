@@ -65,9 +65,6 @@ void mockGoogleCalendarApi() {
       }), headers: {
         'content-type': 'application/json',
       });
-  // TODO mock create event
-  // TODO mock update event
-  // TODO mock delete event
 }
 
 void unmockAllHttp() {

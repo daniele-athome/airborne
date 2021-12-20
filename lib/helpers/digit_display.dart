@@ -6,6 +6,7 @@ const int kMaxDisplayIntegerDigits = 5;
 const double _kDefaultDigitFontSize = 20;
 const EdgeInsetsGeometry _kDefaultDigitPadding = EdgeInsets
     .symmetric(vertical: 4);
+const String kDigitDisplayFontName = 'MajorMonoDisplay';
 
 class DigitDisplayFormTextField extends FormField<num> {
   DigitDisplayFormTextField({
@@ -196,7 +197,7 @@ class _DigitText extends StatelessWidget {
     child: Text(text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: 'MajorMonoDisplay',
+          fontFamily: kDigitDisplayFontName,
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
           color: alternate ? Colors.black : Colors.white,

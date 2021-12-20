@@ -234,7 +234,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
 
   @override
   void initState() {
-    _controller = DigitDisplayController(widget.initialValue);
+    _controller = DigitDisplayController(widget.initialValue, 4);
     super.initState();
   }
 
@@ -292,11 +292,13 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         if (value == '.') {
           _controller.number = 0;
           _mode = _HourMeterDigitState.fractionalDigit1;
+          _controller.activeDigit = 5;
           return;
         }
         else {
           number = '';
           _mode = _HourMeterDigitState.integralPart;
+          _controller.activeDigit = 4;
         }
       }
       else {
@@ -305,6 +307,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       if (_mode == _HourMeterDigitState.integralPart) {
         if (value == '.') {
           _mode = _HourMeterDigitState.fractionalDigit1;
+          _controller.activeDigit = 5;
         }
         else if (number.length < kMaxDisplayIntegerDigits) {
           number += value;
@@ -314,6 +317,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       else if (_mode == _HourMeterDigitState.fractionalDigit1) {
         _controller.number = double.parse(number) + (int.parse(value) * 0.1);
         _mode = _HourMeterDigitState.fractionalDigit2;
+        _controller.activeDigit = 6;
       }
       else if (_mode == _HourMeterDigitState.fractionalDigit2) {
         _controller.number = double.parse(number) + (int.parse(value) * 0.01);
@@ -330,6 +334,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       if (_mode == _HourMeterDigitState.willReset) {
         _controller.number = 0;
         _mode = _HourMeterDigitState.integralPart;
+        _controller.activeDigit = 4;
       }
       else if (_mode == _HourMeterDigitState.integralPart) {
         final number = _controller.number.toString();
@@ -337,14 +342,17 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       }
       else if (_mode == _HourMeterDigitState.fractionalDigit1) {
         _mode = _HourMeterDigitState.integralPart;
+        _controller.activeDigit = 4;
       }
       else if (_mode == _HourMeterDigitState.fractionalDigit2) {
         _controller.number = _controller.number.toInt();
         _mode = _HourMeterDigitState.fractionalDigit1;
+        _controller.activeDigit = 5;
       }
       else if (_mode == _HourMeterDigitState.ended) {
         _controller.number = (_controller.number * 10).toInt() / 10;
         _mode = _HourMeterDigitState.fractionalDigit2;
+        _controller.activeDigit = 6;
       }
     });
     if (mounted && widget.onChanged != null) {

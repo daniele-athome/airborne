@@ -65,6 +65,7 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
     
     final children = <Widget>[];
     bool decimal = false;
+    int i = 0;
     for (var e in numDigits) {
       final digit = int.tryParse(e);
       if (digit == null) {
@@ -73,7 +74,12 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
       }
       children.add(Padding(
         padding: widget.padding,
-        child: SingleDigitText(digit: digit, decimal: decimal, fontSize: widget.fontSize),
+        child: SingleDigitText(
+          digit: digit,
+          decimal: decimal,
+          fontSize: widget.fontSize,
+          active: (widget.controller != null && widget.controller!.activeDigit == i++),
+        ),
       ));
     }
 
@@ -94,12 +100,25 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
 }
 
 class DigitDisplayController extends ValueNotifier<DigitDisplay> {
-  DigitDisplayController(num number) : super(DigitDisplay(number: number));
+  DigitDisplayController(num number, [int? activeDigit]) :
+        super(DigitDisplay(number: number, activeDigit: activeDigit));
 
   num get number => value.number;
 
   set number(num newNumber) {
-    value = DigitDisplay(number: newNumber);
+    value = DigitDisplay(
+      number: newNumber,
+      activeDigit: value.activeDigit,
+    );
+  }
+
+  int? get activeDigit => value.activeDigit;
+
+  set activeDigit(int? digit) {
+    value = DigitDisplay(
+      number: value.number,
+      activeDigit: digit,
+    );
   }
 
 }
@@ -109,9 +128,11 @@ class DigitDisplay {
 
   const DigitDisplay({
     this.number = 0,
+    this.activeDigit,
   });
 
   final num number;
+  final int? activeDigit;
 
 }
 
@@ -122,12 +143,14 @@ class SingleDigitText extends StatelessWidget {
     required this.digit,
     this.decimal = false,
     this.fontSize = _kDefaultDigitFontSize,
+    this.active = false,
   }) : assert(digit >= 0 && digit <= 9),
         super(key: key);
 
   final int digit;
   final bool decimal;
   final double fontSize;
+  final bool active;
 
   @override
   Widget build(BuildContext context) =>
@@ -135,6 +158,7 @@ class SingleDigitText extends StatelessWidget {
         text: digit.toString(),
         alternate: decimal,
         fontSize: fontSize,
+        active: active,
       );
 
 }
@@ -146,20 +170,26 @@ class _DigitText extends StatelessWidget {
     required this.text,
     this.alternate = false,
     this.fontSize = _kDefaultDigitFontSize,
+    this.active = false,
   }) : super(key: key);
 
   final String text;
   final bool alternate;
   final double fontSize;
+  final bool active;
 
   @override
   Widget build(BuildContext context) => Container(
     alignment: Alignment.center,
-    color: alternate ? null : Colors.black,
-    decoration: alternate ? BoxDecoration(
-      border: Border.all(color: Colors.black),
-      color: Colors.white,
-    ) : null,
+    decoration: alternate ?
+      BoxDecoration(
+        border: Border.all(color: active ? Colors.red : Colors.black, width: active ? 2 : 1),
+        color: Colors.white,
+      ) :
+      BoxDecoration(
+          border: active ? Border.all(color: Colors.red, width: 2) : null,
+          color: Colors.black,
+      ),
     // TODO test on different screens
     width: fontSize,
     height: fontSize + 10,

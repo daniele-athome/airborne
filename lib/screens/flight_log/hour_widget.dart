@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -228,7 +230,6 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
   _HourMeterDigitState _mode = _HourMeterDigitState.willReset;
   late DigitDisplayController _controller;
 
-  late BorderSide _borderSide;
   late Color _disabledButtonBackgroundColor;
   late TextStyle _textStyle;
 
@@ -251,7 +252,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     return isCupertino(context) ?
     ClipOval(
       child: CupertinoInkWell(
-        backgroundColor: enabled ? (darkMode ? Colors.white24 : Colors.black54) : _disabledButtonBackgroundColor,
+        backgroundColor: enabled ? (darkMode ? Colors.white24 : Colors.black38) : _disabledButtonBackgroundColor,
         onPressed: enabled ? () => _onPressed(value) : null,
         child: SizedBox(
           height: sizeFactor,
@@ -266,20 +267,22 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         ),
       ),
     ) :
-    SizedBox(
-      height: sizeFactor,
-      width: sizeFactor,
-      child: TextButton(
-        onPressed: enabled ? () => _onPressed(value) : null,
-        style: TextButton.styleFrom(
-          backgroundColor: enabled ? null : _disabledButtonBackgroundColor,
-          shape: RoundedRectangleBorder(
-            side: _borderSide,
-            borderRadius: BorderRadius.all(Radius.circular(sizeFactor / 8)),
+    InkResponse(
+      onTap: enabled ? () => _onPressed(value) : null,
+      radius: math.max(
+        Material.defaultSplashRadius,
+        sizeFactor * 0.7,
+        // x 0.5 for diameter -> radius and + 40% overflow derived from other Material apps.
+      ),
+      child: SizedBox(
+        height: sizeFactor,
+        width: sizeFactor,
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            text ?? value,
+            style: _textStyle,
           ),
-        ),
-        child: Text(text ?? value,
-          style: _textStyle,
         ),
       ),
     );
@@ -476,15 +479,14 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
 
   @override
   Widget build(BuildContext context) {
-    _borderSide = Divider.createBorderSide(context, width: 3);
     if (isCupertino(context)) {
-      _disabledButtonBackgroundColor = CupertinoTheme.of(context).primaryColor;
+      _disabledButtonBackgroundColor = CupertinoColors.secondarySystemFill.resolveFrom(context);
       _textStyle = CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle;
     }
     else {
       _disabledButtonBackgroundColor = Theme.of(context).colorScheme.primary;
       _textStyle = Theme.of(context).textTheme.button!.copyWith(
-        fontSize: Theme.of(context).textTheme.headline5!.fontSize,
+        fontSize: Theme.of(context).textTheme.headline4!.fontSize,
       );
     }
 

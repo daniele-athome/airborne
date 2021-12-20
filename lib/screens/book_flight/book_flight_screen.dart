@@ -410,7 +410,19 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             message = AppLocalizations.of(context)!.bookFlight_message_flight_updated;
           }
           showToast(_fToast, message, const Duration(seconds: 2));
-          _refresh(result as FlightBooking, event == null);
+          // TODO going to booked date triggers a network request, so the refresh is actually useless
+          // this should check if the current displayed period contains the booked date
+          // and then use either refresh+selected or displayDate+selectedDate
+          /*WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+            if (mounted) {
+              final date = TZDateTime.from((result as FlightBooking).from,
+                  _appConfig.locationTimeZone);
+              // SfCalendar doesn't have timezone support so we need to help it
+              _calendarController.selectedDate = date;
+              _calendarController.displayDate = date;
+            }
+          });*/
+          _refresh(result, event == null);
         }
       });
   }

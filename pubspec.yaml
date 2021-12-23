@@ -49,9 +49,9 @@ dependencies:
   shared_preferences: 2.0.11
   solar_calculator: 1.0.2
   # syncfusion 19.4.38 doesn't build
-  syncfusion_flutter_calendar: 19.3.59
-  syncfusion_localizations: 19.3.59
-  syncfusion_flutter_core: 19.3.59
+  syncfusion_flutter_calendar: 19.4.38
+  syncfusion_localizations: 19.4.38+1
+  syncfusion_flutter_core: 19.4.38
   timezone: 0.8.0
   url_launcher: 6.0.17
   validators: 3.0.0

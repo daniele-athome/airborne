@@ -242,6 +242,31 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     _setTitle();
   }
 
+  void _goToEventDate(FlightBooking event) {
+    // SfCalendar doesn't have timezone support so we need to help it
+    var date = TZDateTime.from(event.from, _appConfig.locationTimeZone);
+    switch (_calendarController.view) {
+      case CalendarView.month:
+        _calendarController.selectedDate = date;
+        final mainDate = _visibleDates[_visibleDates.length ~/ 2];
+        if (mainDate.year != date.year || mainDate.month != date.month) {
+          _calendarController.displayDate = date;
+        }
+        break;
+      case CalendarView.schedule:
+        _calendarController.selectedDate = date;
+        _calendarController.displayDate = date;
+        break;
+      case CalendarView.week:
+      case CalendarView.day:
+        // FIXME doesn't work...
+        break;
+      default:
+        throw UnsupportedError('Unsupported calendar view');
+    }
+
+  }
+
   void _refresh(FlightBooking updatedEvent, bool newEvent) {
     setState(() {
       if (updatedEvent is DeletedFlightBooking) {
@@ -249,6 +274,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       }
       else {
         _dataSource.updateEvent(updatedEvent, newEvent);
+        _goToEventDate(updatedEvent);
       }
       _setTitle();
     });
@@ -410,18 +436,6 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             message = AppLocalizations.of(context)!.bookFlight_message_flight_updated;
           }
           showToast(_fToast, message, const Duration(seconds: 2));
-          // TODO going to booked date triggers a network request, so the refresh is actually useless
-          // this should check if the current displayed period contains the booked date
-          // and then use either refresh+selected or displayDate+selectedDate
-          /*WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-            if (mounted) {
-              final date = TZDateTime.from((result as FlightBooking).from,
-                  _appConfig.locationTimeZone);
-              // SfCalendar doesn't have timezone support so we need to help it
-              _calendarController.selectedDate = date;
-              _calendarController.displayDate = date;
-            }
-          });*/
           _refresh(result, event == null);
         }
       });

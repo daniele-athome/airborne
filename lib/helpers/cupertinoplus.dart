@@ -306,12 +306,10 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
               prefix: prefix,
               helper: helper,
               child: showDate ? Text(
-                // TODO locale
-                field.value != null ? DateFormat('EEE, dd/MM/yyyy').format(field.value!) : '',
+                field.value != null ? DateFormat.yMEd().format(field.value!) : '',
                 style: textStyle,
               ) : Text(
-                // TODO locale
-                field.value != null ? DateFormat('HH:mm').format(field.value!) : '',
+                field.value != null ? DateFormat.Hm().format(field.value!) : '',
                 style: textStyle,
               ),
             ) :
@@ -333,8 +331,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                             ? kDefaultCupertinoFormRowWithHelperPadding
                             : kDefaultCupertinoFormRowPadding,
                         child: Text(
-                          // TODO locale
-                          field.value != null ? DateFormat('EEE, dd/MM/yyyy')
+                          field.value != null ? DateFormat.yMEd()
                               .format(field.value!) : '',
                           style: textStyle,
                         ),
@@ -349,8 +346,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                             ? kDefaultCupertinoFormRowWithHelperPadding
                             : kDefaultCupertinoFormRowPadding,
                         child: Text(
-                          // TODO locale
-                          field.value != null ? DateFormat('HH:mm').format(
+                          field.value != null ? DateFormat.Hm().format(
                               field.value!) : '',
                           style: textStyle,
                         ),

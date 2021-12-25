@@ -649,6 +649,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
 // FIXME refactor into widget + controller (e.g. like a text field)
 // TODO move to another file?
+@immutable
 class _DateTimeListTile extends StatelessWidget {
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
@@ -656,7 +657,9 @@ class _DateTimeListTile extends StatelessWidget {
   final Function(TimeOfDay? selected) onTimeSelected;
   final bool showIcon;
 
-  const _DateTimeListTile({
+  final DateFormat _dateFormatter = DateFormat.yMEd();
+
+  _DateTimeListTile({
     Key? key,
     required this.onDateSelected,
     required this.onTimeSelected,
@@ -677,8 +680,7 @@ class _DateTimeListTile extends StatelessWidget {
               Icons.access_time,
             ) : const Text(''),
             title: Text(
-              // TODO locale
-              DateFormat('EEE, dd/MM/yyyy').format(selectedDate),
+              _dateFormatter.format(selectedDate),
               textAlign: TextAlign.left,
             ),
             onTap: () async {
@@ -711,8 +713,7 @@ class _DateTimeListTile extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
             title: Text(
-              // TODO locale
-              DateFormat('HH:mm').format(selectedDate),
+              DateFormat(kAviationTimeFormat).format(selectedDate),
               textAlign: TextAlign.right,
             ),
             onTap: () async {
@@ -784,13 +785,11 @@ class _SunTimesListTile extends StatelessWidget {
           children: [
             Icon(Icons.wb_sunny, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
-            // TODO locale
-            Text(DateFormat('HH:mm').format(sunrise), style: textStyle),
+            Text(DateFormat(kAviationTimeFormat).format(sunrise), style: textStyle),
             SizedBox(width: MediaQuery.of(context).size.width * 0.2, height: 0),
             Icon(Icons.nightlight_round, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
-            // TODO locale
-            Text(DateFormat('HH:mm').format(sunset), style: textStyle),
+            Text(DateFormat(kAviationTimeFormat).format(sunset), style: textStyle),
           ],
         ),
       ),

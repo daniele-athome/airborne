@@ -34,8 +34,7 @@ class FlightLogList extends StatefulWidget {
 class _FlightLogListState extends State<FlightLogList> {
 
   final _hoursFormatter = NumberFormat.decimalPattern();
-  // TODO locale
-  final _dateFormatter = DateFormat('dd/MM/yyyy');
+  final _dateFormatter = DateFormat.yMEd();
   final _pagingController = PagingController<int, FlightLogItem>(
     firstPageKey: 1,
   );

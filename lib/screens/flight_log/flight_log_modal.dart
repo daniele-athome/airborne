@@ -767,13 +767,16 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
 // FIXME refactor into widget + controller (e.g. like a text field)
 // TODO move to another file?
+@immutable
 class _DateListTile extends StatelessWidget {
   final DateTimePickerController controller;
   final Function(DateTime? selected)? onDateSelected;
   final bool showIcon;
   final TextStyle? textStyle;
 
-  const _DateListTile({
+  final DateFormat _dateFormatter = DateFormat.yMEd();
+
+  _DateListTile({
     Key? key,
     required this.controller,
     this.onDateSelected,
@@ -789,8 +792,7 @@ class _DateListTile extends StatelessWidget {
         Icons.access_time,
       ) : const Text(''),
       title: Text(
-        // TODO locale
-        controller.value != null ? DateFormat('EEE, dd/MM/yyyy').format(controller.value!) : '',
+        controller.value != null ? _dateFormatter.format(controller.value!) : '',
         textAlign: TextAlign.left,
         style: textStyle,
       ),

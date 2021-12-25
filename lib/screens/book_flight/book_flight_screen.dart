@@ -217,15 +217,15 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         final mainDate = _visibleDates[_visibleDates.length ~/ 2];
         final year = mainDate.year;
         final month = mainDate.month;
-        _appBarTitle = DateFormat('MMMM yyyy').format(DateTime(year, month));
+        _appBarTitle = DateFormat.yMMMM().format(DateTime(year, month));
         break;
       case CalendarView.week:
-        _appBarTitle = '${DateFormat('dd MMMM')
-                .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b))} - ${DateFormat('dd MMMM')
+        _appBarTitle = '${DateFormat.yMMMd()
+                .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b))} - ${DateFormat.yMMMd()
                 .format(_visibleDates.reduce((a, b) => a.isBefore(b) ? b : a))}';
         break;
       case CalendarView.day:
-        _appBarTitle = DateFormat('dd MMMM yyyy').format(_visibleDates[0]);
+        _appBarTitle = DateFormat.yMMMMd().format(_visibleDates[0]);
         break;
       default:
         throw UnsupportedError('Unsupported calendar view');
@@ -481,7 +481,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   Widget _scheduleViewBuilder(BuildContext buildContext, ScheduleViewMonthHeaderDetails details) {
-    final dateStr = DateFormat('MMMM yyyy').format(details.date);
+    final dateStr = DateFormat.yMMMM().format(details.date);
     final text = dateStr[0].toUpperCase() + dateStr.substring(1);
     return Stack(
       children: <Widget>[
@@ -554,9 +554,8 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     }
 
     if (_calendarController.view == CalendarView.schedule || _calendarController.view == CalendarView.month) {
-      // TODO locale
-      String timeText = '${DateFormat('HH:mm').format(event.tzFrom(_appConfig.locationTimeZone))} -'
-          ' ${DateFormat('HH:mm').format(event.tzTo(_appConfig.locationTimeZone))}';
+      String timeText = '${DateFormat(kAviationTimeFormat).format(event.tzFrom(_appConfig.locationTimeZone))} -'
+          ' ${DateFormat(kAviationTimeFormat).format(event.tzTo(_appConfig.locationTimeZone))}';
       if (event.notes != null) {
         timeText += ' (${event.notes})';
       }
@@ -653,9 +652,8 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                   flex: 5,
                   child: Align(
                     alignment: Alignment.topRight,
-                    // TODO locale
-                    child: Text('${DateFormat('HH:mm').format(
-                      event.tzFrom(_appConfig.locationTimeZone))} - ${DateFormat('HH:mm').format(event.tzTo(_appConfig.locationTimeZone))}',
+                    child: Text('${DateFormat(kAviationTimeFormat).format(
+                      event.tzFrom(_appConfig.locationTimeZone))} - ${DateFormat(kAviationTimeFormat).format(event.tzTo(_appConfig.locationTimeZone))}',
                     style: const TextStyle(fontSize: 14)),
                   ),
                 ),

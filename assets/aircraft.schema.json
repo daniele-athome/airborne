@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://airborne.casaricci.it/aircraft.schema.json",
+  "title": "Airborne aircraft data",
+  "description": "Airborne aircraft data definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "admin",
+    "aircraft_id",
+    "callsign",
+    "backend_info",
+    "pilot_names",
+    "location"
+  ],
+  "properties": {
+    "admin": {
+      "description": "This configuration gives administrative access to the application.",
+      "type": "boolean"
+    },
+    "aircraft_id": {
+      "description": "Internal ID of the aircraft. It's recommended to use the call sign without the hyphen.",
+      "type": "string",
+      "pattern": "^[a-z0-9]*$",
+      "minLength": 1,
+      "maxLength": 10,
+      "examples": [
+        "a1234"
+      ]
+    },
+    "callsign": {
+      "description": "Aircraft call sign.",
+      "type": "string"
+    },
+    "backend_info" : {
+      "description": "Backend service information and credentials.",
+      "type": "object"
+    },
+    "no_pilot_name": {
+      "description": "The name of the fake pilot used to indicate maintenance flights.",
+      "type": "string"
+    },
+    "pilot_names": {
+      "description": "The name of the fake pilot used to indicate maintenance flights.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "location": {
+      "description": "The location where the aircraft is parked.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the location of the hangar.",
+          "type": "string",
+          "examples": [
+            "Fly Berlin",
+            "London Heathrow",
+            "LIRA"
+          ]
+        },
+        "latitude": {
+          "description": "Latitude of the location of the hangar in decimal degrees.",
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90,
+          "examples": [
+            52.8844253
+          ]
+        },
+        "longitude": {
+          "description": "Longitude of the location of the hangar in decimal degrees.",
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "examples": [
+            12.7143166
+          ]
+        },
+        "timezone": {
+          "description": "Time zone of the location of the hangar.",
+          "type": "string",
+          "examples": [
+            "Europe/Berlin",
+            "UTC"
+          ]
+        }
+      }
+    },
+    "fuel_prices": {
+      "description": "List of fuel types and their prices.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": {
+            "description": "Name of fuel type.",
+            "type": "string",
+            "examples": [
+              "Super",
+              "AV GAS"
+            ]
+          },
+          "value": {
+            "description": "Price of fuel type.",
+            "type": "number",
+            "examples": [
+              1.5,
+              2.234
+            ]
+          }
+        }
+      }
+    }
+  }
+}

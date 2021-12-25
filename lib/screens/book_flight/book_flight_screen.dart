@@ -672,8 +672,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       child: SfCalendar(
         key: ValueKey(_dataSource),
         controller: _calendarController,
-        // TODO from locale
-        appointmentTimeTextFormat: 'HH:mm',
+        appointmentTimeTextFormat: kAviationTimeFormat,
         firstDayOfWeek: firstDayOfWeekIndex == 0 ? 7 : firstDayOfWeekIndex,
         headerHeight: 0,
         showNavigationArrow: false,
@@ -686,8 +685,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
           showAgenda: true,
         ),
         timeSlotViewSettings: const TimeSlotViewSettings(
-          // TODO from locale
-          timeFormat: 'HH',
+          timeFormat: kAviationHourFormat,
           startHour: 5,
           endHour: 22,
         ),

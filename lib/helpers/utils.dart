@@ -14,6 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Time format for aviation use (i.e. no am/pm)
 const String kAviationTimeFormat = 'HH:mm';
+/// Hour format for aviation use (i.e. no am/pm)
+const String kAviationHourFormat = 'HH';
 
 /// Network request timeout used throughout the app.
 const Duration kNetworkRequestTimeout = Duration(seconds: 15);

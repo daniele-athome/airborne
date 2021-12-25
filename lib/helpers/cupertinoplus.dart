@@ -137,7 +137,6 @@ class CupertinoFormRowContainer extends StatelessWidget {
 }
 
 /// A button-like [CupertinoFormRow]. Heavily inspired by [CupertinoButton].
-/// TODO animate the background color (or even better convert to [CupertinoInkWell])
 class CupertinoFormButtonRow extends StatefulWidget {
 
   const CupertinoFormButtonRow({

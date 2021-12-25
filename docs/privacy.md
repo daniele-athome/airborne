@@ -14,7 +14,7 @@ Third-party data collection
 The zip file you provide at install time contains account information about a
 Google Calendar and a Google Spreadsheet of your choice that you or others own.
 
-Privacy policy for Google is available at https://policies.google.com/privacy
+Privacy policy for Google is available at [https://policies.google.com/privacy](https://policies.google.com/privacy)
 
 Monitoring and analytics
 ========================

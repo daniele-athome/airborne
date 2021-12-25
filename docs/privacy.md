@@ -1,3 +1,7 @@
+---
+title: Airborne privacy policy
+---
+
 Data collection
 ===============
 

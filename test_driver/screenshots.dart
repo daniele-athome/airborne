@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
+import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/models/book_flight_models.dart';
@@ -350,6 +351,12 @@ class FakeCalendarService implements BookFlightCalendarService {
 
   @override
   Future<FlightBooking> updateBooking(FlightBooking event) {
+    // should be never called for making screenshots
+    throw UnimplementedError();
+  }
+
+  @override
+  set client(GoogleCalendarService client) {
     // should be never called for making screenshots
     throw UnimplementedError();
   }

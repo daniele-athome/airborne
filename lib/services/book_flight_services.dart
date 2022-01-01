@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:googleapis/calendar/v3.dart' as gcalendar;
 import 'package:timezone/timezone.dart';
 
@@ -13,6 +14,11 @@ class BookFlightCalendarService {
   BookFlightCalendarService(GoogleServiceAccountService accountService, Object calendarId) {
     _accountService = accountService;
     _calendarId = calendarId as String;
+  }
+
+  @visibleForTesting
+  set client(GoogleCalendarService client) {
+    _client = client;
   }
 
   Future<GoogleCalendarService> _ensureService() {

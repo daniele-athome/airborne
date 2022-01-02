@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:json_schema2/json_schema2.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 final Logger _log = Logger((AircraftData).toString());
 
@@ -106,10 +108,10 @@ class AircraftDataReader {
     }
 
     _log.finest(metadata);
-    // TODO JSON Schema validation
-    if (metadata['aircraft_id'] != null && metadata['callsign'] != null &&
-        metadata['backend_info'] != null && metadata['pilot_names'] != null) {
 
+    final schemaData = await rootBundle.loadString('assets/aircraft.schema.json');
+    final schema = JsonSchema.createSchema(schemaData);
+    if (schema.validate(metadata)) {
       // TODO check for aircraft picture
       // TODO check for pilot avatars
 

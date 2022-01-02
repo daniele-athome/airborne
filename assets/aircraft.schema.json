@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "$id": "https://airborne.casaricci.it/aircraft.schema.json",
   "title": "Airborne aircraft data",
   "description": "Airborne aircraft data definition",

@@ -27,8 +27,6 @@ void main() {
     testService = BookFlightCalendarService(MockGoogleServiceAccountService(), "TEST");
     testService.client = mockCalendarService;
   });
-  tearDown(() {
-  });
 
   test('search events', () async {
     final eventId = Random().nextInt(10000).toString();

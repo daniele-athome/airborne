@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
@@ -30,6 +31,19 @@ class FlightLogBookService {
     _spreadsheetId = properties['spreadsheet_id']!;
     _sheetName = properties['sheet_name']!;
   }
+
+  @visibleForTesting
+  set client(GoogleSheetsService client) {
+    _client = client;
+  }
+
+  @visibleForTesting
+  set lastId(int lastId) {
+    _lastId = lastId;
+  }
+
+  @visibleForTesting
+  int get lastId =>_lastId;
 
   Future<GoogleSheetsService> _ensureService() {
     if (_client != null) {
@@ -107,7 +121,7 @@ class FlightLogBookService {
         item.destination,
         item.fuel ?? '',
         item.fuel != null ? item.fuelPrice : '',
-        item.notes,
+        item.notes ?? '',
       ]
     ];
 
@@ -115,7 +129,7 @@ class FlightLogBookService {
     _ensureService().then((client) =>
       client.appendRows(_spreadsheetId, _sheetName, _kSheetAppendRange, _formatRowData(item)).then((response) {
         if (response.tableRange != null && response.tableRange!.isNotEmpty) {
-          // TODO return a copy of item with filled id (parse response.tableRange)
+          // TODO return a copy of item with filled id (parse response)
           return item;
         }
         else {
@@ -130,6 +144,7 @@ class FlightLogBookService {
       final rowNum = int.parse(item.id!) - 1;
       return client.updateRows(_spreadsheetId, _sheetName, _sheetDataRange(rowNum, rowNum), _formatRowData(item)).then((response) {
         if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {
+          // TODO return a copy of item (parse response data if available?)
           return item;
         }
         else {

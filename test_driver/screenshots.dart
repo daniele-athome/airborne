@@ -407,4 +407,17 @@ class FakeLogBookService implements FlightLogBookService {
     throw UnimplementedError();
   }
 
+  @override
+  set client(GoogleSheetsService client) {
+    throw UnimplementedError();
+  }
+
+  @override
+  int get lastId => throw UnimplementedError();
+
+  @override
+  set lastId(int lastId) {
+    throw UnimplementedError();
+  }
+
 }

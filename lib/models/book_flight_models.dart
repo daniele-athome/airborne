@@ -37,7 +37,7 @@ class FlightBooking {
 
   @override
   String toString() {
-    return 'FlightBooking{pilotName: $pilotName, from: $from, to: $to, notes: $notes}';
+    return 'FlightBooking{id: $id, pilotName: $pilotName, from: $from, to: $to, notes: $notes}';
   }
 
 }

@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:intl/intl.dart';
 
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/digit_display.dart';
@@ -201,33 +200,8 @@ class HourMeterDialog extends StatefulWidget {
   State<HourMeterDialog> createState() => _HourMeterDialogState();
 }
 
-class _HourMeterDigitState {
-  const _HourMeterDigitState({
-    required this.mode,
-  });
-
-  final int mode;
-
-  static const _HourMeterDigitState willReset = _HourMeterDigitState(mode: -1);
-  static const _HourMeterDigitState integralPart = _HourMeterDigitState(mode: 0);
-  static const _HourMeterDigitState fractionalDigit1 = _HourMeterDigitState(mode: 1);
-  static const _HourMeterDigitState fractionalDigit2 = _HourMeterDigitState(mode: 2);
-  static const _HourMeterDigitState ended = _HourMeterDigitState(mode: 9);
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _HourMeterDigitState &&
-          runtimeType == other.runtimeType &&
-          mode == other.mode;
-
-  @override
-  int get hashCode => mode.hashCode;
-}
-
 class _HourMeterDialogState extends State<HourMeterDialog> {
 
-  _HourMeterDigitState _mode = _HourMeterDigitState.willReset;
   late DigitDisplayController _controller;
 
   late Color _disabledButtonBackgroundColor;
@@ -235,7 +209,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
 
   @override
   void initState() {
-    _controller = DigitDisplayController(widget.initialValue, 4);
+    _controller = DigitDisplayController(widget.initialValue, 0);
     super.initState();
   }
 
@@ -290,42 +264,14 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
 
   _onPressed(String value) {
     setState(() {
-      String number;
-      if (_mode == _HourMeterDigitState.willReset) {
-        if (value == '.') {
-          _controller.number = 0;
-          _mode = _HourMeterDigitState.fractionalDigit1;
-          _controller.activeDigit = 5;
-          return;
-        }
-        else {
-          number = '';
-          _mode = _HourMeterDigitState.integralPart;
-          _controller.activeDigit = 4;
-        }
+      final activeDigit = _controller.activeDigit!;
+      int offset = (activeDigit >= kMaxDisplayIntegerDigits) ? 1 : 0;
+      final number = kHoursFormatter.format(_controller.number)
+          .replaceRange(activeDigit + offset, activeDigit + offset + 1, value);
+      if (activeDigit < 6) {
+        _controller.activeDigit = activeDigit + 1;
       }
-      else {
-        number = _controller.number.toString();
-      }
-      if (_mode == _HourMeterDigitState.integralPart) {
-        if (value == '.') {
-          _mode = _HourMeterDigitState.fractionalDigit1;
-          _controller.activeDigit = 5;
-        }
-        else if (number.length < kMaxDisplayIntegerDigits) {
-          number += value;
-          _controller.number = int.parse(number);
-        }
-      }
-      else if (_mode == _HourMeterDigitState.fractionalDigit1) {
-        _controller.number = double.parse(number) + (int.parse(value) * 0.1);
-        _mode = _HourMeterDigitState.fractionalDigit2;
-        _controller.activeDigit = 6;
-      }
-      else if (_mode == _HourMeterDigitState.fractionalDigit2) {
-        _controller.number = double.parse(number) + (int.parse(value) * 0.01);
-        _mode = _HourMeterDigitState.ended;
-      }
+      _controller.number = double.parse(number);
     });
     if (mounted && widget.onChanged != null) {
       widget.onChanged!(_controller.number);
@@ -334,6 +280,16 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
 
   _onBackspace() {
     setState(() {
+      final activeDigit = _controller.activeDigit!;
+      // clear current digit and go backwards
+      int offset = (activeDigit >= kMaxDisplayIntegerDigits) ? 1 : 0;
+      final number = kHoursFormatter.format(_controller.number)
+          .replaceRange(activeDigit + offset, activeDigit + offset + 1, '0');
+      if (activeDigit > 0) {
+        _controller.activeDigit = activeDigit - 1;
+      }
+      _controller.number = double.parse(number);
+      /*
       if (_mode == _HourMeterDigitState.willReset) {
         _controller.number = 0;
         _mode = _HourMeterDigitState.integralPart;
@@ -357,6 +313,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
         _mode = _HourMeterDigitState.fractionalDigit2;
         _controller.activeDigit = 6;
       }
+       */
     });
     if (mounted && widget.onChanged != null) {
       widget.onChanged!(_controller.number);
@@ -407,16 +364,19 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildNumberButton(context, '0'),
-                _buildNumberButton(context, '.',
-                    text: NumberFormat.decimalPattern().symbols.DECIMAL_SEP,
-                    enabled: _mode == _HourMeterDigitState.willReset || _mode == _HourMeterDigitState.integralPart
-                ),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  double _getDigitDisplayFontSize(BuildContext context) {
+    final mdq = MediaQuery.of(context);
+    final paddingRatio = (mdq.size.width * 0.08).roundToDouble();
+    final size = ((mdq.size.width - paddingRatio - 48) / 7).roundToDouble();
+    return math.min(size, 42);
   }
 
   // FIXME not nice on landscape orientation
@@ -430,7 +390,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
           children: [
             DigitDisplayTextField(
               controller: _controller,
-              fontSize: 26,
+              fontSize: _getDigitDisplayFontSize(context),
+              enabled: true,
             ),
             IconButton(
               // TODO onLongPress should reset the value
@@ -459,7 +420,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
           children: [
             DigitDisplayTextField(
               controller: _controller,
-              fontSize: 32,
+              fontSize: _getDigitDisplayFontSize(context),
+              enabled: true,
             ),
             CupertinoButton(
               // TODO onLongPress should reset the value

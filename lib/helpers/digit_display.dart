@@ -7,6 +7,7 @@ const double _kDefaultDigitFontSize = 20;
 const EdgeInsetsGeometry _kDefaultDigitPadding = EdgeInsets
     .symmetric(vertical: 4);
 const String kDigitDisplayFontName = 'MajorMonoDisplay';
+final NumberFormat kHoursFormatter = NumberFormat("00000.00");
 
 class DigitDisplayFormTextField extends FormField<num> {
   DigitDisplayFormTextField({
@@ -40,20 +41,20 @@ class DigitDisplayTextField extends StatefulWidget {
     this.fontSize = _kDefaultDigitFontSize,
     this.errorText,
     this.padding = _kDefaultDigitPadding,
+    this.enabled = false,
   }) : super(key: key);
 
   final DigitDisplayController? controller;
   final double fontSize;
   final String? errorText;
   final EdgeInsetsGeometry padding;
+  final bool enabled;
 
   @override
   State<DigitDisplayTextField> createState() => _DigitDisplayTextFieldState();
 }
 
 class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
-
-  static final _hoursFormatter = NumberFormat("00000.00");
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
     }
 
     final num number = widget.controller != null ? widget.controller!.number : 0;
-    final numDigits = _hoursFormatter.format(number).split('');
+    final numDigits = kHoursFormatter.format(number).split('');
     
     final children = <Widget>[];
     bool decimal = false;
@@ -73,13 +74,21 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
         decimal = true;
         continue;
       }
+      final digitNumber = i++;
       children.add(Padding(
         padding: widget.padding,
         child: SingleDigitText(
           digit: digit,
           decimal: decimal,
           fontSize: widget.fontSize,
-          active: (widget.controller != null && widget.controller!.activeDigit == i++),
+          active: widget.controller?.activeDigit == digitNumber,
+          onTap: widget.enabled ? () {
+            if (widget.controller != null) {
+              setState(() {
+                widget.controller?.activeDigit = digitNumber;
+              });
+            }
+          } : null,
         ),
       ));
     }
@@ -145,6 +154,7 @@ class SingleDigitText extends StatelessWidget {
     this.decimal = false,
     this.fontSize = _kDefaultDigitFontSize,
     this.active = false,
+    this.onTap,
   }) : assert(digit >= 0 && digit <= 9),
         super(key: key);
 
@@ -152,6 +162,7 @@ class SingleDigitText extends StatelessWidget {
   final bool decimal;
   final double fontSize;
   final bool active;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) =>
@@ -160,6 +171,7 @@ class SingleDigitText extends StatelessWidget {
         alternate: decimal,
         fontSize: fontSize,
         active: active,
+        onTap: onTap,
       );
 
 }
@@ -172,37 +184,45 @@ class _DigitText extends StatelessWidget {
     this.alternate = false,
     this.fontSize = _kDefaultDigitFontSize,
     this.active = false,
+    this.onTap,
   }) : super(key: key);
 
   final String text;
   final bool alternate;
   final double fontSize;
   final bool active;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) => Container(
-    alignment: Alignment.center,
-    decoration: alternate ?
-      BoxDecoration(
-        border: Border.all(color: active ? Colors.red : Colors.black, width: active ? 2 : 1),
-        color: Colors.white,
-      ) :
-      BoxDecoration(
-          border: active ? Border.all(color: Colors.red, width: 2) : null,
-          color: Colors.black,
-      ),
-    // TODO test on different screens
-    width: fontSize,
-    height: fontSize + 10,
-    child: Text(text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: kDigitDisplayFontName,
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-          color: alternate ? Colors.black : Colors.white,
+  Widget build(BuildContext context) {
+    final widget = Container(
+      alignment: Alignment.center,
+      decoration: alternate ?
+        BoxDecoration(
+          border: Border.all(color: active ? Colors.red : Colors.black, width: active ? 2 : 1),
+          color: Colors.white,
+        ) :
+        BoxDecoration(
+            border: active ? Border.all(color: Colors.red, width: 2) : null,
+            color: Colors.black,
         ),
-    ),
-  );
+      // TODO test on different screens
+      width: fontSize,
+      height: fontSize + 10,
+      child: Text(text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: kDigitDisplayFontName,
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            color: alternate ? Colors.black : Colors.white,
+          ),
+      ),
+    );
+    return onTap != null ? GestureDetector(
+      onTap: onTap,
+      child: widget,
+    ) : widget;
+  }
 
 }

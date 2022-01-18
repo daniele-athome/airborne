@@ -271,7 +271,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       if (activeDigit < 6) {
         _controller.activeDigit = activeDigit + 1;
       }
-      _controller.number = double.parse(number);
+      _controller.number = kHoursFormatter.parse(number);
     });
     if (mounted && widget.onChanged != null) {
       widget.onChanged!(_controller.number);
@@ -288,7 +288,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
       if (activeDigit > 0) {
         _controller.activeDigit = activeDigit - 1;
       }
-      _controller.number = double.parse(number);
+      _controller.number = kHoursFormatter.parse(number);
       /*
       if (_mode == _HourMeterDigitState.willReset) {
         _controller.number = 0;

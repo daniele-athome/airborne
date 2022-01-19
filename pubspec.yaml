@@ -50,7 +50,6 @@ dependencies:
   provider: 6.0.2
   shared_preferences: 2.0.12
   solar_calculator: 1.0.2
-  # syncfusion 19.4.38 doesn't build
   syncfusion_flutter_calendar: 19.4.43
   syncfusion_localizations: 19.4.43
   syncfusion_flutter_core: 19.4.43+1

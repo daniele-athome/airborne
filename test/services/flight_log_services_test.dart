@@ -73,6 +73,10 @@ void main() {
     final fakeAppended = gapi_sheets.AppendValuesResponse(
       spreadsheetId: 'TEST!SHEET',
       tableRange: 'A2:J2',
+      updates: gapi_sheets.UpdateValuesResponse(
+        updatedRange: 'A2:J2',
+        updatedRows: 1,
+      ),
       // TODO other values one day...?
     );
     when(mockSheetsService.appendRows('TEST', 'SHEET', 'A:J', any))

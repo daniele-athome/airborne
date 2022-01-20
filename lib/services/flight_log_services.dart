@@ -128,7 +128,7 @@ class FlightLogBookService {
   Future<FlightLogItem> appendItem(FlightLogItem item) =>
     _ensureService().then((client) =>
       client.appendRows(_spreadsheetId, _sheetName, _kSheetAppendRange, _formatRowData(item)).then((response) {
-        if (response.tableRange != null && response.tableRange!.isNotEmpty) {
+        if (response.updates != null && response.updates!.updatedRange != null) {
           // TODO return a copy of item with filled id (parse response)
           return item;
         }

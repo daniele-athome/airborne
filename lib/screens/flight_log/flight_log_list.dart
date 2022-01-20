@@ -69,6 +69,11 @@ class _FlightLogListState extends State<FlightLogList> {
       if (_firstTime) {
         if (page.isNotEmpty) {
           widget.controller.lastEndHourMeter = page[0].endHour;
+          widget.controller.empty = false;
+        }
+        else {
+          widget.controller.lastEndHourMeter = 0;
+          widget.controller.empty = true;
         }
         _firstTime = false;
       }
@@ -289,11 +294,23 @@ class FlightLogListController extends ValueNotifier<FlightLogListState> {
   set lastEndHourMeter(num? number) {
     value = FlightLogListState(
       lastEndHourMeter: number,
+      empty: value.empty,
     );
   }
 
   num? get lastEndHourMeter {
     return value.lastEndHourMeter;
+  }
+
+  set empty(bool? empty) {
+    value = FlightLogListState(
+      lastEndHourMeter: value.lastEndHourMeter,
+      empty: empty,
+    );
+  }
+
+  bool? get empty {
+    return value.empty;
   }
 
   void reset() {
@@ -306,7 +323,9 @@ class FlightLogListController extends ValueNotifier<FlightLogListState> {
 class FlightLogListState {
   const FlightLogListState({
     this.lastEndHourMeter,
+    this.empty
   });
 
   final num? lastEndHourMeter;
+  final bool? empty;
 }

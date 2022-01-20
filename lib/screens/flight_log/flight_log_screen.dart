@@ -131,7 +131,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   @override
   Widget build(BuildContext context) {
     // hide create button until we have the first (actually last) item of the log
-    bool showCreateButton = _logBookController.lastEndHourMeter != null;
+    bool showCreateButton = _logBookController.lastEndHourMeter != null ||
+        _logBookController.empty == true;
 
     return PlatformScaffold(
         iosContentPadding: true,

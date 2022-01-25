@@ -147,6 +147,9 @@ class AppConfig extends ChangeNotifier {
       deleteAircraftCache();
       _log.fine('Selecting no aircraft');
     }
+    if (_currentAircraft != null) {
+      _clearPictureCache();
+    }
     _currentAircraft = data;
     _currentAircraftId = data?.id;
     notifyListeners();
@@ -181,6 +184,13 @@ class AppConfig extends ChangeNotifier {
       prefs.remove('pilotName');
     }
     notifyListeners();
+  }
+
+  void _clearPictureCache() {
+    aircraftPicture.evict();
+    for (var name in pilotNames) {
+      getPilotAvatar(name).evict();
+    }
   }
 
 }

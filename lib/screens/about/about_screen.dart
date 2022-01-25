@@ -118,7 +118,7 @@ class _AboutScreenState extends State<AboutScreen> {
         await deleteAircraftCache();
         await reader.open();
         final aircraftData = reader.toAircraftData();
-        appConfig.addAircraft(aircraftData);
+        appConfig.updateAircraft(aircraftData);
         return aircraftData;
       }
       catch (e, stacktrace) {

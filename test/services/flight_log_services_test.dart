@@ -79,7 +79,7 @@ void main() {
       ),
       // TODO other values one day...?
     );
-    when(mockSheetsService.appendRows('TEST', 'SHEET', 'A:J', any))
+    when(mockSheetsService.appendRows('TEST', 'SHEET', 'A2:J2', any))
       .thenAnswer((_) => Future.value(fakeAppended));
 
     final dateOnly = DateTime.utc(timestamp.year, timestamp.month, timestamp.day);

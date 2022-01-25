@@ -12,7 +12,7 @@ const _kItemsPerPage = 20;
 /// Cell containing the row count.
 const _kSheetCountRange = 'A1';
 /// Data range for appending.
-const _kSheetAppendRange = 'A:J';
+const _kSheetAppendRange = 'A2:J2';
 /// Flight date formatter
 final _kDateFormatter = DateFormat('yyyy-MM-dd');
 

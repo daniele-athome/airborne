@@ -1,0 +1,9 @@
+{
+  "packageFiles": [
+    {
+      "filename": ".version",
+      "type": "plain-text"
+    }
+  ],
+  "header": "# Changelog\n"
+}

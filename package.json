@@ -1,0 +1,11 @@
+{
+  "standard-version": {
+    "skip": {
+      "commit": false,
+      "tag": false
+    },
+    "scripts": {
+      "postbump": "utils/stdver-postbump.sh"
+    }
+  }
+}

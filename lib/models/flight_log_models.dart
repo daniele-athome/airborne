@@ -20,7 +20,7 @@ class FlightLogItem {
   String destination;
   num startHour;
   num endHour;
-  int? fuel;
+  num? fuel;
   num? fuelPrice;
   String? notes;
 

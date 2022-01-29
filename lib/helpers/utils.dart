@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:airborne/helpers/cupertinoplus.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:solar_calculator/solar_calculator.dart';
@@ -52,6 +54,22 @@ String getExceptionMessage(dynamic error) {
       return error.toString();
     }
   }
+}
+
+extension NumberFormatTryParse on NumberFormat {
+  num? tryParse(String text) {
+    try {
+      return parse(text);
+    }
+    on FormatException catch (_) {
+      return null;
+    }
+  }
+}
+
+double roundDouble(num value, int places) {
+  num mod = math.pow(10.0, places);
+  return ((value * mod).round().toDouble() / mod);
 }
 
 class SunTimes {

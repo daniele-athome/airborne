@@ -36,6 +36,8 @@ class FlightLogModal extends StatefulWidget {
 
 class _FlightLogModalState extends State<FlightLogModal> {
   static final _fuelPriceFormatter = NumberFormat("#####.00");
+  /// Parser can't truncate or round the parsed number, so we'll round it before save
+  static final _fuelFormatter = NumberFormat("####0.#")..turnOffGrouping();
 
   // event data
   late String _pilotName;
@@ -62,7 +64,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _destinationController = TextEditingController(text: widget.item.destination);
     _startHourController = DigitDisplayController(widget.item.startHour);
     _endHourController = DigitDisplayController(widget.item.endHour);
-    _fuelController = TextEditingController(text: widget.item.fuel != null ? widget.item.fuel.toString() : '');
+    _fuelController = TextEditingController(text: widget.item.fuel != null ? _fuelFormatter.format(widget.item.fuel) : '');
     _notesController = TextEditingController(text: widget.item.notes);
     _dateController = DateTimePickerController(widget.item.date);
     _fuelPrice = widget.item.fuelPrice;
@@ -205,7 +207,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_cupertino),
             textAlign: TextAlign.end,
             keyboardType: TextInputType.number,
-            validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
+            validator: (value) => !_validateFuel(value) ?
               AppLocalizations.of(context)!.flightLogModal_error_fuel_invalid_number : null,
           ),
           // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
@@ -407,7 +409,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               prefixText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_material + ' ',
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (value) => value != null && value.isNotEmpty && int.tryParse(value) == null ?
+            validator: (value) => !_validateFuel(value) ?
               AppLocalizations.of(context)!.flightLogModal_error_fuel_invalid_number : null,
           ),
           trailing: SizedBox(
@@ -548,6 +550,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
     );
   }
 
+  bool _validateFuel(String? fuelValue) {
+    return fuelValue == null || fuelValue.isEmpty || _fuelFormatter.tryParse(fuelValue) != null;
+  }
+
   void _onSave(BuildContext context) {
     if (_startHourController.value.number > _endHourController.value.number) {
       showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_hourmeter);
@@ -560,7 +566,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
     }
 
     String fuelValue = _fuelController.text;
-    if (fuelValue.isNotEmpty && int.tryParse(fuelValue) == null) {
+    if (!_validateFuel(fuelValue)) {
       showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_fuel);
       return;
     }
@@ -621,7 +627,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       _destinationController.text,
       _startHourController.number,
       _endHourController.number,
-      _fuelController.text.isNotEmpty ? int.parse(_fuelController.text) : null,
+      _fuelController.text.isNotEmpty ? roundDouble(_fuelFormatter.parse(_fuelController.text), 1) : null,
       _fuelPrice,
       _notesController.text,
     );

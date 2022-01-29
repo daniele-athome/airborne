@@ -98,7 +98,7 @@ class FlightLogBookService {
           rowData[6] as String,
           rowData[3] as num,
           rowData[4] as num,
-          rowData.length > 7 && rowData[7] is int ? rowData[7] as int : null,
+          rowData.length > 7 && rowData[7] is num ? rowData[7] as num : null,
           rowData.length > 8 && rowData[8] is num ? rowData[8] as num : null,
           rowData.length > 9 && rowData[9] is String && (rowData[9] as String).isNotEmpty ? rowData[9] as String? : null,
         ));

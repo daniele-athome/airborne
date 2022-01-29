@@ -5,7 +5,8 @@
       "tag": false
     },
     "scripts": {
-      "postbump": "utils/stdver-postbump.sh"
+      "postbump": "utils/stdver-postbump.sh",
+      "postchangelog": "utils/stdver-postchangelog.sh"
     }
   }
 }

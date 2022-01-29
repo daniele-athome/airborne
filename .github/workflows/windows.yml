@@ -2,9 +2,7 @@ name: windows
 
 on:
   push:
-    branches: [ master, release ]
   pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 env:
@@ -41,7 +39,7 @@ jobs:
         run: flutter build windows --debug
 
       - name: Archive debug build
-        if: github.ref == 'refs/heads/release'
+        if: github.ref_type == 'tag'
         uses: actions/upload-artifact@v2
         with:
           name: windows-bundle-debug
@@ -51,7 +49,7 @@ jobs:
         run: flutter build windows --release
 
       - name: Archive release build
-        if: github.ref == 'refs/heads/release'
+        if: github.ref_type == 'tag'
         uses: actions/upload-artifact@v2
         with:
           name: windows-bundle-release

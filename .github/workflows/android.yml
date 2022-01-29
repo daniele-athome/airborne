@@ -2,9 +2,7 @@ name: android
 
 on:
   push:
-    branches: [ master, release ]
   pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 env:
@@ -35,11 +33,11 @@ jobs:
         run: flutter test --no-pub -r expanded
 
       - name: Build Android application (debug)
-        if: github.ref != 'refs/heads/release'
+        if: github.ref_type != 'tag'
         run: flutter build appbundle --debug
 
       - name: Prepare for release build
-        if: github.ref == 'refs/heads/release'
+        if: github.ref_type == 'tag'
         env:
           ENCRYPTED_FILE_KEY: ${{ secrets.ENCRYPTED_FILE_KEY }}
           ENCRYPTED_FILE_IV: ${{ secrets.ENCRYPTED_FILE_IV }}
@@ -48,7 +46,7 @@ jobs:
           openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in fastlane/androidkey.jks.enc -out fastlane/androidkey.jks -d
 
       - name: Build Android application (release)
-        if: github.ref == 'refs/heads/release'
+        if: github.ref_type == 'tag'
         env:
           RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -56,7 +54,7 @@ jobs:
         run: flutter build appbundle --release
 
       - name: Upload release artifact for deploy
-        if: github.ref == 'refs/heads/release'
+        if: github.ref_type == 'tag'
         uses: actions/upload-artifact@v2
         with:
           name: android-bundle-release
@@ -64,7 +62,7 @@ jobs:
 
   deploy:
     needs: test-build
-    if: github.ref == 'refs/heads/release'
+    if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

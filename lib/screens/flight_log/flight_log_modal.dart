@@ -35,7 +35,7 @@ class FlightLogModal extends StatefulWidget {
 }
 
 class _FlightLogModalState extends State<FlightLogModal> {
-  static final _fuelPriceFormatter = NumberFormat("#####.00");
+  static final _fuelPriceFormatter = NumberFormat("####0.00");
   /// Parser can't truncate or round the parsed number, so we'll round it before save
   static final _fuelFormatter = NumberFormat("####0.#")..turnOffGrouping();
 

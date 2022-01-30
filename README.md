@@ -60,7 +60,7 @@ Everything is stored in the Google cloud and data access is achieved through Goo
 
 The app needs a specially crafted zip file containing, among other information, credentials for accessing to Google
 services. Documentation (in a very draft state) can be found in our [backend guide](docs/backend.md) (you can also track
-progress in #32).
+progress in the [related issue](https://github.com/daniele-athome/airborne/issues/32)).
 
 ## Privacy
 

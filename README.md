@@ -21,21 +21,25 @@ Minimal aircraft management app for small groups.
 
 ### Android
 
-![Bookings - Agenda](/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus 5X-Portrait-01-bookflight-agenda.png)
-![Bookings - Month](/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus 5X-Portrait-02-bookflight-month.png)
-![Bookings - Edit](/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus 5X-Portrait-03-bookflight-flighteditor.png)
-![Logbook - List](/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus 5X-Portrait-04-logbook-list.png)
-![Logbook - Edit](/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus 5X-Portrait-05-logbook-flighteditor.png)
-![Onboarding - Pilot](/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus 5X-Portrait-06-onboarding-pilotselect.png)
+<p>
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-01-bookflight-agenda.png" alt="Bookings - Agenda" width="15%">
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-02-bookflight-month.png" alt="Bookings - Month" width="15%">
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-03-bookflight-flighteditor.png" alt="Bookings - Edit" width="15%">
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-04-logbook-list.png" alt="Logbook - List" width="15%">
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-05-logbook-flighteditor.png" alt="Logbook - Edit" width="15%">
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-06-onboarding-pilotselect.png" alt="Onboarding - Pilot" width="15%">
+</p>
 
 ### iOS
 
-![Bookings - Agenda](/ios/fastlane/screenshots/en-US/iPhone 8 Plus-Portrait-01-bookflight-agenda.png)
-![Bookings - Month](/ios/fastlane/screenshots/en-US/iPhone 8 Plus-Portrait-02-bookflight-month.png)
-![Bookings - Edit](/ios/fastlane/screenshots/en-US/iPhone 8 Plus-Portrait-03-bookflight-flighteditor.png)
-![[Logbook - List](/ios/fastlane/screenshots/en-US/iPhone 8 Plus-Portrait-04-logbook-list.png)
-![[Logbook - Edit](/ios/fastlane/screenshots/en-US/iPhone 8 Plus-Portrait-05-logbook-flighteditor.png)
-![Onboarding - Pilot](/ios/fastlane/screenshots/en-US/iPhone 8 Plus-Portrait-06-onboarding-pilotselect.png)
+<p>
+<img src="/ios/fastlane/screenshots/en-US/iPhone%208%20Plus-Portrait-01-bookflight-agenda.png" alt="Bookings - Agenda" width="15%">
+<img src="/ios/fastlane/screenshots/en-US/iPhone%208%20Plus-Portrait-02-bookflight-month.png" alt="Bookings - Month" width="15%">
+<img src="/ios/fastlane/screenshots/en-US/iPhone%208%20Plus-Portrait-03-bookflight-flighteditor.png" alt="Bookings - Edit" width="15%">
+<img src="/ios/fastlane/screenshots/en-US/iPhone%208%20Plus-Portrait-04-logbook-list.png" alt="[Logbook - List" width="15%">
+<img src="/ios/fastlane/screenshots/en-US/iPhone%208%20Plus-Portrait-05-logbook-flighteditor.png" alt="[Logbook - Edit" width="15%">
+<img src="/ios/fastlane/screenshots/en-US/iPhone%208%20Plus-Portrait-06-onboarding-pilotselect.png" alt="Onboarding - Pilot" width="15%">
+</p>
 
 ## Build
 

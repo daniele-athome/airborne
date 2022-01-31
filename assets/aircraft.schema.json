@@ -52,6 +52,12 @@
     "location": {
       "description": "The location where the aircraft is parked.",
       "type": "object",
+      "required": [
+        "name",
+        "latitude",
+        "longitude",
+        "timezone"
+      ],
       "properties": {
         "name": {
           "description": "Name of the location of the hangar.",

@@ -5,11 +5,11 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:json_schema2/json_schema2.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:json_schema2/json_schema2.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 final Logger _log = Logger((AircraftData).toString());
 

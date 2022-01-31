@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,32 +65,14 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  // FIXME this code is similar to the one in about_screen.dart
   void _downloadData(BuildContext context, AppConfig appConfig, DownloadProvider downloadProvider) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final userpass = _aircraftPassword;
-      String? username;
-      String? password;
-      if (userpass != null) {
-        final separator = userpass.indexOf(':');
-        if (separator >= 0) {
-          username = userpass.substring(0, separator);
-          password = userpass.substring(separator + 1);
-        }
-      }
-      final downloadTask = downloadProvider.downloadToFile(_aircraftUrl!, 'aircraft.zip', username, password, true)
-        .timeout(kNetworkRequestTimeout)
-        .then((tempfile) async {
-          _log.finest(tempfile);
-          final stored = await _validateAndStoreAircraft(tempfile, _aircraftUrl!, appConfig);
-          tempfile.deleteSync();
-          return stored;
-        }).then((AircraftData? aircraftData) {
-          if (aircraftData != null) {
-            appConfig.currentAircraft = aircraftData;
-          }
+      final downloadTask = downloadAircraftData(_aircraftUrl!, _aircraftPassword, downloadProvider)
+        .then((AircraftData aircraftData) {
+          appConfig.currentAircraft = aircraftData;
+          appConfig.addAircraft(aircraftData);
           return aircraftData;
         }).catchError((error, StackTrace? stacktrace) {
           _log.info('DOWNLOAD ERROR', error, stacktrace);
@@ -100,12 +81,17 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           if (error is TimeoutException) {
             message = AppLocalizations.of(context)!.error_generic_network_timeout;
           }
+          else if (error is AircraftValidationException) {
+            message = AppLocalizations.of(context)!.addAircraft_error_invalid_datafile;
+          }
+          else if (error is AircraftStoreException) {
+            message = AppLocalizations.of(context)!.addAircraft_error_storing;
+          }
           else {
             message = getExceptionMessage(error);
           }
 
           Future.delayed(Duration.zero, () => showError(context, message));
-          return null;
         });
 
       showPlatformDialog(
@@ -127,35 +113,6 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         }
       });
     }
-  }
-
-  Future<AircraftData?> _validateAndStoreAircraft(File file, String url, AppConfig appConfig) async {
-    final reader = AircraftDataReader(dataFile: file, urlFile: null);
-    final validation = await reader.validate();
-    _log.finest('VALIDATION: $validation');
-    if (validation) {
-      try {
-        final dataFile = await addAircraftDataFile(reader, url);
-        _log.finest(dataFile);
-        await deleteAircraftCache();
-        await reader.open();
-        final aircraftData = reader.toAircraftData();
-        appConfig.addAircraft(aircraftData);
-        return aircraftData;
-      }
-      catch (e, stacktrace) {
-        _log.warning('Error storing aircraft data file', e, stacktrace);
-        if (mounted) {
-          return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_storing), stacktrace);
-        }
-      }
-    }
-    else {
-      if (mounted) {
-        return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_invalid_datafile));
-      }
-    }
-    return null;
   }
 
   List<Widget> _buildFormSections(BuildContext context, AppConfig appConfig) =>

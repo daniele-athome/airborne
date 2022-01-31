@@ -2,14 +2,19 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
+import 'package:airborne/helpers/utils.dart';
 import 'package:archive/archive_io.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'aircraft_data_test.mocks.dart';
+
+@GenerateMocks([DownloadProvider])
 void main() {
   // for reading assets (the JSON schema)
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +69,7 @@ void main() {
     "Simon"
   ],
   "location": {
+    "name": "Fly Berlin",
     "latitude": 52.8844253,
     "longitude": 12.7143166,
     "timezone": "Europe/Berlin"
@@ -136,6 +142,27 @@ void main() {
       expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(), true);
     });
   });
+  
+  group('Testing aircraft data download utilities', () {
+    setUp(() {
+      PathProviderPlatform.instance = MockPathProviderPlatform();
+    });
+    tearDown(() {
+      Directory((PathProviderPlatform.instance as MockPathProviderPlatform).baseDir)
+          .deleteSync(recursive: true);
+    });
+
+    test('Aircraft data valid download', () async {
+      final downloadProvider = MockDownloadProvider();
+      const url = 'http://localhost/a1234.zip';
+      final aircraftFile = await _createExampleValidAircraftData();
+      when(downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true)).thenAnswer((_) => Future.value(aircraftFile));
+      final aircraftData = await downloadAircraftData(url, null, downloadProvider);
+      // TODO verify that something happened
+    });
+
+    // TODO failure tests (validation error, store error, download+timeout error)
+  });
 }
 
 Future<File> _createExampleValidAircraftData() {
@@ -157,6 +184,7 @@ Future<File> _createExampleValidAircraftData() {
     "Simon"
   ],
   "location": {
+    "name": "Fly Berlin",
     "latitude": 52.8844253,
     "longitude": 12.7143166,
     "timezone": "Europe/Berlin"

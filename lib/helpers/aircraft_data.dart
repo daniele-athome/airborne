@@ -11,6 +11,8 @@ import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
+import 'utils.dart';
+
 final Logger _log = Logger((AircraftData).toString());
 
 class AircraftData {
@@ -243,4 +245,56 @@ Future<Directory> deleteAircraftCache() async {
   final tmpDirectory = Directory(path.join(cacheDir.path, 'current_aircraft'));
   final exists = await tmpDirectory.exists();
   return exists ? tmpDirectory.delete(recursive: true) as Future<Directory> : Future.value(tmpDirectory);
+}
+
+class AircraftValidationException implements Exception {
+}
+
+class AircraftStoreException implements Exception {
+  final Object cause;
+
+  AircraftStoreException(this.cause);
+}
+
+Future<AircraftData> _validateAndStoreAircraft(File file, String url) async {
+  final reader = AircraftDataReader(dataFile: file, urlFile: null);
+  final validation = await reader.validate();
+  _log.finest('VALIDATION: $validation');
+  if (validation) {
+    try {
+      final dataFile = await addAircraftDataFile(reader, url);
+      _log.finest(dataFile);
+      await deleteAircraftCache();
+      await reader.open();
+      final aircraftData = reader.toAircraftData();
+      return aircraftData;
+    }
+    catch (e, stacktrace) {
+      _log.warning('Error storing aircraft data file', e, stacktrace);
+      return Future.error(AircraftStoreException(e), stacktrace);
+    }
+  }
+  else {
+    return Future.error(AircraftValidationException());
+  }
+}
+
+Future<AircraftData> downloadAircraftData(String url, String? userpass, DownloadProvider downloadProvider) async {
+  String? username;
+  String? password;
+  if (userpass != null && userpass.isNotEmpty) {
+    final separator = userpass.indexOf(':');
+    if (separator >= 0) {
+      username = userpass.substring(0, separator);
+      password = userpass.substring(separator + 1);
+    }
+  }
+  return downloadProvider.downloadToFile(url, 'aircraft.zip', username, password, true)
+      .timeout(kNetworkRequestTimeout)
+      .then((tempfile) async {
+    _log.finest(tempfile);
+    final stored = await _validateAndStoreAircraft(tempfile, url);
+    tempfile.deleteSync();
+    return stored;
+  });
 }

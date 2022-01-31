@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,7 +37,6 @@ class _AboutScreenState extends State<AboutScreen> {
     super.didChangeDependencies();
   }
 
-  // FIXME this code is similar to the one in aircraft_data_screen.dart
   void _onRefresh(BuildContext context) {
     showTextInputDialog(
       context: context,
@@ -54,27 +52,11 @@ class _AboutScreenState extends State<AboutScreen> {
     ).then((value) {
       if (value != null) {
         final userpass = value[0];
-        String? username;
-        String? password;
-        if (userpass.isNotEmpty) {
-          final separator = userpass.indexOf(':');
-          if (separator >= 0) {
-            username = userpass.substring(0, separator);
-            password = userpass.substring(separator + 1);
-          }
-        }
-        final downloadTask = _downloadProvider.downloadToFile(_appConfig.currentAircraft!.url!, 'aircraft.zip', username, password, true)
-            .timeout(kNetworkRequestTimeout)
-            .then((tempfile) async {
-          _log.finest(tempfile);
-          final stored = await _validateAndStoreAircraft(tempfile, _appConfig.currentAircraft!.url!, _appConfig);
-          tempfile.deleteSync();
-          return stored;
-        }).then((AircraftData? aircraftData) {
-          if (aircraftData != null) {
+        final downloadTask = downloadAircraftData(_appConfig.currentAircraft!.url!, userpass, _downloadProvider)
+          .then((AircraftData aircraftData) {
             _appConfig.currentAircraft = aircraftData;
-          }
-          return aircraftData;
+            _appConfig.updateAircraft(aircraftData);
+            return aircraftData;
         }).catchError((error, StackTrace? stacktrace) {
           _log.info('DOWNLOAD ERROR', error, stacktrace);
           // TODO specialize exceptions (e.g. network errors, others...)
@@ -82,12 +64,17 @@ class _AboutScreenState extends State<AboutScreen> {
           if (error is TimeoutException) {
             message = AppLocalizations.of(context)!.error_generic_network_timeout;
           }
+          else if (error is AircraftValidationException) {
+            message = AppLocalizations.of(context)!.addAircraft_error_invalid_datafile;
+          }
+          else if (error is AircraftStoreException) {
+            message = AppLocalizations.of(context)!.addAircraft_error_storing;
+          }
           else {
             message = getExceptionMessage(error);
           }
 
           Future.delayed(Duration.zero, () => showError(context, message));
-          return null;
         });
 
         showPlatformDialog(
@@ -105,35 +92,6 @@ class _AboutScreenState extends State<AboutScreen> {
         });
       }
     });
-  }
-
-  Future<AircraftData?> _validateAndStoreAircraft(File file, String url, AppConfig appConfig) async {
-    final reader = AircraftDataReader(dataFile: file, urlFile: null);
-    final validation = await reader.validate();
-    _log.finest('VALIDATION: $validation');
-    if (validation) {
-      try {
-        final dataFile = await addAircraftDataFile(reader, url);
-        _log.finest(dataFile);
-        await deleteAircraftCache();
-        await reader.open();
-        final aircraftData = reader.toAircraftData();
-        appConfig.updateAircraft(aircraftData);
-        return aircraftData;
-      }
-      catch (e, stacktrace) {
-        _log.warning('Error storing aircraft data file', e, stacktrace);
-        if (mounted) {
-          return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_storing), stacktrace);
-        }
-      }
-    }
-    else {
-      if (mounted) {
-        return Future.error(Exception(AppLocalizations.of(context)!.addAircraft_error_invalid_datafile));
-      }
-    }
-    return null;
   }
 
   void _onLogout(BuildContext context) {

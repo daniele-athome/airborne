@@ -148,8 +148,10 @@ void main() {
       PathProviderPlatform.instance = MockPathProviderPlatform();
     });
     tearDown(() {
-      Directory((PathProviderPlatform.instance as MockPathProviderPlatform).baseDir)
-          .deleteSync(recursive: true);
+      final directory = Directory((PathProviderPlatform.instance as MockPathProviderPlatform).baseDir);
+      if (directory.existsSync()) {
+        directory.deleteSync(recursive: true);
+      }
     });
 
     test('Aircraft data valid download', () async {
@@ -158,10 +160,43 @@ void main() {
       final aircraftFile = await _createExampleValidAircraftData();
       when(downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true)).thenAnswer((_) => Future.value(aircraftFile));
       final aircraftData = await downloadAircraftData(url, null, downloadProvider);
-      // TODO verify that something happened
+
+      final baseDir = await getTemporaryDirectory();
+      final directory = Directory(path.join(baseDir.path, 'current_aircraft'));
+      final actual = aircraftData.dataPath!;
+      expect(actual.path, directory.path);
+      expect(directory.existsSync(), true);
+      expect(File(path.join(directory.path, 'aircraft.json')).existsSync(), true);
+      expect(File(path.join(directory.path, 'aircraft.jpg')).existsSync(), true);
+      expect(File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(), true);
+      expect(File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(), true);
+      expect(File(path.join(directory.path, 'avatar-john.jpg')).existsSync(), true);
+      expect(File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(), true);
+      expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(), true);
     });
 
-    // TODO failure tests (validation error, store error, download+timeout error)
+    test('Aircraft data invalid (JSON schema not validated) download', () async {
+      final downloadProvider = MockDownloadProvider();
+      const url = 'http://localhost/a1234.zip';
+      final aircraftFile = await _createExampleWithInvalidJsonAircraftData();
+      when(downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true)).thenAnswer((_) => Future.value(aircraftFile));
+      expect(downloadAircraftData(url, null, downloadProvider), throwsA(predicate((e) => e is AircraftValidationException)));
+    });
+
+    test('Aircraft data invalid (missing files) download', () async {
+      final downloadProvider = MockDownloadProvider();
+      const url = 'http://localhost/a1234.zip';
+      final aircraftFile = await _createExampleWithValidJSONAndMissingFilesAircraftData();
+      when(downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true)).thenAnswer((_) => Future.value(aircraftFile));
+      expect(downloadAircraftData(url, null, downloadProvider), throwsA(predicate((e) => e is AircraftStoreException)));
+    });
+
+    test('Aircraft data download error', () async {
+      final downloadProvider = MockDownloadProvider();
+      const url = 'http://localhost/a1234.zip';
+      when(downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true)).thenAnswer((_) => Future.error(const SocketException('Error connecting', osError: OSError())));
+      expect(downloadAircraftData(url, null, downloadProvider), throwsA(predicate((e) => e is SocketException)));
+    });
   });
 }
 
@@ -198,6 +233,56 @@ Future<File> _createExampleValidAircraftData() {
       "mike": List<int>.filled(1000, 0x0A),
       "simon": List<int>.filled(1000, 0x0A),
     },
+  );
+}
+
+Future<File> _createExampleWithInvalidJsonAircraftData() {
+  return _createAircraftFileWithData(filenameWithoutExtension: 'a1234', jsonData: '''
+{
+  "backend_info": {
+    "google_api_service_account": "BLABLABLA",
+    "google_api_key": "API_KEY_NONE",
+    "google_calendar_id": "NO_CALENDAR_MAN"
+  },
+}''',
+    aircraftPicData: List<int>.filled(1000, 0x0A),
+    pilotAvatarsPicData: {
+      "anna": List<int>.filled(1000, 0x0A),
+      "claudia": List<int>.filled(1000, 0x0A),
+      "john": List<int>.filled(1000, 0x0A),
+      "mike": List<int>.filled(1000, 0x0A),
+      "simon": List<int>.filled(1000, 0x0A),
+    },
+  );
+}
+
+Future<File> _createExampleWithValidJSONAndMissingFilesAircraftData() {
+  return _createAircraftFileWithData(filenameWithoutExtension: 'a1234', jsonData: '''
+{
+  "admin": true,
+  "aircraft_id": "a1234",
+  "callsign": "A-1234",
+  "backend_info": {
+    "google_api_service_account": "BLABLABLA",
+    "google_api_key": "API_KEY_NONE",
+    "google_calendar_id": "NO_CALENDAR_MAN"
+  },
+  "pilot_names": [
+    "Mike",
+    "John",
+    "Claudia",
+    "Anna",
+    "Simon"
+  ],
+  "location": {
+    "name": "Fly Berlin",
+    "latitude": 52.8844253,
+    "longitude": 12.7143166,
+    "timezone": "Europe/Berlin"
+  }
+}''',
+    aircraftPicData: null,
+    pilotAvatarsPicData: null,
   );
 }
 

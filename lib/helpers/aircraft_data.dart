@@ -15,6 +15,9 @@ import 'utils.dart';
 
 final Logger _log = Logger((AircraftData).toString());
 
+const _kAircraftMetadataFilename = 'aircraft.json';
+const _kAircraftPicFilename = 'aircraft.jpg';
+
 class AircraftData {
   final Directory? dataPath;
   final String id;
@@ -51,7 +54,7 @@ class AircraftData {
   }
 
   File get aircraftPicture {
-    return File(path.join(dataPath!.path, 'aircraft.jpg'));
+    return File(path.join(dataPath!.path, _kAircraftPicFilename));
   }
 
 }
@@ -93,9 +96,9 @@ class AircraftDataReader {
       return false;
     }
 
-    final mainFile = archive.findFile("aircraft.json");
+    final mainFile = archive.findFile(_kAircraftMetadataFilename);
     if (mainFile == null || !mainFile.isFile) {
-      _log.warning('aircraft.json not found in archive!');
+      _log.warning('$_kAircraftMetadataFilename not found in archive!');
       return false;
     }
 
@@ -105,7 +108,7 @@ class AircraftDataReader {
       metadata = json.decode(String.fromCharCodes(jsonData)) as Map<String, dynamic>;
     }
     catch(e) {
-      _log.warning('aircraft.json is not valid JSON: $e');
+      _log.warning('$_kAircraftMetadataFilename is not valid JSON: $e');
       return false;
     }
 
@@ -114,8 +117,21 @@ class AircraftDataReader {
     final schemaData = await rootBundle.loadString('assets/aircraft.schema.json');
     final schema = JsonSchema.createSchema(schemaData);
     if (schema.validate(metadata)) {
-      // TODO check for aircraft picture
-      // TODO check for pilot avatars
+      // aircraft picture
+      final aircraftPic = archive.findFile(_kAircraftPicFilename);
+      if (aircraftPic == null || !aircraftPic.isFile) {
+        _log.warning('$_kAircraftPicFilename not found in archive!');
+        return false;
+      }
+
+      // pilot avatars
+      for (final pilot in List<String>.from(metadata['pilot_names'] as Iterable<dynamic>)) {
+        final avatarPic = archive.findFile('avatar-${pilot.toLowerCase()}.jpg');
+        if (avatarPic == null || !avatarPic.isFile) {
+          _log.warning('pilot avatar for $pilot is missing');
+          return false;
+        }
+      }
 
       this.metadata = metadata;
       return true;
@@ -150,19 +166,19 @@ class AircraftDataReader {
     }
 
     try {
-      final jsonFile = File(path.join(directory.path, 'aircraft.json'));
+      final jsonFile = File(path.join(directory.path, _kAircraftMetadataFilename));
       final jsonData = await jsonFile.readAsString();
       metadata = json.decode(jsonData) as Map<String, dynamic>;
     }
     catch(e) {
-      _log.warning('aircraft.json is not valid JSON: $e');
+      _log.warning('$_kAircraftMetadataFilename is not valid JSON: $e');
       throw const FormatException('Not a valid aircraft archive.');
     }
 
     // aircraft picture
-    final aircraftPicFile = File(path.join(directory.path, 'aircraft.jpg'));
+    final aircraftPicFile = File(path.join(directory.path, _kAircraftPicFilename));
     if (!(await aircraftPicFile.exists())) {
-      _log.warning('aircraft.jpg is missing');
+      _log.warning('$_kAircraftPicFilename is missing');
       throw const FormatException('Not a valid aircraft archive.');
     }
 

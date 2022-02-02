@@ -50,7 +50,7 @@ void main() {
       expect(await reader.validate(), false);
     });
 
-    test('A zip file with a valid aircraft JSON file should pass validation', () async {
+    test('A zip file with a valid aircraft JSON file but missing stuff should not pass validation', () async {
       final goodZipFile = await _createAircraftFileWithData(filenameWithoutExtension: 'a1234', jsonData: '''
 {
   "admin": true,
@@ -76,10 +76,8 @@ void main() {
   }
 }''');
       final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
-      expect(await reader.validate(), true);
+      expect(await reader.validate(), false);
     });
-
-    // TODO other bad cases (e.g. missing pilot avatars, missing backend_info (which one?), missing aircraft picture)
   });
 
   group('Testing aircraft data file opening', () {
@@ -188,7 +186,7 @@ void main() {
       const url = 'http://localhost/a1234.zip';
       final aircraftFile = await _createExampleWithValidJSONAndMissingFilesAircraftData();
       when(downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true)).thenAnswer((_) => Future.value(aircraftFile));
-      expect(downloadAircraftData(url, null, downloadProvider), throwsA(predicate((e) => e is AircraftStoreException)));
+      expect(downloadAircraftData(url, null, downloadProvider), throwsA(predicate((e) => e is AircraftValidationException)));
     });
 
     test('Aircraft data download error', () async {

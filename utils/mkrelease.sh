@@ -37,7 +37,7 @@ case "$command" in
     stdver_args="$stdver_args --release-as minor"
     ;;
   patch)
-    stdver_args="$stdver_args --release-as minor"
+    stdver_args="$stdver_args --release-as patch"
     ;;
   first)
     stdver_args="$stdver_args --first-release"

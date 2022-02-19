@@ -206,7 +206,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             controller: _fuelController,
             prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_cupertino),
             textAlign: TextAlign.end,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             validator: (value) => !_validateFuel(value) ?
               AppLocalizations.of(context)!.flightLogModal_error_fuel_invalid_number : null,
           ),
@@ -397,7 +397,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           title: TextFormField(
             controller: _fuelController,
             // TODO cursorColor: widget.model.backgroundColor,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             maxLines: 1,
             style: const TextStyle(
                 fontSize: 18,

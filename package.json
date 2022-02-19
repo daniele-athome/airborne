@@ -5,8 +5,10 @@
       "tag": false
     },
     "scripts": {
+      "prebump": "utils/stdver-prebump.sh",
       "postbump": "utils/stdver-postbump.sh",
-      "postchangelog": "utils/stdver-postchangelog.sh"
+      "postchangelog": "utils/stdver-postchangelog.sh",
+      "postcommit": "utils/stdver-postcommit.sh"
     }
   }
 }

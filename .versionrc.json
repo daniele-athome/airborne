@@ -5,5 +5,11 @@
       "type": "plain-text"
     }
   ],
+  "bumpFiles": [
+    {
+      "filename": ".version",
+      "type": "plain-text"
+    }
+  ],
   "header": "# Changelog\n"
 }

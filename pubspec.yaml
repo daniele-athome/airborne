@@ -24,10 +24,11 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  adaptive_dialog: 1.3.0
+  adaptive_dialog: 1.4.0
   # can't upgrade because of integration_test
   archive: 3.1.6
   auto_size_text: 3.0.0
+  # can't upgrade because of integration_test
   collection: 1.15.0
   cupertino_icons: 1.0.4
   flutter:
@@ -35,24 +36,24 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_platform_widgets: 1.20.0
-  fluttertoast: 8.0.8
-  googleapis: 8.0.0
+  fluttertoast: 8.0.9
+  googleapis: 8.1.0
   googleapis_auth: 1.3.0
   infinite_scroll_pagination: 3.1.0
   intl: 0.17.0
-  json_schema2: 2.0.1+1
+  json_schema2: 2.0.1+2
   logging: 1.0.2
   material_segmented_control: 3.1.2
-  package_info_plus: 1.3.1
+  package_info_plus: 1.4.0
   # can't upgrade because of flutter_test
   path: 1.8.0
   path_provider: 2.0.9
   provider: 6.0.2
   shared_preferences: 2.0.13
   solar_calculator: 1.0.2
-  syncfusion_flutter_calendar: 19.4.52
-  syncfusion_localizations: 19.4.52
-  syncfusion_flutter_core: 19.4.52
+  syncfusion_flutter_calendar: 19.4.56
+  syncfusion_localizations: 19.4.56
+  syncfusion_flutter_core: 19.4.56
   timezone: 0.8.0
   url_launcher: 6.0.20
   validators: 3.0.0

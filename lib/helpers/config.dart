@@ -186,6 +186,19 @@ class AppConfig extends ChangeNotifier {
     notifyListeners();
   }
 
+  num? get customFuelPrice {
+    return prefs.getDouble("fuelPrice");
+  }
+
+  set customFuelPrice(num? price) {
+    if (price != null) {
+      prefs.setDouble("fuelPrice", price.toDouble());
+    }
+    else {
+      prefs.remove("fuelPrice");
+    }
+  }
+
   void _clearPictureCache() {
     aircraftPicture.evict();
     for (var name in pilotNames) {

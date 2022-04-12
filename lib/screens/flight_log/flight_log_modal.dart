@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,7 +36,7 @@ class FlightLogModal extends StatefulWidget {
 }
 
 class _FlightLogModalState extends State<FlightLogModal> {
-  static final _fuelPriceFormatter = NumberFormat("####0.00");
+  static final _fuelPriceFormatter = NumberFormat("####0.00")..turnOffGrouping();
   /// Parser can't truncate or round the parsed number, so we'll round it before save
   static final _fuelFormatter = NumberFormat("####0.#")..turnOffGrouping();
 
@@ -44,6 +45,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
   late num? _fuelPrice;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  /// This is a hack. See usage in [_onCustomFuelPriceSelected]
+  final GlobalKey<FormFieldState> _materialFuelPriceState = GlobalKey<FormFieldState>();
   late DigitDisplayController _startHourController;
   late DigitDisplayController _endHourController;
   late TextEditingController _originController;
@@ -95,6 +98,49 @@ class _FlightLogModalState extends State<FlightLogModal> {
       '${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)}' :
       '${_appConfig.fuelPrices![value]} (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)})';
 
+  String _buildCustomFuelPriceLabel(BuildContext context, num? value) {
+    String text = AppLocalizations.of(context)!.flightLogModal_label_fuel_myfuel;
+    return value != null ?
+      '$text (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)})' :
+      text;
+  }
+
+  void _onCustomFuelPriceSelected(BuildContext context) {
+    showTextInputDialog(
+      context: context,
+      textFields: [
+        DialogTextField(
+          hintText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_price,
+          keyboardType: TextInputType.number,
+          validator: (String? text) {
+            return !_validateFuelPrice(text!) ?
+              AppLocalizations.of(context)!.flightLogModal_error_invalid_fuelPrice : null;
+          }
+        ),
+      ],
+      title: AppLocalizations.of(context)!.flightLogModal_hint_fuel_price,
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          _appConfig.customFuelPrice = roundDouble(_fuelPriceFormatter.parse(value[0]), 2);
+          // value will be used in model later by checking if it's zero
+          _fuelPrice = 0;
+        });
+      }
+      else if (_appConfig.customFuelPrice == null) {
+        // no custom fuel price set (dialog was canceled)
+        setState(() {
+          // use item fuel price or first fuel price found
+          _fuelPrice = widget.item.fuelPrice ??= _appConfig.fuelPrices?.keys.first;
+          // this might be a Flutter bug (although it has been fixed in theory)
+          // https://stackoverflow.com/a/61602682/1045199
+          // https://github.com/flutter/flutter/issues/56898
+          _materialFuelPriceState.currentState?.didChange(_fuelPrice);
+        });
+      }
+    });
+  }
+
   void _onCupertinoFuelPricePressed(BuildContext context) {
     showPlatformModalSheet(
       context: context,
@@ -116,6 +162,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
             },
           ));
         }
+        fuelPrices.add(CupertinoActionSheetAction(
+          child: Text(_buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice)),
+          onPressed: () {
+            Navigator.pop(context, 0);
+            _onCustomFuelPriceSelected(context);
+          },
+        ));
 
         return CupertinoActionSheet(
           cancelButton: CupertinoActionSheetAction(
@@ -218,7 +271,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
               _onCupertinoFuelPricePressed(context);
             },
             child: Text(
-              _fuelPrice != null ? _buildFuelPriceLabel(_fuelPrice!) : '',
+              _fuelPrice != null ? (_fuelPrice! == 0 ? _buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice) :
+                _buildFuelPriceLabel(_fuelPrice!)) : '',
               style: textStyle,
             ),
           ),
@@ -268,12 +322,16 @@ class _FlightLogModalState extends State<FlightLogModal> {
           value: key,
         ),
       ).toList();
-      if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
+      if (widget.item.fuelPrice != null && widget.item.fuelPrice != 0 && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
         fuelPrices.add(DropdownMenuItem(
           child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
           value: widget.item.fuelPrice,
         ));
       }
+      fuelPrices.add(DropdownMenuItem(
+        child: Text(_buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice)),
+        value: 0,
+      ));
     }
     else {
       fuelPrices = null;
@@ -415,8 +473,17 @@ class _FlightLogModalState extends State<FlightLogModal> {
           trailing: SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
             child: DropdownButtonFormField<num>(
+              key: _materialFuelPriceState,
               value: _fuelPrice,
-              onChanged: (value) => _fuelPrice = value,
+              onChanged: (value) {
+                if (value == 0) {
+                  // open custom fuel price dialog
+                  _onCustomFuelPriceSelected(context);
+                }
+                else {
+                  _fuelPrice = value;
+                }
+              },
               isDense: false,
               decoration: const InputDecoration(
                 border: InputBorder.none,
@@ -554,6 +621,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
     return fuelValue == null || fuelValue.isEmpty || _fuelFormatter.tryParse(fuelValue) != null;
   }
 
+  bool _validateFuelPrice(String fuelPriceValue) {
+    return fuelPriceValue.isNotEmpty && _fuelPriceFormatter.tryParse(fuelPriceValue) != null;
+  }
+
   void _onSave(BuildContext context) {
     if (_startHourController.value.number > _endHourController.value.number) {
       showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_hourmeter);
@@ -628,7 +699,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       _startHourController.number,
       _endHourController.number,
       _fuelController.text.isNotEmpty ? roundDouble(_fuelFormatter.parse(_fuelController.text), 1) : null,
-      _fuelPrice,
+      _fuelPrice == 0 ? _appConfig.customFuelPrice : _fuelPrice,
       _notesController.text,
     );
     final Future task = (_isEditing ?

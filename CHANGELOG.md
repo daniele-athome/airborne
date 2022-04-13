@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/daniele-athome/airborne/compare/v1.1.0...v1.2.0) (2022-04-13)
+
+
+### Features
+
+* **flight-log:** custom fuel price ([cc5d57b](https://github.com/daniele-athome/airborne/commit/cc5d57b22e15b34a9b4748f4d92d49f1713ef528)), closes [#55](https://github.com/daniele-athome/airborne/issues/55)
+
 ## [1.1.0](https://github.com/daniele-athome/airborne/compare/v1.0.0...v1.1.0) (2022-02-19)
 
 

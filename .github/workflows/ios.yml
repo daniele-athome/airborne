@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: '2.10.4'
+  flutter_version: '2.10.5'
 
 jobs:
   # Since Fastlane also builds, there is no way to split jobs without sacrificing build time

@@ -25,11 +25,10 @@ environment:
 
 dependencies:
   adaptive_dialog: 1.5.0+1
-  # can't upgrade because of integration_test
-  archive: 3.1.6
+  # can't upgrade because of flutter_driver
+  archive: 3.1.11
   auto_size_text: 3.0.0
-  # can't upgrade because of integration_test
-  collection: 1.15.0
+  collection: 1.16.0
   cupertino_icons: 1.0.4
   flutter:
     sdk: flutter

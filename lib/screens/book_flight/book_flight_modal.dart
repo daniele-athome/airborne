@@ -520,7 +520,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         else {
           message = getExceptionMessage(error);
         }
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
         return null;
@@ -569,7 +569,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         else {
           message = getExceptionMessage(error);
         }
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
       });

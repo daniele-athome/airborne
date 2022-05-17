@@ -92,7 +92,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         else {
           message = getExceptionMessage(error);
         }
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           _showError(message, null, _retryFetchData);
         });
       }
@@ -336,7 +336,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   void _changeVisibleDates(List<DateTime> visibleDates) {
     _visibleDates = visibleDates;
     _setTitle();
-    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {});
     });
   }
@@ -700,7 +700,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             future: loadMoreEvents(),
             builder: (context, snapShot) {
               if (snapShot.connectionState == ConnectionState.waiting) {
-                WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                   _hideError();
                 });
               }

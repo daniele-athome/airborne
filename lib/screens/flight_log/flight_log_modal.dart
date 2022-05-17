@@ -715,7 +715,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         else {
           message = getExceptionMessage(error);
         }
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
       });
@@ -764,7 +764,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       else {
         message = getExceptionMessage(error);
       }
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         showError(context, message);
       });
     });
@@ -857,6 +857,7 @@ class _DateListTile extends StatelessWidget {
     Key? key,
     required this.controller,
     this.onDateSelected,
+    // ignore: unused_element
     this.showIcon = true,
     this.textStyle,
   }) : super(key: key);

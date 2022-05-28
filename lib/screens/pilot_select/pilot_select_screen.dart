@@ -46,18 +46,18 @@ class PilotSelectScreen extends StatelessWidget {
   void _choosePilot(BuildContext context, AppConfig appConfig, String name) {
     showPlatformDialog(
       context: context,
-      builder: (_context) => PlatformAlertDialog(
+      builder: (dialogContext) => PlatformAlertDialog(
         title: Text(AppLocalizations.of(context)!.pilotSelect_confirm_title),
         // TODO name should be bold
         content: Text(AppLocalizations.of(context)!.pilotSelect_confirm_message(name)),
         actions: <Widget>[
           PlatformDialogAction(
-            onPressed: () => Navigator.pop(_context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
           ),
           PlatformDialogAction(
             onPressed: () {
-              Navigator.pop(_context);
+              Navigator.pop(dialogContext);
               _confirmPilot(context, appConfig, name);
             },
             child: Text(AppLocalizations.of(context)!.dialog_button_ok),

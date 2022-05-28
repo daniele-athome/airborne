@@ -106,7 +106,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         if (value != null) {
           // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
           // probably FutureProgressDialog popping the navigator has something to do with it
-          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             Navigator.of(context, rootNavigator: true)
                 .pushReplacementNamed(appConfig.pilotName != null ? '/' : 'pilot-select');
           });

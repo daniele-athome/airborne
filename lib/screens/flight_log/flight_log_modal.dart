@@ -172,9 +172,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
         return CupertinoActionSheet(
           cancelButton: CupertinoActionSheetAction(
-            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
             isDestructiveAction: true,
             onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
           ),
           actions: fuelPrices,
         );
@@ -318,19 +318,19 @@ class _FlightLogModalState extends State<FlightLogModal> {
     if (_appConfig.fuelPrices != null) {
       fuelPrices = _appConfig.fuelPrices!.keys.map(
             (key) => DropdownMenuItem(
-          child: Text(_buildFuelPriceLabel(key)),
           value: key,
+          child: Text(_buildFuelPriceLabel(key)),
         ),
       ).toList();
       if (widget.item.fuelPrice != null && widget.item.fuelPrice != 0 && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
         fuelPrices.add(DropdownMenuItem(
-          child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
           value: widget.item.fuelPrice,
+          child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
         ));
       }
       fuelPrices.add(DropdownMenuItem(
-        child: Text(_buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice)),
         value: 0,
+        child: Text(_buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice)),
       ));
     }
     else {
@@ -464,7 +464,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             decoration: InputDecoration(
               border: InputBorder.none,
               // beware the trailing space, must be added post-i18n
-              prefixText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_material + ' ',
+              prefixText: '${AppLocalizations.of(context)!.flightLogModal_hint_fuel_material} ',
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => !_validateFuel(value) ?
@@ -715,7 +715,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         else {
           message = getExceptionMessage(error);
         }
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
       });
@@ -764,7 +764,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       else {
         message = getExceptionMessage(error);
       }
-      WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         showError(context, message);
       });
     });
@@ -811,7 +811,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
     else {
       dialog = showPlatformDialog(
         context: context,
-        builder: (_context) => PlatformAlertDialog(
+        builder: (dialogContext) => PlatformAlertDialog(
           title: Text(AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
               style: const TextStyle(fontWeight: FontWeight.bold)),
           content: SizedBox(
@@ -821,7 +821,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 selectedName: _pilotName,
                 avatarProvider: (name) => _appConfig.getPilotAvatar(name),
                 onSelection: (selected) {
-                  Navigator.of(_context).pop(selected);
+                  Navigator.of(dialogContext).pop(selected);
                 }
             ),
           ),
@@ -857,6 +857,7 @@ class _DateListTile extends StatelessWidget {
     Key? key,
     required this.controller,
     this.onDateSelected,
+    // ignore: unused_element
     this.showIcon = true,
     this.textStyle,
   }) : super(key: key);

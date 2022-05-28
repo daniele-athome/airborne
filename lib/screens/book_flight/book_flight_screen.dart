@@ -92,7 +92,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         else {
           message = getExceptionMessage(error);
         }
-        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           _showError(message, null, _retryFetchData);
         });
       }
@@ -285,19 +285,19 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     if (isCupertino(context)) {
       showPlatformDialog(
         context: context,
-        builder: (_context) => PlatformAlertDialog(
+        builder: (dialogContext) => PlatformAlertDialog(
           title: Text(title?? AppLocalizations.of(context)!.dialog_title_error),
           content: Text(text),
           actions: <Widget>[
             PlatformDialogAction(
               onPressed: () {
-                Navigator.pop(_context);
+                Navigator.pop(dialogContext);
               },
               child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
             ),
             PlatformDialogAction(
               onPressed: () {
-                Navigator.pop(_context);
+                Navigator.pop(dialogContext);
                 retryCallback();
               },
               child: Text(AppLocalizations.of(context)!.bookFlight_button_error_retry),
@@ -336,7 +336,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   void _changeVisibleDates(List<DateTime> visibleDates) {
     _visibleDates = visibleDates;
     _setTitle();
-    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {});
     });
   }
@@ -700,7 +700,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             future: loadMoreEvents(),
             builder: (context, snapShot) {
               if (snapShot.connectionState == ConnectionState.waiting) {
-                WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                   _hideError();
                 });
               }

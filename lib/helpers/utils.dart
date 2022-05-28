@@ -127,13 +127,13 @@ void showToast(FToast fToast, String text, Duration duration) {
 Future<void> showError(BuildContext context, String text) {
   return showPlatformDialog<void>(
     context: context,
-    builder: (_context) => PlatformAlertDialog(
+    builder: (dialogContext) => PlatformAlertDialog(
       title: Text(AppLocalizations.of(context)!.dialog_title_error),
       content: Text(text),
       actions: <Widget>[
         PlatformDialogAction(
           onPressed: () {
-            Navigator.pop(_context);
+            Navigator.pop(dialogContext);
           },
           child: Text(AppLocalizations.of(context)!.dialog_button_ok),
         ),
@@ -143,7 +143,7 @@ Future<void> showError(BuildContext context, String text) {
 }
 
 Future<bool> openUrl(BuildContext context, String url) async {
-  return launch(url)
+  return launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
     .catchError((_) {
       // TODO i18n
       showError(context, 'Cannot open a browser.');
@@ -160,17 +160,17 @@ Future<T?> showConfirm<T>({
 }) {
   return showPlatformDialog<T>(
     context: context,
-    builder: (_context) => PlatformAlertDialog(
+    builder: (dialogContext) => PlatformAlertDialog(
       title: Text(title),
       content: Text(text),
       actions: <Widget>[
         PlatformDialogAction(
-          onPressed: () => Navigator.pop(_context),
+          onPressed: () => Navigator.pop(dialogContext),
           child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
         ),
         PlatformDialogAction(
           onPressed: () {
-            Navigator.pop(_context);
+            Navigator.pop(dialogContext);
             okCallback();
           },
           // TODO destructiveOk for material

@@ -28,7 +28,7 @@ class FlightLogList extends StatefulWidget {
   final Function(BuildContext context, FlightLogItem item) onTapItem;
 
   @override
-  _FlightLogListState createState() => _FlightLogListState();
+  State<FlightLogList> createState() => _FlightLogListState();
 }
 
 class _FlightLogListState extends State<FlightLogList> {

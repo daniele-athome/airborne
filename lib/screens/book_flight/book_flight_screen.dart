@@ -285,19 +285,19 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     if (isCupertino(context)) {
       showPlatformDialog(
         context: context,
-        builder: (_context) => PlatformAlertDialog(
+        builder: (dialogContext) => PlatformAlertDialog(
           title: Text(title?? AppLocalizations.of(context)!.dialog_title_error),
           content: Text(text),
           actions: <Widget>[
             PlatformDialogAction(
               onPressed: () {
-                Navigator.pop(_context);
+                Navigator.pop(dialogContext);
               },
               child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
             ),
             PlatformDialogAction(
               onPressed: () {
-                Navigator.pop(_context);
+                Navigator.pop(dialogContext);
                 retryCallback();
               },
               child: Text(AppLocalizations.of(context)!.bookFlight_button_error_retry),

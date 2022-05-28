@@ -28,7 +28,7 @@ class PilotSelectList extends StatelessWidget {
         children: [
           CupertinoFormSection(
             children: pilotNames.map((e) => CupertinoFormButtonRow(
-              key: Key('pilot_select_list:' + e),
+              key: Key('pilot_select_list:$e'),
               onPressed: () {
                 onSelection(e);
               },
@@ -48,7 +48,7 @@ class PilotSelectList extends StatelessWidget {
       return ListView(
         shrinkWrap: true,
         children: pilotNames.map((e) => ListTile(
-          key: Key('pilot_select_list:' + e),
+          key: Key('pilot_select_list:$e'),
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           leading: CircleAvatar(foregroundImage: avatarProvider(e)),
           title: Text(e),

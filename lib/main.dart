@@ -87,7 +87,7 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -174,7 +174,7 @@ class MainNavigation extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MainNavigationState createState() => _MainNavigationState();
+  State<MainNavigation> createState() => _MainNavigationState();
 }
 
 class _MainNavigationState extends State<MainNavigation> {

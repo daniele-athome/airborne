@@ -17,7 +17,7 @@ class FlightLogScreen extends StatefulWidget {
   const FlightLogScreen({Key? key}) : super(key: key);
 
   @override
-  _FlightLogScreenState createState() => _FlightLogScreenState();
+  State<FlightLogScreen> createState() => _FlightLogScreenState();
 }
 
 class _FlightLogScreenState extends State<FlightLogScreen> {

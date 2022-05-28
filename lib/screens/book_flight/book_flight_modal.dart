@@ -29,7 +29,7 @@ class BookFlightModal extends StatefulWidget {
   final FlightBooking event;
 
   @override
-  _BookFlightModalState createState() => _BookFlightModalState();
+  State<BookFlightModal> createState() => _BookFlightModalState();
 
 }
 
@@ -616,7 +616,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     else {
       dialog = showPlatformDialog(
         context: context,
-        builder: (_context) => PlatformAlertDialog(
+        builder: (dialogContext) => PlatformAlertDialog(
           title: Text(AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
               style: const TextStyle(fontWeight: FontWeight.bold)),
           content: SizedBox(
@@ -626,7 +626,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 selectedName: _pilotName,
                 avatarProvider: (name) => _appConfig.getPilotAvatar(name),
                 onSelection: (selected) {
-                  Navigator.of(_context).pop(selected);
+                  Navigator.of(dialogContext).pop(selected);
                 }
             ),
           ),

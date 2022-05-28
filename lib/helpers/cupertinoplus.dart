@@ -161,7 +161,7 @@ class CupertinoFormButtonRow extends StatefulWidget {
   bool get enabled => onPressed != null;
 
   @override
-  _CupertinoFormButtonRowState createState() => _CupertinoFormButtonRowState();
+  State<CupertinoFormButtonRow> createState() => _CupertinoFormButtonRowState();
 }
 
 class _CupertinoFormButtonRowState extends State<CupertinoFormButtonRow> with SingleTickerProviderStateMixin {
@@ -367,9 +367,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   final String doneButtonText;
 
   @override
-  _CupertinoDateTimeFormFieldRowState createState() =>
-      _CupertinoDateTimeFormFieldRowState();
-
+  FormFieldState<DateTime> createState() => _CupertinoDateTimeFormFieldRowState();
 }
 
 class _CupertinoDateTimeFormFieldRowState extends FormFieldState<DateTime> {

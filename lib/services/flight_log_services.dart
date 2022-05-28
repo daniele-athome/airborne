@@ -162,7 +162,7 @@ class FlightLogBookService {
             return DeletedFlightLogItem(item.id!);
           }
           else {
-            throw Exception('Unable to delete flight log item ' + item.id!);
+            throw Exception('Unable to delete flight log item ${item.id!}');
           }
         });
     });

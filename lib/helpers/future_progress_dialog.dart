@@ -47,7 +47,7 @@ class FutureProgressDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FutureProgressDialogState createState() => _FutureProgressDialogState();
+  State<FutureProgressDialog> createState() => _FutureProgressDialogState();
 }
 
 class _FutureProgressDialogState extends State<FutureProgressDialog> {

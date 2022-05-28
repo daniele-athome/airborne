@@ -37,12 +37,12 @@ class _HourListTileState extends State<HourListTile> {
   }
 
   _onTap(BuildContext context) {
-    Widget pageRouteBuilder(BuildContext _context) => PlatformScaffold(
+    Widget pageRouteBuilder(BuildContext dialogContext) => PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(widget.hintText),
         trailingActions: [PlatformIconButton(
           onPressed: () {
-            Navigator.pop(_context, _controller.number);
+            Navigator.pop(dialogContext, _controller.number);
           },
           icon: const Icon(Icons.check),
           material: (_, __) => MaterialIconButtonData(
@@ -119,13 +119,13 @@ class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
   }
 
   _onPressed(BuildContext context) {
-    Widget pageRouteBuilder(BuildContext _context) => PlatformScaffold(
+    Widget pageRouteBuilder(BuildContext dialogContext) => PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
         title: Text(widget.hintText),
         trailingActions: [PlatformTextButton(
           onPressed: () {
-            Navigator.pop(_context, _controller.number);
+            Navigator.pop(dialogContext, _controller.number);
           },
           cupertino: (_, __) => CupertinoTextButtonData(
             // workaround for https://github.com/flutter/flutter/issues/32701

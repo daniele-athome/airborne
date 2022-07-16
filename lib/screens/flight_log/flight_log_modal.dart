@@ -14,6 +14,7 @@ import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/digit_display.dart';
 import '../../helpers/future_progress_dialog.dart';
+import '../../helpers/list_tiles.dart';
 import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';
@@ -341,7 +342,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       padding: EdgeInsets.zero,
       children: <Widget>[
         // flight date
-        _DateListTile(
+        DateListTile(
           controller: _dateController,
           onDateSelected: (_) => setState(() {}),
           textStyle: const TextStyle(
@@ -840,69 +841,4 @@ class _FlightLogModalState extends State<FlightLogModal> {
       }
     });
   }
-}
-
-// FIXME refactor into widget + controller (e.g. like a text field)
-// TODO move to another file?
-@immutable
-class _DateListTile extends StatelessWidget {
-  final DateTimePickerController controller;
-  final Function(DateTime? selected)? onDateSelected;
-  final bool showIcon;
-  final TextStyle? textStyle;
-
-  final DateFormat _dateFormatter = DateFormat.yMEd();
-
-  _DateListTile({
-    Key? key,
-    required this.controller,
-    this.onDateSelected,
-    // ignore: unused_element
-    this.showIcon = true,
-    this.textStyle,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-      leading: showIcon ? const Icon(
-        Icons.access_time,
-      ) : const Text(''),
-      title: Text(
-        controller.value != null ? _dateFormatter.format(controller.value!) : '',
-        textAlign: TextAlign.left,
-        style: textStyle,
-      ),
-      onTap: () async {
-        final DateTime? date = await showDatePicker(
-          context: context,
-          initialDate: controller.value ?? DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime(2100),
-          /* TODO builder: (BuildContext context, Widget? child) {
-                          return Theme(
-                            data: ThemeData(
-                              brightness:
-                              widget.model.themeData.brightness,
-                              colorScheme:
-                              _getColorScheme(widget.model, true),
-                              accentColor: widget.model.backgroundColor,
-                              primaryColor:
-                              widget.model.backgroundColor,
-                            ),
-                            child: child!,
-                          );
-                        }*/
-        );
-        if (date != null) {
-          controller.value = date;
-          if (onDateSelected != null) {
-            onDateSelected!(date);
-          }
-        }
-      },
-    );
-  }
-
 }

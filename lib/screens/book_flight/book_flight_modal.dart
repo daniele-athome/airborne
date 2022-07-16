@@ -13,6 +13,7 @@ import 'package:timezone/timezone.dart';
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/future_progress_dialog.dart';
+import '../../helpers/list_tiles.dart';
 import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
@@ -282,7 +283,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           thickness: 1,
         ),
         // start date/time
-        _DateTimeListTile(
+        DateTimeListTile(
           selectedDate: _startDate,
           selectedTime: _startTime,
           onDateSelected: (date) => _onStartDateChanged(date, false),
@@ -310,7 +311,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         ),
         _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
         // end date/time
-        _DateTimeListTile(
+        DateTimeListTile(
           selectedDate: _endDate,
           selectedTime: _endTime,
           showIcon: false,
@@ -645,111 +646,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
       }
     });
   }
-}
-
-// FIXME refactor into widget + controller (e.g. like a text field)
-// TODO move to another file?
-@immutable
-class _DateTimeListTile extends StatelessWidget {
-  final DateTime selectedDate;
-  final TimeOfDay selectedTime;
-  final Function(DateTime? selected) onDateSelected;
-  final Function(TimeOfDay? selected) onTimeSelected;
-  final bool showIcon;
-
-  final DateFormat _dateFormatter = DateFormat.yMEd();
-
-  _DateTimeListTile({
-    Key? key,
-    required this.onDateSelected,
-    required this.onTimeSelected,
-    required this.selectedDate,
-    required this.selectedTime,
-    this.showIcon = true,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 7,
-          child: ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
-            leading: showIcon ? const Icon(
-              Icons.access_time,
-            ) : const Text(''),
-            title: Text(
-              _dateFormatter.format(selectedDate),
-              textAlign: TextAlign.left,
-            ),
-            onTap: () async {
-              final DateTime? date = await showDatePicker(
-                context: context,
-                initialDate: selectedDate,
-                firstDate: DateTime(1900),
-                lastDate: DateTime(2100),
-                /* TODO builder: (BuildContext context, Widget? child) {
-                                return Theme(
-                                  data: ThemeData(
-                                    brightness:
-                                    widget.model.themeData.brightness,
-                                    colorScheme:
-                                    _getColorScheme(widget.model, true),
-                                    accentColor: widget.model.backgroundColor,
-                                    primaryColor:
-                                    widget.model.backgroundColor,
-                                  ),
-                                  child: child!,
-                                );
-                              }*/
-              );
-              onDateSelected(date);
-            },
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
-            title: Text(
-              DateFormat(kAviationTimeFormat).format(selectedDate),
-              textAlign: TextAlign.right,
-            ),
-            onTap: () async {
-              final TimeOfDay? time =
-              await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay(
-                    hour: selectedTime.hour,
-                    minute: selectedTime.minute
-                ),
-                /* TODO builder: (BuildContext context,
-                                  Widget? child) {
-                                return Theme(
-                                  data: ThemeData(
-                                    brightness: widget.model
-                                        .themeData.brightness,
-                                    colorScheme: _getColorScheme(
-                                        widget.model, false),
-                                    accentColor: widget
-                                        .model.backgroundColor,
-                                    primaryColor: widget
-                                        .model.backgroundColor,
-                                  ),
-                                  child: child!,
-                                );
-                              }*/
-              );
-
-              onTimeSelected(time);
-            },
-          ),
-        )
-      ],
-    );
-  }
-
 }
 
 // TODO move to another file?

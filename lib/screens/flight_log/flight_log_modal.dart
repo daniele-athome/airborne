@@ -784,54 +784,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _onTapPilot(BuildContext context) {
-    final Future<String?> dialog;
-    final items = _appConfig.pilotNamesWithNoPilot;
-    if (isCupertino(context)) {
-      Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
-        iosContentPadding: true,
-        appBar: PlatformAppBar(
-          title: Text(AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot),
-        ),
-        cupertino: (context, platform) => CupertinoPageScaffoldData(
-          backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
-        ),
-        body: PilotSelectList(
-          pilotNames: items,
-          selectedName: _pilotName,
-          avatarProvider: (name) => _appConfig.getPilotAvatar(name),
-          onSelection: (selected) {
-            Navigator.of(context).pop(selected);
-          }),
-      );
-
-      dialog = Navigator.of(context, rootNavigator: true)
-          .push(CupertinoPageRoute(
-        builder: pageRouteBuilder,
-      ));
-    }
-    else {
-      dialog = showPlatformDialog(
-        context: context,
-        builder: (dialogContext) => PlatformAlertDialog(
-          title: Text(AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          content: SizedBox(
-            width: double.minPositive,
-            child: PilotSelectList(
-                pilotNames: items,
-                selectedName: _pilotName,
-                avatarProvider: (name) => _appConfig.getPilotAvatar(name),
-                onSelection: (selected) {
-                  Navigator.of(dialogContext).pop(selected);
-                }
-            ),
-          ),
-          material: (context, platform) => MaterialAlertDialogData(
-            contentPadding: const EdgeInsets.symmetric(vertical: 20),
-          ),
-        ),
-      );
-    }
+    final dialog = createPilotSelectDialog(
+      context: context,
+      pilotNames: _appConfig.pilotNamesWithNoPilot,
+      title: AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
+      avatarProvider: (name) => _appConfig.getPilotAvatar(name),
+      selectedPilot: _pilotName
+    );
 
     dialog.then((value) {
       if (value != null) {

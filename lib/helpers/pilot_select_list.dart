@@ -60,3 +60,61 @@ class PilotSelectList extends StatelessWidget {
     }
   }
 }
+
+Future<String?> createPilotSelectDialog({
+  required BuildContext context,
+  required List<String> pilotNames,
+  required String title,
+  required ImageProvider Function(String name) avatarProvider,
+  String? selectedPilot
+}) {
+  final Future<String?> dialog;
+  if (isCupertino(context)) {
+    Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
+      iosContentPadding: true,
+      appBar: PlatformAppBar(
+        title: Text(title),
+      ),
+      cupertino: (context, platform) => CupertinoPageScaffoldData(
+        backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
+      ),
+      body: PilotSelectList(
+        pilotNames: pilotNames,
+        selectedName: selectedPilot,
+        avatarProvider: avatarProvider,
+        onSelection: (selected) {
+          Navigator.of(context).pop(selected);
+      }),
+    );
+
+    dialog = Navigator.of(context, rootNavigator: true)
+        .push(CupertinoPageRoute(
+      builder: pageRouteBuilder,
+    ));
+  }
+  else {
+    dialog = showPlatformDialog(
+      context: context,
+      builder: (dialogContext) => PlatformAlertDialog(
+        title: Text(title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: SizedBox(
+          width: double.minPositive,
+          child: PilotSelectList(
+            pilotNames: pilotNames,
+            selectedName: selectedPilot,
+            avatarProvider: avatarProvider,
+            onSelection: (selected) {
+              Navigator.of(dialogContext).pop(selected);
+            }
+          ),
+        ),
+        material: (context, platform) => MaterialAlertDialogData(
+          contentPadding: const EdgeInsets.symmetric(vertical: 20),
+        ),
+      ),
+    );
+  }
+
+  return dialog;
+}

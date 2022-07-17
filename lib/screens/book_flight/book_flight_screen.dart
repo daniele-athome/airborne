@@ -542,9 +542,8 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     int thisDay = 0;
     int spanDays = 0;
     if (multiDayEvent) {
-      // TODO handle events spanning multiple weeks
-      final DateTime today = (_calendarController.view == CalendarView.day) ?
-        _visibleDates[0] : currentDate;
+      final DateTime today = (_calendarController.view == CalendarView.day || _calendarController.view == CalendarView.week) ?
+        _visibleDates.last : currentDate;
       thisDay = today.difference(eventStartDate).inDays + 1;
       spanDays = eventEndDate.difference(eventStartDate).inDays + 1;
     }
@@ -611,8 +610,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             child: Row(
               children: [
                 Expanded(child: Text(eventText)),
-                // FIXME doesn't work for event spanning multiple weeks
-                if (_calendarController.view != CalendarView.week && thisDay < spanDays)
+                if (thisDay < spanDays)
                   const Text('»',
                     // FIXME not sure using height is the right way to do this
                     style: TextStyle(fontSize: 18, height: 0.9),

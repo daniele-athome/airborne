@@ -201,7 +201,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     bool showTime = true,
     required this.doneButtonText,
     DateTime? initialValue,
-    ValueChanged<DateTime>? onChanged,
+    void Function(DateTime value, DateTime oldValue)? onChanged,
     FormFieldSetter<DateTime>? onSaved,
   }) :
       assert(showDate || showTime, 'showDate and showTime cannot be both false!'),
@@ -231,6 +231,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                       child: CupertinoDatePicker(
                         mode: CupertinoDatePickerMode.date,
                         onDateTimeChanged: (value) {
+                          final oldValue = field.value!;
                           final newValue = DateTime(
                             value.year,
                             value.month,
@@ -240,7 +241,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                           );
                           field.didChange(newValue);
                           if (onChanged != null) {
-                            onChanged(newValue);
+                            onChanged(newValue, oldValue);
                           }
                         },
                         initialDateTime: field.value,
@@ -273,6 +274,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                       child: CupertinoDatePicker(
                         mode: CupertinoDatePickerMode.time,
                         onDateTimeChanged: (value) {
+                          final oldValue = field.value!;
                           final newValue = DateTime(
                             field.value!.year,
                             field.value!.month,
@@ -282,7 +284,7 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                           );
                           field.didChange(newValue);
                           if (onChanged != null) {
-                            onChanged(newValue);
+                            onChanged(newValue, oldValue);
                           }
                         },
                         use24hFormat: true,

@@ -38,14 +38,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   // event data
   late String _pilotName;
-  @Deprecated('Use _startDateController')
-  late DateTime _startDate;
-  @Deprecated('Use _startDateController')
-  late TimeOfDay _startTime;
-  @Deprecated('Use _endDateController')
-  late DateTime _endDate;
-  @Deprecated('Use _endDateController')
-  late TimeOfDay _endTime;
   String? _notes;
 
   final DateTimePickerController _startDateController = DateTimePickerController(null);
@@ -74,100 +66,25 @@ class _BookFlightModalState extends State<BookFlightModal> {
     _pilotName = widget.event.pilotName;
     _notes = widget.event.notes;
     _startDateController.value = widget.event.tzFrom(_appConfig.locationTimeZone);
-    _startDate = widget.event.tzFrom(_appConfig.locationTimeZone);
-    _endDate = widget.event.tzTo(_appConfig.locationTimeZone);
     _endDateController.value = widget.event.tzTo(_appConfig.locationTimeZone);
-    _startTime = TimeOfDay(hour: _startDate.hour, minute: _startDate.minute);
-    _endTime = TimeOfDay(hour: _endDate.hour, minute: _endDate.minute);
   }
 
-  void _onStartDateChanged(DateTime? date, bool time) {
-    if (date != null && date != _startDate) {
+  void _onStartDateChanged(DateTime date, DateTime oldDate) {
+    if (date != oldDate) {
       setState(() {
-        final Duration dateDifference =
-          _endDate.difference(_startDate);
-        _startDate = DateTime(
-          date.year,
-          date.month,
-          date.day,
-          _startTime.hour,
-          _startTime.minute
-        );
-        _endDate = _startDate.add(dateDifference);
-        _endTime = TimeOfDay(
-          hour: _endDate.hour,
-          minute: _endDate.minute,
-        );
-
-        if (time) {
-          _startTime = TimeOfDay(
-            hour: date.hour,
-            minute: date.minute
-          );
-          final Duration timeDifference =
-          _endDate.difference(_startDate);
-          _startDate = DateTime(
-            _startDate.year,
-            _startDate.month,
-            _startDate.day,
-            _startTime.hour,
-            _startTime.minute,
-          );
-          _endDate = _startDate.add(timeDifference);
-          _endTime = TimeOfDay(
-            hour: _endDate.hour,
-            minute: _endDate.minute
-          );
-        }
-
-        _endDateController.value = _endDate;
+        final Duration dateDifference = _endDateController.value!.difference(oldDate);
+        _endDateController.value = date.add(dateDifference);
       });
     }
   }
 
-  void _onEndDateChanged(DateTime? date, bool time) {
-    if (date != null && date != _endDate) {
+  void _onEndDateChanged(DateTime date, DateTime oldDate) {
+    if (date != oldDate) {
       setState(() {
-        final Duration dateDifference =
-        _endDate.difference(_startDate);
-        _endDate = DateTime(
-          date.year,
-          date.month,
-          date.day,
-          _endTime.hour,
-          _endTime.minute,
-        );
-        if (_endDate.isBefore(_startDate)) {
-          _startDate = _endDate.subtract(dateDifference);
-          _startTime = TimeOfDay(
-            hour: _startDate.hour,
-            minute: _startDate.minute
-          );
-          _startDateController.value = _startDate;
-        }
-
-        if (time) {
-          _endTime = TimeOfDay(
-            hour: date.hour,
-            minute: date.minute
-          );
-          final Duration timeDifference =
-          _endDate.difference(_startDate);
-          _endDate = DateTime(
-            _endDate.year,
-            _endDate.month,
-            _endDate.day,
-            _endTime.hour,
-            _endTime.minute,
-          );
-          if (_endDate.isBefore(_startDate)) {
-            _startDate = _endDate.subtract(timeDifference);
-            _startTime = TimeOfDay(
-              hour: _startDate.hour,
-              minute: _startDate.minute
-            );
-            _startDateController.value = _startDate;
-          }
+        final startDate = _startDateController.value!;
+        final Duration dateDifference = oldDate.difference(startDate);
+        if (date.isBefore(startDate)) {
+          _startDateController.value = date.subtract(dateDifference);
         }
       });
     }
@@ -212,7 +129,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
             helper: _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
             doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
-            onChanged: (value) => _onStartDateChanged(value, true),
+            onChanged: (value, oldValue) => _onStartDateChanged(value, oldValue),
             controller: _startDateController,
           ),
           // end date/time
@@ -220,7 +137,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             prefix: Text(AppLocalizations.of(context)!.bookFlightModal_label_end),
             helper: _SunTimesListTile(sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
             doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
-            onChanged: (value) => _onEndDateChanged(value, true),
+            onChanged: (value, oldValue) => _onEndDateChanged(value, oldValue),
             controller: _endDateController,
           ),
         ]),
@@ -284,61 +201,17 @@ class _BookFlightModalState extends State<BookFlightModal> {
         ),
         // start date/time
         DateTimeListTile(
-          selectedDate: _startDate,
-          selectedTime: _startTime,
-          onDateSelected: (date) => _onStartDateChanged(date, false),
-          onTimeSelected: (time) {
-            if (time != null && time != _startTime) {
-              setState(() {
-                _startTime = time;
-                final Duration difference =
-                _endDate.difference(_startDate);
-                // TODO time zone
-                _startDate = DateTime(
-                  _startDate.year,
-                  _startDate.month,
-                  _startDate.day,
-                  _startTime.hour,
-                  _startTime.minute,
-                );
-                _endDate = _startDate.add(difference);
-                _endTime = TimeOfDay(
-                    hour: _endDate.hour,
-                    minute: _endDate.minute);
-              });
-            }
-          },
+          controller: _startDateController,
+          onDateSelected: (date, oldDate) => _onStartDateChanged(date, oldDate),
+          onTimeSelected: (date, oldDate) => _onStartDateChanged(date, oldDate),
         ),
         _SunTimesListTile(sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
         // end date/time
         DateTimeListTile(
-          selectedDate: _endDate,
-          selectedTime: _endTime,
+          controller: _endDateController,
           showIcon: false,
-          onDateSelected: (date) => _onEndDateChanged(date, false),
-          onTimeSelected: (time) {
-            if (time != null && time != _endTime) {
-              setState(() {
-                _endTime = time;
-                final Duration difference =
-                _endDate.difference(_startDate);
-                // TODO time zone
-                _endDate = DateTime(
-                  _endDate.year,
-                  _endDate.month,
-                  _endDate.day,
-                  _endTime.hour,
-                  _endTime.minute,
-                );
-                if (_endDate.isBefore(_startDate)) {
-                  _startDate = _endDate.subtract(difference);
-                  _startTime = TimeOfDay(
-                      hour: _startDate.hour,
-                      minute: _startDate.minute);
-                }
-              });
-            }
-          },
+          onDateSelected: (date, oldDate) => _onEndDateChanged(date, oldDate),
+          onTimeSelected: (date, oldDate) => _onEndDateChanged(date, oldDate),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
@@ -379,8 +252,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   // FIXME use AppConfig state instance
   Widget _getEventEditor(BuildContext context, AppConfig appConfig) {
-    final SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDate, appConfig.locationTimeZone);
-    final SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDate, appConfig.locationTimeZone);
+    final SunTimes startSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _startDateController.value!, appConfig.locationTimeZone);
+    final SunTimes endSunTimes = getSunTimes(appConfig.locationLatitude, appConfig.locationLongitude, _endDateController.value!, appConfig.locationTimeZone);
 
     return isCupertino(context) ?
       _buildCupertinoForm(context, appConfig, startSunTimes, endSunTimes) :
@@ -493,8 +366,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final event = FlightBooking(
       widget.event.id,
       _pilotName,
-      TZDateTime.from(_startDate, _appConfig.locationTimeZone).toUtc(),
-      TZDateTime.from(_endDate, _appConfig.locationTimeZone).toUtc(),
+      TZDateTime.from(_startDateController.value!, _appConfig.locationTimeZone).toUtc(),
+      TZDateTime.from(_endDateController.value!, _appConfig.locationTimeZone).toUtc(),
       _notes,
     );
 

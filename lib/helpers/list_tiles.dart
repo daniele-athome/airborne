@@ -7,13 +7,13 @@ import 'utils.dart';
 @immutable
 class DateListTile extends StatelessWidget {
   final DateTimePickerController controller;
-  final Function(DateTime? selected)? onDateSelected;
+  final Function(DateTime selected)? onDateSelected;
   final bool showIcon;
   final TextStyle? textStyle;
 
-  final DateFormat _dateFormatter = DateFormat.yMEd();
+  static final DateFormat _dateFormatter = DateFormat.yMEd();
 
-  DateListTile({
+  const DateListTile({
     Key? key,
     required this.controller,
     this.onDateSelected,
@@ -67,23 +67,20 @@ class DateListTile extends StatelessWidget {
 
 }
 
-// FIXME refactor into widget + controller (e.g. like a text field)
 @immutable
 class DateTimeListTile extends StatelessWidget {
-  final DateTime selectedDate;
-  final TimeOfDay selectedTime;
-  final Function(DateTime? selected) onDateSelected;
-  final Function(TimeOfDay? selected) onTimeSelected;
+  final DateTimePickerController controller;
+  final Function(DateTime selected, DateTime oldValue)? onDateSelected;
+  final Function(DateTime selected, DateTime oldValue)? onTimeSelected;
   final bool showIcon;
 
-  final DateFormat _dateFormatter = DateFormat.yMEd();
+  static final DateFormat _dateFormatter = DateFormat.yMEd();
 
-  DateTimeListTile({
+  const DateTimeListTile({
     Key? key,
+    required this.controller,
     required this.onDateSelected,
     required this.onTimeSelected,
-    required this.selectedDate,
-    required this.selectedTime,
     this.showIcon = true,
   }) : super(key: key);
 
@@ -99,13 +96,14 @@ class DateTimeListTile extends StatelessWidget {
               Icons.access_time,
             ) : const Text(''),
             title: Text(
-              _dateFormatter.format(selectedDate),
+              controller.value != null ? _dateFormatter.format(controller.value!) : '',
               textAlign: TextAlign.left,
             ),
             onTap: () async {
+              final initialDate = controller.value != null ? controller.value! : DateTime.now();
               final DateTime? date = await showDatePicker(
                 context: context,
-                initialDate: selectedDate,
+                initialDate: initialDate,
                 firstDate: DateTime(1900),
                 lastDate: DateTime(2100),
                 /* TODO builder: (BuildContext context, Widget? child) {
@@ -123,7 +121,13 @@ class DateTimeListTile extends StatelessWidget {
                                 );
                               }*/
               );
-              onDateSelected(date);
+              if (date != null) {
+                final oldValue = initialDate;
+                final newValue = _setDate(date);
+                if (onDateSelected != null) {
+                  onDateSelected!(newValue, oldValue);
+                }
+              }
             },
           ),
         ),
@@ -132,16 +136,17 @@ class DateTimeListTile extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
             title: Text(
-              DateFormat(kAviationTimeFormat).format(selectedDate),
+              controller.value != null ? DateFormat(kAviationTimeFormat).format(controller.value!) : '',
               textAlign: TextAlign.right,
             ),
             onTap: () async {
+              final initialDate = controller.value != null ? controller.value! : DateTime.now();
               final TimeOfDay? time =
               await showTimePicker(
                 context: context,
                 initialTime: TimeOfDay(
-                    hour: selectedTime.hour,
-                    minute: selectedTime.minute
+                    hour: initialDate.hour,
+                    minute: initialDate.minute
                 ),
                 /* TODO builder: (BuildContext context,
                                   Widget? child) {
@@ -160,12 +165,35 @@ class DateTimeListTile extends StatelessWidget {
                                 );
                               }*/
               );
-
-              onTimeSelected(time);
+              if (time != null) {
+                final oldValue = initialDate;
+                final date = _setTime(time);
+                if (onTimeSelected != null) {
+                  onTimeSelected!(date, oldValue);
+                }
+              }
             },
           ),
         )
       ],
+    );
+  }
+
+  DateTime _setDate(DateTime date) {
+    var currentDate = controller.value;
+    currentDate ??= DateTime.now();
+    return controller.value = DateTime(
+      date.year, date.month, date.day,
+      currentDate.hour, currentDate.minute
+    );
+  }
+
+  DateTime _setTime(TimeOfDay time) {
+    var currentDate = controller.value;
+    currentDate ??= DateTime.now();
+    return controller.value = DateTime(
+      currentDate.year, currentDate.month, currentDate.day,
+      time.hour, time.minute
     );
   }
 

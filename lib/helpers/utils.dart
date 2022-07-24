@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:airborne/helpers/cupertinoplus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,6 +12,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'cupertinoplus.dart';
 
 /// Time format for aviation use (i.e. no am/pm)
 const String kAviationTimeFormat = 'HH:mm';

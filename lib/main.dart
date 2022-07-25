@@ -18,10 +18,12 @@ import 'helpers/config.dart';
 import 'helpers/googleapis.dart';
 import 'helpers/utils.dart';
 import 'screens/about/about_screen.dart';
+import 'screens/activities/activities_screen.dart';
 import 'screens/aircraft_select/aircraft_data_screen.dart';
 import 'screens/book_flight/book_flight_screen.dart';
 import 'screens/flight_log/flight_log_screen.dart';
 import 'screens/pilot_select/pilot_select_screen.dart';
+import 'services/activities_services.dart';
 import 'services/book_flight_services.dart';
 import 'services/flight_log_services.dart';
 
@@ -129,6 +131,8 @@ class _MyAppState extends State<MyApp> {
             MainNavigation(appConfig) : const SizedBox.shrink(),
           'pilot-select': (context) => appConfig.currentAircraft != null ?
             const PilotSelectScreen() : const SizedBox.shrink(),
+          'activities': (context) => appConfig.currentAircraft != null ?
+            const ActivitiesScreen() : const SizedBox.shrink(),
           'aircraft-data': (context) => const SetAircraftDataScreen(),
         },
         debugShowCheckedModeBanner: false,
@@ -158,11 +162,13 @@ class MainNavigation extends StatefulWidget {
 
   final BookFlightCalendarService? bookFlightCalendarService;
   final FlightLogBookService? flightLogBookService;
+  final ActivitiesService? activitiesService;
   // TODO other services one day...
 
   const MainNavigation(this.appConfig, {Key? key})
       : bookFlightCalendarService = null,
         flightLogBookService = null,
+        activitiesService = null,
         super(key: key);
 
   /// Mainly for integration testing.
@@ -171,6 +177,7 @@ class MainNavigation extends StatefulWidget {
     Key? key,
     this.bookFlightCalendarService,
     this.flightLogBookService,
+    this.activitiesService,
   }) : super(key: key);
 
   @override
@@ -181,6 +188,7 @@ class _MainNavigationState extends State<MainNavigation> {
   late PlatformTabController _tabController;
   late BookFlightCalendarService? _bookFlightCalendarService;
   late FlightLogBookService? _flightLogBookService;
+  late ActivitiesService? _activitiesService;
 
   @override
   void initState() {
@@ -205,6 +213,8 @@ class _MainNavigationState extends State<MainNavigation> {
         (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account!, widget.appConfig.googleCalendarId) : null);
     _flightLogBookService = widget.flightLogBookService ??
         (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account!, widget.appConfig.flightlogBackendInfo) : null);
+    _activitiesService = widget.activitiesService ??
+        (widget.appConfig.hasFeature('activities') ? ActivitiesService(account!, widget.appConfig.activitiesBackendInfo) : null);
   }
 
   @override
@@ -235,6 +245,10 @@ class _MainNavigationState extends State<MainNavigation> {
         value: _flightLogBookService,
         child: const FlightLogScreen(),
       ),
+      if (widget.appConfig.hasFeature('activities')) () => Provider.value(
+        value: _activitiesService,
+        child: const ActivitiesScreen(),
+      ),
       () => const AboutScreen(),
     ][index]();
   }
@@ -254,6 +268,13 @@ class _MainNavigationState extends State<MainNavigation> {
           key: const Key('nav_flight_log'),
         ),
         label: AppLocalizations.of(context)!.mainNav_logBook,
+        tooltip: '',
+      ),
+      if (widget.appConfig.hasFeature('activities')) BottomNavigationBarItem(
+        icon: Icon(PlatformIcons(context).flag,
+          key: const Key('nav_activities'),
+        ),
+        label: AppLocalizations.of(context)!.mainNav_activities,
         tooltip: '',
       ),
       BottomNavigationBarItem(

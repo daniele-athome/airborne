@@ -8,6 +8,7 @@
 
   "mainNav_bookFlight": "Prenota",
   "mainNav_logBook": "Log book",
+  "mainNav_activities": "Attività",
   "mainNav_about": "Info",
 
   "button_goToday": "Oggi",
@@ -90,6 +91,12 @@
   "flightLogModal_dialog_delete_title": "Cancellare?",
   "flightLogModal_dialog_delete_message": "Stai cancellando un volo registrato. Non potrai recuperarlo!",
   "flightLogModal_dialog_working": "Un attimo...",
+
+  "activities_title": "Attività",
+  "activities_button_error_retry": "Riprova",
+  "activities_error_noItemsFound": "Nulla da segnalare!",
+  "activities_error_firstPageIndicator": "Qualcosa è andato storto.",
+  "activities_error_newPageIndicator": "Qualcosa è andato storto. Tocca per riprovare.",
 
   "addAircraft_title": "Configura aereo",
   "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",

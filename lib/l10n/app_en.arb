@@ -11,6 +11,7 @@
 
   "mainNav_bookFlight": "Bookings",
   "mainNav_logBook": "Log book",
+  "mainNav_activities": "Activities",
   "mainNav_about": "Info",
 
   "button_goToday": "Today",
@@ -107,6 +108,12 @@
   "flightLogModal_dialog_delete_title": "Delete?",
   "flightLogModal_dialog_delete_message": "You are deleting a registered flight. You won't be able to undo this!",
   "flightLogModal_dialog_working": "Please wait...",
+
+  "activities_title": "Activities",
+  "activities_button_error_retry": "Retry",
+  "activities_error_noItemsFound": "Nothing to do!",
+  "activities_error_firstPageIndicator": "Something went wrong.",
+  "activities_error_newPageIndicator": "Something went wrong. Tap to retry.",
 
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",

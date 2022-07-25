@@ -44,6 +44,9 @@ class AppConfig extends ChangeNotifier {
         return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] != null &&
             _currentAircraft!.backendInfo['flightlog_sheet_name'] != null &&
             _currentAircraft!.noPilotName != null;
+      case 'activities':
+        return _currentAircraft!.backendInfo['activities_spreadsheet_id'] != null &&
+            _currentAircraft!.backendInfo['activities_sheet_name'] != null;
       default:
         throw Exception('Unknown feature: $feature');
     }
@@ -69,6 +72,13 @@ class AppConfig extends ChangeNotifier {
     return {
       'spreadsheet_id': _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
+    };
+  }
+
+  Map<String, String> get activitiesBackendInfo {
+    return {
+      'spreadsheet_id': _currentAircraft!.backendInfo['activities_spreadsheet_id'],
+      'sheet_name': _currentAircraft!.backendInfo['activities_sheet_name'],
     };
   }
 

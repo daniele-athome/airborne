@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,17 +14,11 @@ import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'helpers/config.dart';
-import 'helpers/googleapis.dart';
 import 'helpers/utils.dart';
-import 'screens/about/about_screen.dart';
 import 'screens/activities/activities_screen.dart';
 import 'screens/aircraft_select/aircraft_data_screen.dart';
-import 'screens/book_flight/book_flight_screen.dart';
-import 'screens/flight_log/flight_log_screen.dart';
+import 'screens/main/main_screen.dart';
 import 'screens/pilot_select/pilot_select_screen.dart';
-import 'services/activities_services.dart';
-import 'services/book_flight_services.dart';
-import 'services/flight_log_services.dart';
 
 final Logger _log = Logger("main");
 
@@ -154,159 +147,5 @@ class _MyAppState extends State<MyApp> {
           // TODO
         ),
       ));
-  }
-}
-
-class MainNavigation extends StatefulWidget {
-  final AppConfig appConfig;
-
-  final BookFlightCalendarService? bookFlightCalendarService;
-  final FlightLogBookService? flightLogBookService;
-  final ActivitiesService? activitiesService;
-  // TODO other services one day...
-
-  const MainNavigation(this.appConfig, {Key? key})
-      : bookFlightCalendarService = null,
-        flightLogBookService = null,
-        activitiesService = null,
-        super(key: key);
-
-  /// Mainly for integration testing.
-  @visibleForTesting
-  const MainNavigation.withServices(this.appConfig, {
-    Key? key,
-    this.bookFlightCalendarService,
-    this.flightLogBookService,
-    this.activitiesService,
-  }) : super(key: key);
-
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  late PlatformTabController _tabController;
-  late BookFlightCalendarService? _bookFlightCalendarService;
-  late FlightLogBookService? _flightLogBookService;
-  late ActivitiesService? _activitiesService;
-
-  @override
-  void initState() {
-    _tabController = PlatformTabController();
-    widget.appConfig.addListener(_resetTabController);
-    _rebuildServices();
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant MainNavigation oldWidget) {
-    _rebuildServices();
-    super.didUpdateWidget(oldWidget);
-  }
-
-  void _rebuildServices() {
-    final account = (widget.bookFlightCalendarService == null && widget.flightLogBookService == null) ?
-      GoogleServiceAccountService(
-          json: widget.appConfig.googleServiceAccountJson
-      ) : null;
-    _bookFlightCalendarService = widget.bookFlightCalendarService ??
-        (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account!, widget.appConfig.googleCalendarId) : null);
-    _flightLogBookService = widget.flightLogBookService ??
-        (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account!, widget.appConfig.flightlogBackendInfo) : null);
-    _activitiesService = widget.activitiesService ??
-        (widget.appConfig.hasFeature('activities') ? ActivitiesService(account!, widget.appConfig.activitiesBackendInfo) : null);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  void _resetTabController() {
-    if (mounted) {
-      _tabController.setIndex(context, 0);
-    }
-  }
-  
-  @override
-  void dispose() {
-    widget.appConfig.removeListener(_resetTabController);
-    super.dispose();
-  }
-
-  Widget _buildTab(BuildContext context, int index) {
-    // FIXME find a more efficient way to do this
-    return [
-      if (widget.appConfig.hasFeature('book_flight')) () => Provider.value(
-        value: _bookFlightCalendarService,
-        child: const BookFlightScreen(),
-      ),
-      if (widget.appConfig.hasFeature('flight_log')) () => Provider.value(
-        value: _flightLogBookService,
-        child: const FlightLogScreen(),
-      ),
-      if (widget.appConfig.hasFeature('activities')) () => Provider.value(
-        value: _activitiesService,
-        child: const ActivitiesScreen(),
-      ),
-      () => const AboutScreen(),
-    ][index]();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final items = [
-      if (widget.appConfig.hasFeature('book_flight')) BottomNavigationBarItem(
-        icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded,
-          key: const Key('nav_book_flight'),
-        ),
-        label: AppLocalizations.of(context)!.mainNav_bookFlight,
-        tooltip: '',
-      ),
-      if (widget.appConfig.hasFeature('flight_log')) BottomNavigationBarItem(
-        icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp,
-          key: const Key('nav_flight_log'),
-        ),
-        label: AppLocalizations.of(context)!.mainNav_logBook,
-        tooltip: '',
-      ),
-      if (widget.appConfig.hasFeature('activities')) BottomNavigationBarItem(
-        icon: Icon(PlatformIcons(context).flag,
-          key: const Key('nav_activities'),
-        ),
-        label: AppLocalizations.of(context)!.mainNav_activities,
-        tooltip: '',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(PlatformIcons(context).info,
-          key: const Key('nav_info'),
-        ),
-        label: AppLocalizations.of(context)!.mainNav_about,
-        tooltip: '',
-      ),
-    ];
-
-    if (items.length >= 2) {
-      return PlatformTabScaffold(
-        iosContentBottomPadding: true,
-        // appBar is owned by screen
-        bodyBuilder: (context, index) => _buildTab(context, index),
-        tabController: _tabController,
-        items: items,
-        material: (_, __) =>
-            MaterialTabScaffoldData(
-              // TODO
-            ),
-        cupertino: (_, __) =>
-            CupertinoTabScaffoldData(
-              // TODO
-            ),
-      );
-    }
-    else {
-      return PlatformScaffold(
-          body: const AboutScreen(),
-      );
-    }
   }
 }

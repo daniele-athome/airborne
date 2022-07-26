@@ -5,7 +5,7 @@ import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/helpers/utils.dart';
-import 'package:airborne/main.dart' as app;
+import 'package:airborne/screens/main/main_screen.dart' as main_screen;
 import 'package:airborne/models/book_flight_models.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
@@ -163,7 +163,7 @@ class MainNavigationApp extends StatelessWidget {
           //locale: const Locale('it', ''),
           initialRoute: 'pilot-select',
           routes: <String, WidgetBuilder>{
-            '/': (context) => app.MainNavigation.withServices(appConfig,
+            '/': (context) => main_screen.MainNavigation.withServices(appConfig,
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
               flightLogBookService: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames)),
             ),

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../helpers/config.dart';
 import '../../helpers/googleapis.dart';
+import '../../helpers/utils.dart';
 import '../../services/activities_services.dart';
 import '../../services/book_flight_services.dart';
 import '../../services/flight_log_services.dart';
@@ -118,6 +119,7 @@ class _MainNavigationState extends State<MainNavigation> {
         icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded,
           key: const Key('nav_book_flight'),
         ),
+        backgroundColor: getBrightness(context) == Brightness.dark ? Colors.tealAccent : Colors.deepOrange,
         label: AppLocalizations.of(context)!.mainNav_bookFlight,
         tooltip: '',
       ),
@@ -125,6 +127,7 @@ class _MainNavigationState extends State<MainNavigation> {
         icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp,
           key: const Key('nav_flight_log'),
         ),
+        backgroundColor: getBrightness(context) == Brightness.dark ? const Color(0xffffff00) : Colors.green.shade500,
         label: AppLocalizations.of(context)!.mainNav_logBook,
         tooltip: '',
       ),
@@ -132,6 +135,7 @@ class _MainNavigationState extends State<MainNavigation> {
         icon: Icon(PlatformIcons(context).flag,
           key: const Key('nav_activities'),
         ),
+        backgroundColor: getBrightness(context) == Brightness.dark ? Colors.white : Colors.amber.shade700,
         label: AppLocalizations.of(context)!.mainNav_activities,
         tooltip: '',
       ),
@@ -139,6 +143,7 @@ class _MainNavigationState extends State<MainNavigation> {
         icon: Icon(PlatformIcons(context).info,
           key: const Key('nav_info'),
         ),
+        backgroundColor: getBrightness(context) == Brightness.dark ? const Color(0xff40c4ff) : Colors.deepPurple,
         label: AppLocalizations.of(context)!.mainNav_about,
         tooltip: '',
       ),

@@ -41,19 +41,19 @@ dependencies:
   http: 0.13.4
   infinite_scroll_pagination: 3.2.0
   intl: 0.17.0
-  json_schema2: 2.0.2+6
+  json_schema2: 2.0.2+7
   logging: 1.0.2
   material_segmented_control: 4.0.0
-  package_info_plus: 1.4.2
+  package_info_plus: 1.4.3
   # can't upgrade because of integration_test
   path: 1.8.1
   path_provider: 2.0.11
   provider: 6.0.3
   shared_preferences: 2.0.15
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 20.2.38
-  syncfusion_localizations: 20.2.38
-  syncfusion_flutter_core: 20.2.38
+  syncfusion_flutter_calendar: 20.2.40
+  syncfusion_localizations: 20.2.40
+  syncfusion_flutter_core: 20.2.40
   timeline_tile: 2.0.0
   timezone: 0.8.0
   url_launcher: 6.1.5

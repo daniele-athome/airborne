@@ -156,6 +156,9 @@ class _MainNavigationState extends State<MainNavigation> {
         bodyBuilder: (context, index) => _buildTab(context, index),
         tabController: _tabController,
         items: items,
+        materialTabs: (_, __) => MaterialNavBarData(
+          type: BottomNavigationBarType.fixed,
+        ),
         material: (_, __) =>
             MaterialTabScaffoldData(
               // TODO

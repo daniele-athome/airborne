@@ -293,7 +293,7 @@ class _EntryListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final summaryTextStyle = isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle.copyWith(color: _textColor(entry)) :
-      Theme.of(context).textTheme.headline5!.copyWith(color: _textColor(entry));
+      Theme.of(context).textTheme.headline6!.copyWith(color: _textColor(entry));
     final dateBackgroundColor = isCupertino(context) ?
       CupertinoColors.link.resolveFrom(context) :
       Theme.of(context).primaryColorLight;

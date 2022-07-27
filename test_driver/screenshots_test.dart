@@ -25,7 +25,7 @@ void main() {
 
   group('Screenshots', () {
     test('Onboarding - Select pilot', () async {
-      await screenshot(driver, config, '06-onboarding-pilotselect');
+      await screenshot(driver, config, '50-onboarding-pilotselect');
       await driver.tap(find.text('Anna'));
       await driver.waitUntilNoTransientCallbacks();
       // TODO i18n
@@ -56,6 +56,12 @@ void main() {
       await driver.tap(find.byValueKey('button_logFlight'));
       await screenshot(driver, config, '05-logbook-flighteditor');
       await driver.tap(await pageClose('button_flightLogModal_close'));
+    });
+
+    test('Activities - List view', () async {
+      await driver.tap(find.byValueKey('nav_activities'));
+      await driver.waitUntilNoTransientCallbacks();
+      await screenshot(driver, config, '06-activities-list');
     });
   });
 }

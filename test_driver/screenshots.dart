@@ -5,10 +5,12 @@ import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/helpers/utils.dart';
+import 'package:airborne/models/activities_models.dart';
 import 'package:airborne/screens/main/main_screen.dart' as main_screen;
 import 'package:airborne/models/book_flight_models.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
+import 'package:airborne/services/activities_services.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter/foundation.dart';
@@ -17,6 +19,7 @@ import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,8 +82,9 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
   final events = <FlightBooking>[];
   final random = Random();
   while (currentDate.isBefore(endDate)) {
-    // 40% chance of having events on any given day
-    final numEvents = random.nextInt(100 ~/ 40) == 0 ? (random.nextInt(4) + 1) : 0;
+    // 40% chance of having events on any given day (except for today)
+    final numEventsPerDay = random.nextInt(4) + 1;
+    final numEvents = !DateUtils.isSameDay(currentDate, now) ? (random.nextInt(100 ~/ 40) == 0 ? numEventsPerDay : 0) : numEventsPerDay;
     int currentHour = startHour;
     int numDayEvents = 0;
     while (currentHour < endHour && numDayEvents < numEvents) {
@@ -140,6 +144,62 @@ List<FlightLogItem> generateFakeLogBookItems(List<String> pilotNames) {
   }, growable: false);
 }
 
+/// Generates some random activities.
+List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
+  // summary, type, description
+  const allFakeEntries = {
+    'en': [
+      ['Landing gear damaged', ActivityType.critical, 'The landing gear was damaged during a hard landing. The crossbow needs to be replaced.'],
+      ['New app version!', ActivityType.note, 'Version 3.0.4 was released in app stores!'],
+      ['Battery cable damage', ActivityType.important, null],
+      ['Washing needed!', ActivityType.minor, null],
+      ['August 2022 hangar payment', ActivityType.important, null],
+      ['Transponder not working properly', ActivityType.important, 'Some glitch there.'],
+      ['Relevant NOTAM warning', ActivityType.notice, 'Beware of the dangerous zone above mount Everest.'],
+    ],
+    'it': [
+      ['Carrello distrutto', ActivityType.critical, 'Distrutto durante l\'ultimo atterraggio. La balestra deve essere sostituita.'],
+      ['Nuova versione app!', ActivityType.note, 'Versione 3.0.4 rilasciata negli app store!'],
+      ['Cavo batteria danneggiato', ActivityType.important, null],
+      ['Aereo da lavare!', ActivityType.minor, null],
+      ['Pagamento hangar agosto 2022', ActivityType.important, null],
+      ['Transponder non funziona', ActivityType.important, 'Qualche problema.'],
+      ['NOTAM rilevante', ActivityType.notice, 'Attenzione alla zona pericolosa sopra il monte Everest.'],
+    ],
+  };
+  final language = Intl.shortLocale(Intl.getCurrentLocale());
+  final fakeEntries = List.of(allFakeEntries[language]!.reversed, growable: false);
+
+  final random = Random();
+  final now = DateTime.now();
+  // matches with the one in the zip file
+  final location = getLocation('Europe/Rome');
+  final startDate = TZDateTime.from(DateTime(now.year, now.month, now.day), location).subtract(const Duration(days: 30));
+  TZDateTime currentDate = startDate;
+
+  return List<ActivityEntry>.generate(fakeEntries.length, (index) {
+    currentDate = currentDate.add(const Duration(days: 1));
+    final itemIndex = index % fakeEntries.length;
+    final summary = fakeEntries[itemIndex][0] as String;
+    final type = fakeEntries[itemIndex][1] as ActivityType;
+    final description = fakeEntries[itemIndex][2] as String?;
+
+    return ActivityEntry(
+      id: index.toString(),
+      type: type,
+      creationDate: currentDate,
+      author: pilotNames[random.nextInt(pilotNames.length)],
+      summary: summary,
+      description: description,
+      // TODO proper random due date
+      dueDate: random.nextBool() ? DateTime.now() : null,
+      // status should be compatible with type
+      status: type.task ? ActivityStatus.values[random.nextInt(ActivityStatus.values.length)] : null,
+      alert: random.nextBool() ? random.nextBool() : null,
+    );
+  }, growable: false);
+}
+
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
 // Another way could be by accepting a few constructor parameters...
 class MainNavigationApp extends StatelessWidget {
@@ -166,6 +226,7 @@ class MainNavigationApp extends StatelessWidget {
             '/': (context) => main_screen.MainNavigation.withServices(appConfig,
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
               flightLogBookService: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames)),
+              activitiesService: FakeActivitiesService(generateFakeActivities(appConfig.pilotNames)),
             ),
             'pilot-select': (context) => const PilotSelectScreen(),
           },
@@ -405,6 +466,50 @@ class FakeLogBookService implements FlightLogBookService {
   @override
   Future<FlightLogItem> updateItem(FlightLogItem item) {
     throw UnimplementedError();
+  }
+
+  @override
+  set client(GoogleSheetsService client) {
+    throw UnimplementedError();
+  }
+
+  @override
+  int get lastId => throw UnimplementedError();
+
+  @override
+  set lastId(int lastId) {
+    throw UnimplementedError();
+  }
+
+}
+
+class FakeActivitiesService implements ActivitiesService {
+
+  final Iterable<ActivityEntry> items;
+  bool _fetched = false;
+
+  FakeActivitiesService(this.items);
+
+  @override
+  Future<Iterable<ActivityEntry>> fetchItems() {
+    if (!_fetched) {
+      _fetched = true;
+      return Future.value(items);
+    }
+    else {
+      return Future.value(List.empty());
+    }
+  }
+
+  @override
+  bool hasMoreData() {
+    return !_fetched;
+  }
+
+  @override
+  Future<void> reset() {
+    _fetched = false;
+    return Future.value();
   }
 
   @override

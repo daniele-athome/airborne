@@ -292,25 +292,24 @@ class _EntryListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final summaryTextStyle = isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle.copyWith(color: _textColor(entry)) :
-    Theme.of(context).textTheme.headline5!.copyWith(color: _textColor(entry));
-
+      CupertinoTheme.of(context).textTheme.textStyle.copyWith(color: _textColor(entry)) :
+      Theme.of(context).textTheme.headline5!.copyWith(color: _textColor(entry));
     final dateBackgroundColor = isCupertino(context) ?
-    CupertinoColors.link.resolveFrom(context) :
-    Theme.of(context).primaryColorLight;
+      CupertinoColors.link.resolveFrom(context) :
+      Theme.of(context).primaryColorLight;
     final dateTextColor = ThemeData.estimateBrightnessForColor(dateBackgroundColor) == Brightness.light ?
-    Colors.black : Colors.white;
+      Colors.black : Colors.white;
     final dateTextStyle = isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-      fontSize: 14,
-      color: dateTextColor,
-    ) :
-    Theme.of(context).textTheme.labelMedium!.copyWith(
-      color: dateTextColor,
-    );
+      CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+        fontSize: 14,
+        color: dateTextColor,
+      ) :
+      Theme.of(context).textTheme.labelMedium!.copyWith(
+        color: dateTextColor,
+      );
     final contentTextStyle = isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 14, color: _textColor(entry)) :
-    Theme.of(context).textTheme.bodyMedium!.copyWith(color: _textColor(entry));
+      CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 14, color: _textColor(entry)) :
+      Theme.of(context).textTheme.bodyMedium!.copyWith(color: _textColor(entry));
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -319,12 +318,12 @@ class _EntryListItem extends StatelessWidget {
         children: <Widget>[
           Text(entry.summary, style: summaryTextStyle),
           Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: dateBackgroundColor,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
-              child: Text(_dateFormatter.format(entry.creationDate), style: dateTextStyle)
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: dateBackgroundColor,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
+            child: Text(_dateFormatter.format(entry.creationDate), style: dateTextStyle)
           ),
           if (entry.description != null) const SizedBox(height: 4),
           if (entry.description != null) Text(entry.description!, style: contentTextStyle),

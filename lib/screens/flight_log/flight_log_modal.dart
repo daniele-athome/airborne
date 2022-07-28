@@ -23,6 +23,25 @@ import 'hour_widget.dart';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
+// TODO move all this fuel stuff somewhere else
+
+const _kFuelDecimals = 1;
+const _kFuelPriceDecimals = 2;
+
+final _fuelPriceFormatter = NumberFormat("####0.00")..turnOffGrouping();
+/// Parser can't truncate or round the parsed number, so we'll round it before save
+final _fuelFormatter = NumberFormat("####0.#")..turnOffGrouping();
+
+bool _validateFuel(String? fuelValue) =>
+    fuelValue == null || fuelValue.isEmpty || _fuelFormatter.tryParse(fuelValue) != null;
+
+bool _validateFuelPrice(String? fuelPriceValue) =>
+    fuelPriceValue == null || fuelPriceValue.isEmpty || _fuelPriceFormatter.tryParse(fuelPriceValue) != null;
+
+num _parseFuel(String text) => roundDouble(_fuelFormatter.parse(text), _kFuelDecimals);
+
+num _parseFuelPrice(String text) => roundDouble(_fuelPriceFormatter.parse(text), _kFuelPriceDecimals);
+
 class FlightLogModal extends StatefulWidget {
 
   const FlightLogModal(this.item, {
@@ -37,9 +56,6 @@ class FlightLogModal extends StatefulWidget {
 }
 
 class _FlightLogModalState extends State<FlightLogModal> {
-  static final _fuelPriceFormatter = NumberFormat("####0.00")..turnOffGrouping();
-  /// Parser can't truncate or round the parsed number, so we'll round it before save
-  static final _fuelFormatter = NumberFormat("####0.#")..turnOffGrouping();
 
   // event data
   late String _pilotName;
@@ -54,6 +70,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
   late TextEditingController _destinationController;
   late DateTimePickerController _dateController;
   late TextEditingController _fuelController;
+  late TextEditingController _fuelPriceController;
   late TextEditingController _notesController;
 
   late FlightLogBookService _service;
@@ -68,7 +85,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _destinationController = TextEditingController(text: widget.item.destination);
     _startHourController = DigitDisplayController(widget.item.startHour);
     _endHourController = DigitDisplayController(widget.item.endHour);
+    // TODO this controller should handle numeric values natively (i.e. it should parse/format text)
     _fuelController = TextEditingController(text: widget.item.fuel != null ? _fuelFormatter.format(widget.item.fuel) : '');
+    // TODO this controller should handle numeric values natively (i.e. it should parse/format text)
+    _fuelPriceController = TextEditingController(text: _fuelTotalCostToText());
     _notesController = TextEditingController(text: widget.item.notes);
     _dateController = DateTimePickerController(widget.item.date);
     _fuelPrice = widget.item.fuelPrice;
@@ -90,9 +110,15 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _startHourController.dispose();
     _endHourController.dispose();
     _fuelController.dispose();
+    _fuelPriceController.dispose();
     _notesController.dispose();
     _dateController.dispose();
     super.dispose();
+  }
+
+  String _fuelTotalCostToText() {
+    return widget.item.fuel != null && widget.item.fuelPrice != null ?
+      _fuelPriceFormatter.format(widget.item.fuel! * widget.item.fuelPrice!) : '';
   }
 
   String _buildFuelPriceLabel(num value) => !_appConfig.fuelPrices!.containsKey(value) ?
@@ -123,7 +149,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
     ).then((value) {
       if (value != null) {
         setState(() {
-          _appConfig.customFuelPrice = roundDouble(_fuelPriceFormatter.parse(value[0]), 2);
+          _appConfig.customFuelPrice = _parseFuelPrice(value[0]);
           // value will be used in model later by checking if it's zero
           _fuelPrice = 0;
         });
@@ -265,7 +291,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               AppLocalizations.of(context)!.flightLogModal_error_fuel_invalid_number : null,
           ),
           // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
-          CupertinoFormButtonRow(
+          _appConfig.useFuelUnitPrice ? CupertinoFormButtonRow(
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_price_cupertino),
             onPressed: () {
@@ -276,6 +302,25 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 _buildFuelPriceLabel(_fuelPrice!)) : '',
               style: textStyle,
             ),
+          ) :
+          // TODO convert to single widget with 2 constructors (like _MaterialFuelPriceSelector)
+          CupertinoTextFormFieldRow(
+            controller: _fuelPriceController,
+            prefix: Text(AppLocalizations.of(context)!.flightLogModal_label_fuel_cost_cupertino(_appConfig.fuelPriceCurrency)),
+            textAlign: TextAlign.end,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            onChanged: (value) {
+              if (_validateFuelPrice(value) && _fuelController.text.isNotEmpty && _validateFuel(_fuelController.text)) {
+                final fuelCost = _parseFuelPrice(value);
+                final fuelAmount = _parseFuel(_fuelController.text);
+                _fuelPrice = roundDouble(fuelCost / fuelAmount, _kFuelPriceDecimals);
+              }
+              else {
+                _fuelPrice = null;
+              }
+            },
+            validator: (value) => !_validateFuelPrice(value) ?
+              AppLocalizations.of(context)!.flightLogModal_error_fuelCost_invalid_number : null,
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
@@ -473,9 +518,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
           trailing: SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
-            child: DropdownButtonFormField<num>(
-              key: _materialFuelPriceState,
-              value: _fuelPrice,
+            child: _appConfig.useFuelUnitPrice ? _MaterialFuelPriceSelector.unitPrice(
+              initialValue: _fuelPrice,
+              dropdownItems: fuelPrices,
               onChanged: (value) {
                 if (value == 0) {
                   // open custom fuel price dialog
@@ -485,34 +530,22 @@ class _FlightLogModalState extends State<FlightLogModal> {
                   _fuelPrice = value;
                 }
               },
-              isDense: false,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
+              dropdownState: _materialFuelPriceState,
+              currencySymbol: _appConfig.fuelPriceCurrency,
+            ) :
+              _MaterialFuelPriceSelector.totalCost(
+                textController: _fuelPriceController,
+                onChanged: (value) {
+                  if (value != null && _fuelController.text.isNotEmpty && _validateFuel(_fuelController.text)) {
+                    final fuelAmount = _parseFuel(_fuelController.text);
+                    _fuelPrice = roundDouble(value / fuelAmount, _kFuelPriceDecimals);
+                  }
+                  else {
+                    _fuelPrice = null;
+                  }
+                },
+                currencySymbol: _appConfig.fuelPriceCurrency,
               ),
-              /* TODO not ready yet -- selectedItemBuilder: (context) {
-                Widget itemBuilder(String text)  =>
-                  Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(text),
-                        )
-                    ),
-                  );
-
-                final List<Widget> fuelPrices = _appConfig.fuelPrices!.keys.map(
-                      (key) => itemBuilder(_buildFuelPriceLabel(key)),
-                ).toList();
-                if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
-                  fuelPrices.add(itemBuilder(_buildFuelPriceLabel(widget.item.fuelPrice!)));
-                }
-                return fuelPrices;
-              },*/
-              items: fuelPrices,
-              validator: (_) => null,
-            ),
           ),
         ),
         const Divider(
@@ -618,14 +651,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
     );
   }
 
-  bool _validateFuel(String? fuelValue) {
-    return fuelValue == null || fuelValue.isEmpty || _fuelFormatter.tryParse(fuelValue) != null;
-  }
-
-  bool _validateFuelPrice(String fuelPriceValue) {
-    return fuelPriceValue.isNotEmpty && _fuelPriceFormatter.tryParse(fuelPriceValue) != null;
-  }
-
   void _onSave(BuildContext context) {
     if (_startHourController.value.number > _endHourController.value.number) {
       showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_hourmeter);
@@ -641,6 +666,22 @@ class _FlightLogModalState extends State<FlightLogModal> {
     if (!_validateFuel(fuelValue)) {
       showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_fuel);
       return;
+    }
+
+    // validate fuel price if manual input for total cost
+    if (!_appConfig.useFuelUnitPrice && fuelValue.isNotEmpty) {
+      num fuelAmount = _parseFuel(_fuelController.text);
+      if (fuelAmount > 0) {
+        String fuelCostValue = _fuelPriceController.text;
+        if (fuelCostValue.isEmpty) {
+          showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_fuelCost_empty);
+          return;
+        }
+        else if (!_validateFuelPrice(fuelCostValue)) {
+          showError(context, AppLocalizations.of(context)!.flightLogModal_error_invalid_fuelCost);
+          return;
+        }
+      }
     }
 
     if (_isEditing) {
@@ -699,7 +740,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       _destinationController.text,
       _startHourController.number,
       _endHourController.number,
-      _fuelController.text.isNotEmpty ? roundDouble(_fuelFormatter.parse(_fuelController.text), 1) : null,
+      _fuelController.text.isNotEmpty ? _parseFuel(_fuelController.text) : null,
       _fuelPrice == 0 ? _appConfig.customFuelPrice : _fuelPrice,
       _notesController.text,
     );
@@ -801,3 +842,105 @@ class _FlightLogModalState extends State<FlightLogModal> {
     });
   }
 }
+
+// FIXME this widget should be stateful and handle the whole input part (including the dropdown items)
+class _MaterialFuelPriceSelector extends StatelessWidget {
+
+  /// Builds a fuel price selector dropdown.
+  /// onChanged will give the unit price.
+  const _MaterialFuelPriceSelector.unitPrice({
+    Key? key,
+    this.initialValue,
+    required this.dropdownItems,
+    required this.onChanged,
+    required this.dropdownState,
+    required this.currencySymbol,
+  }) :
+      useUnitPrice = true,
+      textController = null,
+      super(key: key);
+
+  /// Builds a fuel price text input field.
+  /// onChanged will give the total cost.
+  const _MaterialFuelPriceSelector.totalCost({
+    Key? key,
+    required this.onChanged,
+    required this.currencySymbol,
+    required this.textController,
+  }) :
+      useUnitPrice = false,
+      initialValue = null,
+      dropdownState = null,
+      dropdownItems = null,
+      super(key: key);
+
+  final bool useUnitPrice;
+  final num? initialValue;
+  final Key? dropdownState;
+  final TextEditingController? textController;
+  final List<DropdownMenuItem<num>>? dropdownItems;
+  final void Function(num? value) onChanged;
+  final String currencySymbol;
+
+  @override
+  Widget build(BuildContext context) {
+    if (useUnitPrice) {
+      return DropdownButtonFormField<num>(
+        key: dropdownState,
+        value: initialValue,
+        onChanged: onChanged,
+        isDense: false,
+        decoration: const InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.zero,
+        ),
+        /* TODO not ready yet -- selectedItemBuilder: (context) {
+                Widget itemBuilder(String text)  =>
+                  Expanded(
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text(text),
+                        )
+                    ),
+                  );
+
+                final List<Widget> fuelPrices = _appConfig.fuelPrices!.keys.map(
+                      (key) => itemBuilder(_buildFuelPriceLabel(key)),
+                ).toList();
+                if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
+                  fuelPrices.add(itemBuilder(_buildFuelPriceLabel(widget.item.fuelPrice!)));
+                }
+                return fuelPrices;
+              },*/
+        items: dropdownItems,
+        validator: (_) => null,
+      );
+    }
+    else {
+      return TextFormField(
+        controller: textController,
+        // TODO cursorColor: widget.model.backgroundColor,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        maxLines: 1,
+        style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w400
+        ),
+        onChanged: (value) => onChanged(_validateFuelPrice(value) ? _parseFuelPrice(value) : null),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          // FIXME not using given currency symbol
+          icon: const Icon(Icons.euro),
+          hintText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_cost,
+        ),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) => !_validateFuelPrice(value) ? AppLocalizations.of(context)!.flightLogModal_error_fuelCost_invalid_number : null,
+      );
+    }
+  }
+
+}
+
+// TODO _CupertinoFuelPriceSelector

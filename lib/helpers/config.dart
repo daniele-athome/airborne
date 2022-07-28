@@ -209,6 +209,11 @@ class AppConfig extends ChangeNotifier {
     }
   }
 
+  /// True if fuel price should be asked as unit price (e.g. "I bought 14 liters at 2.5 € per liter"),
+  /// false if total purchase price should be asked instead (e.g. "I bought 14 liters for 35 €")
+  // TODO make it a configuration parameter
+  bool get useFuelUnitPrice => false;
+
   void _clearPictureCache() {
     aircraftPicture.evict();
     for (var name in pilotNames) {

@@ -27,7 +27,7 @@ Minimal aircraft management app for small groups.
 <img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-03-bookflight-flighteditor.png" alt="Bookings - Edit" width="15%">
 <img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-04-logbook-list.png" alt="Logbook - List" width="15%">
 <img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-05-logbook-flighteditor.png" alt="Logbook - Edit" width="15%">
-<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-06-onboarding-pilotselect.png" alt="Onboarding - Pilot" width="15%">
+<img src="/android/fastlane/metadata/android/en-US/images/phoneScreenshots/Nexus%205X-Portrait-50-onboarding-pilotselect.png" alt="Onboarding - Pilot" width="15%">
 </p>
 
 ### iOS

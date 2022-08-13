@@ -1,1 +1,2 @@
-* prezzo benzina personalizzabile
+* inserimento costo totale benzina invece del prezzo al litro
+* sezione attività (sola lettura)

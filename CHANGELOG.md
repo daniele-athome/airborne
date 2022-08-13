@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/daniele-athome/airborne/compare/v1.2.0...v1.3.0) (2022-08-13)
+
+
+### Features
+
+* colorize bottom navigation bar ([b23b437](https://github.com/daniele-athome/airborne/commit/b23b437cfe1dbf3cd3bd4fee4f79609c7f66ed24))
+* **flight-log:** input total fuel cost instead of unit price ([305dd63](https://github.com/daniele-athome/airborne/commit/305dd63fda15532031a0fe27dd1c5d3c2c62216f)), closes [#66](https://github.com/daniele-athome/airborne/issues/66)
+* read-only activity journal ([5b42298](https://github.com/daniele-athome/airborne/commit/5b42298841e432105e6a92081daa2af409a3c9df)), closes [#30](https://github.com/daniele-athome/airborne/issues/30)
+
+
+### Bug Fixes
+
+* **about:** update pilots list after updating aircraft data ([ab31a81](https://github.com/daniele-athome/airborne/commit/ab31a81f33e4cc2dfd819bad8b3c900f356c85cc)), closes [#62](https://github.com/daniele-athome/airborne/issues/62)
+* handle events spanning multiple weeks ([ee085a4](https://github.com/daniele-athome/airborne/commit/ee085a4b0edce57307b24ea897cd071ab77a0baa)), closes [#15](https://github.com/daniele-athome/airborne/issues/15)
+
 ## [1.2.0](https://github.com/daniele-athome/airborne/compare/v1.1.0...v1.2.0) (2022-04-13)
 
 

@@ -40,18 +40,18 @@ dependencies:
   http: 0.13.5
   infinite_scroll_pagination: 3.2.0
   intl: 0.17.0
-  json_schema2: 2.0.2+14
+  json_schema2: 2.0.2+16
   logging: 1.1.0
   material_segmented_control: 4.0.0
-  package_info_plus: 3.0.0
+  package_info_plus: 3.0.1
   path: 1.8.2
   path_provider: 2.0.11
   provider: 6.0.4
   shared_preferences: 2.0.15
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 20.3.50
-  syncfusion_localizations: 20.3.50
-  syncfusion_flutter_core: 20.3.50
+  syncfusion_flutter_calendar: 20.3.52
+  syncfusion_localizations: 20.3.52
+  syncfusion_flutter_core: 20.3.52
   timeline_tile: 2.0.0
   timezone: 0.9.0
   url_launcher: 6.1.6

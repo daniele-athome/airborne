@@ -124,8 +124,6 @@ class _MyAppState extends State<MyApp> {
             MainNavigation(appConfig) : const SizedBox.shrink(),
           'pilot-select': (context) => appConfig.currentAircraft != null ?
             const PilotSelectScreen() : const SizedBox.shrink(),
-          'activities': (context) => appConfig.currentAircraft != null ?
-            const ActivitiesScreen() : const SizedBox.shrink(),
           'aircraft-data': (context) => const SetAircraftDataScreen(),
         },
         debugShowCheckedModeBanner: false,

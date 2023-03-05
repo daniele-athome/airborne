@@ -70,7 +70,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
       _formKey.currentState!.save();
 
       final downloadTask = downloadAircraftData(_aircraftUrl!, _aircraftPassword, downloadProvider)
-        .then((AircraftData aircraftData) {
+        .then<AircraftData?>((AircraftData aircraftData) {
           appConfig.currentAircraft = aircraftData;
           appConfig.addAircraft(aircraftData);
           return aircraftData;
@@ -92,6 +92,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           }
 
           Future.delayed(Duration.zero, () => showError(context, message));
+          return null;
         });
 
       showPlatformDialog(

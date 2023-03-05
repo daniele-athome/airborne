@@ -53,7 +53,7 @@ class _AboutScreenState extends State<AboutScreen> {
       if (value != null) {
         final userpass = value[0];
         final downloadTask = downloadAircraftData(_appConfig.currentAircraft!.url!, userpass, _downloadProvider)
-          .then((AircraftData aircraftData) {
+          .then<AircraftData?>((AircraftData aircraftData) {
             _appConfig.currentAircraft = aircraftData;
             _appConfig.updateAircraft(aircraftData);
             return aircraftData;
@@ -75,6 +75,7 @@ class _AboutScreenState extends State<AboutScreen> {
           }
 
           Future.delayed(Duration.zero, () => showError(context, message));
+          return null;
         });
 
         showPlatformDialog(
@@ -225,14 +226,14 @@ class _AboutScreenState extends State<AboutScreen> {
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
       title: Text(_appConfig.currentAircraft!.callSign,
-        style: Theme.of(context).textTheme.headline6!.copyWith(fontWeight: FontWeight.bold),
+        style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
       ),
     ),
     ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       subtitle: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
       title: Text(_appConfig.locationName,
-        style: Theme.of(context).textTheme.headline6,
+        style: Theme.of(context).textTheme.titleLarge,
       ),
       trailing: IconButton(
         onPressed: () => openUrl(context, _appConfig.locationUrl),
@@ -402,7 +403,7 @@ class HeaderListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: first ? const EdgeInsets.fromLTRB(20, 0, 20, 10) : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Text(text, style: Theme.of(context).textTheme.headline5),
+      child: Text(text, style: Theme.of(context).textTheme.headlineSmall),
     );
   }
 

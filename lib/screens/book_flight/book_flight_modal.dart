@@ -433,6 +433,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _doDelete(BuildContext context) {
     final Future task = _service.deleteBooking(widget.event)
       .timeout(kNetworkRequestTimeout)
+      // safe typing it for catchError
+      .then((value) => Future<DeletedFlightBooking?>.value(value))
       .catchError((error, StackTrace stacktrace) {
         _log.warning('DELETE ERROR', error, stacktrace);
         final String message;
@@ -446,6 +448,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
+        return null;
       });
 
     showPlatformDialog(
@@ -500,7 +503,7 @@ class _SunTimesListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.subtitle1;
+      Theme.of(context).textTheme.titleMedium;
 
     return Container(
       padding: isCupertino(context) ?

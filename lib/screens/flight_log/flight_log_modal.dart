@@ -747,6 +747,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
     final Future task = (_isEditing ?
       _service.updateItem(item) : _service.appendItem(item))
       .timeout(kNetworkRequestTimeout)
+      // safe typing it for catchError
+      .then((value) => Future<FlightLogItem?>.value(value))
       .catchError((error, StackTrace stacktrace) {
         _log.warning('SAVE ERROR', error, stacktrace);
         final String message;
@@ -760,6 +762,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           showError(context, message);
         });
+        return null;
       });
 
     showPlatformDialog(
@@ -796,6 +799,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
   void _doDelete(BuildContext context) {
     final Future task = _service.deleteItem(widget.item)
         .timeout(kNetworkRequestTimeout)
+        // safe typing it for catchError
+        .then((value) => Future<FlightLogItem?>.value(value))
         .catchError((error, StackTrace stacktrace) {
       _log.warning('DELETE ERROR', error, stacktrace);
       final String message;
@@ -809,6 +814,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         showError(context, message);
       });
+      return null;
     });
 
     showPlatformDialog(

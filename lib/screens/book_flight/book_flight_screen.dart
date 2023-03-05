@@ -473,7 +473,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             borderColor: Colors.grey,
             selectedColor: Theme.of(context).colorScheme.secondary,
             unselectedColor: Theme.of(context).dialogBackgroundColor,
-            onSegmentChosen: _changeView,
+            onSegmentTapped: _changeView,
           ),
         )
       ],

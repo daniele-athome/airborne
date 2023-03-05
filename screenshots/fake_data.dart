@@ -230,6 +230,7 @@ class FakeAppConfig extends AppConfig {
     });
 
     //final dataFile = File('test_driver/screenshots_data.zip');
+    // ignore: invalid_use_of_visible_for_testing_member
     final reader = AircraftDataReader.fromBytes(
       //dataBytes: dataFile.readAsBytesSync(),
       dataBytes: kScreenshotsData,

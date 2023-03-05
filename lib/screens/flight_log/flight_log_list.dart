@@ -107,22 +107,22 @@ class _FlightLogListState extends State<FlightLogList> {
   Widget _buildListItem(BuildContext context, FlightLogItem item, int index) {
     final dateStyle = (isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyText1!).copyWith(
+      Theme.of(context).textTheme.bodyLarge!).copyWith(
         fontSize: 16,
         // TODO do we need this? -- fontWeight: FontWeight.bold,
       );
     final subtitleStyle = isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.subtitle1!.copyWith(color: Theme.of(context).textTheme.caption!.color);
+      Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).textTheme.bodySmall!.color);
     final pilotStyle = (isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyText2!).copyWith(
+      Theme.of(context).textTheme.bodyMedium!).copyWith(
         fontSize: 17,
         // TODO do we need this? -- fontWeight: FontWeight.w300,
       );
     final timeStyle = (isCupertino(context) ?
       CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyText2!).copyWith(
+      Theme.of(context).textTheme.bodyMedium!).copyWith(
         fontSize: 20,
       );
 

@@ -243,7 +243,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
               textAlign: TextAlign.center,
               style: isCupertino(context) ?
                 CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle :
-                Theme.of(context).textTheme.headline6,
+                Theme.of(context).textTheme.titleLarge,
             ),
             if (message != null)
               const SizedBox(
@@ -255,7 +255,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: isCupertino(context) ?
                   CupertinoTheme.of(context).textTheme.textStyle :
-                  Theme.of(context).textTheme.bodyText2,
+                  Theme.of(context).textTheme.bodyMedium,
               ),
             if (onTryAgain != null)
               const SizedBox(
@@ -337,7 +337,7 @@ class NewPageErrorIndicator extends StatelessWidget {
             textAlign: TextAlign.center,
             style: isCupertino(context) ?
               CupertinoTheme.of(context).textTheme.navActionTextStyle :
-              Theme.of(context).textTheme.bodyText2,
+              Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(
             height: 4,

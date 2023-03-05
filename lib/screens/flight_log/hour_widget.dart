@@ -78,7 +78,7 @@ class _HourListTileState extends State<HourListTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // TODO try to replicate InputDecoration floating label text style
-          Text(widget.hintText, style: Theme.of(context).textTheme.caption!),
+          Text(widget.hintText, style: Theme.of(context).textTheme.bodySmall!),
           DigitDisplayFormTextField(
             controller: widget.controller,
             // TODO i18n
@@ -447,8 +447,8 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     }
     else {
       _disabledButtonBackgroundColor = Theme.of(context).colorScheme.primary;
-      _textStyle = Theme.of(context).textTheme.button!.copyWith(
-        fontSize: Theme.of(context).textTheme.headline4!.fontSize,
+      _textStyle = Theme.of(context).textTheme.labelLarge!.copyWith(
+        fontSize: Theme.of(context).textTheme.headlineMedium!.fontSize,
       );
     }
 

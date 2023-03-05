@@ -166,9 +166,7 @@ List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
 // Another way could be by accepting a few constructor parameters...
 class MainNavigationApp extends StatelessWidget {
-  MainNavigationApp({Key? key, this.initialRoute}) : super(key: key);
-
-  final String? initialRoute;
+  const MainNavigationApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +184,7 @@ class MainNavigationApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           // TEST
           //locale: const Locale('it', ''),
-          initialRoute: initialRoute ?? (appConfig.pilotName != null ? '/' : 'pilot-select'),
+          initialRoute: appConfig.pilotName != null ? '/' : 'pilot-select',
           routes: <String, WidgetBuilder>{
             '/': (context) => main_screen.MainNavigation.withServices(appConfig,
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),

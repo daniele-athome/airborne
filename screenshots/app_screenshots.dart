@@ -16,14 +16,14 @@ import 'fake_data.dart';
 void main() async {
   //enableFlutterDriverExtension();
 
-  Finder pageClose(String cupertinoValueKey) {
+  /*Finder pageClose(String cupertinoValueKey) {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return find.byKey(Key(cupertinoValueKey));
     }
     else {
       return find.byType(CloseButton);
     }
-  }
+  }*/
 
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final locale = await findSystemLocale();
@@ -47,7 +47,7 @@ void main() async {
             create: (context) => DownloadProvider(() => HttpClient())
         ),
       ],
-      child: MainNavigationApp(),
+      child: const MainNavigationApp(),
     );
   }
 

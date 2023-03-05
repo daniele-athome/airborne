@@ -15,7 +15,6 @@ import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'helpers/config.dart';
 import 'helpers/utils.dart';
-import 'screens/activities/activities_screen.dart';
 import 'screens/aircraft_select/aircraft_data_screen.dart';
 import 'screens/main/main_screen.dart';
 import 'screens/pilot_select/pilot_select_screen.dart';

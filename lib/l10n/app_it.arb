@@ -17,6 +17,10 @@
 
   "error_generic_network_timeout": "Il server non risponde.",
 
+  "relativeDate_yesterday": "Ieri, {date}",
+  "relativeDate_today": "Oggi, {date}",
+  "relativeDate_tomorrow": "Domani, {date}",
+
   "bookFlight_view_schedule": "Agenda",
   "bookFlight_view_month": "Mese",
   "bookFlight_view_week": "Settimana",

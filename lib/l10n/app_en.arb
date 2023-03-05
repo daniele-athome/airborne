@@ -20,6 +20,34 @@
 
   "error_generic_network_timeout": "Server did not respond.",
 
+  "relativeDate_yesterday": "Yesterday, {date}",
+  "@relativeDate_yesterday": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Mon, 3/6/2023"
+      }
+    }
+  },
+  "relativeDate_today": "Today, {date}",
+  "@relativeDate_today": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Mon, 3/6/2023"
+      }
+    }
+  },
+  "relativeDate_tomorrow": "Tomorrow, {date}",
+  "@relativeDate_tomorrow": {
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Mon, 3/6/2023"
+      }
+    }
+  },
+
   "bookFlight_view_schedule": "Schedule",
   "bookFlight_view_month": "Month",
   "bookFlight_view_week": "Week",

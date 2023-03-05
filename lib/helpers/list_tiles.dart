@@ -96,7 +96,7 @@ class DateTimeListTile extends StatelessWidget {
               Icons.access_time,
             ) : const Text(''),
             title: Text(
-              controller.value != null ? _dateFormatter.format(controller.value!) : '',
+              controller.value != null ? getRelativeDateString(context, _dateFormatter, controller.value!) : '',
               textAlign: TextAlign.left,
             ),
             onTap: () async {

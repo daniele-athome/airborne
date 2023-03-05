@@ -57,6 +57,44 @@ String getExceptionMessage(dynamic error) {
   }
 }
 
+String getRelativeDateString(BuildContext context, DateFormat formatter, DateTime value) {
+  if (value.isToday) {
+    return AppLocalizations.of(context)!.relativeDate_today(formatter.format(value));
+  }
+  else if (value.isYesterday) {
+    return AppLocalizations.of(context)!.relativeDate_yesterday(formatter.format(value));
+  }
+  else if (value.isTomorrow) {
+    return AppLocalizations.of(context)!.relativeDate_tomorrow(formatter.format(value));
+  }
+  else {
+    return formatter.format(value);
+  }
+}
+
+extension DateHelpers on DateTime {
+  bool get isToday {
+    final now = DateTime.now();
+    return now.day == day &&
+        now.month == month &&
+        now.year == year;
+  }
+
+  bool get isYesterday {
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return yesterday.day == day &&
+        yesterday.month == month &&
+        yesterday.year == year;
+  }
+
+  bool get isTomorrow {
+    final yesterday = DateTime.now().add(const Duration(days: 1));
+    return yesterday.day == day &&
+        yesterday.month == month &&
+        yesterday.year == year;
+  }
+}
+
 extension NumberFormatTryParse on NumberFormat {
   num? tryParse(String text) {
     try {

@@ -1,64 +1,27 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/googleapis.dart';
-import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/models/activities_models.dart';
-import 'package:airborne/screens/main/main_screen.dart' as main_screen;
 import 'package:airborne/models/book_flight_models.dart';
 import 'package:airborne/models/flight_log_models.dart';
+import 'package:airborne/screens/main/main_screen.dart' as main_screen;
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:airborne/services/activities_services.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:airborne/services/flight_log_services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart';
 
 import 'screenshots_data.dart';
-
-Future<void> main() async {
-  enableFlutterDriverExtension(handler: (message) {
-    String? result;
-    switch (message) {
-      case 'getPlatform':
-        result = defaultTargetPlatform.toString();
-        break;
-    }
-    return Future.value(result);
-  });
-
-  await findSystemLocale();
-  tz_data.initializeTimeZones();
-  final appConfig = FakeAppConfig();
-  await appConfig.init();
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AppConfig>.value(
-          value: appConfig
-        ),
-        ChangeNotifierProvider<DownloadProvider>(
-          create: (context) => DownloadProvider(() => HttpClient())
-        ),
-      ],
-      child: const MainNavigationApp(),
-    ),
-  );
-}
 
 /// Generates some random events within the current month so they appear immediately.
 List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
@@ -72,7 +35,7 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
     'Flight school',
     'Anyone with me?',
   ];
-  
+
   final now = DateTime.now();
   // matches with the one in the zip file
   final location = getLocation('Europe/Rome');
@@ -203,7 +166,9 @@ List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
 // Another way could be by accepting a few constructor parameters...
 class MainNavigationApp extends StatelessWidget {
-  const MainNavigationApp({Key? key}) : super(key: key);
+  MainNavigationApp({Key? key, this.initialRoute}) : super(key: key);
+
+  final String? initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +186,7 @@ class MainNavigationApp extends StatelessWidget {
           supportedLocales: AppLocalizations.supportedLocales,
           // TEST
           //locale: const Locale('it', ''),
-          initialRoute: 'pilot-select',
+          initialRoute: initialRoute ?? (appConfig.pilotName != null ? '/' : 'pilot-select'),
           routes: <String, WidgetBuilder>{
             '/': (context) => main_screen.MainNavigation.withServices(appConfig,
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
@@ -254,12 +219,16 @@ class MainNavigationApp extends StatelessWidget {
 }
 
 class FakeAppConfig extends AppConfig {
+  final String? initPilotName;
+
+  FakeAppConfig() : initPilotName = null;
+  FakeAppConfig.withPilotName(this.initPilotName);
 
   @override
   Future<void> init() async {
     prefs = FakeSharedPreferences({
       'currentAircraft': 'a1234',
-      //'pilotName': 'Anna',
+      'pilotName': initPilotName,
     });
 
     //final dataFile = File('test_driver/screenshots_data.zip');
@@ -406,7 +375,7 @@ class FakeCalendarService implements BookFlightCalendarService {
   @override
   Future<Iterable<FlightBooking>> search(DateTime timeMin, DateTime timeMax) {
     return Future.value(events.where((element) =>
-      (element.from.isAfter(timeMin) || element.from == timeMin) && (element.to.isBefore(timeMax) || element.to == timeMax)
+    (element.from.isAfter(timeMin) || element.from == timeMin) && (element.to.isBefore(timeMax) || element.to == timeMax)
     ));
   }
 

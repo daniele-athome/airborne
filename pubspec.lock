@@ -735,9 +735,11 @@ packages:
   screenshots:
     dependency: "direct dev"
     description:
-      path: "/home/daniele/Playground/screenshots"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: afc6b4afc0d15f80492ec22c56be2bbd3548ea6b
+      url: "https://github.com/daniele-athome/screenshots"
+    source: git
     version: "3.0.0"
   shared_preferences:
     dependency: "direct main"

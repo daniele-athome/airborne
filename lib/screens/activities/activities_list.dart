@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
-import 'package:timeline_tile/timeline_tile.dart';
 
 import '../../helpers/utils.dart';
 import '../../models/activities_models.dart';
@@ -59,8 +57,11 @@ class _ActivitiesListState extends State<ActivitiesList> {
       }
 
       final items = widget.activitiesService.hasMoreData() ?
-      await widget.activitiesService.fetchItems() : <ActivityEntry>[];
-      final page = items.toList(growable: false).reversed.toList(growable: false);
+        await widget.activitiesService.fetchItems() : <ActivityEntry>[];
+      final page = items
+        // ignore done items for now
+        .where((entry) => entry.status != ActivityStatus.done)
+        .toList(growable: false);
 
       if (_firstTime) {
         if (page.isNotEmpty) {
@@ -205,31 +206,23 @@ class _EntryListItem extends StatelessWidget {
 
   final ActivityEntry entry;
 
-  static final _dateFormatter = DateFormat.yMEd();
-
   Color? _backgroundColor(BuildContext context, ActivityEntry entry) {
-    if (entry.type == ActivityType.critical && entry.status != ActivityStatus.done) {
-      return Colors.red.shade800;
-    }
     return isCupertino(context) ? CupertinoColors.systemFill.resolveFrom(context) : null;
   }
 
-  Color? _textColor(ActivityEntry entry) {
-    if (entry.type == ActivityType.critical && entry.status != ActivityStatus.done) {
-      return Colors.white;
-    }
-    return null;
-  }
-
-  Widget _entryIndicator(ActivityEntry entry) {
+  Widget _entryIndicator(BuildContext context, ActivityEntry entry) {
     const kIconSize = 20.0;
     final IconData icon;
     final Color bgColor;
     final Color iconColor;
+    final String text;
+    // FIXME "done" is filtered out for now
     if (entry.status == ActivityStatus.done) {
       bgColor = const Color(0xff6ad192);
       iconColor = Colors.white;
       icon = Icons.check;
+      // TODO i18n
+      text = "Fatto";
     }
     else {
       switch (entry.type) {
@@ -237,132 +230,124 @@ class _EntryListItem extends StatelessWidget {
           bgColor = Colors.blue;
           iconColor = Colors.white;
           icon = Icons.note_alt_outlined;
+          text = AppLocalizations.of(context)!.activities_activity_type_note;
           break;
         case ActivityType.minor:
           bgColor = Colors.teal;
           iconColor = Colors.white;
           icon = Icons.task_outlined;
+          text = AppLocalizations.of(context)!.activities_activity_type_minor;
           break;
         case ActivityType.notice:
           bgColor = Colors.deepPurpleAccent;
           iconColor = Colors.white;
           icon = Icons.notifications_active_outlined;
+          text = AppLocalizations.of(context)!.activities_activity_type_notice;
           break;
         case ActivityType.important:
           bgColor = Colors.amber;
           iconColor = Colors.white;
           icon = Icons.warning_amber_outlined;
+          text = AppLocalizations.of(context)!.activities_activity_type_important;
           break;
         case ActivityType.critical:
           bgColor = Colors.red;
           iconColor = Colors.white;
           icon = Icons.block_outlined;
+          text = AppLocalizations.of(context)!.activities_activity_type_critical;
           break;
         default:
           throw UnsupportedError("Unknown type: ${entry.type.name}");
       }
     }
 
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: bgColor,
-          ),
+    final dateTextColor = ThemeData.estimateBrightnessForColor(bgColor) == Brightness.light ?
+      Colors.black : Colors.white;
+    final textStyle = isCupertino(context) ?
+    CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+      fontSize: 18,
+      color: dateTextColor,
+    ) :
+    Theme.of(context).textTheme.bodyMedium!.copyWith(
+      color: dateTextColor,
+    );
+
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: bgColor,
         ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 30,
-              width: 30,
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 24,
+              width: 24,
               child: Icon(
                 icon,
                 size: kIconSize,
                 color: iconColor,
               ),
             ),
-          ),
-        ),
-      ],
+            const SizedBox(width: 4.0),
+            Text(text, style: textStyle),
+          ],
+        )
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final summaryTextStyle = isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle.copyWith(color: _textColor(entry)) :
-      Theme.of(context).textTheme.titleLarge!.copyWith(color: _textColor(entry));
-    final dateBackgroundColor = isCupertino(context) ?
-      CupertinoColors.link.resolveFrom(context) :
-      Theme.of(context).primaryColorLight;
-    final dateTextColor = ThemeData.estimateBrightnessForColor(dateBackgroundColor) == Brightness.light ?
-      Colors.black : Colors.white;
-    final dateTextStyle = isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-        fontSize: 14,
-        color: dateTextColor,
-      ) :
-      Theme.of(context).textTheme.labelMedium!.copyWith(
-        color: dateTextColor,
-      );
+      CupertinoTheme.of(context).textTheme.textStyle :
+      Theme.of(context).textTheme.titleLarge!;
     final contentTextStyle = isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 14, color: _textColor(entry)) :
-      Theme.of(context).textTheme.bodyMedium!.copyWith(color: _textColor(entry));
+      CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 14) :
+      Theme.of(context).textTheme.bodyMedium!;
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(entry.summary, style: summaryTextStyle),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              color: dateBackgroundColor,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(entry.summary, style: summaryTextStyle),
+                if (entry.description != null) const SizedBox(height: 4),
+                if (entry.description != null) Text(entry.description!, style: contentTextStyle),
+                const SizedBox(height: 8.0),
+                _entryIndicator(context, entry),
+                //const SizedBox(height: 8),
+                // TODO expire indicator (icon with different color for expired/not expired)
+              ],
             ),
-            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
-            child: Text(_dateFormatter.format(entry.creationDate), style: dateTextStyle)
           ),
-          if (entry.description != null) const SizedBox(height: 4),
-          if (entry.description != null) Text(entry.description!, style: contentTextStyle),
-          //const SizedBox(height: 8),
         ],
       ),
     );
 
-    return TimelineTile(
-      alignment: TimelineAlign.manual,
-      lineXY: 0.05,
-      indicatorStyle: IndicatorStyle(
-        padding: const EdgeInsets.all(8),
-        indicatorXY: 0.5,
-        drawGap: true,
-        width: 30,
-        height: 30,
-        indicator: _entryIndicator(entry),
-      ),
-      endChild: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: isCupertino(context) ?
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
-            color: _backgroundColor(context, entry),
-          ),
-          // no shadow, so we manually create a margin
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          child: content,
-        ) :
-        Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: isCupertino(context) ?
+      Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
           color: _backgroundColor(context, entry),
-          elevation: 5,
-          child: content,
         ),
+        // no shadow, so we manually create a margin
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        child: content,
+      ) :
+      Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        color: _backgroundColor(context, entry),
+        elevation: 5,
+        child: content,
       ),
     );
   }

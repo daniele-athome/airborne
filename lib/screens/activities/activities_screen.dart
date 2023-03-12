@@ -54,7 +54,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: ActivitiesList(
           controller: _activitiesController,
           activitiesService: _activitiesService,

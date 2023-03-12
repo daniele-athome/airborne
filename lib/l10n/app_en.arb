@@ -155,6 +155,11 @@
   "activities_error_noItemsFound": "Nothing to do!",
   "activities_error_firstPageIndicator": "Something went wrong.",
   "activities_error_newPageIndicator": "Something went wrong. Tap to retry.",
+  "activities_activity_type_note": "Note",
+  "activities_activity_type_minor": "Minor",
+  "activities_activity_type_notice": "Notice",
+  "activities_activity_type_important": "Important",
+  "activities_activity_type_critical": "Critical",
 
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",

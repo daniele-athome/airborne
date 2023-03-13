@@ -124,18 +124,22 @@ class _ActivitiesListState extends State<ActivitiesList> {
           CupertinoSliverRefreshControl(
             onRefresh: () => _refresh(),
           ),
-          PagedSliverList.separated(
-            pagingController: _pagingController,
-            separatorBuilder: (context, index) => const SizedBox.shrink(),
-            builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
-              itemBuilder: _buildListItem,
-              firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
-              newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
-              noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
-              firstPageProgressIndicatorBuilder: (context) => const CupertinoActivityIndicator(radius: 20),
-              newPageProgressIndicatorBuilder: (context) => const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: CupertinoActivityIndicator(radius: 16),
+          SliverPadding(
+            // 2 points less because something else is adding padding
+            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            sliver: PagedSliverList.separated(
+              pagingController: _pagingController,
+              separatorBuilder: (context, index) => const SizedBox.shrink(),
+              builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
+                itemBuilder: _buildListItem,
+                firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
+                newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
+                noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
+                firstPageProgressIndicatorBuilder: (context) => const CupertinoActivityIndicator(radius: 20),
+                newPageProgressIndicatorBuilder: (context) => const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: CupertinoActivityIndicator(radius: 16),
+                ),
               ),
             ),
           ),
@@ -147,6 +151,7 @@ class _ActivitiesListState extends State<ActivitiesList> {
         onRefresh: () => _refresh(),
         child: PagedListView.separated(
           physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
           pagingController: _pagingController,
           separatorBuilder: (context, index) => const SizedBox.shrink(),
           builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
@@ -265,7 +270,7 @@ class _EntryListItem extends StatelessWidget {
       Colors.black : Colors.white;
     final textStyle = isCupertino(context) ?
     CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-      fontSize: 18,
+      fontSize: 14,
       color: dateTextColor,
     ) :
     Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -330,7 +335,7 @@ class _EntryListItem extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: isCupertino(context) ?
       Container(
         decoration: BoxDecoration(

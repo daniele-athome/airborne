@@ -307,7 +307,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                   CupertinoButton.filled(
                     onPressed: onTryAgain,
                     child: Text(
-                      AppLocalizations.of(context)!.flightLog_button_error_retry,
+                      AppLocalizations.of(context)!.button_error_retry,
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -321,7 +321,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                       color: Colors.white,
                     ),
                     label: Text(
-                      AppLocalizations.of(context)!.flightLog_button_error_retry,
+                      AppLocalizations.of(context)!.button_error_retry,
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,

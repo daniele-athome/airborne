@@ -14,6 +14,7 @@
   "button_goToday": "Oggi",
   "button_bookFlight": "Prenota",
   "button_logFlight": "Registra volo",
+  "button_error_retry": "Riprova",
 
   "error_generic_network_timeout": "Il server non risponde.",
 
@@ -26,7 +27,6 @@
   "bookFlight_view_week": "Settimana",
   "bookFlight_view_day": "Giorno",
   "bookFlight_span_days": "Giorno {current} / {total}",
-  "bookFlight_button_error_retry": "Riprova",
   "bookFlight_message_flight_added": "Prenotazione effettuata.",
   "bookFlight_message_flight_canceled": "Prenotazione cancellata.",
   "bookFlight_message_flight_updated": "Prenotazione modificata.",
@@ -55,7 +55,6 @@
   "flightLog_message_flight_added": "Volo registrato.",
   "flightLog_message_flight_canceled": "Volo cancellato.",
   "flightLog_message_flight_updated": "Volo modificato.",
-  "flightLog_button_error_retry": "Riprova",
   "flightLog_error_noItemsFound": "Nessun volo registrato.",
   "flightLog_error_firstPageIndicator": "Qualcosa è andato storto.",
   "flightLog_error_newPageIndicator": "Qualcosa è andato storto. Tocca per riprovare.",
@@ -102,7 +101,6 @@
   "flightLogModal_dialog_working": "Un attimo...",
 
   "activities_title": "Attività",
-  "activities_button_error_retry": "Riprova",
   "activities_error_noItemsFound": "Nulla da segnalare!",
   "activities_error_firstPageIndicator": "Qualcosa è andato storto.",
   "activities_error_newPageIndicator": "Qualcosa è andato storto. Tocca per riprovare.",

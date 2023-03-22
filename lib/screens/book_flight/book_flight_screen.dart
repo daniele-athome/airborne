@@ -300,7 +300,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                 Navigator.pop(dialogContext);
                 retryCallback();
               },
-              child: Text(AppLocalizations.of(context)!.bookFlight_button_error_retry),
+              child: Text(AppLocalizations.of(context)!.button_error_retry),
             ),
           ],
         ),
@@ -313,7 +313,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(days: 1),
         action: SnackBarAction(
-          label: AppLocalizations.of(context)!.bookFlight_button_error_retry,
+          label: AppLocalizations.of(context)!.button_error_retry,
           textColor: Colors.white,
           onPressed: () {
             _hideError();

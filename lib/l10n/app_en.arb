@@ -17,6 +17,7 @@
   "button_goToday": "Today",
   "button_bookFlight": "Book",
   "button_logFlight": "Log flight",
+  "button_error_retry": "Retry",
 
   "error_generic_network_timeout": "Server did not respond.",
 
@@ -67,7 +68,6 @@
       }
     }
   },
-  "bookFlight_button_error_retry": "Retry",
   "bookFlight_message_flight_added": "Flight booked successfully.",
   "bookFlight_message_flight_canceled": "Flight canceled successfully.",
   "bookFlight_message_flight_updated": "Flight saved successfully.",
@@ -96,7 +96,6 @@
   "flightLog_message_flight_added": "Flight registered successfully.",
   "flightLog_message_flight_canceled": "Flight deleted successfully.",
   "flightLog_message_flight_updated": "Flight saved successfully.",
-  "flightLog_button_error_retry": "Retry",
   "flightLog_error_noItemsFound": "No registered flights.",
   "flightLog_error_firstPageIndicator": "Something went wrong.",
   "flightLog_error_newPageIndicator": "Something went wrong. Tap to retry.",
@@ -151,7 +150,6 @@
   "flightLogModal_dialog_working": "Please wait...",
 
   "activities_title": "Activities",
-  "activities_button_error_retry": "Retry",
   "activities_error_noItemsFound": "Nothing to do!",
   "activities_error_firstPageIndicator": "Something went wrong.",
   "activities_error_newPageIndicator": "Something went wrong. Tap to retry.",

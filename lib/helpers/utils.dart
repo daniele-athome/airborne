@@ -305,6 +305,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                 width: double.infinity,
                 child: isCupertino(context) ?
                   CupertinoButton.filled(
+                    key: const Key('button_error_retry'),
                     onPressed: onTryAgain,
                     child: Text(
                       AppLocalizations.of(context)!.button_error_retry,
@@ -315,6 +316,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                     ),
                   ) :
                   ElevatedButton.icon(
+                    key: const Key('button_error_retry'),
                     onPressed: onTryAgain,
                     icon: const Icon(
                       Icons.refresh,

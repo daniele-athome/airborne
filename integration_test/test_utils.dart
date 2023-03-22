@@ -67,6 +67,18 @@ void mockGoogleCalendarApi() {
       });
 }
 
+void mockGoogleSheetsApi() {
+  final base = nock('https://sheets.googleapis.com');
+  base.get(matches(r'^/v4/spreadsheets/NONE/values/.+'))
+    ..query((Map<String, String> params) => true)
+    ..persist()
+    ..reply(200, json.encode({
+      "items": [],
+    }), headers: {
+      'content-type': 'application/json',
+    });
+}
+
 void unmockAllHttp() {
   nock.cleanAll();
   HttpOverrides.global = null;

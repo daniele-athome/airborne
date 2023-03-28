@@ -1,14 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
+import 'package:airborne/models/flight_log_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nock/nock.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:random_date/random_date.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'test_aircraft_data.dart';
+
+final _kRandom = Random();
 
 /// TODO is there a better way to do this?
 Future<bool> waitForWidget(WidgetTester tester, Finder finder, int seconds) async {
@@ -40,8 +45,27 @@ Future setUpDummyAircraft({bool setPilot = true}) async {
   await dataFile.writeAsBytes(kTestAircraftData);
 }
 
-void mockGoogleAuthentication() {
-  nock('https://oauth2.googleapis.com').post('/token',
+int randomBetween(int min, int max) => min + _kRandom.nextInt((max+1) - min);
+
+FlightLogItem randomFlightLogItem(int id) {
+  final hourStart = randomBetween(1000, 2000);
+  final hourEnd = randomBetween(hourStart, 2000);
+  return FlightLogItem(
+    id.toString(),
+    RandomDate.withRange(2021, 2023).random(),
+    "Anna",
+    "Fly Berlin",
+    "London Heathrow",
+    hourStart,
+    hourEnd,
+    null,
+    null,
+    "HELLO"
+  );
+}
+
+Interceptor mockGoogleAuthentication() {
+  return nock('https://oauth2.googleapis.com').post('/token',
     (List<int> body, ContentType contentType) => true,
   )
     ..persist()
@@ -55,9 +79,9 @@ void mockGoogleAuthentication() {
     });
 }
 
-void mockGoogleCalendarApi() {
+Interceptor mockGoogleCalendarApi() {
   final base = nock('https://www.googleapis.com/calendar/v3');
-  base.get(startsWith('/calendars/NONE/events'))
+  return base.get(startsWith('/calendars/NONE/events'))
       ..query((Map<String, String> params) => true)
       ..persist()
       ..reply(200, json.encode({
@@ -65,18 +89,6 @@ void mockGoogleCalendarApi() {
       }), headers: {
         'content-type': 'application/json',
       });
-}
-
-void mockGoogleSheetsApi() {
-  final base = nock('https://sheets.googleapis.com');
-  base.get(matches(r'^/v4/spreadsheets/NONE/values/.+'))
-    ..query((Map<String, String> params) => true)
-    ..persist()
-    ..reply(200, json.encode({
-      "items": [],
-    }), headers: {
-      'content-type': 'application/json',
-    });
 }
 
 void unmockAllHttp() {

@@ -122,6 +122,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
 
   Widget _buildBody(BuildContext context) {
     return FlightLogList(
+      key: const Key('list_flight_log'),
       controller: _logBookController,
       logBookService: _logBookService,
       onTapItem: (context, item) => _onTapItem(context, item),

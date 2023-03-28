@@ -716,6 +716,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  random_date:
+    dependency: "direct dev"
+    description:
+      name: random_date
+      sha256: "9d33bda9fc297a415d2861401157af1833f979429417246190cf84a4e7387346"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7"
   resource_portable:
     dependency: transitive
     description:

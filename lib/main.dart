@@ -34,6 +34,7 @@ Future<void> main() async {
       }
     }
     else {
+      // FIXME doesn't work in tests, use debugPrint (it should be overridden in tests)
       developer.log(
         record.message,
         time: record.time,

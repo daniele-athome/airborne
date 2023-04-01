@@ -13,26 +13,26 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: d74f051467a841ce893a50ebeb420b7a5695f985d2781e22b3927fbc849aea45
+      sha256: a36ec4843dc30ea6bf652bf25e3448db6c5e8bcf4aa55f063a5d1dad216d8214
       url: "https://pub.dev"
     source: hosted
-    version: "57.0.0"
+    version: "58.0.0"
   adaptive_dialog:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      sha256: "5dea5b051a217d127b57587686990131488f964a9d2ea1142401f101e18795df"
+      sha256: "665e90c9eecdbf0aa953a9e1fce5da6c8db3d3357c450262b9c534a54e939119"
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.2"
+    version: "1.8.3"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
-      sha256: b665679cdccab0c754e65021f01087c6fab07a0b13659dd58827f765739b40f8
+      sha256: cc4242565347e98424ce9945c819c192ec0838cb9d1f6aa4a97cc96becbc5b27
       url: "https://pub.dev"
     source: hosted
-    version: "5.9.0"
+    version: "5.10.0"
   animations:
     dependency: transitive
     description:
@@ -528,10 +528,10 @@ packages:
     dependency: "direct dev"
     description:
       name: mockito
-      sha256: "2a8a17b82b1bde04d514e75d90d634a0ac23f6cb4991f6098009dd56836aeafe"
+      sha256: dd61809f04da1838a680926de50a9e87385c1de91c6579629c3d1723946e8059
       url: "https://pub.dev"
     source: hosted
-    version: "5.3.2"
+    version: "5.4.0"
   nested:
     dependency: transitive
     description:
@@ -608,10 +608,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "12eee51abdf4d34c590f043f45073adbb45514a108bd9db4491547a2fd891059"
+      sha256: "818b2dc38b0f178e0ea3f7cf3b28146faab11375985d815942a68eee11c2d0f7"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   path_provider_linux:
     dependency: transitive
     description:
@@ -753,58 +753,58 @@ packages:
     dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: "78528fd87d0d08ffd3e69551173c026e8eacc7b7079c82eb6a77413957b7e394"
+      sha256: "858aaa72d8f61637d64e776aca82e1c67e6d9ee07979123c5d17115031c1b13b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.20"
+    version: "2.1.0"
   shared_preferences_android:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: ad423a80fe7b4e48b50d6111b3ea1027af0e959e49d485712e134863d9c1c521
+      sha256: "8304d8a1f7d21a429f91dee552792249362b68a331ac5c3c1caf370f658873f6"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.17"
+    version: "2.1.0"
   shared_preferences_foundation:
     dependency: transitive
     description:
       name: shared_preferences_foundation
-      sha256: "1e755f8583229f185cfca61b1d80fb2344c9d660e1c69ede5450d8f478fa5310"
+      sha256: cf2a42fb20148502022861f71698db12d937c7459345a1bdaa88fc91a91b3603
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.5"
+    version: "2.2.0"
   shared_preferences_linux:
     dependency: transitive
     description:
       name: shared_preferences_linux
-      sha256: "3a59ed10890a8409ad0faad7bb2957dab4b92b8fbe553257b05d30ed8af2c707"
+      sha256: "9d387433ca65717bbf1be88f4d5bb18f10508917a8fa2fb02e0fd0d7479a9afa"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.5"
+    version: "2.2.0"
   shared_preferences_platform_interface:
     dependency: transitive
     description:
       name: shared_preferences_platform_interface
-      sha256: "824bfd02713e37603b2bdade0842e47d56e7db32b1dcdd1cae533fb88e2913fc"
+      sha256: fb5cf25c0235df2d0640ac1b1174f6466bd311f621574997ac59018a6664548d
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.2.0"
   shared_preferences_web:
     dependency: transitive
     description:
       name: shared_preferences_web
-      sha256: "0dc2633f215a3d4aa3184c9b2c5766f4711e4e5a6b256e62aafee41f89f1bfb8"
+      sha256: "74083203a8eae241e0de4a0d597dbedab3b8fef5563f33cf3c12d7e93c655ca5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.6"
+    version: "2.1.0"
   shared_preferences_windows:
     dependency: transitive
     description:
       name: shared_preferences_windows
-      sha256: "71bcd669bb9cdb6b39f22c4a7728b6d49e934f6cba73157ffa5a54f1eed67436"
+      sha256: "5e588e2efef56916a3b229c3bfe81e6a525665a454519ca51dbcc4236a274173"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.5"
+    version: "2.2.0"
   shelf:
     dependency: transitive
     description:
@@ -934,34 +934,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: a91ba8f2ae2bd891004515fcae98330eb40b8bece639a5660ed27bdbb9917e54
+      sha256: "12d19a40f666e4e7a2d41d1a4a3c36acef6220261b43dcbd6c5573b26b465ea9"
       url: "https://pub.dev"
     source: hosted
-    version: "20.4.54"
+    version: "21.1.37"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "3979f0b1c5a97422cadae52d476c21fa3e0fb671ef51de6cae1d646d8b99fe1f"
+      sha256: f23067e46b781d488abf8e22e5608ca9972b49562e95f9e46cb6134e968f721b
       url: "https://pub.dev"
     source: hosted
-    version: "20.4.54"
+    version: "21.1.37"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: e4d4794d54f3a315046031d431a27e0d7350544b1bef0bcd1d2acf58f940dd37
+      sha256: c9c0b90c10aec611266432fe34640fc6a46afe41cdeea39564d002f6c43daf91
       url: "https://pub.dev"
     source: hosted
-    version: "20.4.54"
+    version: "21.1.37"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: "6dd7d3f262eb83dc13249d816ebaebfe00901f5a748029cd47f53c680f3361e3"
+      sha256: "5134c71f4da0451f8fc113260aacc666e44c44b74aeb31200a8656ed3bf28443"
       url: "https://pub.dev"
     source: hosted
-    version: "20.4.54"
+    version: "21.1.37"
   term_glyph:
     dependency: transitive
     description:
@@ -1023,7 +1023,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "6c670f643ffe213958871e2e537e9725b87354d6"
+      resolved-ref: a6c6507f8911cd6464b20c5660dbe0f3155ba5ef
       url: "https://github.com/daniele-athome/tool_base.git"
     source: git
     version: "2.0.0"
@@ -1208,10 +1208,10 @@ packages:
     dependency: transitive
     description:
       name: yaon
-      sha256: "2fd803f305f6afdd9714c28903c93d724006179ce2503704f42498d2f93d235a"
+      sha256: "1b0946e7ff0111e10a75ed47c4bdffc56487fd89a870e83786383c7a0bc402b8"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2+1"
+    version: "1.0.2+2"
 sdks:
   dart: ">=2.19.0 <3.0.0"
   flutter: ">=3.7.0"

@@ -436,22 +436,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.1"
-  json_class:
-    dependency: transitive
-    description:
-      name: json_class
-      sha256: "6a9cc5edd2ecabdda178572289aa9eb10052aff6836b62b0b6e9983a3a6597ea"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.1+2"
-  json_schema2:
+  json_schema:
     dependency: "direct main"
     description:
-      name: json_schema2
-      sha256: "7d9dfbaa34200ae7be3c408817f1a497bef6ef72a9455fdc378b9510bfbb1b66"
+      name: json_schema
+      sha256: d9325bc3033934e6da6f1a2cd592533dc867dd1c0f740c6ae69c31d6756838d9
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4+2"
+    version: "5.1.1"
   lint:
     dependency: "direct dev"
     description:
@@ -732,14 +724,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-  rest_client:
+  rfc_6901:
     dependency: transitive
     description:
-      name: rest_client
-      sha256: "7bc13fc4d36cfdcb98b4936fd7871d07cd69b97d98fad8223e8016785ea14b3b"
+      name: rfc_6901
+      sha256: "8d97680dada633146cf75ab9382f2ce2b7e4bd63ceecd867416cf43b5832b988"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.1+9"
+    version: "0.1.1"
   screenshots:
     dependency: "direct dev"
     description:
@@ -1116,14 +1108,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.7"
   validators:
     dependency: "direct main"
     description:
@@ -1204,14 +1188,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  yaon:
-    dependency: transitive
-    description:
-      name: yaon
-      sha256: "01ca95714b241aa40853f4119fffd60b56e21cb247d964ed2e9890d23fa1d3e0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
 sdks:
   dart: ">=3.0.0 <4.0.0"
   flutter: ">=3.10.0"

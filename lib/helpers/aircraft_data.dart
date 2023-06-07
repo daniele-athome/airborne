@@ -5,7 +5,7 @@ import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:json_schema2/json_schema2.dart';
+import 'package:json_schema/json_schema.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -114,8 +114,9 @@ class AircraftDataReader {
     _log.finest(metadata);
 
     final schemaData = await rootBundle.loadString('assets/aircraft.schema.json');
-    final schema = JsonSchema.createSchema(schemaData);
-    if (schema.validate(metadata)) {
+    final schema = JsonSchema.create(schemaData);
+    final validation = schema.validate(metadata);
+    if (validation.isValid) {
       // aircraft picture
       final aircraftPic = archive.findFile(_kAircraftPicFilename);
       if (aircraftPic == null || !aircraftPic.isFile) {

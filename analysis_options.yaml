@@ -13,3 +13,5 @@ linter:
   rules:
     avoid_redundant_argument_values: false
     avoid_positional_boolean_parameters: false
+    prefer_relative_imports: true
+    use_key_in_widget_constructors: true

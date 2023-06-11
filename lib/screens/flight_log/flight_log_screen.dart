@@ -87,15 +87,11 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
           child: FlightLogModal(model),
         );
 
-    final route = isCupertino(context)
-        ? CupertinoPageRoute(
-            builder: pageRouteBuilder,
-            fullscreenDialog: true,
-          )
-        : MaterialPageRoute(
-            builder: pageRouteBuilder,
-            fullscreenDialog: true,
-          );
+    final route = platformPageRoute(
+      context: context,
+      builder: pageRouteBuilder,
+      fullscreenDialog: true,
+    );
     Navigator.of(context, rootNavigator: true).push(route).then((result) {
       if (result != null) {
         final String message;
@@ -133,6 +129,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
 
     return PlatformScaffold(
       iosContentPadding: true,
+      // not using PlatformAppBar for Cupertino here (see below)
       appBar: isCupertino(context)
           ? null
           : PlatformAppBar(

@@ -116,17 +116,32 @@ class _FlightLogListState extends State<FlightLogList> {
   @override
   Widget build(BuildContext context) {
     // TODO test scrolling physics with no content
-    if (isCupertino(context)) {
-      return CustomScrollView(
+    return PlatformWidget(
+      material: (context, platform) => RefreshIndicator(
+        onRefresh: () => _refresh(),
+        child: PagedListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          pagingController: _pagingController,
+          separatorBuilder: (context, index) => FlightLogListDivider(),
+          builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
+            itemBuilder: _buildListItem,
+            firstPageErrorIndicatorBuilder: (context) =>
+                firstPageErrorIndicator(context),
+            newPageErrorIndicatorBuilder: (context) =>
+                newPageErrorIndicator(context),
+            noItemsFoundIndicatorBuilder: (context) =>
+                noItemsFoundIndicator(context),
+          ),
+        ),
+      ),
+      cupertino: (context, platform) => CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverRefreshControl(
             onRefresh: () => _refresh(),
           ),
           PagedSliverList.separated(
             pagingController: _pagingController,
-            separatorBuilder: (context, index) => isCupertino(context)
-                ? buildCupertinoFormRowDivider(context, true)
-                : const Divider(height: 0),
+            separatorBuilder: (context, index) => FlightLogListDivider(),
             builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
               itemBuilder: _buildListItem,
               firstPageErrorIndicatorBuilder: (context) =>
@@ -144,28 +159,8 @@ class _FlightLogListState extends State<FlightLogList> {
             ),
           ),
         ],
-      );
-    } else {
-      return RefreshIndicator(
-        onRefresh: () => _refresh(),
-        child: PagedListView.separated(
-          physics: const AlwaysScrollableScrollPhysics(),
-          pagingController: _pagingController,
-          separatorBuilder: (context, index) => isCupertino(context)
-              ? buildCupertinoFormRowDivider(context, true)
-              : const Divider(height: 0),
-          builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
-            itemBuilder: _buildListItem,
-            firstPageErrorIndicatorBuilder: (context) =>
-                firstPageErrorIndicator(context),
-            newPageErrorIndicatorBuilder: (context) =>
-                newPageErrorIndicator(context),
-            noItemsFoundIndicatorBuilder: (context) =>
-                noItemsFoundIndicator(context),
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -191,31 +186,38 @@ class FlightLogListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateStyle = (isCupertino(context)
-            ? CupertinoTheme.of(context).textTheme.textStyle
-            : Theme.of(context).textTheme.bodyLarge!)
-        .copyWith(
-      fontSize: 16,
+    final dateStyle = platformThemeData(
+      context,
       // TODO do we need this? -- fontWeight: FontWeight.bold,
+      material: (ThemeData data) =>
+          data.textTheme.bodyLarge!.copyWith(fontSize: 16),
+      cupertino: (CupertinoThemeData data) =>
+          data.textTheme.textStyle.copyWith(fontSize: 16),
     );
-    final subtitleStyle = isCupertino(context)
-        ? CupertinoTheme.of(context).textTheme.textStyle
-        : Theme.of(context)
-            .textTheme
-            .titleMedium!
-            .copyWith(color: Theme.of(context).textTheme.bodySmall!.color);
-    final pilotStyle = (isCupertino(context)
-            ? CupertinoTheme.of(context).textTheme.textStyle
-            : Theme.of(context).textTheme.bodyMedium!)
-        .copyWith(
-      fontSize: 17,
+    final subtitleStyle = platformThemeData(
+      context,
+      material: (ThemeData data) => data.textTheme.titleMedium!
+          .copyWith(color: data.textTheme.bodySmall!.color),
+      cupertino: (CupertinoThemeData data) => data.textTheme.textStyle,
+    );
+    final pilotStyle = platformThemeData(
+      context,
       // TODO do we need this? -- fontWeight: FontWeight.w300,
+      material: (ThemeData data) => data.textTheme.bodyMedium!.copyWith(
+        fontSize: 17,
+      ),
+      cupertino: (CupertinoThemeData data) => data.textTheme.textStyle.copyWith(
+        fontSize: 17,
+      ),
     );
-    final timeStyle = (isCupertino(context)
-            ? CupertinoTheme.of(context).textTheme.textStyle
-            : Theme.of(context).textTheme.bodyMedium!)
-        .copyWith(
-      fontSize: 20,
+    final timeStyle = platformThemeData(
+      context,
+      material: (ThemeData data) => data.textTheme.bodyMedium!.copyWith(
+        fontSize: 20,
+      ),
+      cupertino: (CupertinoThemeData data) => data.textTheme.textStyle.copyWith(
+        fontSize: 20,
+      ),
     );
 
     final listItem = Padding(
@@ -295,17 +297,17 @@ class FlightLogListItem extends StatelessWidget {
       ),
     );
 
-    if (isCupertino(context)) {
-      return CupertinoInkWell(
-        onPressed: () => onTapItem(context, item),
-        child: listItem,
-      );
-    } else {
-      return InkWell(
+    return PlatformWidgetBuilder(
+      material: (_, child, __) => InkWell(
         onTap: () => onTapItem(context, item),
-        child: listItem,
-      );
-    }
+        child: child,
+      ),
+      cupertino: (_, child, __) => CupertinoInkWell(
+        onPressed: () => onTapItem(context, item),
+        child: child!,
+      ),
+      child: listItem,
+    );
   }
 
   String _buildLocationName(FlightLogItem item) =>
@@ -356,4 +358,15 @@ class FlightLogListState {
 
   final num? lastEndHourMeter;
   final bool? empty;
+}
+
+class FlightLogListDivider extends PlatformWidget {
+  FlightLogListDivider({super.key});
+
+  @override
+  Widget createCupertinoWidget(BuildContext context) =>
+      buildCupertinoFormRowDivider(context, true);
+
+  @override
+  Widget createMaterialWidget(BuildContext context) => const Divider(height: 0);
 }

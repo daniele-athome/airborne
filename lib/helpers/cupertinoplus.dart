@@ -34,7 +34,7 @@ CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(
     CupertinoDynamicColor.withBrightness(
       //color: CupertinoTheme.of(context).barBackgroundColor,
       // FIXME non-transparent version of the above color, since it was causing problems with page transitions
-      color: const Color(0xFFEDEEEE),
+      color: const Color(0xFFF2F2F7),
       darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
     );
 

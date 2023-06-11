@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -26,11 +25,15 @@ class DateListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-      leading: showIcon ? const Icon(
-        Icons.access_time,
-      ) : const Text(''),
+      leading: showIcon
+          ? const Icon(
+              Icons.access_time,
+            )
+          : const Text(''),
       title: Text(
-        controller.value != null ? _dateFormatter.format(controller.value!) : '',
+        controller.value != null
+            ? _dateFormatter.format(controller.value!)
+            : '',
         textAlign: TextAlign.left,
         style: textStyle,
       ),
@@ -64,7 +67,6 @@ class DateListTile extends StatelessWidget {
       },
     );
   }
-
 }
 
 @immutable
@@ -92,15 +94,21 @@ class DateTimeListTile extends StatelessWidget {
           flex: 7,
           child: ListTile(
             contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
-            leading: showIcon ? const Icon(
-              Icons.access_time,
-            ) : const Text(''),
+            leading: showIcon
+                ? const Icon(
+                    Icons.access_time,
+                  )
+                : const Text(''),
             title: Text(
-              controller.value != null ? getRelativeDateString(context, _dateFormatter, controller.value!) : '',
+              controller.value != null
+                  ? getRelativeDateString(
+                      context, _dateFormatter, controller.value!)
+                  : '',
               textAlign: TextAlign.left,
             ),
             onTap: () async {
-              final initialDate = controller.value != null ? controller.value! : DateTime.now();
+              final initialDate =
+                  controller.value != null ? controller.value! : DateTime.now();
               final DateTime? date = await showDatePicker(
                 context: context,
                 initialDate: initialDate,
@@ -136,18 +144,18 @@ class DateTimeListTile extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
             title: Text(
-              controller.value != null ? DateFormat(kAviationTimeFormat).format(controller.value!) : '',
+              controller.value != null
+                  ? DateFormat(kAviationTimeFormat).format(controller.value!)
+                  : '',
               textAlign: TextAlign.right,
             ),
             onTap: () async {
-              final initialDate = controller.value != null ? controller.value! : DateTime.now();
-              final TimeOfDay? time =
-              await showTimePicker(
+              final initialDate =
+                  controller.value != null ? controller.value! : DateTime.now();
+              final TimeOfDay? time = await showTimePicker(
                 context: context,
                 initialTime: TimeOfDay(
-                    hour: initialDate.hour,
-                    minute: initialDate.minute
-                ),
+                    hour: initialDate.hour, minute: initialDate.minute),
                 /* TODO builder: (BuildContext context,
                                   Widget? child) {
                                 return Theme(
@@ -183,18 +191,13 @@ class DateTimeListTile extends StatelessWidget {
     var currentDate = controller.value;
     currentDate ??= DateTime.now();
     return controller.value = DateTime(
-      date.year, date.month, date.day,
-      currentDate.hour, currentDate.minute
-    );
+        date.year, date.month, date.day, currentDate.hour, currentDate.minute);
   }
 
   DateTime _setTime(TimeOfDay time) {
     var currentDate = controller.value;
     currentDate ??= DateTime.now();
-    return controller.value = DateTime(
-      currentDate.year, currentDate.month, currentDate.day,
-      time.hour, time.minute
-    );
+    return controller.value = DateTime(currentDate.year, currentDate.month,
+        currentDate.day, time.hour, time.minute);
   }
-
 }

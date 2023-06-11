@@ -8,7 +8,6 @@ import 'aircraft_data.dart';
 final Logger _log = Logger((AppConfig).toString());
 
 class AppConfig extends ChangeNotifier {
-
   @protected
   late SharedPreferences prefs;
 
@@ -22,8 +21,7 @@ class AppConfig extends ChangeNotifier {
       try {
         final aircraftReader = await loadAircraft(_currentAircraftId!);
         currentAircraft = aircraftReader.toAircraftData();
-      }
-      catch (e) {
+      } catch (e) {
         _log.info('Error loading current aircraft, cleaning everything ($e)');
         _currentAircraftId = null;
         pilotName = null;
@@ -41,11 +39,13 @@ class AppConfig extends ChangeNotifier {
       case 'book_flight':
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
-        return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] != null &&
+        return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] !=
+                null &&
             _currentAircraft!.backendInfo['flightlog_sheet_name'] != null &&
             _currentAircraft!.noPilotName != null;
       case 'activities':
-        return _currentAircraft!.backendInfo['activities_spreadsheet_id'] != null &&
+        return _currentAircraft!.backendInfo['activities_spreadsheet_id'] !=
+                null &&
             _currentAircraft!.backendInfo['activities_sheet_name'] != null;
       default:
         throw Exception('Unknown feature: $feature');
@@ -57,7 +57,8 @@ class AppConfig extends ChangeNotifier {
   }
 
   String get googleServiceAccountJson {
-    return _currentAircraft!.backendInfo['google_api_service_account']! as String;
+    return _currentAircraft!.backendInfo['google_api_service_account']!
+        as String;
   }
 
   String get googleApiKey {
@@ -70,14 +71,16 @@ class AppConfig extends ChangeNotifier {
 
   Map<String, String> get flightlogBackendInfo {
     return {
-      'spreadsheet_id': _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
+      'spreadsheet_id':
+          _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
     };
   }
 
   Map<String, String> get activitiesBackendInfo {
     return {
-      'spreadsheet_id': _currentAircraft!.backendInfo['activities_spreadsheet_id'],
+      'spreadsheet_id':
+          _currentAircraft!.backendInfo['activities_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['activities_sheet_name'],
     };
   }
@@ -125,9 +128,9 @@ class AppConfig extends ChangeNotifier {
   }
 
   ImageProvider getPilotAvatar(String name) {
-    return (name == _currentAircraft!.noPilotName ?
-      const AssetImage('assets/images/nopilot_avatar.png') :
-      FileImage(_currentAircraft!.getPilotAvatar(name))) as ImageProvider;
+    return (name == _currentAircraft!.noPilotName
+        ? const AssetImage('assets/images/nopilot_avatar.png')
+        : FileImage(_currentAircraft!.getPilotAvatar(name))) as ImageProvider;
   }
 
   ImageProvider get aircraftPicture {
@@ -141,8 +144,7 @@ class AppConfig extends ChangeNotifier {
   set _currentAircraftId(String? value) {
     if (value != null) {
       prefs.setString('currentAircraft', value);
-    }
-    else {
+    } else {
       prefs.remove('currentAircraft');
     }
   }
@@ -152,8 +154,7 @@ class AppConfig extends ChangeNotifier {
   set currentAircraft(AircraftData? data) {
     if (data != null) {
       _log.fine('Switching aircraft: ${data.callSign}');
-    }
-    else {
+    } else {
       deleteAircraftCache();
       _log.fine('Selecting no aircraft');
     }
@@ -189,8 +190,7 @@ class AppConfig extends ChangeNotifier {
   set pilotName(String? value) {
     if (value != null) {
       prefs.setString('pilotName', value);
-    }
-    else {
+    } else {
       prefs.remove('pilotName');
     }
     notifyListeners();
@@ -203,8 +203,7 @@ class AppConfig extends ChangeNotifier {
   set customFuelPrice(num? price) {
     if (price != null) {
       prefs.setDouble("fuelPrice", price.toDouble());
-    }
-    else {
+    } else {
       prefs.remove("fuelPrice");
     }
   }
@@ -220,5 +219,4 @@ class AppConfig extends ChangeNotifier {
       getPilotAvatar(name).evict();
     }
   }
-
 }

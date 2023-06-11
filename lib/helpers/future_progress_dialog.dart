@@ -7,20 +7,20 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import 'cupertinoplus.dart';
 
-Decoration _defaultDecoration(BuildContext context) => isCupertino(context) ?
-  BoxDecoration(
-    color: kCupertinoDialogScaffoldBackgroundColor(context).resolveFrom(context),
-    shape: BoxShape.rectangle,
-    borderRadius: const BorderRadius.all(Radius.circular(10)),
-  ) :
-  BoxDecoration(
-    color: Theme.of(context).dialogBackgroundColor,
-    shape: BoxShape.rectangle,
-    borderRadius: const BorderRadius.all(Radius.circular(10)),
-  );
+Decoration _defaultDecoration(BuildContext context) => isCupertino(context)
+    ? BoxDecoration(
+        color: kCupertinoDialogScaffoldBackgroundColor(context)
+            .resolveFrom(context),
+        shape: BoxShape.rectangle,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      )
+    : BoxDecoration(
+        color: Theme.of(context).dialogBackgroundColor,
+        shape: BoxShape.rectangle,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      );
 
 class FutureProgressDialog extends StatefulWidget {
-
   /// Dialog will be closed when [future] task is finished.
   @required
   final Future future;
@@ -51,7 +51,6 @@ class FutureProgressDialog extends StatefulWidget {
 }
 
 class _FutureProgressDialogState extends State<FutureProgressDialog> {
-
   @override
   void initState() {
     super.initState();
@@ -86,13 +85,13 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
             alignment: Alignment.center,
             padding: const EdgeInsets.all(20),
             decoration: widget.decoration ?? _defaultDecoration(context),
-            child: widget.progress ?? const CupertinoActivityIndicator(
-              radius: 24,
-            ),
+            child: widget.progress ??
+                const CupertinoActivityIndicator(
+                  radius: 24,
+                ),
           ),
         );
-      }
-      else {
+      } else {
         content = Center(
           child: Container(
             height: 120,
@@ -103,9 +102,10 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                widget.progress ?? const CupertinoActivityIndicator(
-                  radius: 24,
-                ),
+                widget.progress ??
+                    const CupertinoActivityIndicator(
+                      radius: 24,
+                    ),
                 const SizedBox(height: 10),
                 _buildText(context),
               ],
@@ -116,8 +116,7 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
 
       // no dialog needed
       return content;
-    }
-    else {
+    } else {
       if (widget.message == null) {
         content = Center(
           child: Container(
@@ -128,18 +127,18 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
             child: widget.progress ?? const CircularProgressIndicator(),
           ),
         );
-      }
-      else {
+      } else {
         content = Container(
           height: 100,
           padding: const EdgeInsets.all(20),
           decoration: widget.decoration ?? _defaultDecoration(context),
-          child:
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-            widget.progress ?? const CircularProgressIndicator(),
-            const SizedBox(width: 20),
-            _buildText(context)
-          ]),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                widget.progress ?? const CircularProgressIndicator(),
+                const SizedBox(width: 20),
+                _buildText(context)
+              ]),
         );
       }
 

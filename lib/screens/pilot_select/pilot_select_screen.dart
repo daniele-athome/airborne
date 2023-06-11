@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,8 +20,10 @@ class PilotSelectScreen extends StatelessWidget {
         title: Text(AppLocalizations.of(context)!.pilotSelect_title),
         automaticallyImplyLeading: false,
         material: (context, platform) => MaterialAppBarData(
-          toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
-            kPortraitToolbarHeight : kLandscapeToolbarHeight,
+          toolbarHeight:
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? kPortraitToolbarHeight
+                  : kLandscapeToolbarHeight,
         ),
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
@@ -49,7 +50,8 @@ class PilotSelectScreen extends StatelessWidget {
       builder: (dialogContext) => PlatformAlertDialog(
         title: Text(AppLocalizations.of(context)!.pilotSelect_confirm_title),
         // TODO name should be bold
-        content: Text(AppLocalizations.of(context)!.pilotSelect_confirm_message(name)),
+        content: Text(
+            AppLocalizations.of(context)!.pilotSelect_confirm_message(name)),
         actions: <Widget>[
           PlatformDialogAction(
             onPressed: () => Navigator.pop(dialogContext),
@@ -66,5 +68,4 @@ class PilotSelectScreen extends StatelessWidget {
       ),
     );
   }
-
 }

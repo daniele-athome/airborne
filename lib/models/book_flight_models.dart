@@ -20,26 +20,23 @@ class FlightBooking {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is FlightBooking &&
-              id == other.id;
+      identical(this, other) || other is FlightBooking && id == other.id;
 
   @override
-  int get hashCode => id?.hashCode?? 0;
+  int get hashCode => id?.hashCode ?? 0;
 
   bool equals(FlightBooking other) =>
       identical(this, other) ||
-          (id == other.id &&
-              pilotName == other.pilotName &&
-              from == other.from &&
-              to == other.to &&
-              notes == other.notes);
+      (id == other.id &&
+          pilotName == other.pilotName &&
+          from == other.from &&
+          to == other.to &&
+          notes == other.notes);
 
   @override
   String toString() {
     return 'FlightBooking{id: $id, pilotName: $pilotName, from: $from, to: $to, notes: $notes}';
   }
-
 }
 
 class DeletedFlightBooking extends FlightBooking {

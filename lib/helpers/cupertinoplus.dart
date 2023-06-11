@@ -6,11 +6,12 @@ import 'utils.dart';
 
 const double kDefaultCupertinoFormRowStartPadding = 20.0;
 
-const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding =
-    EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 6.0);
+const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding = EdgeInsets.symmetric(
+    horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 6.0);
 
 const EdgeInsetsGeometry kDefaultCupertinoFormRowWithHelperPadding =
-EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 12.0);
+    EdgeInsets.symmetric(
+        horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 12.0);
 
 const EdgeInsetsGeometry kDefaultCupertinoFormRowHorizontalPadding =
     EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding);
@@ -28,13 +29,14 @@ const kDefaultCupertinoFormMargin = EdgeInsets.only(
 );
 
 /// A trick for making the background of dialogs a little darker when in light mode.
-CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(BuildContext context) =>
-  CupertinoDynamicColor.withBrightness(
-    //color: CupertinoTheme.of(context).barBackgroundColor,
-    // FIXME non-transparent version of the above color, since it was causing problems with page transitions
-    color: const Color(0xFFEDEEEE),
-    darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
-  );
+CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(
+        BuildContext context) =>
+    CupertinoDynamicColor.withBrightness(
+      //color: CupertinoTheme.of(context).barBackgroundColor,
+      // FIXME non-transparent version of the above color, since it was causing problems with page transitions
+      color: const Color(0xFFEDEEEE),
+      darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
+    );
 
 /// From [CupertinoFormSection].
 Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
@@ -42,7 +44,8 @@ Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
   final double dividerHeight = 1.0 / MediaQuery.of(context).devicePixelRatio;
 
   return Container(
-    margin: (shortDivider) ? const EdgeInsetsDirectional.only(start: 15.0) : null,
+    margin:
+        (shortDivider) ? const EdgeInsetsDirectional.only(start: 15.0) : null,
     color: dividerColor,
     height: dividerHeight,
   );
@@ -68,7 +71,6 @@ class CupertinoInkWell extends StatefulWidget {
 }
 
 class _CupertinoInkWellState extends State<CupertinoInkWell> {
-
   bool _buttonHeldDown = false;
 
   void _handleTapDown(TapDownDetails event) {
@@ -108,7 +110,9 @@ class _CupertinoInkWellState extends State<CupertinoInkWell> {
       child: Semantics(
         button: true,
         child: Container(
-          color: _buttonHeldDown ? CupertinoColors.secondarySystemFill.resolveFrom(context) : widget.backgroundColor,
+          color: _buttonHeldDown
+              ? CupertinoColors.secondarySystemFill.resolveFrom(context)
+              : widget.backgroundColor,
           child: widget.child,
         ),
       ),
@@ -138,7 +142,6 @@ class CupertinoFormRowContainer extends StatelessWidget {
 
 /// A button-like [CupertinoFormRow]. Heavily inspired by [CupertinoButton].
 class CupertinoFormButtonRow extends StatefulWidget {
-
   const CupertinoFormButtonRow({
     Key? key,
     required this.child,
@@ -164,33 +167,30 @@ class CupertinoFormButtonRow extends StatefulWidget {
   State<CupertinoFormButtonRow> createState() => _CupertinoFormButtonRowState();
 }
 
-class _CupertinoFormButtonRowState extends State<CupertinoFormButtonRow> with SingleTickerProviderStateMixin {
-
+class _CupertinoFormButtonRowState extends State<CupertinoFormButtonRow>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return CupertinoInkWell(
       onPressed: widget.onPressed,
       child: Container(
         constraints:
-        const BoxConstraints(minHeight: kMinInteractiveDimensionCupertino),
+            const BoxConstraints(minHeight: kMinInteractiveDimensionCupertino),
         alignment: Alignment.center,
         child: CupertinoFormRow(
             prefix: widget.prefix,
             helper: widget.helper,
             error: widget.error,
             padding: widget.padding,
-            child: widget.child
-        ),
+            child: widget.child),
       ),
     );
   }
-
 }
 
 /// A Cupertino form field row that activates and date and time picker on tap.
 /// Inspired by [CupertinoTextFormFieldRow].
 class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
-
   // TODO other constructor parameters
   CupertinoDateTimeFormFieldRow({
     Key? key,
@@ -203,162 +203,171 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     DateTime? initialValue,
     void Function(DateTime value, DateTime oldValue)? onChanged,
     FormFieldSetter<DateTime>? onSaved,
-  }) :
-      assert(showDate || showTime, 'showDate and showTime cannot be both false!'),
-      super(
-        key: key,
-        initialValue: controller?.value ?? initialValue ?? DateTime.now(),
-        onSaved: onSaved,
-        builder: (FormFieldState<DateTime> field) {
-          void onTapDateHandler() {
-            showCupertinoModalPopup(
-              context: field.context,
-              builder: (context) => Container(
-                height: 300,
-                color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CupertinoButton(
-                          child: Text(doneButtonText),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: CupertinoDatePicker(
-                        mode: CupertinoDatePickerMode.date,
-                        onDateTimeChanged: (value) {
-                          final oldValue = field.value!;
-                          final newValue = DateTime(
-                            value.year,
-                            value.month,
-                            value.day,
-                            field.value!.hour,
-                            field.value!.minute,
-                          );
-                          field.didChange(newValue);
-                          if (onChanged != null) {
-                            onChanged(newValue, oldValue);
-                          }
-                        },
-                        initialDateTime: field.value,
+  })  : assert(showDate || showTime,
+            'showDate and showTime cannot be both false!'),
+        super(
+          key: key,
+          initialValue: controller?.value ?? initialValue ?? DateTime.now(),
+          onSaved: onSaved,
+          builder: (FormFieldState<DateTime> field) {
+            void onTapDateHandler() {
+              showCupertinoModalPopup(
+                context: field.context,
+                builder: (context) => Container(
+                  height: 300,
+                  color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          CupertinoButton(
+                            child: Text(doneButtonText),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.date,
+                          onDateTimeChanged: (value) {
+                            final oldValue = field.value!;
+                            final newValue = DateTime(
+                              value.year,
+                              value.month,
+                              value.day,
+                              field.value!.hour,
+                              field.value!.minute,
+                            );
+                            field.didChange(newValue);
+                            if (onChanged != null) {
+                              onChanged(newValue, oldValue);
+                            }
+                          },
+                          initialDateTime: field.value,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          void onTapTimeHandler() {
-            showCupertinoModalPopup(
-              context: field.context,
-              builder: (context) => Container(
-                height: 300,
-                color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CupertinoButton(
-                          child: Text(doneButtonText),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: CupertinoDatePicker(
-                        mode: CupertinoDatePickerMode.time,
-                        onDateTimeChanged: (value) {
-                          final oldValue = field.value!;
-                          final newValue = DateTime(
-                            field.value!.year,
-                            field.value!.month,
-                            field.value!.day,
-                            value.hour,
-                            value.minute,
-                          );
-                          field.didChange(newValue);
-                          if (onChanged != null) {
-                            onChanged(newValue, oldValue);
-                          }
-                        },
-                        use24hFormat: true,
-                        initialDateTime: field.value,
+            void onTapTimeHandler() {
+              showCupertinoModalPopup(
+                context: field.context,
+                builder: (context) => Container(
+                  height: 300,
+                  color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          CupertinoButton(
+                            child: Text(doneButtonText),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.time,
+                          onDateTimeChanged: (value) {
+                            final oldValue = field.value!;
+                            final newValue = DateTime(
+                              field.value!.year,
+                              field.value!.month,
+                              field.value!.day,
+                              value.hour,
+                              value.minute,
+                            );
+                            field.didChange(newValue);
+                            if (onChanged != null) {
+                              onChanged(newValue, oldValue);
+                            }
+                          },
+                          use24hFormat: true,
+                          initialDateTime: field.value,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          final TextStyle textStyle = CupertinoTheme.of(field.context).textTheme.textStyle;
+            final TextStyle textStyle =
+                CupertinoTheme.of(field.context).textTheme.textStyle;
 
-          // TODO refactor this
-          return showDate != showTime ?
-            CupertinoFormButtonRow(
-              onPressed: showDate ? onTapDateHandler : onTapTimeHandler,
-              padding: kDefaultCupertinoFormRowPadding,
-              prefix: prefix,
-              helper: helper,
-              child: showDate ? Text(
-                field.value != null ? DateFormat.yMEd().format(field.value!) : '',
-                style: textStyle,
-              ) : Text(
-                field.value != null ? DateFormat.Hm().format(field.value!) : '',
-                style: textStyle,
-              ),
-            ) :
-            CupertinoFormRowContainer(
-              child: CupertinoFormRow(
-                prefix: prefix,
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                    kDefaultCupertinoFormRowStartPadding, 0, 0, 0),
-                helper: helper,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // TODO tap color effect
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: onTapDateHandler,
-                      child: Padding(
-                        padding: helper != null
-                            ? kDefaultCupertinoFormRowWithHelperPadding
-                            : kDefaultCupertinoFormRowPadding,
-                        child: Text(
-                          field.value != null ? DateFormat.yMEd()
-                              .format(field.value!) : '',
-                          style: textStyle,
-                        ),
+            // TODO refactor this
+            return showDate != showTime
+                ? CupertinoFormButtonRow(
+                    onPressed: showDate ? onTapDateHandler : onTapTimeHandler,
+                    padding: kDefaultCupertinoFormRowPadding,
+                    prefix: prefix,
+                    helper: helper,
+                    child: showDate
+                        ? Text(
+                            field.value != null
+                                ? DateFormat.yMEd().format(field.value!)
+                                : '',
+                            style: textStyle,
+                          )
+                        : Text(
+                            field.value != null
+                                ? DateFormat.Hm().format(field.value!)
+                                : '',
+                            style: textStyle,
+                          ),
+                  )
+                : CupertinoFormRowContainer(
+                    child: CupertinoFormRow(
+                      prefix: prefix,
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          kDefaultCupertinoFormRowStartPadding, 0, 0, 0),
+                      helper: helper,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // TODO tap color effect
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: onTapDateHandler,
+                            child: Padding(
+                              padding: helper != null
+                                  ? kDefaultCupertinoFormRowWithHelperPadding
+                                  : kDefaultCupertinoFormRowPadding,
+                              child: Text(
+                                field.value != null
+                                    ? DateFormat.yMEd().format(field.value!)
+                                    : '',
+                                style: textStyle,
+                              ),
+                            ),
+                          ),
+                          // TODO tap color effect
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: onTapTimeHandler,
+                            child: Padding(
+                              padding: helper != null
+                                  ? kDefaultCupertinoFormRowWithHelperPadding
+                                  : kDefaultCupertinoFormRowPadding,
+                              child: Text(
+                                field.value != null
+                                    ? DateFormat.Hm().format(field.value!)
+                                    : '',
+                                style: textStyle,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    // TODO tap color effect
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: onTapTimeHandler,
-                      child: Padding(
-                        padding: helper != null
-                            ? kDefaultCupertinoFormRowWithHelperPadding
-                            : kDefaultCupertinoFormRowPadding,
-                        child: Text(
-                          field.value != null ? DateFormat.Hm().format(
-                              field.value!) : '',
-                          style: textStyle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-        },
-      );
+                  );
+          },
+        );
 
   final Widget? prefix;
 
@@ -369,7 +378,8 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   final String doneButtonText;
 
   @override
-  FormFieldState<DateTime> createState() => _CupertinoDateTimeFormFieldRowState();
+  FormFieldState<DateTime> createState() =>
+      _CupertinoDateTimeFormFieldRowState();
 }
 
 class _CupertinoDateTimeFormFieldRowState extends FormFieldState<DateTime> {
@@ -388,8 +398,7 @@ class _CupertinoDateTimeFormFieldRowState extends FormFieldState<DateTime> {
     setValue(widget.initialValue);
     if (widget.controller == null) {
       _controller = DateTimePickerController(widget.initialValue);
-    }
-    else {
+    } else {
       widget.controller!.addListener(_handleControllerChanged);
     }
   }
@@ -452,5 +461,4 @@ class _CupertinoDateTimeFormFieldRowState extends FormFieldState<DateTime> {
       didChange(_effectiveController!.value);
     }
   }
-
 }

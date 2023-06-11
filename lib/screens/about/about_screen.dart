@@ -52,25 +52,25 @@ class _AboutScreenState extends State<AboutScreen> {
     ).then((value) {
       if (value != null) {
         final userpass = value[0];
-        final downloadTask = downloadAircraftData(_appConfig.currentAircraft!.url!, userpass, _downloadProvider)
-          .then<AircraftData?>((AircraftData aircraftData) {
-            _appConfig.currentAircraft = aircraftData;
-            _appConfig.updateAircraft(aircraftData);
-            return aircraftData;
+        final downloadTask = downloadAircraftData(
+                _appConfig.currentAircraft!.url!, userpass, _downloadProvider)
+            .then<AircraftData?>((AircraftData aircraftData) {
+          _appConfig.currentAircraft = aircraftData;
+          _appConfig.updateAircraft(aircraftData);
+          return aircraftData;
         }).catchError((error, StackTrace? stacktrace) {
           _log.info('DOWNLOAD ERROR', error, stacktrace);
           // TODO specialize exceptions (e.g. network errors, others...)
           final String message;
           if (error is TimeoutException) {
-            message = AppLocalizations.of(context)!.error_generic_network_timeout;
-          }
-          else if (error is AircraftValidationException) {
-            message = AppLocalizations.of(context)!.addAircraft_error_invalid_datafile;
-          }
-          else if (error is AircraftStoreException) {
+            message =
+                AppLocalizations.of(context)!.error_generic_network_timeout;
+          } else if (error is AircraftValidationException) {
+            message = AppLocalizations.of(context)!
+                .addAircraft_error_invalid_datafile;
+          } else if (error is AircraftStoreException) {
             message = AppLocalizations.of(context)!.addAircraft_error_storing;
-          }
-          else {
+          } else {
             message = getExceptionMessage(error);
           }
 
@@ -81,9 +81,12 @@ class _AboutScreenState extends State<AboutScreen> {
         showPlatformDialog(
           context: context,
           builder: (context) {
-            return FutureProgressDialog(downloadTask,
-              message: isCupertino(context) ? null :
-              Text(AppLocalizations.of(context)!.addAircraft_dialog_downloading),
+            return FutureProgressDialog(
+              downloadTask,
+              message: isCupertino(context)
+                  ? null
+                  : Text(AppLocalizations.of(context)!
+                      .addAircraft_dialog_downloading),
             );
           },
         ).then((value) async {
@@ -104,7 +107,8 @@ class _AboutScreenState extends State<AboutScreen> {
       okCallback: () {
         _appConfig.pilotName = null;
         _appConfig.currentAircraft = null;
-        Navigator.of(context, rootNavigator: true).popAndPushNamed('aircraft-data');
+        Navigator.of(context, rootNavigator: true)
+            .popAndPushNamed('aircraft-data');
       },
     );
   }
@@ -113,14 +117,16 @@ class _AboutScreenState extends State<AboutScreen> {
     final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
     return [
       CupertinoFormSection(
-        header: Text(AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
+        header: Text(
+            AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
         children: [
           CupertinoFormRowContainer(
             child: CupertinoFormRow(
               padding: kDefaultCupertinoFormRowPadding,
-              prefix: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
+              prefix:
+                  Text(AppLocalizations.of(context)!.about_aircraft_callsign),
               child: Text(_appConfig.currentAircraft!.callSign,
-                style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+                  style: textStyle.copyWith(fontWeight: FontWeight.bold)),
             ),
           ),
           CupertinoFormButtonRow(
@@ -132,27 +138,30 @@ class _AboutScreenState extends State<AboutScreen> {
               children: [
                 Text(_appConfig.locationName, style: textStyle),
                 const SizedBox(width: 2),
-                Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+                Icon(CupertinoIcons.chevron_forward,
+                    color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
               ],
             ),
           ),
         ],
       ),
       CupertinoFormSection(
-        header: Text(AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
+        header: Text(
+            AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
         children: [
           ..._appConfig.pilotNames.map((e) => CupertinoFormRowContainer(
-            child: Padding(
-              padding: kDefaultCupertinoFormRowPadding,
-              child: Row(
-                children: [
-                  CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
-                  const SizedBox(width: 14),
-                  Expanded(child: Text(e, style: textStyle)),
-                ],
-              ),
-            ),
-          )),
+                child: Padding(
+                  padding: kDefaultCupertinoFormRowPadding,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                          foregroundImage: _appConfig.getPilotAvatar(e)),
+                      const SizedBox(width: 14),
+                      Expanded(child: Text(e, style: textStyle)),
+                    ],
+                  ),
+                ),
+              )),
         ],
       ),
       CupertinoFormSection(
@@ -166,11 +175,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 future: PackageInfo.fromPlatform(),
                 initialData: null,
                 builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
-                  snapshot.connectionState == ConnectionState.done ?
-                  '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
-                      : '',
-                  style: textStyle
-                ),
+                    snapshot.connectionState == ConnectionState.done
+                        ? '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+                        : '',
+                    style: textStyle),
               ),
             ),
           ),
@@ -178,38 +186,43 @@ class _AboutScreenState extends State<AboutScreen> {
             onPressed: () => openUrl(context, pubspec.homepage),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
-            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            child: Icon(CupertinoIcons.chevron_forward,
+                color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
           CupertinoFormButtonRow(
             onPressed: () => openUrl(context, pubspec.issueTracker),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_app_issues),
-            child: Icon(CupertinoIcons.chevron_forward, color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            child: Icon(CupertinoIcons.chevron_forward,
+                color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
         ],
       ),
       const SizedBox(height: kDefaultCupertinoFormSectionMargin),
       CupertinoFormSection(children: <Widget>[
-        if (_appConfig.currentAircraft!.url != null) Row(
-          children: [
-            Expanded(
-              child: CupertinoButton(
-                key: const Key('about_button_update_aircraft'),
-                onPressed: () => _onRefresh(context),
-                child: Text(AppLocalizations.of(context)!.about_app_update_aircraft,
-                  style: const TextStyle(color: CupertinoColors.activeBlue),
+        if (_appConfig.currentAircraft!.url != null)
+          Row(
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                  key: const Key('about_button_update_aircraft'),
+                  onPressed: () => _onRefresh(context),
+                  child: Text(
+                    AppLocalizations.of(context)!.about_app_update_aircraft,
+                    style: const TextStyle(color: CupertinoColors.activeBlue),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         Row(
           children: [
             Expanded(
               child: CupertinoButton(
                 key: const Key('about_button_disconnect_aircraft'),
                 onPressed: () => _onLogout(context),
-                child: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft,
+                child: Text(
+                  AppLocalizations.of(context)!.about_app_disconnect_aircraft,
                   style: const TextStyle(color: CupertinoColors.destructiveRed),
                 ),
               ),
@@ -221,94 +234,111 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   List<Widget> _buildMaterialItems(BuildContext context) => [
-    HeaderListTile(AppLocalizations.of(context)!.about_aircraft_info, first: true),
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
-      title: Text(_appConfig.currentAircraft!.callSign,
-        style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
-      ),
-    ),
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      subtitle: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
-      title: Text(_appConfig.locationName,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-      trailing: IconButton(
-        onPressed: () => openUrl(context, _appConfig.locationUrl),
-        tooltip: AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
-        icon: const Icon(Icons.open_in_new),
-      ),
-    ),
-    HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
-    ..._appConfig.pilotNames.map((e) => ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
-      title: Text(e),
-    )).toList(growable: false),
-    HeaderListTile(AppLocalizations.of(context)!.appName),
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: const SizedBox(
-        height: double.infinity,
-        child: Icon(Icons.info),
-      ),
-      subtitle: Text(AppLocalizations.of(context)!.about_app_version),
-      title: FutureBuilder(
-        future: PackageInfo.fromPlatform(),
-        initialData: null,
-        builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
-          snapshot.connectionState == ConnectionState.done ?
-          '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
-              : '',
+        HeaderListTile(AppLocalizations.of(context)!.about_aircraft_info,
+            first: true),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
+          title: Text(
+            _appConfig.currentAircraft!.callSign,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-    ),
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: const SizedBox(
-        height: double.infinity,
-        child: Icon(Icons.all_inclusive),
-      ),
-      title: Text(AppLocalizations.of(context)!.about_app_homepage),
-      subtitle: Text(AppLocalizations.of(context)!.about_app_homepage_subtitle),
-      onTap: () => openUrl(context, pubspec.homepage),
-    ),
-    ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: const SizedBox(
-        height: double.infinity,
-        child: Icon(Icons.bug_report, color: Colors.red),
-      ),
-      title: Text(AppLocalizations.of(context)!.about_app_issues),
-      subtitle: Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
-      onTap: () => openUrl(context, pubspec.issueTracker),
-    ),
-    if (_appConfig.currentAircraft!.url != null) ListTile(
-      key: const Key('about_button_update_aircraft'),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: SizedBox(
-        height: double.infinity,
-        child: Icon(Icons.update, color: Colors.blue.shade600),
-      ),
-      title: Text(AppLocalizations.of(context)!.about_app_update_aircraft),
-      subtitle: Text(AppLocalizations.of(context)!.about_app_update_aircraft_subtitle),
-      onTap: () => _onRefresh(context),
-    ),
-    ListTile(
-      key: const Key('about_button_disconnect_aircraft'),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      leading: SizedBox(
-        height: double.infinity,
-        child: Icon(Icons.logout, color: Colors.blue.shade600),
-      ),
-      title: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft),
-      subtitle: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft_subtitle),
-      onTap: () => _onLogout(context),
-    ),
-  ];
-  
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          subtitle: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
+          title: Text(
+            _appConfig.locationName,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          trailing: IconButton(
+            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            tooltip:
+                AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
+            icon: const Icon(Icons.open_in_new),
+          ),
+        ),
+        HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
+        ..._appConfig.pilotNames
+            .map((e) => ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  leading: CircleAvatar(
+                      foregroundImage: _appConfig.getPilotAvatar(e)),
+                  title: Text(e),
+                ))
+            .toList(growable: false),
+        HeaderListTile(AppLocalizations.of(context)!.appName),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.info),
+          ),
+          subtitle: Text(AppLocalizations.of(context)!.about_app_version),
+          title: FutureBuilder(
+            future: PackageInfo.fromPlatform(),
+            initialData: null,
+            builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
+              snapshot.connectionState == ConnectionState.done
+                  ? '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+                  : '',
+            ),
+          ),
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.all_inclusive),
+          ),
+          title: Text(AppLocalizations.of(context)!.about_app_homepage),
+          subtitle:
+              Text(AppLocalizations.of(context)!.about_app_homepage_subtitle),
+          onTap: () => openUrl(context, pubspec.homepage),
+        ),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: const SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.bug_report, color: Colors.red),
+          ),
+          title: Text(AppLocalizations.of(context)!.about_app_issues),
+          subtitle:
+              Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
+          onTap: () => openUrl(context, pubspec.issueTracker),
+        ),
+        if (_appConfig.currentAircraft!.url != null)
+          ListTile(
+            key: const Key('about_button_update_aircraft'),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+            leading: SizedBox(
+              height: double.infinity,
+              child: Icon(Icons.update, color: Colors.blue.shade600),
+            ),
+            title:
+                Text(AppLocalizations.of(context)!.about_app_update_aircraft),
+            subtitle: Text(AppLocalizations.of(context)!
+                .about_app_update_aircraft_subtitle),
+            onTap: () => _onRefresh(context),
+          ),
+        ListTile(
+          key: const Key('about_button_disconnect_aircraft'),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          leading: SizedBox(
+            height: double.infinity,
+            child: Icon(Icons.logout, color: Colors.blue.shade600),
+          ),
+          title:
+              Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft),
+          subtitle: Text(AppLocalizations.of(context)!
+              .about_app_disconnect_aircraft_subtitle),
+          onTap: () => _onLogout(context),
+        ),
+      ];
+
   @override
   Widget build(BuildContext context) {
     final list = ListView(
@@ -335,14 +365,15 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   );
                 },
-                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                  return loadingProgress != null ?
-                  Container(
-                    height: 250,
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator.adaptive(),
-                  ) :
-                  child;
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  return loadingProgress != null
+                      ? Container(
+                          height: 250,
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator.adaptive(),
+                        )
+                      : child;
                 },
               ),
             ),
@@ -353,10 +384,13 @@ class _AboutScreenState extends State<AboutScreen> {
                 child: Container(
                   height: 30.0,
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(20.0)),
                     // TODO is this the right color? I'm getting confused...
-                    color: isCupertino(context) ? CupertinoColors.systemGroupedBackground.resolveFrom(context) :
-                    Theme.of(context).scaffoldBackgroundColor,
+                    color: isCupertino(context)
+                        ? CupertinoColors.systemGroupedBackground
+                            .resolveFrom(context)
+                        : Theme.of(context).scaffoldBackgroundColor,
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.black54,
@@ -370,41 +404,43 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ],
         ),
-        ...isCupertino(context) ?
-        _buildCupertinoItems(context) :
-        _buildMaterialItems(context),
+        ...isCupertino(context)
+            ? _buildCupertinoItems(context)
+            : _buildMaterialItems(context),
       ],
     );
-    return isCupertino(context) ?
-      Container(
-        color: CupertinoColors.systemGroupedBackground.resolveFrom(context),
-        child: list,
-      ) :
-      Ink(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: list,
-      );
+    return isCupertino(context)
+        ? Container(
+            color: CupertinoColors.systemGroupedBackground.resolveFrom(context),
+            child: list,
+          )
+        : Ink(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: list,
+          );
   }
 }
 
 class HeaderListTile extends StatelessWidget {
-
-  const HeaderListTile(this.text, {
+  const HeaderListTile(
+    this.text, {
     Key? key,
     this.first = false,
   }) : super(key: key);
 
   /// The text to be displayed.
   final String text;
+
   /// True if this is the first header of the list.
   final bool first;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: first ? const EdgeInsets.fromLTRB(20, 0, 20, 10) : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: first
+          ? const EdgeInsets.fromLTRB(20, 0, 20, 10)
+          : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Text(text, style: Theme.of(context).textTheme.headlineSmall),
     );
   }
-
 }

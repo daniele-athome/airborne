@@ -1,11 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 const int kMaxDisplayIntegerDigits = 5;
 const double _kDefaultDigitFontSize = 20;
-const EdgeInsetsGeometry _kDefaultDigitPadding = EdgeInsets
-    .symmetric(vertical: 4);
+const EdgeInsetsGeometry _kDefaultDigitPadding =
+    EdgeInsets.symmetric(vertical: 4);
 const String kDigitDisplayFontName = 'MajorMonoDisplay';
 final NumberFormat kHoursFormatter = NumberFormat("00000.00");
 
@@ -18,23 +17,21 @@ class DigitDisplayFormTextField extends FormField<num> {
     double fontSize = _kDefaultDigitFontSize,
     EdgeInsetsGeometry padding = _kDefaultDigitPadding,
   }) : super(
-    key: key,
-    onSaved: onSaved,
-    initialValue: controller?.value.number,
-    validator: validator,
-    builder: (field) {
-      return DigitDisplayTextField(
-        controller: controller,
-        fontSize: fontSize,
-        padding: padding,
-      );
-    },
-  );
-
+          key: key,
+          onSaved: onSaved,
+          initialValue: controller?.value.number,
+          validator: validator,
+          builder: (field) {
+            return DigitDisplayTextField(
+              controller: controller,
+              fontSize: fontSize,
+              padding: padding,
+            );
+          },
+        );
 }
 
 class DigitDisplayTextField extends StatefulWidget {
-
   const DigitDisplayTextField({
     Key? key,
     this.controller,
@@ -55,16 +52,17 @@ class DigitDisplayTextField extends StatefulWidget {
 }
 
 class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
-
   @override
   Widget build(BuildContext context) {
     if (widget.controller != null && widget.controller!.number > 99999) {
-      throw UnsupportedError('Numbers with more than 5 integer digits are not supported.');
+      throw UnsupportedError(
+          'Numbers with more than 5 integer digits are not supported.');
     }
 
-    final num number = widget.controller != null ? widget.controller!.number : 0;
+    final num number =
+        widget.controller != null ? widget.controller!.number : 0;
     final numDigits = kHoursFormatter.format(number).split('');
-    
+
     final children = <Widget>[];
     bool decimal = false;
     int i = 0;
@@ -82,13 +80,15 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
           decimal: decimal,
           fontSize: widget.fontSize,
           active: widget.controller?.activeDigit == digitNumber,
-          onTap: widget.enabled ? () {
-            if (widget.controller != null) {
-              setState(() {
-                widget.controller?.activeDigit = digitNumber;
-              });
-            }
-          } : null,
+          onTap: widget.enabled
+              ? () {
+                  if (widget.controller != null) {
+                    setState(() {
+                      widget.controller?.activeDigit = digitNumber;
+                    });
+                  }
+                }
+              : null,
         ),
       ));
     }
@@ -96,22 +96,22 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
     final field = Row(
       children: children,
     );
-    return widget.errorText != null ?
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            field,
-            // TODO text style
-            Text(widget.errorText!),
-          ],
-        ) : field;
+    return widget.errorText != null
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              field,
+              // TODO text style
+              Text(widget.errorText!),
+            ],
+          )
+        : field;
   }
-
 }
 
 class DigitDisplayController extends ValueNotifier<DigitDisplay> {
-  DigitDisplayController(num number, [int? activeDigit]) :
-        super(DigitDisplay(number: number, activeDigit: activeDigit));
+  DigitDisplayController(num number, [int? activeDigit])
+      : super(DigitDisplay(number: number, activeDigit: activeDigit));
 
   num get number => value.number;
 
@@ -130,12 +130,10 @@ class DigitDisplayController extends ValueNotifier<DigitDisplay> {
       activeDigit: digit,
     );
   }
-
 }
 
 @immutable
 class DigitDisplay {
-
   const DigitDisplay({
     this.number = 0,
     this.activeDigit,
@@ -143,11 +141,9 @@ class DigitDisplay {
 
   final num number;
   final int? activeDigit;
-
 }
 
 class SingleDigitText extends StatelessWidget {
-
   const SingleDigitText({
     Key? key,
     required this.digit,
@@ -155,7 +151,7 @@ class SingleDigitText extends StatelessWidget {
     this.fontSize = _kDefaultDigitFontSize,
     this.active = false,
     this.onTap,
-  }) : assert(digit >= 0 && digit <= 9),
+  })  : assert(digit >= 0 && digit <= 9),
         super(key: key);
 
   final int digit;
@@ -165,19 +161,16 @@ class SingleDigitText extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) =>
-      _DigitText(
+  Widget build(BuildContext context) => _DigitText(
         text: digit.toString(),
         alternate: decimal,
         fontSize: fontSize,
         active: active,
         onTap: onTap,
       );
-
 }
 
 class _DigitText extends StatelessWidget {
-
   const _DigitText({
     Key? key,
     required this.text,
@@ -197,32 +190,36 @@ class _DigitText extends StatelessWidget {
   Widget build(BuildContext context) {
     final widget = Container(
       alignment: Alignment.center,
-      decoration: alternate ?
-        BoxDecoration(
-          border: Border.all(color: active ? Colors.red : Colors.black, width: active ? 2 : 1),
-          color: Colors.white,
-        ) :
-        BoxDecoration(
-            border: active ? Border.all(color: Colors.red, width: 2) : null,
-            color: Colors.black,
-        ),
+      decoration: alternate
+          ? BoxDecoration(
+              border: Border.all(
+                  color: active ? Colors.red : Colors.black,
+                  width: active ? 2 : 1),
+              color: Colors.white,
+            )
+          : BoxDecoration(
+              border: active ? Border.all(color: Colors.red, width: 2) : null,
+              color: Colors.black,
+            ),
       // TODO test on different screens
       width: fontSize,
       height: fontSize + 10,
-      child: Text(text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: kDigitDisplayFontName,
-            fontSize: fontSize,
-            fontWeight: FontWeight.bold,
-            color: alternate ? Colors.black : Colors.white,
-          ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: kDigitDisplayFontName,
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: alternate ? Colors.black : Colors.white,
+        ),
       ),
     );
-    return onTap != null ? GestureDetector(
-      onTap: onTap,
-      child: widget,
-    ) : widget;
+    return onTap != null
+        ? GestureDetector(
+            onTap: onTap,
+            child: widget,
+          )
+        : widget;
   }
-
 }

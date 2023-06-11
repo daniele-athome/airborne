@@ -1,4 +1,3 @@
-
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +26,16 @@ void main() {
     });
 
     testWidgets('onboarding: register aircraft', (WidgetTester tester) async {
-      nock('http://localhost').get('/a1234.zip')
-        .reply(200, kTestAircraftData);
+      nock('http://localhost').get('/a1234.zip').reply(200, kTestAircraftData);
 
       app.main();
 
       await tester.pumpAndSettle();
       await tester.enterText(
-          find.byWidgetPredicate((widget) => widget is PlatformTextFormField &&
-              widget.keyboardType == TextInputType.url), 'http://localhost/a1234.zip');
+          find.byWidgetPredicate((widget) =>
+              widget is PlatformTextFormField &&
+              widget.keyboardType == TextInputType.url),
+          'http://localhost/a1234.zip');
       await tester.tap(find.byKey(const Key('aircraft_data_button_install')));
       await tester.pumpAndSettle();
 
@@ -66,13 +66,13 @@ void main() {
       await tester.tap(infoNav);
       await tester.pumpAndSettle();
 
-      final updateButton = find.byKey(const Key('about_button_update_aircraft'));
+      final updateButton =
+          find.byKey(const Key('about_button_update_aircraft'));
       await tester.scrollUntilVisible(updateButton, 300);
       await tester.pumpAndSettle();
       await tester.tap(updateButton);
 
-      nock('http://localhost').get('/a1234.zip')
-          .reply(200, kTestAircraftData);
+      nock('http://localhost').get('/a1234.zip').reply(200, kTestAircraftData);
 
       await tester.pumpAndSettle();
       await tester.tap(find.text('OK'));
@@ -81,7 +81,6 @@ void main() {
       // FIXME we should actually check that all went well
       expect(await waitForWidget(tester, infoNav, 10), true);
     });
-
   });
 
   group('offboarding test', () {
@@ -108,7 +107,8 @@ void main() {
       await tester.tap(infoNav);
       await tester.pumpAndSettle();
 
-      final disconnectButton = find.byKey(const Key('about_button_disconnect_aircraft'));
+      final disconnectButton =
+          find.byKey(const Key('about_button_disconnect_aircraft'));
       await tester.scrollUntilVisible(disconnectButton, 300);
       await tester.pumpAndSettle();
       await tester.tap(disconnectButton);
@@ -118,8 +118,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // did we return to the aircraft data screen?
-      expect(tester.any(find.byKey(const Key('aircraft_data_button_install'))), true);
+      expect(tester.any(find.byKey(const Key('aircraft_data_button_install'))),
+          true);
     });
   });
-
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,6 +21,7 @@ class MainNavigation extends StatefulWidget {
   final BookFlightCalendarService? bookFlightCalendarService;
   final FlightLogBookService? flightLogBookService;
   final ActivitiesService? activitiesService;
+
   // TODO other services one day...
 
   const MainNavigation(this.appConfig, {Key? key})
@@ -32,7 +32,8 @@ class MainNavigation extends StatefulWidget {
 
   /// Mainly for integration testing.
   @visibleForTesting
-  const MainNavigation.withServices(this.appConfig, {
+  const MainNavigation.withServices(
+    this.appConfig, {
     Key? key,
     this.bookFlightCalendarService,
     this.flightLogBookService,
@@ -64,16 +65,26 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _rebuildServices() {
-    final account = (widget.bookFlightCalendarService == null && widget.flightLogBookService == null) ?
-      GoogleServiceAccountService(
-          json: widget.appConfig.googleServiceAccountJson
-      ) : null;
+    final account = (widget.bookFlightCalendarService == null &&
+            widget.flightLogBookService == null)
+        ? GoogleServiceAccountService(
+            json: widget.appConfig.googleServiceAccountJson)
+        : null;
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
-        (widget.appConfig.hasFeature('book_flight') ? BookFlightCalendarService(account!, widget.appConfig.googleCalendarId) : null);
+        (widget.appConfig.hasFeature('book_flight')
+            ? BookFlightCalendarService(
+                account!, widget.appConfig.googleCalendarId)
+            : null);
     _flightLogBookService = widget.flightLogBookService ??
-        (widget.appConfig.hasFeature('flight_log') ? FlightLogBookService(account!, widget.appConfig.flightlogBackendInfo) : null);
+        (widget.appConfig.hasFeature('flight_log')
+            ? FlightLogBookService(
+                account!, widget.appConfig.flightlogBackendInfo)
+            : null);
     _activitiesService = widget.activitiesService ??
-        (widget.appConfig.hasFeature('activities') ? ActivitiesService(account!, widget.appConfig.activitiesBackendInfo) : null);
+        (widget.appConfig.hasFeature('activities')
+            ? ActivitiesService(
+                account!, widget.appConfig.activitiesBackendInfo)
+            : null);
   }
 
   @override
@@ -96,18 +107,21 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget _buildTab(BuildContext context, int index) {
     // FIXME find a more efficient way to do this
     return [
-      if (widget.appConfig.hasFeature('book_flight')) () => Provider.value(
-        value: _bookFlightCalendarService,
-        child: const BookFlightScreen(),
-      ),
-      if (widget.appConfig.hasFeature('flight_log')) () => Provider.value(
-        value: _flightLogBookService,
-        child: const FlightLogScreen(),
-      ),
-      if (widget.appConfig.hasFeature('activities')) () => Provider.value(
-        value: _activitiesService,
-        child: const ActivitiesScreen(),
-      ),
+      if (widget.appConfig.hasFeature('book_flight'))
+        () => Provider.value(
+              value: _bookFlightCalendarService,
+              child: const BookFlightScreen(),
+            ),
+      if (widget.appConfig.hasFeature('flight_log'))
+        () => Provider.value(
+              value: _flightLogBookService,
+              child: const FlightLogScreen(),
+            ),
+      if (widget.appConfig.hasFeature('activities'))
+        () => Provider.value(
+              value: _activitiesService,
+              child: const ActivitiesScreen(),
+            ),
       () => const AboutScreen(),
     ][index]();
   }
@@ -115,35 +129,54 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     final items = [
-      if (widget.appConfig.hasFeature('book_flight')) BottomNavigationBarItem(
-        icon: Icon(isCupertino(context)? CupertinoIcons.calendar : Icons.calendar_today_rounded,
-          key: const Key('nav_book_flight'),
+      if (widget.appConfig.hasFeature('book_flight'))
+        BottomNavigationBarItem(
+          icon: Icon(
+            isCupertino(context)
+                ? CupertinoIcons.calendar
+                : Icons.calendar_today_rounded,
+            key: const Key('nav_book_flight'),
+          ),
+          backgroundColor: getBrightness(context) == Brightness.dark
+              ? Colors.tealAccent
+              : Colors.deepOrange,
+          label: AppLocalizations.of(context)!.mainNav_bookFlight,
+          tooltip: '',
         ),
-        backgroundColor: getBrightness(context) == Brightness.dark ? Colors.tealAccent : Colors.deepOrange,
-        label: AppLocalizations.of(context)!.mainNav_bookFlight,
-        tooltip: '',
-      ),
-      if (widget.appConfig.hasFeature('flight_log')) BottomNavigationBarItem(
-        icon: Icon(isCupertino(context)? CupertinoIcons.book_solid : Icons.menu_book_sharp,
-          key: const Key('nav_flight_log'),
+      if (widget.appConfig.hasFeature('flight_log'))
+        BottomNavigationBarItem(
+          icon: Icon(
+            isCupertino(context)
+                ? CupertinoIcons.book_solid
+                : Icons.menu_book_sharp,
+            key: const Key('nav_flight_log'),
+          ),
+          backgroundColor: getBrightness(context) == Brightness.dark
+              ? const Color(0xffffff00)
+              : Colors.green.shade500,
+          label: AppLocalizations.of(context)!.mainNav_logBook,
+          tooltip: '',
         ),
-        backgroundColor: getBrightness(context) == Brightness.dark ? const Color(0xffffff00) : Colors.green.shade500,
-        label: AppLocalizations.of(context)!.mainNav_logBook,
-        tooltip: '',
-      ),
-      if (widget.appConfig.hasFeature('activities')) BottomNavigationBarItem(
-        icon: Icon(PlatformIcons(context).flag,
-          key: const Key('nav_activities'),
+      if (widget.appConfig.hasFeature('activities'))
+        BottomNavigationBarItem(
+          icon: Icon(
+            PlatformIcons(context).flag,
+            key: const Key('nav_activities'),
+          ),
+          backgroundColor: getBrightness(context) == Brightness.dark
+              ? Colors.white
+              : Colors.amber.shade700,
+          label: AppLocalizations.of(context)!.mainNav_activities,
+          tooltip: '',
         ),
-        backgroundColor: getBrightness(context) == Brightness.dark ? Colors.white : Colors.amber.shade700,
-        label: AppLocalizations.of(context)!.mainNav_activities,
-        tooltip: '',
-      ),
       BottomNavigationBarItem(
-        icon: Icon(PlatformIcons(context).info,
+        icon: Icon(
+          PlatformIcons(context).info,
           key: const Key('nav_info'),
         ),
-        backgroundColor: getBrightness(context) == Brightness.dark ? const Color(0xff40c4ff) : Colors.deepPurple,
+        backgroundColor: getBrightness(context) == Brightness.dark
+            ? const Color(0xff40c4ff)
+            : Colors.deepPurple,
         label: AppLocalizations.of(context)!.mainNav_about,
         tooltip: '',
       ),
@@ -159,19 +192,16 @@ class _MainNavigationState extends State<MainNavigation> {
         materialTabs: (_, __) => MaterialNavBarData(
           type: BottomNavigationBarType.fixed,
         ),
-        material: (_, __) =>
-            MaterialTabScaffoldData(
-              // TODO
+        material: (_, __) => MaterialTabScaffoldData(
+            // TODO
             ),
-        cupertino: (_, __) =>
-            CupertinoTabScaffoldData(
-              // TODO
+        cupertino: (_, __) => CupertinoTabScaffoldData(
+            // TODO
             ),
       );
-    }
-    else {
+    } else {
       return PlatformScaffold(
-          body: const AboutScreen(),
+        body: const AboutScreen(),
       );
     }
   }

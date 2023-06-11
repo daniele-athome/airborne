@@ -11,7 +11,8 @@ class BookFlightCalendarService {
   late final String _calendarId;
   GoogleCalendarService? _client;
 
-  BookFlightCalendarService(GoogleServiceAccountService accountService, Object calendarId) {
+  BookFlightCalendarService(
+      GoogleServiceAccountService accountService, Object calendarId) {
     _accountService = accountService;
     _calendarId = calendarId as String;
   }
@@ -24,8 +25,7 @@ class BookFlightCalendarService {
   Future<GoogleCalendarService> _ensureService() {
     if (_client != null) {
       return Future.value(_client);
-    }
-    else {
+    } else {
       return _accountService.getAuthenticatedClient().then((client) {
         _client = GoogleCalendarService(client);
         return _client!;
@@ -34,11 +34,12 @@ class BookFlightCalendarService {
   }
 
   Future<Iterable<FlightBooking>> search(DateTime timeMin, DateTime timeMax) {
-    return _ensureService().then((client) =>
-      client.listEvents(_calendarId, timeMin, timeMax).then((events) =>
-        events.items!
-              .where((gcalendar.Event e) => e.summary != null && e.start != null && e.end != null)
-              .map((gcalendar.Event e) {
+    return _ensureService().then(
+      (client) => client.listEvents(_calendarId, timeMin, timeMax).then(
+          (events) => events.items!
+                  .where((gcalendar.Event e) =>
+                      e.summary != null && e.start != null && e.end != null)
+                  .map((gcalendar.Event e) {
                 // e.timezone is always null but times are UTC!!!
                 return FlightBooking(
                   e.id,
@@ -47,18 +48,16 @@ class BookFlightCalendarService {
                   getTzDateTime(e.end!, events.timeZone!),
                   e.description,
                 );
-              })
-      ),
+              })),
     );
   }
 
   Future<bool> bookingConflicts(FlightBooking event) {
-    return _ensureService().then((client) =>
-      client.listEvents(_calendarId, event.from, event.to).then((events) =>
-        events.items!
-          .where((gcalendar.Event e) => e.id != event.id)
-          .isNotEmpty
-      ),
+    return _ensureService().then(
+      (client) => client.listEvents(_calendarId, event.from, event.to).then(
+          (events) => events.items!
+              .where((gcalendar.Event e) => e.id != event.id)
+              .isNotEmpty),
     );
   }
 
@@ -108,14 +107,16 @@ class BookFlightCalendarService {
 
   Future<DeletedFlightBooking> deleteBooking(FlightBooking event) {
     return _ensureService().then((client) {
-      return client.deleteEvent(_calendarId, event.id!)
+      return client
+          .deleteEvent(_calendarId, event.id!)
           .then((value) => DeletedFlightBooking(event.id!));
     });
   }
-
 }
 
-TZDateTime getTzDateTime(gcalendar.EventDateTime dateTime, String defaultTimeZone) {
+TZDateTime getTzDateTime(
+    gcalendar.EventDateTime dateTime, String defaultTimeZone) {
   final timeZone = dateTime.timeZone ?? defaultTimeZone;
-  return TZDateTime.from(dateTime.dateTime!, timeZone == 'UTC' ? UTC : getLocation(timeZone));
+  return TZDateTime.from(
+      dateTime.dateTime!, timeZone == 'UTC' ? UTC : getLocation(timeZone));
 }

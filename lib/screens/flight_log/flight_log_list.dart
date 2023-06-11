@@ -1,4 +1,3 @@
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,7 @@ class FlightLogList extends StatefulWidget {
     required this.controller,
     required this.logBookService,
     required this.onTapItem,
-  })  : super(key: key);
+  }) : super(key: key);
 
   final FlightLogListController controller;
   final FlightLogBookService logBookService;
@@ -32,7 +31,6 @@ class FlightLogList extends StatefulWidget {
 }
 
 class _FlightLogListState extends State<FlightLogList> {
-
   final _pagingController = PagingController<int, FlightLogItem>(
     firstPageKey: 1,
   );
@@ -60,16 +58,17 @@ class _FlightLogListState extends State<FlightLogList> {
         await widget.logBookService.reset();
       }
 
-      final items = widget.logBookService.hasMoreData() ?
-        await widget.logBookService.fetchItems() : <FlightLogItem>[];
-      final page = items.toList(growable: false).reversed.toList(growable: false);
+      final items = widget.logBookService.hasMoreData()
+          ? await widget.logBookService.fetchItems()
+          : <FlightLogItem>[];
+      final page =
+          items.toList(growable: false).reversed.toList(growable: false);
 
       if (_firstTime) {
         if (page.isNotEmpty) {
           widget.controller.lastEndHourMeter = page[0].endHour;
           widget.controller.empty = false;
-        }
-        else {
+        } else {
           widget.controller.lastEndHourMeter = 0;
           widget.controller.empty = true;
         }
@@ -78,12 +77,10 @@ class _FlightLogListState extends State<FlightLogList> {
 
       if (widget.logBookService.hasMoreData()) {
         _pagingController.appendPage(page, pageKey + 1);
-      }
-      else {
+      } else {
         _pagingController.appendLastPage(page);
       }
-    }
-    catch (error, stacktrace) {
+    } catch (error, stacktrace) {
       _log.warning('error loading log book data', error, stacktrace);
       _pagingController.error = error;
     }
@@ -95,26 +92,25 @@ class _FlightLogListState extends State<FlightLogList> {
   }
 
   Widget _buildListItem(BuildContext context, FlightLogItem item, int index) =>
-    FlightLogListItem(item: item, onTapItem: widget.onTapItem);
+      FlightLogListItem(item: item, onTapItem: widget.onTapItem);
 
   Widget noItemsFoundIndicator(BuildContext context) =>
-    FirstPageExceptionIndicator(
-      title: AppLocalizations.of(context)!.flightLog_error_noItemsFound,
-      onTryAgain: _refresh,
-    );
+      FirstPageExceptionIndicator(
+        title: AppLocalizations.of(context)!.flightLog_error_noItemsFound,
+        onTryAgain: _refresh,
+      );
 
   Widget firstPageErrorIndicator(BuildContext context) =>
-    FirstPageExceptionIndicator(
-      title: AppLocalizations.of(context)!.flightLog_error_firstPageIndicator,
-      message: getExceptionMessage(_pagingController.error),
-      onTryAgain: _refresh,
-    );
+      FirstPageExceptionIndicator(
+        title: AppLocalizations.of(context)!.flightLog_error_firstPageIndicator,
+        message: getExceptionMessage(_pagingController.error),
+        onTryAgain: _refresh,
+      );
 
-  Widget newPageErrorIndicator(BuildContext context) =>
-    NewPageErrorIndicator(
-      message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
-      onTap: _pagingController.retryLastFailedRequest,
-    );
+  Widget newPageErrorIndicator(BuildContext context) => NewPageErrorIndicator(
+        message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
+        onTap: _pagingController.retryLastFailedRequest,
+      );
 
   /// FIXME using PagedSliverList within a CustomScrollView for Material leads to errors
   @override
@@ -128,14 +124,19 @@ class _FlightLogListState extends State<FlightLogList> {
           ),
           PagedSliverList.separated(
             pagingController: _pagingController,
-            separatorBuilder: (context, index) => isCupertino(context) ?
-            buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
+            separatorBuilder: (context, index) => isCupertino(context)
+                ? buildCupertinoFormRowDivider(context, true)
+                : const Divider(height: 0),
             builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
               itemBuilder: _buildListItem,
-              firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
-              newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
-              noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
-              firstPageProgressIndicatorBuilder: (context) => const CupertinoActivityIndicator(radius: 20),
+              firstPageErrorIndicatorBuilder: (context) =>
+                  firstPageErrorIndicator(context),
+              newPageErrorIndicatorBuilder: (context) =>
+                  newPageErrorIndicator(context),
+              noItemsFoundIndicatorBuilder: (context) =>
+                  noItemsFoundIndicator(context),
+              firstPageProgressIndicatorBuilder: (context) =>
+                  const CupertinoActivityIndicator(radius: 20),
               newPageProgressIndicatorBuilder: (context) => const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: CupertinoActivityIndicator(radius: 16),
@@ -144,20 +145,23 @@ class _FlightLogListState extends State<FlightLogList> {
           ),
         ],
       );
-    }
-    else {
+    } else {
       return RefreshIndicator(
         onRefresh: () => _refresh(),
         child: PagedListView.separated(
           physics: const AlwaysScrollableScrollPhysics(),
           pagingController: _pagingController,
-          separatorBuilder: (context, index) => isCupertino(context) ?
-          buildCupertinoFormRowDivider(context, true) : const Divider(height: 0),
+          separatorBuilder: (context, index) => isCupertino(context)
+              ? buildCupertinoFormRowDivider(context, true)
+              : const Divider(height: 0),
           builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
             itemBuilder: _buildListItem,
-            firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
-            newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
-            noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
+            firstPageErrorIndicatorBuilder: (context) =>
+                firstPageErrorIndicator(context),
+            newPageErrorIndicatorBuilder: (context) =>
+                newPageErrorIndicator(context),
+            noItemsFoundIndicatorBuilder: (context) =>
+                noItemsFoundIndicator(context),
           ),
         ),
       );
@@ -170,7 +174,6 @@ class _FlightLogListState extends State<FlightLogList> {
     widget.controller.removeListener(_refresh);
     super.dispose();
   }
-
 }
 
 class FlightLogListItem extends StatelessWidget {
@@ -188,24 +191,30 @@ class FlightLogListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateStyle = (isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle :
-    Theme.of(context).textTheme.bodyLarge!).copyWith(
+    final dateStyle = (isCupertino(context)
+            ? CupertinoTheme.of(context).textTheme.textStyle
+            : Theme.of(context).textTheme.bodyLarge!)
+        .copyWith(
       fontSize: 16,
       // TODO do we need this? -- fontWeight: FontWeight.bold,
     );
-    final subtitleStyle = isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle :
-    Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).textTheme.bodySmall!.color);
-    final pilotStyle = (isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle :
-    Theme.of(context).textTheme.bodyMedium!).copyWith(
+    final subtitleStyle = isCupertino(context)
+        ? CupertinoTheme.of(context).textTheme.textStyle
+        : Theme.of(context)
+            .textTheme
+            .titleMedium!
+            .copyWith(color: Theme.of(context).textTheme.bodySmall!.color);
+    final pilotStyle = (isCupertino(context)
+            ? CupertinoTheme.of(context).textTheme.textStyle
+            : Theme.of(context).textTheme.bodyMedium!)
+        .copyWith(
       fontSize: 17,
       // TODO do we need this? -- fontWeight: FontWeight.w300,
     );
-    final timeStyle = (isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle :
-    Theme.of(context).textTheme.bodyMedium!).copyWith(
+    final timeStyle = (isCupertino(context)
+            ? CupertinoTheme.of(context).textTheme.textStyle
+            : Theme.of(context).textTheme.bodyMedium!)
+        .copyWith(
       fontSize: 20,
     );
 
@@ -222,13 +231,15 @@ class FlightLogListItem extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Text(_dateFormatter.format(item.date), style: dateStyle),
+                    child: Text(_dateFormatter.format(item.date),
+                        style: dateStyle),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 2),
                     child: Row(
                       children: [
-                        Icon(PlatformIcons(context).locationSolid, color: Colors.red, size: 18),
+                        Icon(PlatformIcons(context).locationSolid,
+                            color: Colors.red, size: 18),
                         const SizedBox(width: 4),
                         Text(_buildLocationName(item), style: subtitleStyle),
                       ],
@@ -238,15 +249,15 @@ class FlightLogListItem extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 2),
                     child: Row(
                       children: [
-                        Icon(PlatformIcons(context).clockSolid, color: Colors.blue, size: 18),
+                        Icon(PlatformIcons(context).clockSolid,
+                            color: Colors.blue, size: 18),
                         const SizedBox(width: 4),
                         Text(_buildHours(item), style: subtitleStyle),
                       ],
                     ),
                   ),
                 ],
-              )
-          ),
+              )),
           Expanded(
             flex: 4,
             child: Column(
@@ -254,7 +265,8 @@ class FlightLogListItem extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: AutoSizeText(item.pilotName,
+                  child: AutoSizeText(
+                    item.pilotName,
                     style: pilotStyle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -266,10 +278,12 @@ class FlightLogListItem extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      if (item.fuel != null && item.fuel! > 0) const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        child: Icon(Icons.local_gas_station, color: Colors.green, size: 24),
-                      ),
+                      if (item.fuel != null && item.fuel! > 0)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4),
+                          child: Icon(Icons.local_gas_station,
+                              color: Colors.green, size: 24),
+                        ),
                       Text(_buildTime(item), style: timeStyle),
                     ],
                   ),
@@ -286,8 +300,7 @@ class FlightLogListItem extends StatelessWidget {
         onPressed: () => onTapItem(context, item),
         child: listItem,
       );
-    }
-    else {
+    } else {
       return InkWell(
         onTap: () => onTapItem(context, item),
         child: listItem,
@@ -295,14 +308,16 @@ class FlightLogListItem extends StatelessWidget {
     }
   }
 
-  String _buildLocationName(FlightLogItem item) => (item.origin != item.destination) ?
-  '${item.origin} – ${item.destination}' : item.origin;
+  String _buildLocationName(FlightLogItem item) =>
+      (item.origin != item.destination)
+          ? '${item.origin} – ${item.destination}'
+          : item.origin;
 
   String _buildHours(FlightLogItem item) =>
       '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
 
-  String _buildTime(FlightLogItem item) => '${((item.endHour - item.startHour)*60).round().toString()}′';
-
+  String _buildTime(FlightLogItem item) =>
+      '${((item.endHour - item.startHour) * 60).round().toString()}′';
 }
 
 class FlightLogListController extends ValueNotifier<FlightLogListState> {
@@ -333,15 +348,11 @@ class FlightLogListController extends ValueNotifier<FlightLogListState> {
   void reset() {
     value = const FlightLogListState();
   }
-
 }
 
 @immutable
 class FlightLogListState {
-  const FlightLogListState({
-    this.lastEndHourMeter,
-    this.empty
-  });
+  const FlightLogListState({this.lastEndHourMeter, this.empty});
 
   final num? lastEndHourMeter;
   final bool? empty;

@@ -26,13 +26,13 @@ class GoogleServiceAccountService {
       // FIXME doesn't work on web platform
       final HttpClient httpClient = HttpClient();
       httpClient.findProxy = HttpClient.findProxyFromEnvironment;
-      return clientViaServiceAccount(_serviceAccount, scopes, baseClient: http_io.IOClient(httpClient))
+      return clientViaServiceAccount(_serviceAccount, scopes,
+              baseClient: http_io.IOClient(httpClient))
           .then((AuthClient client) {
         _client = client;
         return client;
       });
-    }
-    else {
+    } else {
       return Future.value(_client);
     }
   }
@@ -49,12 +49,16 @@ class GoogleCalendarService {
     _api = CalendarApi(_client);
   }
 
-  Future<Events> listEvents(String calendarId, DateTime timeMin, DateTime timeMax) {
-    return _api.events.list(calendarId,
-      // FIXME toUtc is a workaround
-      timeMin: timeMin.toUtc(),
-      timeMax: timeMax.toUtc(),
-    ).timeout(_defaultTimeout);
+  Future<Events> listEvents(
+      String calendarId, DateTime timeMin, DateTime timeMax) {
+    return _api.events
+        .list(
+          calendarId,
+          // FIXME toUtc is a workaround
+          timeMin: timeMin.toUtc(),
+          timeMax: timeMax.toUtc(),
+        )
+        .timeout(_defaultTimeout);
   }
 
   Future<Event> insertEvent(String calendarId, Event event) {
@@ -62,13 +66,14 @@ class GoogleCalendarService {
   }
 
   Future<Event> updateEvent(String calendarId, String eventId, Event event) {
-    return _api.events.update(event, calendarId, eventId).timeout(_defaultTimeout);
+    return _api.events
+        .update(event, calendarId, eventId)
+        .timeout(_defaultTimeout);
   }
 
   Future<void> deleteEvent(String calendarId, String eventId) {
     return _api.events.delete(calendarId, eventId).timeout(_defaultTimeout);
   }
-
 }
 
 class GoogleSheetsService {
@@ -84,36 +89,52 @@ class GoogleSheetsService {
 
   String sheetRange(String sheetName, String range) => "'$sheetName'!$range";
 
-  Future<ValueRange> getRows(String spreadsheetId, String sheetName, String range) {
+  Future<ValueRange> getRows(
+      String spreadsheetId, String sheetName, String range) {
     final sheetRange = this.sheetRange(sheetName, range);
-    return _api.spreadsheets.values.get(spreadsheetId, sheetRange,
-      valueRenderOption: 'UNFORMATTED_VALUE',
-    ).timeout(_defaultTimeout);
+    return _api.spreadsheets.values
+        .get(
+          spreadsheetId,
+          sheetRange,
+          valueRenderOption: 'UNFORMATTED_VALUE',
+        )
+        .timeout(_defaultTimeout);
   }
 
-  Future<AppendValuesResponse> appendRows(String spreadsheetId, String sheetName, String range, List<List<Object?>> values) {
+  Future<AppendValuesResponse> appendRows(String spreadsheetId,
+      String sheetName, String range, List<List<Object?>> values) {
     final encodedRange = sheetRange(sheetName, range);
-    return _api.spreadsheets.values.append(ValueRange(
-      range: encodedRange,
-      values: values,
-    ), spreadsheetId, encodedRange, valueInputOption: 'USER_ENTERED');
+    return _api.spreadsheets.values.append(
+        ValueRange(
+          range: encodedRange,
+          values: values,
+        ),
+        spreadsheetId,
+        encodedRange,
+        valueInputOption: 'USER_ENTERED');
   }
 
-  Future<UpdateValuesResponse> updateRows(String spreadsheetId, String sheetName, String range, List<List<Object?>> values) {
+  Future<UpdateValuesResponse> updateRows(String spreadsheetId,
+      String sheetName, String range, List<List<Object?>> values) {
     final encodedRange = sheetRange(sheetName, range);
-    return _api.spreadsheets.values.update(ValueRange(
-      range: encodedRange,
-      values: values,
-    ), spreadsheetId, encodedRange, valueInputOption: 'USER_ENTERED');
+    return _api.spreadsheets.values.update(
+        ValueRange(
+          range: encodedRange,
+          values: values,
+        ),
+        spreadsheetId,
+        encodedRange,
+        valueInputOption: 'USER_ENTERED');
   }
 
-  Future<BatchUpdateSpreadsheetResponse> deleteRows(String spreadsheetId, String sheetName, int startRow, int endRow) {
+  Future<BatchUpdateSpreadsheetResponse> deleteRows(
+      String spreadsheetId, String sheetName, int startRow, int endRow) {
     return _getSheetId(spreadsheetId, sheetName).then((spreadsheet) {
       final Sheet sheetInfo;
       try {
-        sheetInfo = spreadsheet.sheets!.firstWhere((element) => element.properties!.title == sheetName);
-      }
-      on StateError catch (_) {
+        sheetInfo = spreadsheet.sheets!
+            .firstWhere((element) => element.properties!.title == sheetName);
+      } on StateError catch (_) {
         throw Exception('Sheet not found: $sheetName');
       }
       final request = BatchUpdateSpreadsheetRequest(requests: [
@@ -135,7 +156,6 @@ class GoogleSheetsService {
   Future<Spreadsheet> _getSheetId(String spreadsheetId, String sheetName) {
     return _api.spreadsheets.get(spreadsheetId, $fields: 'sheets.properties');
   }
-
 }
 
 const _kGsDateBase = 2209161600 / 86400;

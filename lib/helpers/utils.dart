@@ -17,6 +17,7 @@ import 'cupertinoplus.dart';
 
 /// Time format for aviation use (i.e. no am/pm)
 const String kAviationTimeFormat = 'HH:mm';
+
 /// Hour format for aviation use (i.e. no am/pm)
 const String kAviationHourFormat = 'HH';
 
@@ -26,48 +27,49 @@ const Duration kNetworkRequestTimeout = Duration(seconds: 15);
 /// https://github.com/flutter/flutter/issues/6983
 /// terrible hack (I'm not even handling the text size)
 const double kPortraitToolbarHeight = kToolbarHeight;
+
 /// per Material specs, toolbar in landscape should be 48dp
 const double kLandscapeToolbarHeight = 48;
 
-Brightness getBrightness(BuildContext context) => isCupertino(context) ?
-    CupertinoTheme.brightnessOf(context) : Theme.of(context).brightness;
+Brightness getBrightness(BuildContext context) => isCupertino(context)
+    ? CupertinoTheme.brightnessOf(context)
+    : Theme.of(context).brightness;
 
-Color getModalBarrierColor(BuildContext context) => isCupertino(context) ?
-  // from cupertino/dialog.dart:_kDialogColor
-  const CupertinoDynamicColor.withBrightness(
-    color: Color(0xCCF2F2F2),
-    darkColor: Color(0xBF1E1E1E),
-  ).resolveFrom(context) :
-  Colors.black54;
+Color getModalBarrierColor(BuildContext context) => isCupertino(context)
+    ?
+    // from cupertino/dialog.dart:_kDialogColor
+    const CupertinoDynamicColor.withBrightness(
+        color: Color(0xCCF2F2F2),
+        darkColor: Color(0xBF1E1E1E),
+      ).resolveFrom(context)
+    : Colors.black54;
 
 String getExceptionMessage(dynamic error) {
   if (error is LocationNotFoundException) {
     return error.msg;
-  }
-  else if (error is SocketException) {
-    return (error.osError?.message)?? error.message;
-  }
-  else {
+  } else if (error is SocketException) {
+    return (error.osError?.message) ?? error.message;
+  } else {
     try {
       return error.message.toString();
-    }
-    on NoSuchMethodError catch (_) {
+    } on NoSuchMethodError catch (_) {
       return error.toString();
     }
   }
 }
 
-String getRelativeDateString(BuildContext context, DateFormat formatter, DateTime value) {
+String getRelativeDateString(
+    BuildContext context, DateFormat formatter, DateTime value) {
   if (value.isToday) {
-    return AppLocalizations.of(context)!.relativeDate_today(formatter.format(value));
-  }
-  else if (value.isYesterday) {
-    return AppLocalizations.of(context)!.relativeDate_yesterday(formatter.format(value));
-  }
-  else if (value.isTomorrow) {
-    return AppLocalizations.of(context)!.relativeDate_tomorrow(formatter.format(value));
-  }
-  else {
+    return AppLocalizations.of(context)!
+        .relativeDate_today(formatter.format(value));
+  } else if (value.isYesterday) {
+    return AppLocalizations.of(context)!
+        .relativeDate_yesterday(formatter.format(value));
+  } else if (value.isTomorrow) {
+    return AppLocalizations.of(context)!
+        .relativeDate_tomorrow(formatter.format(value));
+  } else {
     return formatter.format(value);
   }
 }
@@ -75,9 +77,7 @@ String getRelativeDateString(BuildContext context, DateFormat formatter, DateTim
 extension DateHelpers on DateTime {
   bool get isToday {
     final now = DateTime.now();
-    return now.day == day &&
-        now.month == month &&
-        now.year == year;
+    return now.day == day && now.month == month && now.year == year;
   }
 
   bool get isYesterday {
@@ -99,8 +99,7 @@ extension NumberFormatTryParse on NumberFormat {
   num? tryParse(String text) {
     try {
       return parse(text);
-    }
-    on FormatException catch (_) {
+    } on FormatException catch (_) {
       return null;
     }
   }
@@ -114,32 +113,33 @@ double roundDouble(num value, int places) {
 class SunTimes {
   final TZDateTime sunrise;
   final TZDateTime sunset;
+
   SunTimes(this.sunrise, this.sunset);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is SunTimes &&
-              sunrise == other.sunrise &&
-              sunset == other.sunset;
+      other is SunTimes && sunrise == other.sunrise && sunset == other.sunset;
 
   @override
   int get hashCode => sunrise.hashCode ^ sunset.hashCode;
-
 }
 
-SunTimes getSunTimes(double latitude, double longitude, DateTime dateTime, Location tzLocation) {
+SunTimes getSunTimes(
+    double latitude, double longitude, DateTime dateTime, Location tzLocation) {
   final instant = Instant(
-    year: dateTime.year,
-    month: dateTime.month,
-    day: dateTime.day,
-    timeZoneOffset: tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset / 1000 / 60 / 60
-  );
+      year: dateTime.year,
+      month: dateTime.month,
+      day: dateTime.day,
+      timeZoneOffset:
+          tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset /
+              1000 /
+              60 /
+              60);
   final times = SolarCalculator(instant, latitude, longitude);
   return SunTimes(
       TZDateTime.from(times.sunriseTime.toUtcDateTime(), tzLocation),
-      TZDateTime.from(times.sunsetTime.toUtcDateTime(), tzLocation)
-  );
+      TZDateTime.from(times.sunsetTime.toUtcDateTime(), tzLocation));
 }
 
 void showToast(FToast fToast, String text, Duration duration) {
@@ -155,11 +155,10 @@ void showToast(FToast fToast, String text, Duration duration) {
     ),
     toastDuration: duration,
     positionedToastBuilder: (context, child) => Positioned(
-      bottom: 50.0 * MediaQuery.of(context).devicePixelRatio + 50.0,
-      left: 24.0,
-      right: 24.0,
-      child: child
-    ),
+        bottom: 50.0 * MediaQuery.of(context).devicePixelRatio + 50.0,
+        left: 24.0,
+        right: 24.0,
+        child: child),
   );
 }
 
@@ -183,20 +182,19 @@ Future<void> showError(BuildContext context, String text) {
 
 Future<bool> openUrl(BuildContext context, String url) async {
   return launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
-    .catchError((_) {
-      // TODO i18n
-      showError(context, 'Cannot open a browser.');
-      return false;
+      .catchError((_) {
+    // TODO i18n
+    showError(context, 'Cannot open a browser.');
+    return false;
   });
 }
 
-Future<T?> showConfirm<T>({
-  required BuildContext context,
-  required String text,
-  required String title,
-  required void Function() okCallback,
-  bool destructiveOk = false
-}) {
+Future<T?> showConfirm<T>(
+    {required BuildContext context,
+    required String text,
+    required String title,
+    required void Function() okCallback,
+    bool destructiveOk = false}) {
   return showPlatformDialog<T>(
     context: context,
     builder: (dialogContext) => PlatformAlertDialog(
@@ -213,7 +211,8 @@ Future<T?> showConfirm<T>({
             okCallback();
           },
           // TODO destructiveOk for material
-          cupertino: (_, __) => CupertinoDialogActionData(isDestructiveAction: destructiveOk),
+          cupertino: (_, __) =>
+              CupertinoDialogActionData(isDestructiveAction: destructiveOk),
           child: Text(AppLocalizations.of(context)!.dialog_button_ok),
         ),
       ],
@@ -227,23 +226,24 @@ class DownloadProvider extends ChangeNotifier {
   /// FIXME doesn't work on web platform (we should use http package)
   final HttpClient Function() clientBuilder;
 
-  Future<File> downloadToFile(String url, String filename, String? username, String? password, bool temp) async {
+  Future<File> downloadToFile(String url, String filename, String? username,
+      String? password, bool temp) async {
     final uri = Uri.parse(url);
     HttpClient client = clientBuilder();
     client.findProxy = HttpClient.findProxyFromEnvironment;
     if (username != null && password != null) {
-      client.addCredentials(uri, "", HttpClientBasicCredentials(username, password));
+      client.addCredentials(
+          uri, "", HttpClientBasicCredentials(username, password));
     }
     final request = await client.getUrl(uri);
     final response = await request.close();
     if (response.statusCode == 200) {
-      final directory = await (temp ? getTemporaryDirectory() : getApplicationSupportDirectory());
+      final directory = await (temp
+          ? getTemporaryDirectory()
+          : getApplicationSupportDirectory());
       final file = File(path.join(directory.path, filename));
-      return response
-          .pipe(file.openWrite())
-          .then((value) => file);
-    }
-    else {
+      return response.pipe(file.openWrite()).then((value) => file);
+    } else {
       return Future.error(Exception('Download error (${response.statusCode})'));
     }
   }
@@ -279,9 +279,9 @@ class FirstPageExceptionIndicator extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: isCupertino(context) ?
-                CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle :
-                Theme.of(context).textTheme.titleLarge,
+              style: isCupertino(context)
+                  ? CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle
+                  : Theme.of(context).textTheme.titleLarge,
             ),
             if (message != null)
               const SizedBox(
@@ -291,9 +291,9 @@ class FirstPageExceptionIndicator extends StatelessWidget {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: isCupertino(context) ?
-                  CupertinoTheme.of(context).textTheme.textStyle :
-                  Theme.of(context).textTheme.bodyMedium,
+                style: isCupertino(context)
+                    ? CupertinoTheme.of(context).textTheme.textStyle
+                    : Theme.of(context).textTheme.bodyMedium,
               ),
             if (onTryAgain != null)
               const SizedBox(
@@ -303,33 +303,33 @@ class FirstPageExceptionIndicator extends StatelessWidget {
               SizedBox(
                 height: 50,
                 width: double.infinity,
-                child: isCupertino(context) ?
-                  CupertinoButton.filled(
-                    key: const Key('button_error_retry'),
-                    onPressed: onTryAgain,
-                    child: Text(
-                      AppLocalizations.of(context)!.button_error_retry,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
+                child: isCupertino(context)
+                    ? CupertinoButton.filled(
+                        key: const Key('button_error_retry'),
+                        onPressed: onTryAgain,
+                        child: Text(
+                          AppLocalizations.of(context)!.button_error_retry,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : ElevatedButton.icon(
+                        key: const Key('button_error_retry'),
+                        onPressed: onTryAgain,
+                        icon: const Icon(
+                          Icons.refresh,
+                          color: Colors.white,
+                        ),
+                        label: Text(
+                          AppLocalizations.of(context)!.button_error_retry,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    ),
-                  ) :
-                  ElevatedButton.icon(
-                    key: const Key('button_error_retry'),
-                    onPressed: onTryAgain,
-                    icon: const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      AppLocalizations.of(context)!.button_error_retry,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                ),
               ),
           ],
         ),
@@ -349,12 +349,12 @@ class FooterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(
-      top: 16,
-      bottom: 16,
-    ),
-    child: Center(child: child),
-  );
+        padding: const EdgeInsets.only(
+          top: 16,
+          bottom: 16,
+        ),
+        child: Center(child: child),
+      );
 }
 
 /// Forked from [infinite\_scroll\_pagination].
@@ -375,9 +375,9 @@ class NewPageErrorIndicator extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: isCupertino(context) ?
-              CupertinoTheme.of(context).textTheme.navActionTextStyle :
-              Theme.of(context).textTheme.bodyMedium,
+            style: isCupertino(context)
+                ? CupertinoTheme.of(context).textTheme.navActionTextStyle
+                : Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(
             height: 4,
@@ -391,19 +391,18 @@ class NewPageErrorIndicator extends StatelessWidget {
     );
   }
 
-  Widget _buildCupertinoWidget(BuildContext context) =>
-    CupertinoInkWell(
-      onPressed: onTap,
-      child: _buildChildWidget(context),
-    );
+  Widget _buildCupertinoWidget(BuildContext context) => CupertinoInkWell(
+        onPressed: onTap,
+        child: _buildChildWidget(context),
+      );
 
-  Widget _buildMaterialWidget(BuildContext context) =>
-    InkWell(
-      onTap: onTap,
-      child: _buildChildWidget(context),
-    );
+  Widget _buildMaterialWidget(BuildContext context) => InkWell(
+        onTap: onTap,
+        child: _buildChildWidget(context),
+      );
 
   @override
-  Widget build(BuildContext context) => isCupertino(context) ?
-    _buildCupertinoWidget(context) : _buildMaterialWidget(context);
+  Widget build(BuildContext context) => isCupertino(context)
+      ? _buildCupertinoWidget(context)
+      : _buildMaterialWidget(context);
 }

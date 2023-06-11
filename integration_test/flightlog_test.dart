@@ -38,7 +38,10 @@ void main() async {
 
       await tester.pumpAndSettle();
 
-      expect(await waitForWidget(tester, find.byKey(const Key('nav_flight_log')), 10), true);
+      expect(
+          await waitForWidget(
+              tester, find.byKey(const Key('nav_flight_log')), 10),
+          true);
       await tester.tap(find.byKey(const Key("nav_flight_log")));
       await tester.pumpAndSettle();
 
@@ -65,15 +68,23 @@ void main() async {
 
       await tester.pumpAndSettle();
 
-      expect(await waitForWidget(tester, find.byKey(const Key('nav_flight_log')), 10), true);
+      expect(
+          await waitForWidget(
+              tester, find.byKey(const Key('nav_flight_log')), 10),
+          true);
       await tester.tap(find.byKey(const Key("nav_flight_log")));
       await tester.pumpAndSettle();
 
       expect(tester.any(find.byKey(const Key('list_flight_log'))), true);
       expect(httpRowsMock.isDone, true);
       expect(httpCountMock.isDone, true);
-      expect(tester.widgetList(find.descendant(of: find.byKey(const Key('list_flight_log')),
-          matching: find.byType(FlightLogListItem))).length, mockItems.length);
+      expect(
+          tester
+              .widgetList(find.descendant(
+                  of: find.byKey(const Key('list_flight_log')),
+                  matching: find.byType(FlightLogListItem)))
+              .length,
+          mockItems.length);
 
       httpRowsMock.cancel();
       httpCountMock.cancel();
@@ -81,12 +92,10 @@ void main() async {
 
     // TODO C[R]UD tests
   });
-
 }
 
 // TODO copied (actually modified) from FlightLogBookService, consider abstracting
-List<Object?> _formatRowData(FlightLogItem item) =>
-    [
+List<Object?> _formatRowData(FlightLogItem item) => [
       dateToGsheets(DateTime.now()),
       dateToGsheets(item.date).toInt(),
       item.pilotName,
@@ -105,11 +114,16 @@ Interceptor mockGoogleSheetsRowsApi({List<FlightLogItem>? items}) {
   return base.get(matches(r'^/v4/spreadsheets/NONE/values/%27NONE%27%21.{5}'))
     ..query((Map<String, String> params) => true)
     ..persist()
-    ..reply(200, json.encode({
-      "values": items != null ? items.map((e) => _formatRowData(e)).toList(growable: false) : [],
-    }), headers: {
-      'content-type': 'application/json',
-    });
+    ..reply(
+        200,
+        json.encode({
+          "values": items != null
+              ? items.map((e) => _formatRowData(e)).toList(growable: false)
+              : [],
+        }),
+        headers: {
+          'content-type': 'application/json',
+        });
 }
 
 Interceptor mockGoogleSheetsCountApi(int count) {
@@ -117,9 +131,14 @@ Interceptor mockGoogleSheetsCountApi(int count) {
   return base.get(matches(r'^/v4/spreadsheets/NONE/values/%27NONE%27%21A1'))
     ..query((Map<String, String> params) => true)
     ..persist()
-    ..reply(200, json.encode({
-      "values": [[count.toString()]],
-    }), headers: {
-      'content-type': 'application/json',
-    });
+    ..reply(
+        200,
+        json.encode({
+          "values": [
+            [count.toString()]
+          ],
+        }),
+        headers: {
+          'content-type': 'application/json',
+        });
 }

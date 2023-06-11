@@ -25,15 +25,15 @@ Future<void> main() async {
   Logger.root.level = kReleaseMode ? Level.INFO : Level.ALL;
   Logger.root.onRecord.listen((record) {
     if (kReleaseMode) {
-      debugPrint('${record.time} ${record.level.name} ${record.loggerName} - ${record.message}');
+      debugPrint(
+          '${record.time} ${record.level.name} ${record.loggerName} - ${record.message}');
       if (record.error != null) {
         debugPrint(record.error.toString());
       }
       if (record.stackTrace != null) {
         debugPrint(record.stackTrace.toString());
       }
-    }
-    else {
+    } else {
       // FIXME doesn't work in tests, use debugPrint (it should be overridden in tests)
       developer.log(
         record.message,
@@ -66,12 +66,9 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppConfig>.value(
-          value: appConfig
-        ),
+        ChangeNotifierProvider<AppConfig>.value(value: appConfig),
         ChangeNotifierProvider<DownloadProvider>(
-          create: (context) => DownloadProvider(() => HttpClient())
-        ),
+            create: (context) => DownloadProvider(() => HttpClient())),
       ],
       child: const MyApp(),
     ),
@@ -94,8 +91,7 @@ class _MyAppState extends State<MyApp> {
   String _getInitialRoute(AppConfig appConfig) {
     if (appConfig.aircrafts.isEmpty && appConfig.currentAircraft == null) {
       return 'aircraft-data';
-    }
-    else {
+    } else {
       return appConfig.pilotName != null ? '/' : 'pilot-select';
     }
   }
@@ -104,46 +100,48 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     _log.finest('MAIN-BUILD');
     return Consumer<AppConfig>(
-      builder: (context, appConfig, child) => PlatformApp(
-        onGenerateTitle: (BuildContext context) =>
-            AppLocalizations.of(context)!.appName,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          SfGlobalLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        // TEST
-        //locale: const Locale('it', ''),
-        initialRoute: _getInitialRoute(appConfig),
-        routes: <String, WidgetBuilder>{
-          // there is probably a better way to avoid loading the routes...
-          '/': (context) => appConfig.currentAircraft != null ?
-            MainNavigation(appConfig) : const SizedBox.shrink(),
-          'pilot-select': (context) => appConfig.currentAircraft != null ?
-            const PilotSelectScreen() : const SizedBox.shrink(),
-          'aircraft-data': (context) => const SetAircraftDataScreen(),
-        },
-        debugShowCheckedModeBanner: false,
-        material: (_, __) => MaterialAppData(
-          // TEST
-          //themeMode: ThemeMode.dark,
-          theme: ThemeData(
-            brightness: Brightness.light,
-            primarySwatch: Colors.deepOrange,
-          ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            primarySwatch: Colors.deepOrange,
-          ),
-        ),
-        cupertino: (_, __) => CupertinoAppData(
-          // TEST
-          //theme: const CupertinoThemeData(brightness: Brightness.dark),
-          // TODO
-        ),
-      ));
+        builder: (context, appConfig, child) => PlatformApp(
+              onGenerateTitle: (BuildContext context) =>
+                  AppLocalizations.of(context)!.appName,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                SfGlobalLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              // TEST
+              //locale: const Locale('it', ''),
+              initialRoute: _getInitialRoute(appConfig),
+              routes: <String, WidgetBuilder>{
+                // there is probably a better way to avoid loading the routes...
+                '/': (context) => appConfig.currentAircraft != null
+                    ? MainNavigation(appConfig)
+                    : const SizedBox.shrink(),
+                'pilot-select': (context) => appConfig.currentAircraft != null
+                    ? const PilotSelectScreen()
+                    : const SizedBox.shrink(),
+                'aircraft-data': (context) => const SetAircraftDataScreen(),
+              },
+              debugShowCheckedModeBanner: false,
+              material: (_, __) => MaterialAppData(
+                // TEST
+                //themeMode: ThemeMode.dark,
+                theme: ThemeData(
+                  brightness: Brightness.light,
+                  primarySwatch: Colors.deepOrange,
+                ),
+                darkTheme: ThemeData(
+                  brightness: Brightness.dark,
+                  primarySwatch: Colors.deepOrange,
+                ),
+              ),
+              cupertino: (_, __) => CupertinoAppData(
+                  // TEST
+                  //theme: const CupertinoThemeData(brightness: Brightness.dark),
+                  // TODO
+                  ),
+            ));
   }
 }

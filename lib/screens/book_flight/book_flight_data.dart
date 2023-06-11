@@ -1,4 +1,3 @@
-
 import 'package:logging/logging.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -12,7 +11,8 @@ class FlightBookingDataSource extends CalendarDataSource {
   late BookFlightCalendarService _service;
   late final void Function(dynamic) _onError;
 
-  FlightBookingDataSource(BookFlightCalendarService service, void Function(dynamic) onError) {
+  FlightBookingDataSource(
+      BookFlightCalendarService service, void Function(dynamic) onError) {
     _service = service;
     _onError = onError;
     appointments = [];
@@ -44,24 +44,24 @@ class FlightBookingDataSource extends CalendarDataSource {
     final List<FlightBooking> removed = [];
     final List<FlightBooking> changed = [];
 
-    _log.fine('Loading more events from ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
+    _log.fine(
+        'Loading more events from ${startDate.toIso8601String()} to ${endDate.toIso8601String()}');
     try {
       // FIXME trick to avoid race conditions with setState called by _changeVisibleDates
       await Future.delayed(const Duration(milliseconds: 500));
 
       // TODO maybe load a few days before and after if currently in schedule view?
-      final events = await _service.search(startDate, endDate.add(const Duration(days: 1)))
+      final events = await _service
+          .search(startDate, endDate.add(const Duration(days: 1)))
           .timeout(kNetworkRequestTimeout);
       _log.finest('EVENTS: $events');
 
       // changed events
-      changed.addAll(events
-          .where((FlightBooking f) {
+      changed.addAll(events.where((FlightBooking f) {
         final FlightBooking? otherEvent = appointments!
             .firstWhere((e) => e == f, orElse: () => null) as FlightBooking?;
         return otherEvent != null && !otherEvent.equals(f);
-      })
-      );
+      }));
       if (changed.isNotEmpty) {
         changed.forEach(appointments!.remove);
         notifyListeners(CalendarDataSourceAction.remove, changed);
@@ -70,13 +70,16 @@ class FlightBookingDataSource extends CalendarDataSource {
       }
 
       // changed events don't get caught in this (because equals only checks for event ID)
-      added.addAll(events.where((FlightBooking f) => !appointments!.contains(f)));
+      added.addAll(
+          events.where((FlightBooking f) => !appointments!.contains(f)));
 
       // removed items are events that are not seen on the returned collection but are present on the internal data source
       removed.addAll(appointments!
-          .where((f) => (f as FlightBooking).from.compareTo(startDate) >= 0 &&
-          f.to.compareTo(endDate) <= 0 && !events.contains(f))
-      // FIXME probably not the best way to change the type
+          .where((f) =>
+              (f as FlightBooking).from.compareTo(startDate) >= 0 &&
+              f.to.compareTo(endDate) <= 0 &&
+              !events.contains(f))
+          // FIXME probably not the best way to change the type
           .map((f) => f as FlightBooking));
 
       appointments!.addAll(added);
@@ -89,8 +92,7 @@ class FlightBookingDataSource extends CalendarDataSource {
       if (removed.isNotEmpty) {
         notifyListeners(CalendarDataSourceAction.remove, removed);
       }
-    }
-    catch (err, stacktrace) {
+    } catch (err, stacktrace) {
       _log.warning('Error loading events', err, stacktrace);
       _onError(err);
       notifyListeners(CalendarDataSourceAction.add, []);

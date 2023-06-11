@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,8 +18,8 @@ class ActivitiesScreen extends StatefulWidget {
 }
 
 class _ActivitiesScreenState extends State<ActivitiesScreen> {
-
   late ActivitiesListController _activitiesController;
+
   // TODO late AppConfig _appConfig;
   late ActivitiesService _activitiesService;
 
@@ -46,8 +45,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         title: Text(AppLocalizations.of(context)!.activities_title),
         automaticallyImplyLeading: false,
         material: (context, platform) => MaterialAppBarData(
-          toolbarHeight: MediaQuery.of(context).orientation == Orientation.portrait ?
-          kPortraitToolbarHeight : kLandscapeToolbarHeight,
+          toolbarHeight:
+              MediaQuery.of(context).orientation == Orientation.portrait
+                  ? kPortraitToolbarHeight
+                  : kLandscapeToolbarHeight,
         ),
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
@@ -59,5 +60,4 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
       ),
     );
   }
-
 }

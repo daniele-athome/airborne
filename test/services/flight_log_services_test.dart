@@ -1,4 +1,3 @@
-
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/services/flight_log_services.dart';
@@ -24,8 +23,7 @@ void main() {
     });
     testService.client = mockSheetsService;
   });
-  tearDown(() {
-  });
+  tearDown(() {});
 
   test('fetch items (single page)', () async {
     testService.lastId = 2;
@@ -58,10 +56,13 @@ void main() {
     when(mockSheetsService.getRows('TEST', 'SHEET', 'A2:J3'))
         .thenAnswer((_) => Future.value(fakeRows));
 
-    final dateOnly = DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
+    final dateOnly =
+        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
     final expectedItems = [
-      FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure', 'Fly Arrival', 1000, 2000, null, null, null),
-      FlightLogItem('2', dateOnly, 'Anna', 'Fly Start', 'Fly End', 2000, 3000, null, null, null),
+      FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure', 'Fly Arrival', 1000,
+          2000, null, null, null),
+      FlightLogItem('2', dateOnly, 'Anna', 'Fly Start', 'Fly End', 2000, 3000,
+          null, null, null),
     ];
     expect(await testService.fetchItems(), expectedItems);
     expect(testService.lastId, 0);
@@ -80,10 +81,12 @@ void main() {
       // TODO other values one day...?
     );
     when(mockSheetsService.appendRows('TEST', 'SHEET', 'A2:J2', any))
-      .thenAnswer((_) => Future.value(fakeAppended));
+        .thenAnswer((_) => Future.value(fakeAppended));
 
-    final dateOnly = DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
-    final fakeItem = FlightLogItem(null, dateOnly, 'Anna', 'Fly Departure', 'Fly Arrival', 1000, 2000, null, null, null);
+    final dateOnly =
+        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
+    final fakeItem = FlightLogItem(null, dateOnly, 'Anna', 'Fly Departure',
+        'Fly Arrival', 1000, 2000, null, null, null);
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
     expect(await testService.appendItem(fakeItem), expectedItem);
@@ -97,10 +100,12 @@ void main() {
       // TODO other values one day...?
     );
     when(mockSheetsService.updateRows('TEST', 'SHEET', 'A2:J2', any))
-      .thenAnswer((_) => Future.value(fakeAppended));
+        .thenAnswer((_) => Future.value(fakeAppended));
 
-    final dateOnly = DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
-    final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure', 'Fly Arrival', 1000, 2000, null, null, null);
+    final dateOnly =
+        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
+    final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure',
+        'Fly Arrival', 1000, 2000, null, null, null);
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
     expect(await testService.updateItem(fakeItem), expectedItem);
@@ -109,20 +114,22 @@ void main() {
   test('delete item', () async {
     final timestamp = DateTime.now();
     final fakeAppended = gapi_sheets.BatchUpdateSpreadsheetResponse(
-      spreadsheetId: 'TEST!SHEET',
-      replies: [
-        gapi_sheets.Response(
-          // TODO what here?
-          deleteDimensionGroup: gapi_sheets.DeleteDimensionGroupResponse(),
-        )
-      ]
-      // TODO other values one day...?
-    );
+        spreadsheetId: 'TEST!SHEET',
+        replies: [
+          gapi_sheets.Response(
+            // TODO what here?
+            deleteDimensionGroup: gapi_sheets.DeleteDimensionGroupResponse(),
+          )
+        ]
+        // TODO other values one day...?
+        );
     when(mockSheetsService.deleteRows('TEST', 'SHEET', 2, 2))
-      .thenAnswer((_) => Future.value(fakeAppended));
+        .thenAnswer((_) => Future.value(fakeAppended));
 
-    final dateOnly = DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
-    final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure', 'Fly Arrival', 1000, 2000, null, null, null);
+    final dateOnly =
+        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
+    final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure',
+        'Fly Arrival', 1000, 2000, null, null, null);
     final expectedItem = DeletedFlightLogItem('1');
     expect(await testService.deleteItem(fakeItem), expectedItem);
   });

@@ -55,13 +55,13 @@ class AircraftData {
   File get aircraftPicture {
     return File(path.join(dataPath!.path, _kAircraftPicFilename));
   }
-
 }
 
 class AircraftDataReader {
   // for main constructor
   File? dataFile;
   File? urlFile;
+
   // for fromBytes constructor
   Uint8List? dataBytes;
   String? dataFilename;
@@ -89,8 +89,7 @@ class AircraftDataReader {
     final Archive archive;
     try {
       archive = ZipDecoder().decodeBytes(bytes, verify: true);
-    }
-    catch (e) {
+    } catch (e) {
       _log.warning('Not a valid zip file: $e');
       return false;
     }
@@ -104,16 +103,17 @@ class AircraftDataReader {
     final jsonData = mainFile.content as List<int>;
     final Map<String, dynamic> metadata;
     try {
-      metadata = json.decode(String.fromCharCodes(jsonData)) as Map<String, dynamic>;
-    }
-    catch(e) {
+      metadata =
+          json.decode(String.fromCharCodes(jsonData)) as Map<String, dynamic>;
+    } catch (e) {
       _log.warning('$_kAircraftMetadataFilename is not valid JSON: $e');
       return false;
     }
 
     _log.finest(metadata);
 
-    final schemaData = await rootBundle.loadString('assets/aircraft.schema.json');
+    final schemaData =
+        await rootBundle.loadString('assets/aircraft.schema.json');
     final schema = JsonSchema.create(schemaData);
     final validation = schema.validate(metadata);
     if (validation.isValid) {
@@ -125,7 +125,8 @@ class AircraftDataReader {
       }
 
       // pilot avatars
-      for (final pilot in List<String>.from(metadata['pilot_names'] as Iterable<dynamic>)) {
+      for (final pilot
+          in List<String>.from(metadata['pilot_names'] as Iterable<dynamic>)) {
         final avatarPic = archive.findFile('avatar-${pilot.toLowerCase()}.jpg');
         if (avatarPic == null || !avatarPic.isFile) {
           _log.warning('pilot avatar for $pilot is missing');
@@ -153,7 +154,8 @@ class AircraftDataReader {
       await directory.create(recursive: true);
 
       // FIXME in-memory operations - fine for small files, but it needs to change
-      final bytes = dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
+      final bytes =
+          dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
       final archive = ZipDecoder().decodeBytes(bytes, verify: true);
 
       for (final file in archive.files) {
@@ -166,25 +168,29 @@ class AircraftDataReader {
     }
 
     try {
-      final jsonFile = File(path.join(directory.path, _kAircraftMetadataFilename));
+      final jsonFile =
+          File(path.join(directory.path, _kAircraftMetadataFilename));
       final jsonData = await jsonFile.readAsString();
       metadata = json.decode(jsonData) as Map<String, dynamic>;
-    }
-    catch(e) {
+    } catch (e) {
       _log.warning('$_kAircraftMetadataFilename is not valid JSON: $e');
       throw const FormatException('Not a valid aircraft archive.');
     }
 
     // aircraft picture
-    final aircraftPicFile = File(path.join(directory.path, _kAircraftPicFilename));
+    final aircraftPicFile =
+        File(path.join(directory.path, _kAircraftPicFilename));
     if (!(await aircraftPicFile.exists())) {
       _log.warning('$_kAircraftPicFilename is missing');
       throw const FormatException('Not a valid aircraft archive.');
     }
 
     // pilot avatars
-    for (final pilot in List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>)) {
-      if (!(await File(path.join(directory.path, 'avatar-${pilot.toLowerCase()}.jpg')).exists())) {
+    for (final pilot
+        in List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>)) {
+      if (!(await File(
+              path.join(directory.path, 'avatar-${pilot.toLowerCase()}.jpg'))
+          .exists())) {
         _log.warning('pilot avatar for $pilot is missing');
         throw const FormatException('Not a valid aircraft archive.');
       }
@@ -194,8 +200,7 @@ class AircraftDataReader {
     try {
       String? url = urlFile != null ? await urlFile!.readAsString() : this.url;
       metadata!['url'] = url;
-    }
-    catch (e) {
+    } catch (e) {
       // fail gracefully
       _log.info("Unable to read url file", e);
     }
@@ -206,23 +211,26 @@ class AircraftDataReader {
   }
 
   AircraftData toAircraftData() => AircraftData(
-      dataPath: metadata!['path'] as Directory,
-      id: metadata!['aircraft_id'] as String,
-      callSign: metadata!['callsign'] as String,
-      backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
-      pilotNames: List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>),
-      noPilotName: metadata!['no_pilot_name'] as String?,
-      locationName: metadata!['location']?['name'] as String,
-      locationLatitude: metadata!['location']?['latitude'] as double,
-      locationLongitude: metadata!['location']?['longitude'] as double,
-      locationTimeZone: metadata!['location']?['timezone'] as String,
-      fuelPrices: (metadata!['fuel_prices'] != null) ?
-        Map.fromEntries((metadata!['fuel_prices'] as List<dynamic>).map((item) =>
-          MapEntry((item as Map<String, dynamic>)['value'] as num, item['label'] as String))) : null,
-      url: metadata!['url'] as String?,
-      admin: metadata!['admin'] != null && metadata!['admin'] as bool,
-    );
-
+        dataPath: metadata!['path'] as Directory,
+        id: metadata!['aircraft_id'] as String,
+        callSign: metadata!['callsign'] as String,
+        backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
+        pilotNames:
+            List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>),
+        noPilotName: metadata!['no_pilot_name'] as String?,
+        locationName: metadata!['location']?['name'] as String,
+        locationLatitude: metadata!['location']?['latitude'] as double,
+        locationLongitude: metadata!['location']?['longitude'] as double,
+        locationTimeZone: metadata!['location']?['timezone'] as String,
+        fuelPrices: (metadata!['fuel_prices'] != null)
+            ? Map.fromEntries((metadata!['fuel_prices'] as List<dynamic>).map(
+                (item) => MapEntry(
+                    (item as Map<String, dynamic>)['value'] as num,
+                    item['label'] as String)))
+            : null,
+        url: metadata!['url'] as String?,
+        admin: metadata!['admin'] != null && metadata!['admin'] as bool,
+      );
 }
 
 /// Add an aircraft data file to a local data store for long-term storage.
@@ -235,23 +243,23 @@ Future<File> addAircraftDataFile(AircraftDataReader reader, String url) async {
   await directory.create(recursive: true);
 
   // store url in separate file
-  File urlFile = File(path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.url'));
+  File urlFile = File(path.join(
+      directory.path, '${reader.metadata!['aircraft_id'] as String}.url'));
   await urlFile.writeAsString(url);
   reader.urlFile = urlFile;
 
-  final filename = path.join(directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
+  final filename = path.join(
+      directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
   return reader.dataFile!.copy(filename);
 }
 
 /// Loads an aircraft data file into the cache.
 Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   final baseDir = await getApplicationSupportDirectory();
-  final dataFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'));
+  final dataFile =
+      File(path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'));
   final urlFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.url'));
-  final reader = AircraftDataReader(
-    dataFile: dataFile,
-    urlFile: urlFile
-  );
+  final reader = AircraftDataReader(dataFile: dataFile, urlFile: urlFile);
   await reader.open();
   return reader;
 }
@@ -260,11 +268,12 @@ Future<Directory> deleteAircraftCache() async {
   final cacheDir = await getTemporaryDirectory();
   final tmpDirectory = Directory(path.join(cacheDir.path, 'current_aircraft'));
   final exists = await tmpDirectory.exists();
-  return exists ? tmpDirectory.delete(recursive: true) as Future<Directory> : Future.value(tmpDirectory);
+  return exists
+      ? tmpDirectory.delete(recursive: true) as Future<Directory>
+      : Future.value(tmpDirectory);
 }
 
-class AircraftValidationException implements Exception {
-}
+class AircraftValidationException implements Exception {}
 
 class AircraftStoreException implements Exception {
   final Object cause;
@@ -284,18 +293,17 @@ Future<AircraftData> _validateAndStoreAircraft(File file, String url) async {
       await reader.open();
       final aircraftData = reader.toAircraftData();
       return aircraftData;
-    }
-    catch (e, stacktrace) {
+    } catch (e, stacktrace) {
       _log.warning('Error storing aircraft data file', e, stacktrace);
       return Future.error(AircraftStoreException(e), stacktrace);
     }
-  }
-  else {
+  } else {
     return Future.error(AircraftValidationException());
   }
 }
 
-Future<AircraftData> downloadAircraftData(String url, String? userpass, DownloadProvider downloadProvider) async {
+Future<AircraftData> downloadAircraftData(
+    String url, String? userpass, DownloadProvider downloadProvider) async {
   String? username;
   String? password;
   if (userpass != null && userpass.isNotEmpty) {
@@ -305,7 +313,8 @@ Future<AircraftData> downloadAircraftData(String url, String? userpass, Download
       password = userpass.substring(separator + 1);
     }
   }
-  return downloadProvider.downloadToFile(url, 'aircraft.zip', username, password, true)
+  return downloadProvider
+      .downloadToFile(url, 'aircraft.zip', username, password, true)
       .timeout(kNetworkRequestTimeout)
       .then((tempfile) async {
     _log.finest(tempfile);

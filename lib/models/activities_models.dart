@@ -1,16 +1,19 @@
-
 /// Activity types. The code is used by the backend.
 /// A type can be a task (i.e. can be marked as done) or not.
 /// A type can also trigger an alert: it will be notified to all pilots (may be overridden in entry)
 enum ActivityType {
   /// A simple note. Not a task.
   note(10, false, false),
+
   /// A minor task to be done (e.g. washing)
   minor(30, true, false),
+
   /// A non-critical issue requiring a notice to all pilots.
   notice(70, false, true),
+
   /// A relevant, important issue that must be addressed (although aircraft is able to fly).
   important(90, true, true),
+
   /// A critical issue, possibly related to flight security. Must be addressed before flight.
   critical(100, true, true);
 
@@ -76,5 +79,4 @@ class ActivityEntry {
 
   /// Trigger an alert to all pilots. If null, the alert flag in [type] will be used.
   bool? alert;
-
 }

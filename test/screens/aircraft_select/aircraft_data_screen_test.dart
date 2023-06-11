@@ -30,14 +30,17 @@ void main() {
           ],
           child: const SetAircraftDataScreen(),
         ),
-    );
+      );
 
   group('Single aircraft data screen tests', () {
-    testWidgets('An invalid URI in address field should not validate', (tester) async {
+    testWidgets('An invalid URI in address field should not validate',
+        (tester) async {
       await tester.pumpWidget(createSkeletonApp());
       await tester.enterText(
-          find.byWidgetPredicate((widget) => widget is PlatformTextFormField &&
-              widget.keyboardType == TextInputType.url), "NOT_VALID_URI");
+          find.byWidgetPredicate((widget) =>
+              widget is PlatformTextFormField &&
+              widget.keyboardType == TextInputType.url),
+          "NOT_VALID_URI");
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), false);
     });
@@ -45,8 +48,10 @@ void main() {
     testWidgets('A valid URI in address field should validate', (tester) async {
       await tester.pumpWidget(createSkeletonApp());
       await tester.enterText(
-          find.byWidgetPredicate((widget) => widget is PlatformTextFormField &&
-              widget.keyboardType == TextInputType.url), 'http://localhost/a1234.zip');
+          find.byWidgetPredicate((widget) =>
+              widget is PlatformTextFormField &&
+              widget.keyboardType == TextInputType.url),
+          'http://localhost/a1234.zip');
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
@@ -64,6 +69,5 @@ ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
 ChangeNotifierProvider<DownloadProvider> _provideFakeDownloadProvider() {
   final client = MockHttpClient();
   return ChangeNotifierProvider<DownloadProvider>(
-    create: (context) => DownloadProvider(() => client)
-  );
+      create: (context) => DownloadProvider(() => client));
 }

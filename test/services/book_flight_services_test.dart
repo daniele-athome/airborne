@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:airborne/helpers/googleapis.dart';
@@ -24,7 +23,8 @@ void main() {
   });
   setUp(() {
     mockCalendarService = MockGoogleCalendarService();
-    testService = BookFlightCalendarService(MockGoogleServiceAccountService(), "TEST");
+    testService =
+        BookFlightCalendarService(MockGoogleServiceAccountService(), "TEST");
     testService.client = mockCalendarService;
   });
 
@@ -35,12 +35,15 @@ void main() {
     final fakeEvent = gapi_calendar.Event(
       id: eventId,
       summary: 'Anna',
-      start: gapi_calendar.EventDateTime(dateTime: dtStart, timeZone: local.name),
+      start:
+          gapi_calendar.EventDateTime(dateTime: dtStart, timeZone: local.name),
       end: gapi_calendar.EventDateTime(dateTime: dtEnd, timeZone: local.name),
       description: null,
     );
-    final fakeEvents = gapi_calendar.Events(items: [fakeEvent], timeZone: 'UTC');
-    when(mockCalendarService.listEvents("TEST", dtStart, dtEnd)).thenAnswer((_) => Future.value(fakeEvents));
+    final fakeEvents =
+        gapi_calendar.Events(items: [fakeEvent], timeZone: 'UTC');
+    when(mockCalendarService.listEvents("TEST", dtStart, dtEnd))
+        .thenAnswer((_) => Future.value(fakeEvents));
 
     final expectedEvent = FlightBooking(eventId, "Anna",
         TZDateTime.from(dtStart, UTC), TZDateTime.from(dtEnd, UTC), null);
@@ -54,20 +57,26 @@ void main() {
     final fakeEvent = gapi_calendar.Event(
       id: 'OLDEVENT',
       summary: 'Anna',
-      start: gapi_calendar.EventDateTime(dateTime: dtStart.toUtc(), timeZone: local.name),
-      end: gapi_calendar.EventDateTime(dateTime: dtEnd.toUtc(), timeZone: local.name),
+      start: gapi_calendar.EventDateTime(
+          dateTime: dtStart.toUtc(), timeZone: local.name),
+      end: gapi_calendar.EventDateTime(
+          dateTime: dtEnd.toUtc(), timeZone: local.name),
       description: null,
     );
-    final fakeEvents = gapi_calendar.Events(items: [fakeEvent], timeZone: local.name);
-    when(mockCalendarService.listEvents("TEST", TZDateTime.from(dtStart, local), TZDateTime.from(dtEnd, local)))
+    final fakeEvents =
+        gapi_calendar.Events(items: [fakeEvent], timeZone: local.name);
+    when(mockCalendarService.listEvents("TEST", TZDateTime.from(dtStart, local),
+            TZDateTime.from(dtEnd, local)))
         .thenAnswer((_) => Future.value(fakeEvents));
 
     final fakeBooking = FlightBooking("NEWEVENT", "Anna",
         TZDateTime.from(dtStart, local), TZDateTime.from(dtEnd, local), null);
     expect(await testService.bookingConflicts(fakeBooking), true);
 
-    final emptyFakeEvents = gapi_calendar.Events(items: [], timeZone: local.name);
-    when(mockCalendarService.listEvents("TEST", TZDateTime.from(dtStart, local), TZDateTime.from(dtEnd, local)))
+    final emptyFakeEvents =
+        gapi_calendar.Events(items: [], timeZone: local.name);
+    when(mockCalendarService.listEvents("TEST", TZDateTime.from(dtStart, local),
+            TZDateTime.from(dtEnd, local)))
         .thenAnswer((_) => Future.value(emptyFakeEvents));
     expect(await testService.bookingConflicts(fakeBooking), false);
   });
@@ -83,7 +92,8 @@ void main() {
       description: null,
     );
     // TODO stub event parameter (needs custom ArgMatcher)
-    when(mockCalendarService.insertEvent("TEST", any)).thenAnswer((_) => Future.value(fakeEvent));
+    when(mockCalendarService.insertEvent("TEST", any))
+        .thenAnswer((_) => Future.value(fakeEvent));
 
     final fakeBooking = FlightBooking("NEWEVENT", "Anna",
         TZDateTime.from(dtStart, local), TZDateTime.from(dtEnd, local), null);
@@ -101,7 +111,8 @@ void main() {
       description: null,
     );
     // TODO stub event parameter (needs custom ArgMatcher)
-    when(mockCalendarService.updateEvent("TEST", "NEWEVENT", any)).thenAnswer((_) => Future.value(fakeEvent));
+    when(mockCalendarService.updateEvent("TEST", "NEWEVENT", any))
+        .thenAnswer((_) => Future.value(fakeEvent));
 
     final fakeBooking = FlightBooking("NEWEVENT", "Anna",
         TZDateTime.from(dtStart, local), TZDateTime.from(dtEnd, local), null);
@@ -111,7 +122,8 @@ void main() {
   test('delete booking', () async {
     final dtStart = DateTime.now();
     final dtEnd = DateTime.now();
-    when(mockCalendarService.deleteEvent("TEST", "NEWEVENT")).thenAnswer((_) => Future.value());
+    when(mockCalendarService.deleteEvent("TEST", "NEWEVENT"))
+        .thenAnswer((_) => Future.value());
 
     final fakeBooking = FlightBooking("NEWEVENT", "Anna",
         TZDateTime.from(dtStart, local), TZDateTime.from(dtEnd, local), null);

@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,7 +12,6 @@ import '../../services/activities_services.dart';
 final Logger _log = Logger((ActivityEntry).toString());
 
 class ActivitiesList extends StatefulWidget {
-
   final ActivitiesListController controller;
   final ActivitiesService activitiesService;
 
@@ -28,7 +26,6 @@ class ActivitiesList extends StatefulWidget {
 }
 
 class _ActivitiesListState extends State<ActivitiesList> {
-
   final _pagingController = PagingController<int, ActivityEntry>(
     firstPageKey: 1,
   );
@@ -56,18 +53,18 @@ class _ActivitiesListState extends State<ActivitiesList> {
         await widget.activitiesService.reset();
       }
 
-      final items = widget.activitiesService.hasMoreData() ?
-        await widget.activitiesService.fetchItems() : <ActivityEntry>[];
+      final items = widget.activitiesService.hasMoreData()
+          ? await widget.activitiesService.fetchItems()
+          : <ActivityEntry>[];
       final page = items
-        // ignore done items for now
-        .where((entry) => entry.status != ActivityStatus.done)
-        .toList(growable: false);
+          // ignore done items for now
+          .where((entry) => entry.status != ActivityStatus.done)
+          .toList(growable: false);
 
       if (_firstTime) {
         if (page.isNotEmpty) {
           widget.controller.empty = false;
-        }
-        else {
+        } else {
           widget.controller.empty = true;
         }
         _firstTime = false;
@@ -75,12 +72,10 @@ class _ActivitiesListState extends State<ActivitiesList> {
 
       if (widget.activitiesService.hasMoreData()) {
         _pagingController.appendPage(page, pageKey + 1);
-      }
-      else {
+      } else {
         _pagingController.appendLastPage(page);
       }
-    }
-    catch (error, stacktrace) {
+    } catch (error, stacktrace) {
       _log.warning('error loading activities data', error, stacktrace);
       _pagingController.error = error;
     }
@@ -99,14 +94,15 @@ class _ActivitiesListState extends State<ActivitiesList> {
 
   Widget firstPageErrorIndicator(BuildContext context) =>
       FirstPageExceptionIndicator(
-        title: AppLocalizations.of(context)!.activities_error_firstPageIndicator,
+        title:
+            AppLocalizations.of(context)!.activities_error_firstPageIndicator,
         message: getExceptionMessage(_pagingController.error),
         onTryAgain: _refresh,
       );
 
-  Widget newPageErrorIndicator(BuildContext context) =>
-      NewPageErrorIndicator(
-        message: AppLocalizations.of(context)!.activities_error_newPageIndicator,
+  Widget newPageErrorIndicator(BuildContext context) => NewPageErrorIndicator(
+        message:
+            AppLocalizations.of(context)!.activities_error_newPageIndicator,
         onTap: _pagingController.retryLastFailedRequest,
       );
 
@@ -132,10 +128,14 @@ class _ActivitiesListState extends State<ActivitiesList> {
               separatorBuilder: (context, index) => const SizedBox.shrink(),
               builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
                 itemBuilder: _buildListItem,
-                firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
-                newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
-                noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
-                firstPageProgressIndicatorBuilder: (context) => const CupertinoActivityIndicator(radius: 20),
+                firstPageErrorIndicatorBuilder: (context) =>
+                    firstPageErrorIndicator(context),
+                newPageErrorIndicatorBuilder: (context) =>
+                    newPageErrorIndicator(context),
+                noItemsFoundIndicatorBuilder: (context) =>
+                    noItemsFoundIndicator(context),
+                firstPageProgressIndicatorBuilder: (context) =>
+                    const CupertinoActivityIndicator(radius: 20),
                 newPageProgressIndicatorBuilder: (context) => const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: CupertinoActivityIndicator(radius: 16),
@@ -145,8 +145,7 @@ class _ActivitiesListState extends State<ActivitiesList> {
           ),
         ],
       );
-    }
-    else {
+    } else {
       return RefreshIndicator(
         onRefresh: () => _refresh(),
         child: PagedListView.separated(
@@ -156,9 +155,12 @@ class _ActivitiesListState extends State<ActivitiesList> {
           separatorBuilder: (context, index) => const SizedBox.shrink(),
           builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
             itemBuilder: _buildListItem,
-            firstPageErrorIndicatorBuilder: (context) => firstPageErrorIndicator(context),
-            newPageErrorIndicatorBuilder: (context) => newPageErrorIndicator(context),
-            noItemsFoundIndicatorBuilder: (context) => noItemsFoundIndicator(context),
+            firstPageErrorIndicatorBuilder: (context) =>
+                firstPageErrorIndicator(context),
+            newPageErrorIndicatorBuilder: (context) =>
+                newPageErrorIndicator(context),
+            noItemsFoundIndicatorBuilder: (context) =>
+                noItemsFoundIndicator(context),
           ),
         ),
       );
@@ -171,7 +173,6 @@ class _ActivitiesListState extends State<ActivitiesList> {
     widget.controller.removeListener(_refresh);
     super.dispose();
   }
-
 }
 
 class ActivitiesListController extends ValueNotifier<ActivitiesListState> {
@@ -190,20 +191,16 @@ class ActivitiesListController extends ValueNotifier<ActivitiesListState> {
   void reset() {
     value = const ActivitiesListState();
   }
-
 }
 
 @immutable
 class ActivitiesListState {
-  const ActivitiesListState({
-    this.empty
-  });
+  const ActivitiesListState({this.empty});
 
   final bool? empty;
 }
 
 class _EntryListItem extends StatelessWidget {
-
   const _EntryListItem({
     Key? key,
     required this.entry,
@@ -212,7 +209,9 @@ class _EntryListItem extends StatelessWidget {
   final ActivityEntry entry;
 
   Color? _backgroundColor(BuildContext context, ActivityEntry entry) {
-    return isCupertino(context) ? CupertinoColors.systemFill.resolveFrom(context) : null;
+    return isCupertino(context)
+        ? CupertinoColors.systemFill.resolveFrom(context)
+        : null;
   }
 
   Widget _entryIndicator(BuildContext context, ActivityEntry entry) {
@@ -228,8 +227,7 @@ class _EntryListItem extends StatelessWidget {
       icon = Icons.check;
       // TODO i18n
       text = "Fatto";
-    }
-    else {
+    } else {
       switch (entry.type) {
         case ActivityType.note:
           bgColor = Colors.blue;
@@ -253,29 +251,33 @@ class _EntryListItem extends StatelessWidget {
           bgColor = Colors.amber;
           iconColor = Colors.white;
           icon = Icons.warning_amber_outlined;
-          text = AppLocalizations.of(context)!.activities_activity_type_important;
+          text =
+              AppLocalizations.of(context)!.activities_activity_type_important;
           break;
         case ActivityType.critical:
           bgColor = Colors.red;
           iconColor = Colors.white;
           icon = Icons.block_outlined;
-          text = AppLocalizations.of(context)!.activities_activity_type_critical;
+          text =
+              AppLocalizations.of(context)!.activities_activity_type_critical;
           break;
         default:
           throw UnsupportedError("Unknown type: ${entry.type.name}");
       }
     }
 
-    final dateTextColor = ThemeData.estimateBrightnessForColor(bgColor) == Brightness.light ?
-      Colors.black : Colors.white;
-    final textStyle = isCupertino(context) ?
-    CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-      fontSize: 14,
-      color: dateTextColor,
-    ) :
-    Theme.of(context).textTheme.bodyMedium!.copyWith(
-      color: dateTextColor,
-    );
+    final dateTextColor =
+        ThemeData.estimateBrightnessForColor(bgColor) == Brightness.light
+            ? Colors.black
+            : Colors.white;
+    final textStyle = isCupertino(context)
+        ? CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+              fontSize: 14,
+              color: dateTextColor,
+            )
+        : Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: dateTextColor,
+            );
 
     return Container(
         decoration: BoxDecoration(
@@ -298,18 +300,17 @@ class _EntryListItem extends StatelessWidget {
             const SizedBox(width: 4.0),
             Text(text, style: textStyle),
           ],
-        )
-    );
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final summaryTextStyle = isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.titleLarge!;
-    final contentTextStyle = isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 14) :
-      Theme.of(context).textTheme.bodyMedium!;
+    final summaryTextStyle = isCupertino(context)
+        ? CupertinoTheme.of(context).textTheme.textStyle
+        : Theme.of(context).textTheme.titleLarge!;
+    final contentTextStyle = isCupertino(context)
+        ? CupertinoTheme.of(context).textTheme.textStyle.copyWith(fontSize: 14)
+        : Theme.of(context).textTheme.bodyMedium!;
 
     final content = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -322,7 +323,8 @@ class _EntryListItem extends StatelessWidget {
               children: <Widget>[
                 Text(entry.summary, style: summaryTextStyle),
                 if (entry.description != null) const SizedBox(height: 4),
-                if (entry.description != null) Text(entry.description!, style: contentTextStyle),
+                if (entry.description != null)
+                  Text(entry.description!, style: contentTextStyle),
                 const SizedBox(height: 8.0),
                 _entryIndicator(context, entry),
                 //const SizedBox(height: 8),
@@ -336,25 +338,24 @@ class _EntryListItem extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: isCupertino(context) ?
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.0),
-          color: _backgroundColor(context, entry),
-        ),
-        // no shadow, so we manually create a margin
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        child: content,
-      ) :
-      Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        color: _backgroundColor(context, entry),
-        elevation: 5,
-        child: content,
-      ),
+      child: isCupertino(context)
+          ? Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: _backgroundColor(context, entry),
+              ),
+              // no shadow, so we manually create a margin
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              child: content,
+            )
+          : Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              color: _backgroundColor(context, entry),
+              elevation: 5,
+              child: content,
+            ),
     );
   }
-
 }

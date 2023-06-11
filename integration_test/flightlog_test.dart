@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/models/flight_log_models.dart';
+import 'package:airborne/screens/flight_log/flight_log_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,9 +70,10 @@ void main() async {
       await tester.pumpAndSettle();
 
       expect(tester.any(find.byKey(const Key('list_flight_log'))), true);
-      // TODO verify list items
       expect(httpRowsMock.isDone, true);
       expect(httpCountMock.isDone, true);
+      expect(tester.widgetList(find.descendant(of: find.byKey(const Key('list_flight_log')),
+          matching: find.byType(FlightLogListItem))).length, mockItems.length);
 
       httpRowsMock.cancel();
       httpCountMock.cancel();

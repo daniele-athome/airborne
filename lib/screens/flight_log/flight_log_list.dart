@@ -33,8 +33,6 @@ class FlightLogList extends StatefulWidget {
 
 class _FlightLogListState extends State<FlightLogList> {
 
-  final _hoursFormatter = NumberFormat.decimalPattern();
-  final _dateFormatter = DateFormat.yMEd();
   final _pagingController = PagingController<int, FlightLogItem>(
     firstPageKey: 1,
   );
@@ -96,121 +94,8 @@ class _FlightLogListState extends State<FlightLogList> {
     return Future.sync(() => _pagingController.refresh());
   }
 
-  String _buildLocationName(FlightLogItem item) => (item.origin != item.destination) ?
-        '${item.origin} – ${item.destination}' : item.origin;
-
-  String _buildHours(FlightLogItem item) =>
-      '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
-
-  String _buildTime(FlightLogItem item) => '${((item.endHour - item.startHour)*60).round().toString()}′';
-
-  Widget _buildListItem(BuildContext context, FlightLogItem item, int index) {
-    final dateStyle = (isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyLarge!).copyWith(
-        fontSize: 16,
-        // TODO do we need this? -- fontWeight: FontWeight.bold,
-      );
-    final subtitleStyle = isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).textTheme.bodySmall!.color);
-    final pilotStyle = (isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyMedium!).copyWith(
-        fontSize: 17,
-        // TODO do we need this? -- fontWeight: FontWeight.w300,
-      );
-    final timeStyle = (isCupertino(context) ?
-      CupertinoTheme.of(context).textTheme.textStyle :
-      Theme.of(context).textTheme.bodyMedium!).copyWith(
-        fontSize: 20,
-      );
-
-    final listItem = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(_dateFormatter.format(item.date), style: dateStyle),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    children: [
-                      Icon(PlatformIcons(context).locationSolid, color: Colors.red, size: 18),
-                      const SizedBox(width: 4),
-                      Text(_buildLocationName(item), style: subtitleStyle),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    children: [
-                      Icon(PlatformIcons(context).clockSolid, color: Colors.blue, size: 18),
-                      const SizedBox(width: 4),
-                      Text(_buildHours(item), style: subtitleStyle),
-                    ],
-                  ),
-                ),
-              ],
-            )
-          ),
-          Expanded(
-            flex: 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: AutoSizeText(item.pilotName,
-                    style: pilotStyle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (item.fuel != null && item.fuel! > 0) const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        child: Icon(Icons.local_gas_station, color: Colors.green, size: 24),
-                      ),
-                      Text(_buildTime(item), style: timeStyle),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (isCupertino(context)) {
-      return CupertinoInkWell(
-        onPressed: () => widget.onTapItem(context, item),
-        child: listItem,
-      );
-    }
-    else {
-      return InkWell(
-        onTap: () => widget.onTapItem(context, item),
-        child: listItem,
-      );
-    }
-  }
+  Widget _buildListItem(BuildContext context, FlightLogItem item, int index) =>
+    FlightLogListItem(item: item, onTapItem: widget.onTapItem);
 
   Widget noItemsFoundIndicator(BuildContext context) =>
     FirstPageExceptionIndicator(
@@ -285,6 +170,138 @@ class _FlightLogListState extends State<FlightLogList> {
     widget.controller.removeListener(_refresh);
     super.dispose();
   }
+
+}
+
+class FlightLogListItem extends StatelessWidget {
+  final _hoursFormatter = NumberFormat.decimalPattern();
+  final _dateFormatter = DateFormat.yMEd();
+
+  final FlightLogItem item;
+  final Function(BuildContext context, FlightLogItem item) onTapItem;
+
+  FlightLogListItem({
+    super.key,
+    required this.item,
+    required this.onTapItem,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dateStyle = (isCupertino(context) ?
+    CupertinoTheme.of(context).textTheme.textStyle :
+    Theme.of(context).textTheme.bodyLarge!).copyWith(
+      fontSize: 16,
+      // TODO do we need this? -- fontWeight: FontWeight.bold,
+    );
+    final subtitleStyle = isCupertino(context) ?
+    CupertinoTheme.of(context).textTheme.textStyle :
+    Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).textTheme.bodySmall!.color);
+    final pilotStyle = (isCupertino(context) ?
+    CupertinoTheme.of(context).textTheme.textStyle :
+    Theme.of(context).textTheme.bodyMedium!).copyWith(
+      fontSize: 17,
+      // TODO do we need this? -- fontWeight: FontWeight.w300,
+    );
+    final timeStyle = (isCupertino(context) ?
+    CupertinoTheme.of(context).textTheme.textStyle :
+    Theme.of(context).textTheme.bodyMedium!).copyWith(
+      fontSize: 20,
+    );
+
+    final listItem = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+              flex: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Text(_dateFormatter.format(item.date), style: dateStyle),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(
+                      children: [
+                        Icon(PlatformIcons(context).locationSolid, color: Colors.red, size: 18),
+                        const SizedBox(width: 4),
+                        Text(_buildLocationName(item), style: subtitleStyle),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(
+                      children: [
+                        Icon(PlatformIcons(context).clockSolid, color: Colors.blue, size: 18),
+                        const SizedBox(width: 4),
+                        Text(_buildHours(item), style: subtitleStyle),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+          ),
+          Expanded(
+            flex: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: AutoSizeText(item.pilotName,
+                    style: pilotStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (item.fuel != null && item.fuel! > 0) const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        child: Icon(Icons.local_gas_station, color: Colors.green, size: 24),
+                      ),
+                      Text(_buildTime(item), style: timeStyle),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (isCupertino(context)) {
+      return CupertinoInkWell(
+        onPressed: () => onTapItem(context, item),
+        child: listItem,
+      );
+    }
+    else {
+      return InkWell(
+        onTap: () => onTapItem(context, item),
+        child: listItem,
+      );
+    }
+  }
+
+  String _buildLocationName(FlightLogItem item) => (item.origin != item.destination) ?
+  '${item.origin} – ${item.destination}' : item.origin;
+
+  String _buildHours(FlightLogItem item) =>
+      '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
+
+  String _buildTime(FlightLogItem item) => '${((item.endHour - item.startHour)*60).round().toString()}′';
 
 }
 

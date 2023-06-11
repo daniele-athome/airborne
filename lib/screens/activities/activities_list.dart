@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
 import '../../helpers/utils.dart';
@@ -201,6 +202,8 @@ class ActivitiesListState {
 }
 
 class _EntryListItem extends StatelessWidget {
+  static final DateFormat _dateFormatter = DateFormat.yMd();
+
   const _EntryListItem({
     Key? key,
     required this.entry,
@@ -303,6 +306,61 @@ class _EntryListItem extends StatelessWidget {
         ));
   }
 
+  Widget _expireIndicator(BuildContext context, ActivityEntry entry) {
+    const kIconSize = 20.0;
+    final IconData icon;
+    final Color bgColor;
+    final Color iconColor;
+
+    final today = DateTime.now();
+    if (DateUtils.isSameDay(entry.dueDate, today) ||
+        entry.dueDate!.isBefore(today)) {
+      bgColor = Colors.red;
+      iconColor = Colors.white;
+      icon = Icons.warning_amber_outlined;
+    } else {
+      bgColor = Colors.amber;
+      iconColor = Colors.black;
+      icon = Icons.calendar_today_outlined;
+    }
+
+    final dateTextColor =
+        ThemeData.estimateBrightnessForColor(bgColor) == Brightness.light
+            ? Colors.black
+            : Colors.white;
+    final textStyle = isCupertino(context)
+        ? CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+              fontSize: 14,
+              color: dateTextColor,
+            )
+        : Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: dateTextColor,
+            );
+
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: bgColor,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 24,
+              width: 24,
+              child: Icon(
+                icon,
+                size: kIconSize,
+                color: iconColor,
+              ),
+            ),
+            const SizedBox(width: 4.0),
+            Text(_dateFormatter.format(entry.dueDate!), style: textStyle),
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final summaryTextStyle = isCupertino(context)
@@ -326,9 +384,15 @@ class _EntryListItem extends StatelessWidget {
                 if (entry.description != null)
                   Text(entry.description!, style: contentTextStyle),
                 const SizedBox(height: 8.0),
-                _entryIndicator(context, entry),
-                //const SizedBox(height: 8),
-                // TODO expire indicator (icon with different color for expired/not expired)
+                Row(
+                  children: [
+                    _entryIndicator(context, entry),
+                    const SizedBox(width: 8.0),
+                    if (entry.status != ActivityStatus.done &&
+                        entry.dueDate != null)
+                      _expireIndicator(context, entry),
+                  ],
+                )
               ],
             ),
           ),

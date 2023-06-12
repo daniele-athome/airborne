@@ -130,7 +130,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ),
           CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
             child: Row(
@@ -255,7 +255,7 @@ class _AboutScreenState extends State<AboutScreen> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           trailing: IconButton(
-            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
             tooltip:
                 AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
             icon: const Icon(Icons.open_in_new),

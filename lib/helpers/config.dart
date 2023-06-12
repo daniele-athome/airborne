@@ -101,7 +101,7 @@ class AppConfig extends ChangeNotifier {
     return tz.getLocation(_currentAircraft!.locationTimeZone);
   }
 
-  String get locationUrl {
+  String get locationMapsUrl {
     // TODO constant? Format? Whatever?
     return 'https://www.google.com/maps/search/?api=1&query=$locationLatitude,$locationLongitude';
   }

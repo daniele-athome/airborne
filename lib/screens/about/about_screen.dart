@@ -371,7 +371,6 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(Theme.of(context).visualDensity.baseSizeAdjustment.dy);
     final list = ListView(
       children: [
         Stack(

@@ -263,42 +263,35 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
         if (_appConfig.currentAircraft!.locationWeatherLive != null ||
             _appConfig.currentAircraft!.locationWeatherForecast != null)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center, mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  child: TextButton.icon(onPressed: () => openUrl(context,
-                      _appConfig.currentAircraft!.locationWeatherLive!),
-                      style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20)),
-                      icon: const Icon(Icons.sunny), label: Text('Meteo live'))
-                /*ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 20),
-                      enabled: _appConfig.currentAircraft!.locationWeatherLive != null,
-                      onTap: () => openUrl(context,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: OutlinedButton.icon(
+                      onPressed: () => openUrl(context,
                           _appConfig.currentAircraft!.locationWeatherLive!),
-                      leading: const Icon(Icons.sunny),
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(12.0)),
+                      icon: const Icon(Icons.sunny),
                       // TODO i18n
-                      title: Text('Meteo live')
-                  )*/
-              ),
-              Flexible(
-                  child: TextButton.icon(onPressed: () => openUrl(context,
-                      _appConfig.currentAircraft!.locationWeatherForecast!),
-                      style: TextButton.styleFrom(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20)),
-                      icon: const Icon(Icons.wb_cloudy), label: Text('Previsioni'))
-                /*ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 20),
-                      enabled: _appConfig.currentAircraft!.locationWeatherForecast != null,
-                      onTap: () => openUrl(context,
+                      label: Text('Meteo live')),
+                ),
+                const SizedBox(width: 8.0),
+                Flexible(
+                  child: OutlinedButton.icon(
+                      onPressed: () => openUrl(context,
                           _appConfig.currentAircraft!.locationWeatherForecast!),
-                      leading: const Icon(Icons.wb_cloudy),
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(12.0)),
+                      icon: const Icon(Icons.wb_cloudy),
                       // TODO i18n
-                      title: Text('Previsioni')
-                  )*/
-              ),
-            ],
+                      label: Text('Previsioni')),
+                ),
+              ],
+            ),
           ),
         HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
         ..._appConfig.pilotNames
@@ -380,6 +373,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(Theme.of(context).visualDensity.baseSizeAdjustment.dy);
     final list = ListView(
       children: [
         Stack(

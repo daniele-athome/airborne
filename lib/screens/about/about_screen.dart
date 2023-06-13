@@ -276,8 +276,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       style: TextButton.styleFrom(
                           padding: const EdgeInsets.all(12.0)),
                       icon: const Icon(Icons.sunny),
-                      // TODO i18n
-                      label: Text('Meteo live')),
+                      label: Text(AppLocalizations.of(context)!.about_aircraft_location_weather_live)),
                 ),
                 const SizedBox(width: 8.0),
                 Flexible(
@@ -287,8 +286,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       style: TextButton.styleFrom(
                           padding: const EdgeInsets.all(12.0)),
                       icon: const Icon(Icons.wb_cloudy),
-                      // TODO i18n
-                      label: Text('Previsioni')),
+                      label: Text(AppLocalizations.of(context)!.about_aircraft_location_weather_forecast)),
                 ),
               ],
             ),

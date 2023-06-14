@@ -4,7 +4,6 @@
   "title": "Airborne aircraft data",
   "description": "Airborne aircraft data definition",
   "type": "object",
-  "additionalProperties": false,
   "required": [
     "admin",
     "aircraft_id",

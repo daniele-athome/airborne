@@ -46,7 +46,7 @@ jobs:
 
       - name: Setup Ruby environment
         if: github.ref_type == 'tag'
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
 

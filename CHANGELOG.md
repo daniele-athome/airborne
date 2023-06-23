@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.0](https://github.com/daniele-athome/airborne/compare/v1.3.0...v1.4.0) (2023-06-23)
+
+
+### Features
+
+* **activities:** show expire indicator ([ec5a903](https://github.com/daniele-athome/airborne/commit/ec5a903e3143f0daf2bc3c3947fbb008676d6bd4)), closes [#30](https://github.com/daniele-athome/airborne/issues/30)
+* **book-flight:** show relative day name next to selected date ([df6fea8](https://github.com/daniele-athome/airborne/commit/df6fea8619311129817e0b57790a83c1d9de7788)), closes [#67](https://github.com/daniele-athome/airborne/issues/67)
+* weather reporting links ([3866c17](https://github.com/daniele-athome/airborne/commit/3866c17b51f5c5d1b5556fdbb7da20f09f808cda)), closes [#70](https://github.com/daniele-athome/airborne/issues/70)
+
+
+### Bug Fixes
+
+* allow extra properties in aircraft JSON ([8f52f94](https://github.com/daniele-athome/airborne/commit/8f52f94e82a9b1e72b3ee564e97e3db0a45b7ae3))
+* correct Cupertino scaffolding color ([01b4f27](https://github.com/daniele-athome/airborne/commit/01b4f27aef89402047858db1e1626ae6f258092e))
+
 ## [1.3.0](https://github.com/daniele-athome/airborne/compare/v1.2.0...v1.3.0) (2022-08-13)
 
 

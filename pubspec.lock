@@ -21,10 +21,10 @@ packages:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      sha256: "844143591ca5ca38c0e1fd7c736f3c9457fe69420b90140b5d4ac4673a2ea9e4"
+      sha256: "4e163e4a8a68473f84b9886d27778e7b9b20e26cb1e4c51562be1035eb5661c5"
       url: "https://pub.dev"
     source: hosted
-    version: "1.9.0-no-macos.2"
+    version: "1.9.0-no-macos.3"
   analyzer:
     dependency: transitive
     description:
@@ -926,34 +926,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: "5cdb5b9f29edb028d3b6214c6e001269e65f85100d48877c13195e0381c6194c"
+      sha256: "6367ab92000728d4423e6236177b676e9e4ceedbb9d238d0778f6f9e5240229a"
       url: "https://pub.dev"
     source: hosted
-    version: "21.2.9"
+    version: "22.1.34"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "4aa69e3541d38810533b1455aa38997a89755f9928e16ef813b62b2e8bcc398c"
+      sha256: "952f5ee970bc3fba2db95a8dac71a295d9a70ad2c0993c7279e3a883c3e1459f"
       url: "https://pub.dev"
     source: hosted
-    version: "21.2.9"
+    version: "22.1.34"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: "2d0b69106152be3cbabf97e43e03b414ff650eeb91f6b17e7d24b7fade0a9ce9"
+      sha256: "0325a9857f1dffd5ed323d1c80909637317dd53fbbc1e1b5df8ba08dbfcb2628"
       url: "https://pub.dev"
     source: hosted
-    version: "21.2.9"
+    version: "22.1.34"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: f9bd03b605039615b8f1261e7323ca8d24b65f50fa9f5f983efe10df0754158c
+      sha256: f0a4f09a715859b70ab32be92f1d79181f4d928aadba0a9cf8f0feca36d67f46
       url: "https://pub.dev"
     source: hosted
-    version: "21.2.9"
+    version: "22.1.34"
   term_glyph:
     dependency: transitive
     description:
@@ -1056,10 +1056,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: eed4e6a1164aa9794409325c3b707ff424d4d1c2a785e7db67f8bbda00e36e51
+      sha256: "15f5acbf0dce90146a0f5a2c4a002b1814a6303c4c5c075aa2623b2d16156f03"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.35"
+    version: "6.0.36"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1088,10 +1088,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_platform_interface
-      sha256: "6c9ca697a5ae218ce56cece69d46128169a58aa8653c1b01d26fcd4aad8c4370"
+      sha256: bfdfa402f1f3298637d71ca8ecfe840b4696698213d5346e9d12d4ab647ee2ea
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.3"
   url_launcher_web:
     dependency: transitive
     description:
@@ -1168,10 +1168,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "7dacfda1edcca378031db9905ad7d7bd56b29fd1a90b0908b71a52a12c41e36b"
+      sha256: "1414f27dd781737e51afa9711f2ac2ace6ab4498ee98e20863fa5505aa00c58c"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.3"
+    version: "5.0.4"
   xdg_directories:
     dependency: transitive
     description:

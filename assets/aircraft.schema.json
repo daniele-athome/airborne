@@ -92,6 +92,14 @@
             "Europe/Berlin",
             "UTC"
           ]
+        },
+        "weather_live": {
+          "description": "URL to live weather conditions.",
+          "type": "string"
+        },
+        "weather_forecast": {
+          "description": "URL to weather forecasts.",
+          "type": "string"
         }
       }
     },

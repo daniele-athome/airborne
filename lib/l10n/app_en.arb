@@ -186,6 +186,8 @@
   "about_aircraft_callsign": "Call Sign",
   "about_aircraft_hangar": "Hangar",
   "about_aircraft_hangar_open_maps": "Open in maps",
+  "about_aircraft_location_weather_live": "Live",
+  "about_aircraft_location_weather_forecast": "Forecast",
   "about_aircraft_pilots": "Pilots",
   "about_app_version": "Version",
   "about_app_homepage": "Source code",

@@ -130,7 +130,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ),
           CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
             child: Row(
@@ -145,6 +145,63 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
         ],
       ),
+      if (_appConfig.currentAircraft!.locationWeatherLive != null ||
+          _appConfig.currentAircraft!.locationWeatherForecast != null)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              kDefaultCupertinoFormRowStartPadding,
+              4.0,
+              kDefaultCupertinoFormRowStartPadding,
+              0.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                  padding: const EdgeInsets.all(8.0),
+                  onPressed:
+                      _appConfig.currentAircraft!.locationWeatherLive != null
+                          ? () => openUrl(context,
+                              _appConfig.currentAircraft!.locationWeatherLive!)
+                          : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(CupertinoIcons.sun_max_fill),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        AppLocalizations.of(context)!
+                            .about_aircraft_location_weather_live,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              Expanded(
+                child: CupertinoButton(
+                  padding: const EdgeInsets.all(8.0),
+                  onPressed: _appConfig
+                              .currentAircraft!.locationWeatherForecast !=
+                          null
+                      ? () => openUrl(context,
+                          _appConfig.currentAircraft!.locationWeatherForecast!)
+                      : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(CupertinoIcons.cloud_moon_rain_fill),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        AppLocalizations.of(context)!
+                            .about_aircraft_location_weather_forecast,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       CupertinoFormSection(
         header: Text(
             AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
@@ -255,12 +312,44 @@ class _AboutScreenState extends State<AboutScreen> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           trailing: IconButton(
-            onPressed: () => openUrl(context, _appConfig.locationUrl),
+            onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
             tooltip:
                 AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
             icon: const Icon(Icons.open_in_new),
           ),
         ),
+        if (_appConfig.currentAircraft!.locationWeatherLive != null ||
+            _appConfig.currentAircraft!.locationWeatherForecast != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: OutlinedButton.icon(
+                      onPressed: () => openUrl(context,
+                          _appConfig.currentAircraft!.locationWeatherLive!),
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(12.0)),
+                      icon: const Icon(Icons.sunny),
+                      label: Text(AppLocalizations.of(context)!
+                          .about_aircraft_location_weather_live)),
+                ),
+                const SizedBox(width: 8.0),
+                Flexible(
+                  child: OutlinedButton.icon(
+                      onPressed: () => openUrl(context,
+                          _appConfig.currentAircraft!.locationWeatherForecast!),
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(12.0)),
+                      icon: const Icon(Icons.wb_cloudy),
+                      label: Text(AppLocalizations.of(context)!
+                          .about_aircraft_location_weather_forecast)),
+                ),
+              ],
+            ),
+          ),
         HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
         ..._appConfig.pilotNames
             .map((e) => ListTile(

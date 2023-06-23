@@ -28,6 +28,8 @@ class AircraftData {
   final double locationLatitude;
   final double locationLongitude;
   final String locationTimeZone;
+  final String? locationWeatherLive;
+  final String? locationWeatherForecast;
   final Map<num, String>? fuelPrices;
   final String? url;
   final bool admin;
@@ -43,6 +45,8 @@ class AircraftData {
     required this.locationLatitude,
     required this.locationLongitude,
     required this.locationTimeZone,
+    required this.locationWeatherLive,
+    required this.locationWeatherForecast,
     required this.fuelPrices,
     required this.url,
     this.admin = false,
@@ -222,6 +226,8 @@ class AircraftDataReader {
         locationLatitude: metadata!['location']?['latitude'] as double,
         locationLongitude: metadata!['location']?['longitude'] as double,
         locationTimeZone: metadata!['location']?['timezone'] as String,
+        locationWeatherLive: metadata!['location']?['weather_live'] as String?,
+        locationWeatherForecast: metadata!['location']?['weather_forecast'] as String?,
         fuelPrices: (metadata!['fuel_prices'] != null)
             ? Map.fromEntries((metadata!['fuel_prices'] as List<dynamic>).map(
                 (item) => MapEntry(

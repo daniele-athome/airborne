@@ -102,34 +102,6 @@
           "type": "string"
         }
       }
-    },
-    "fuel_prices": {
-      "description": "List of fuel types and their prices.",
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": {
-        "type": "object",
-        "required": ["label", "value"],
-        "properties": {
-          "label": {
-            "description": "Name of fuel type.",
-            "type": "string",
-            "examples": [
-              "Super",
-              "AV GAS"
-            ]
-          },
-          "value": {
-            "description": "Price of fuel type.",
-            "type": "number",
-            "examples": [
-              1.5,
-              2.234
-            ]
-          }
-        }
-      }
     }
   }
 }

@@ -106,10 +106,6 @@ class AppConfig extends ChangeNotifier {
     return 'https://www.google.com/maps/search/?api=1&query=$locationLatitude,$locationLongitude';
   }
 
-  Map<num, String>? get fuelPrices {
-    return _currentAircraft!.fuelPrices;
-  }
-
   // TODO read from configuration
   String get fuelPriceCurrency {
     return '€';
@@ -195,23 +191,6 @@ class AppConfig extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  num? get customFuelPrice {
-    return prefs.getDouble("fuelPrice");
-  }
-
-  set customFuelPrice(num? price) {
-    if (price != null) {
-      prefs.setDouble("fuelPrice", price.toDouble());
-    } else {
-      prefs.remove("fuelPrice");
-    }
-  }
-
-  /// True if fuel price should be asked as unit price (e.g. "I bought 14 liters at 2.5 € per liter"),
-  /// false if total purchase price should be asked instead (e.g. "I bought 14 liters for 35 €")
-  // TODO make it a configuration parameter
-  bool get useFuelUnitPrice => false;
 
   void _clearPictureCache() {
     aircraftPicture.evict();

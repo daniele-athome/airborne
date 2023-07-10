@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -60,13 +59,9 @@ class FlightLogModal extends StatefulWidget {
 class _FlightLogModalState extends State<FlightLogModal> {
   // event data
   late String _pilotName;
-  late num? _fuelPrice;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  /// This is a hack. See usage in [_onCustomFuelPriceSelected]
-  final GlobalKey<FormFieldState> _materialFuelPriceState =
-      GlobalKey<FormFieldState>();
   late DigitDisplayController _startHourController;
   late DigitDisplayController _endHourController;
   late TextEditingController _originController;
@@ -98,7 +93,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
     _fuelPriceController = TextEditingController(text: _fuelTotalCostToText());
     _notesController = TextEditingController(text: widget.item.notes);
     _dateController = DateTimePickerController(widget.item.date);
-    _fuelPrice = widget.item.fuelPrice;
     super.initState();
   }
 
@@ -106,7 +100,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
   void didChangeDependencies() {
     _service = Provider.of<FlightLogBookService>(context);
     _appConfig = Provider.of<AppConfig>(context);
-    _fuelPrice ??= _appConfig.fuelPrices?.keys.first;
     super.didChangeDependencies();
   }
 
@@ -127,108 +120,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
     return widget.item.fuel != null && widget.item.fuelPrice != null
         ? _fuelPriceFormatter.format(widget.item.fuel! * widget.item.fuelPrice!)
         : '';
-  }
-
-  String _buildFuelPriceLabel(num value) => !_appConfig.fuelPrices!
-          .containsKey(value)
-      ? '${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)}'
-      : '${_appConfig.fuelPrices![value]} (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)})';
-
-  String _buildCustomFuelPriceLabel(BuildContext context, num? value) {
-    String text =
-        AppLocalizations.of(context)!.flightLogModal_label_fuel_myfuel;
-    return value != null
-        ? '$text (${_appConfig.fuelPriceCurrency} ${_fuelPriceFormatter.format(value)})'
-        : text;
-  }
-
-  void _onCustomFuelPriceSelected(BuildContext context) {
-    showTextInputDialog(
-      context: context,
-      textFields: [
-        DialogTextField(
-            hintText:
-                AppLocalizations.of(context)!.flightLogModal_hint_fuel_price,
-            keyboardType: TextInputType.number,
-            validator: (String? text) {
-              return !_validateFuelPrice(text!)
-                  ? AppLocalizations.of(context)!
-                      .flightLogModal_error_invalid_fuelPrice
-                  : null;
-            }),
-      ],
-      title: AppLocalizations.of(context)!.flightLogModal_hint_fuel_price,
-    ).then((value) {
-      if (value != null) {
-        setState(() {
-          _appConfig.customFuelPrice = _parseFuelPrice(value[0]);
-          // value will be used in model later by checking if it's zero
-          _fuelPrice = 0;
-        });
-      } else if (_appConfig.customFuelPrice == null) {
-        // no custom fuel price set (dialog was canceled)
-        setState(() {
-          // use item fuel price or first fuel price found
-          _fuelPrice =
-              widget.item.fuelPrice ??= _appConfig.fuelPrices?.keys.first;
-          // this might be a Flutter bug (although it has been fixed in theory)
-          // https://stackoverflow.com/a/61602682/1045199
-          // https://github.com/flutter/flutter/issues/56898
-          _materialFuelPriceState.currentState?.didChange(_fuelPrice);
-        });
-      }
-    });
-  }
-
-  void _onCupertinoFuelPricePressed(BuildContext context) {
-    showPlatformModalSheet(
-      context: context,
-      builder: (_) {
-        final List<CupertinoActionSheetAction>? fuelPrices;
-        fuelPrices = _appConfig.fuelPrices!.keys
-            .map(
-              (key) => CupertinoActionSheetAction(
-                child: Text(_buildFuelPriceLabel(key)),
-                onPressed: () {
-                  Navigator.pop(context, key);
-                },
-              ),
-            )
-            .toList();
-        if (widget.item.fuelPrice != null &&
-            !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
-          fuelPrices.add(CupertinoActionSheetAction(
-            child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
-            onPressed: () {
-              Navigator.pop(context, widget.item.fuelPrice);
-            },
-          ));
-        }
-        fuelPrices.add(CupertinoActionSheetAction(
-          child: Text(
-              _buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice)),
-          onPressed: () {
-            Navigator.pop(context, 0);
-            _onCustomFuelPriceSelected(context);
-          },
-        ));
-
-        return CupertinoActionSheet(
-          cancelButton: CupertinoActionSheetAction(
-            isDestructiveAction: true,
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.dialog_button_cancel),
-          ),
-          actions: fuelPrices,
-        );
-      },
-    ).then((value) {
-      if (value != null) {
-        setState(() {
-          _fuelPrice = value;
-        });
-      }
-    });
   }
 
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) {
@@ -303,67 +194,32 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // fuel + fuel price
-        if (_appConfig.fuelPrices != null)
-          CupertinoFormSection(children: <Widget>[
-            CupertinoTextFormFieldRow(
-              controller: _fuelController,
-              prefix: Text(AppLocalizations.of(context)!
-                  .flightLogModal_label_fuel_cupertino),
-              textAlign: TextAlign.end,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              validator: (value) => !_validateFuel(value)
-                  ? AppLocalizations.of(context)!
-                      .flightLogModal_error_fuel_invalid_number
-                  : null,
-            ),
-            // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
-            _appConfig.useFuelUnitPrice
-                ? CupertinoFormButtonRow(
-                    padding: kDefaultCupertinoFormRowPadding,
-                    prefix: Text(AppLocalizations.of(context)!
-                        .flightLogModal_label_fuel_price_cupertino),
-                    onPressed: () {
-                      _onCupertinoFuelPricePressed(context);
-                    },
-                    child: Text(
-                      _fuelPrice != null
-                          ? (_fuelPrice! == 0
-                              ? _buildCustomFuelPriceLabel(
-                                  context, _appConfig.customFuelPrice)
-                              : _buildFuelPriceLabel(_fuelPrice!))
-                          : '',
-                      style: textStyle,
-                    ),
-                  )
-                :
-                // TODO convert to single widget with 2 constructors (like _MaterialFuelPriceSelector)
-                CupertinoTextFormFieldRow(
-                    controller: _fuelPriceController,
-                    prefix: Text(AppLocalizations.of(context)!
-                        .flightLogModal_label_fuel_cost_cupertino(
-                            _appConfig.fuelPriceCurrency)),
-                    textAlign: TextAlign.end,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    onChanged: (value) {
-                      if (_validateFuelPrice(value) &&
-                          _fuelController.text.isNotEmpty &&
-                          _validateFuel(_fuelController.text)) {
-                        final fuelCost = _parseFuelPrice(value);
-                        final fuelAmount = _parseFuel(_fuelController.text);
-                        _fuelPrice = roundDouble(
-                            fuelCost / fuelAmount, _kFuelPriceDecimals);
-                      } else {
-                        _fuelPrice = null;
-                      }
-                    },
-                    validator: (value) => !_validateFuelPrice(value)
-                        ? AppLocalizations.of(context)!
-                            .flightLogModal_error_fuelCost_invalid_number
-                        : null,
-                  ),
-          ]),
+        CupertinoFormSection(children: <Widget>[
+          CupertinoTextFormFieldRow(
+            controller: _fuelController,
+            prefix: Text(AppLocalizations.of(context)!
+                .flightLogModal_label_fuel_cupertino),
+            textAlign: TextAlign.end,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            validator: (value) => !_validateFuel(value)
+                ? AppLocalizations.of(context)!
+                    .flightLogModal_error_fuel_invalid_number
+                : null,
+          ),
+          // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
+          CupertinoTextFormFieldRow(
+            controller: _fuelPriceController,
+            prefix: Text(AppLocalizations.of(context)!
+                .flightLogModal_label_fuel_cost_cupertino(
+                    _appConfig.fuelPriceCurrency)),
+            textAlign: TextAlign.end,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            validator: (value) => !_validateFuelPrice(value)
+                ? AppLocalizations.of(context)!
+                    .flightLogModal_error_fuelCost_invalid_number
+                : null,
+          ),
+        ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
@@ -404,33 +260,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   Widget _buildMaterialForm(BuildContext context) {
-    final List<DropdownMenuItem<num>>? fuelPrices;
-    if (_appConfig.fuelPrices != null) {
-      fuelPrices = _appConfig.fuelPrices!.keys
-          .map(
-            (key) => DropdownMenuItem(
-              value: key,
-              child: Text(_buildFuelPriceLabel(key)),
-            ),
-          )
-          .toList();
-      if (widget.item.fuelPrice != null &&
-          widget.item.fuelPrice != 0 &&
-          !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
-        fuelPrices.add(DropdownMenuItem(
-          value: widget.item.fuelPrice,
-          child: Text(_buildFuelPriceLabel(widget.item.fuelPrice!)),
-        ));
-      }
-      fuelPrices.add(DropdownMenuItem(
-        value: 0,
-        child: Text(
-            _buildCustomFuelPriceLabel(context, _appConfig.customFuelPrice)),
-      ));
-    } else {
-      fuelPrices = null;
-    }
-
     return ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
@@ -534,63 +363,35 @@ class _FlightLogModalState extends State<FlightLogModal> {
           thickness: 1,
         ),
         // fuel quantity + type/price
-        if (_appConfig.fuelPrices != null)
-          ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-            leading: const Icon(Icons.local_gas_station),
-            title: TextFormField(
-              controller: _fuelController,
-              // TODO cursorColor: widget.model.backgroundColor,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              maxLines: 1,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                // beware the trailing space, must be added post-i18n
-                prefixText:
-                    '${AppLocalizations.of(context)!.flightLogModal_hint_fuel_material} ',
-              ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) => !_validateFuel(value)
-                  ? AppLocalizations.of(context)!
-                      .flightLogModal_error_fuel_invalid_number
-                  : null,
+        ListTile(
+          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          leading: const Icon(Icons.local_gas_station),
+          title: TextFormField(
+            controller: _fuelController,
+            // TODO cursorColor: widget.model.backgroundColor,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            maxLines: 1,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              // beware the trailing space, must be added post-i18n
+              prefixText:
+                  '${AppLocalizations.of(context)!.flightLogModal_hint_fuel_material} ',
             ),
-            trailing: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: _appConfig.useFuelUnitPrice
-                  ? _MaterialFuelPriceSelector.unitPrice(
-                      initialValue: _fuelPrice,
-                      dropdownItems: fuelPrices,
-                      onChanged: (value) {
-                        if (value == 0) {
-                          // open custom fuel price dialog
-                          _onCustomFuelPriceSelected(context);
-                        } else {
-                          _fuelPrice = value;
-                        }
-                      },
-                      dropdownState: _materialFuelPriceState,
-                      currencySymbol: _appConfig.fuelPriceCurrency,
-                    )
-                  : _MaterialFuelPriceSelector.totalCost(
-                      textController: _fuelPriceController,
-                      onChanged: (value) {
-                        if (value != null &&
-                            _fuelController.text.isNotEmpty &&
-                            _validateFuel(_fuelController.text)) {
-                          final fuelAmount = _parseFuel(_fuelController.text);
-                          _fuelPrice = roundDouble(
-                              value / fuelAmount, _kFuelPriceDecimals);
-                        } else {
-                          _fuelPrice = null;
-                        }
-                      },
-                      currencySymbol: _appConfig.fuelPriceCurrency,
-                    ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) => !_validateFuel(value)
+                ? AppLocalizations.of(context)!
+                    .flightLogModal_error_fuel_invalid_number
+                : null,
+          ),
+          trailing: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: _MaterialFuelPriceSelector.totalCost(
+              textController: _fuelPriceController,
+              currencySymbol: _appConfig.fuelPriceCurrency,
             ),
           ),
+        ),
         const Divider(
           height: 1.0,
           thickness: 1,
@@ -713,7 +514,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
     }
 
     // validate fuel price if manual input for total cost
-    if (!_appConfig.useFuelUnitPrice && fuelValue.isNotEmpty) {
+    if (fuelValue.isNotEmpty) {
       num fuelAmount = _parseFuel(_fuelController.text);
       if (fuelAmount > 0) {
         String fuelCostValue = _fuelPriceController.text;
@@ -791,6 +592,18 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _doSave(BuildContext context) {
+    final num? fuelAmount;
+    final num? fuelPrice;
+    if (_fuelController.text.isNotEmpty) {
+      fuelAmount = _parseFuel(_fuelController.text);
+      final fuelCost = _parseFuelPrice(_fuelPriceController.text);
+      fuelPrice = roundDouble(fuelCost / fuelAmount, _kFuelPriceDecimals);
+    }
+    else {
+      fuelAmount = null;
+      fuelPrice = null;
+    }
+
     final item = FlightLogItem(
       widget.item.id,
       _dateController.value!,
@@ -799,8 +612,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
       _destinationController.text,
       _startHourController.number,
       _endHourController.number,
-      _fuelController.text.isNotEmpty ? _parseFuel(_fuelController.text) : null,
-      _fuelPrice == 0 ? _appConfig.customFuelPrice : _fuelPrice,
+      fuelAmount,
+      fuelPrice,
       _notesController.text,
     );
     final Future task =
@@ -913,99 +726,46 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 }
 
-// FIXME this widget should be stateful and handle the whole input part (including the dropdown items)
+// FIXME this widget should be stateful and handle the whole input part
 class _MaterialFuelPriceSelector extends StatelessWidget {
-  /// Builds a fuel price selector dropdown.
-  /// onChanged will give the unit price.
-  const _MaterialFuelPriceSelector.unitPrice({
-    Key? key,
-    this.initialValue,
-    required this.dropdownItems,
-    required this.onChanged,
-    required this.dropdownState,
-    required this.currencySymbol,
-  })  : useUnitPrice = true,
-        textController = null,
-        super(key: key);
-
   /// Builds a fuel price text input field.
   /// onChanged will give the total cost.
   const _MaterialFuelPriceSelector.totalCost({
     Key? key,
-    required this.onChanged,
+    // ignore: unused_element
+    this.onChanged,
     required this.currencySymbol,
     required this.textController,
-  })  : useUnitPrice = false,
-        initialValue = null,
-        dropdownState = null,
-        dropdownItems = null,
-        super(key: key);
+  }) : super(key: key);
 
-  final bool useUnitPrice;
-  final num? initialValue;
-  final Key? dropdownState;
   final TextEditingController? textController;
-  final List<DropdownMenuItem<num>>? dropdownItems;
-  final void Function(num? value) onChanged;
+  final void Function(num? value)? onChanged;
   final String currencySymbol;
 
   @override
   Widget build(BuildContext context) {
-    if (useUnitPrice) {
-      return DropdownButtonFormField<num>(
-        key: dropdownState,
-        value: initialValue,
-        onChanged: onChanged,
-        isDense: false,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-        ),
-        /* TODO not ready yet -- selectedItemBuilder: (context) {
-                Widget itemBuilder(String text)  =>
-                  Expanded(
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(text),
-                        )
-                    ),
-                  );
-
-                final List<Widget> fuelPrices = _appConfig.fuelPrices!.keys.map(
-                      (key) => itemBuilder(_buildFuelPriceLabel(key)),
-                ).toList();
-                if (widget.item.fuelPrice != null && !_appConfig.fuelPrices!.containsKey(widget.item.fuelPrice)) {
-                  fuelPrices.add(itemBuilder(_buildFuelPriceLabel(widget.item.fuelPrice!)));
-                }
-                return fuelPrices;
-              },*/
-        items: dropdownItems,
-        validator: (_) => null,
-      );
-    } else {
-      return TextFormField(
-        controller: textController,
-        // TODO cursorColor: widget.model.backgroundColor,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        maxLines: 1,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-        onChanged: (value) => onChanged(
-            _validateFuelPrice(value) ? _parseFuelPrice(value) : null),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          // FIXME not using given currency symbol
-          icon: const Icon(Icons.euro),
-          hintText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_cost,
-        ),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (value) => !_validateFuelPrice(value)
-            ? AppLocalizations.of(context)!
-                .flightLogModal_error_fuelCost_invalid_number
-            : null,
-      );
-    }
+    return TextFormField(
+      controller: textController,
+      // TODO cursorColor: widget.model.backgroundColor,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      maxLines: 1,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+      onChanged: (value) => onChanged != null
+          ? onChanged!(
+              _validateFuelPrice(value) ? _parseFuelPrice(value) : null)
+          : {},
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        // FIXME not using given currency symbol
+        icon: const Icon(Icons.euro),
+        hintText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_cost,
+      ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) => !_validateFuelPrice(value)
+          ? AppLocalizations.of(context)!
+              .flightLogModal_error_fuelCost_invalid_number
+          : null,
+    );
   }
 }
 

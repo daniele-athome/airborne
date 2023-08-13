@@ -19,7 +19,7 @@ class FlightLogScreen extends StatefulWidget {
   State<FlightLogScreen> createState() => _FlightLogScreenState();
 }
 
-class _FlightLogScreenState extends State<FlightLogScreen> {
+class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingObserver {
   late FToast _fToast;
   late FlightLogListController _logBookController;
   late AppConfig _appConfig;
@@ -28,6 +28,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _fToast = FToast();
     _fToast.init(context);
     _logBookController = FlightLogListController();
@@ -47,9 +48,17 @@ class _FlightLogScreenState extends State<FlightLogScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _logBookController.reset();
+    }
+  }
+
+  @override
   void dispose() {
-    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     _logBookController.removeListener(_logBookListChanged);
+    super.dispose();
   }
 
   void _logBookListChanged() {

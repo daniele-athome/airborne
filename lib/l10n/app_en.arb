@@ -136,6 +136,7 @@
   "flightLogModal_error_invalid_hourmeter": "Invalid hour meter.",
   "flightLogModal_error_invalid_locations": "Please provide origin and destination of flight.",
   "flightLogModal_error_invalid_fuel": "Invalid fuel quantity.",
+  "flightLogModal_error_invalid_fuel_empty": "Please provide fuel quantity.",
   "flightLogModal_error_invalid_fuelPrice": "Invalid fuel price.",
   "flightLogModal_error_invalid_fuelCost_empty": "Please provide total fuel cost.",
   "flightLogModal_error_invalid_fuelCost": "Invalid fuel cost.",

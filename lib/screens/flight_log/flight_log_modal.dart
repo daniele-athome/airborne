@@ -513,7 +513,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
       return;
     }
 
-    // validate fuel price if manual input for total cost
+    String fuelCostValue = _fuelPriceController.text;
+    if (!_validateFuelPrice(fuelCostValue)) {
+      showError(context,
+          AppLocalizations.of(context)!.flightLogModal_error_invalid_fuelCost);
+      return;
+    }
+
+    // when fuel amount is greater than zero, fuel cost is mandatory
     if (fuelValue.isNotEmpty) {
       num fuelAmount = _parseFuel(_fuelController.text);
       if (fuelAmount > 0) {
@@ -524,13 +531,19 @@ class _FlightLogModalState extends State<FlightLogModal> {
               AppLocalizations.of(context)!
                   .flightLogModal_error_invalid_fuelCost_empty);
           return;
-        } else if (!_validateFuelPrice(fuelCostValue)) {
-          showError(
-              context,
-              AppLocalizations.of(context)!
-                  .flightLogModal_error_invalid_fuelCost);
-          return;
         }
+      }
+    }
+
+    // when fuel cost is greater than zero, fuel amount is mandatory
+    if (fuelCostValue.isNotEmpty) {
+      num fuelCostAmount = _parseFuelPrice(_fuelPriceController.text);
+      if (fuelCostAmount > 0 && fuelValue.isEmpty) {
+        showError(
+            context,
+            AppLocalizations.of(context)!
+                .flightLogModal_error_invalid_fuel_empty);
+        return;
       }
     }
 

@@ -87,6 +87,7 @@
   "flightLogModal_error_invalid_hourmeter": "Orametro non valido.",
   "flightLogModal_error_invalid_locations": "Inserisci partenza e arrivo del volo.",
   "flightLogModal_error_invalid_fuel": "Quantità di benzina non valida.",
+  "flightLogModal_error_invalid_fuel_empty": "Inserisci la quantità di benzina.",
   "flightLogModal_error_invalid_fuelPrice": "Prezzo benzina non valido.",
   "flightLogModal_error_invalid_fuelCost_empty": "Inserisci il costo totale della benzina.",
   "flightLogModal_error_invalid_fuelCost": "Costo totale benzina non valido.",

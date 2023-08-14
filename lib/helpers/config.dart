@@ -20,7 +20,7 @@ class AppConfig extends ChangeNotifier {
       // load current aircraft
       try {
         final aircraftReader = await loadAircraft(_currentAircraftId!);
-        currentAircraft = aircraftReader.toAircraftData();
+        await setCurrentAircraft(aircraftReader.toAircraftData());
       } catch (e) {
         _log.info('Error loading current aircraft, cleaning everything ($e)');
         _currentAircraftId = null;
@@ -147,7 +147,7 @@ class AppConfig extends ChangeNotifier {
 
   AircraftData? get currentAircraft => _currentAircraft;
 
-  set currentAircraft(AircraftData? data) {
+  Future<void> setCurrentAircraft(AircraftData? data) async {
     if (data != null) {
       _log.fine('Switching aircraft: ${data.callSign}');
     } else {
@@ -192,10 +192,10 @@ class AppConfig extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _clearPictureCache() {
-    aircraftPicture.evict();
+  void _clearPictureCache() async {
+    await aircraftPicture.evict();
     for (var name in pilotNames) {
-      getPilotAvatar(name).evict();
+      await getPilotAvatar(name).evict();
     }
   }
 }

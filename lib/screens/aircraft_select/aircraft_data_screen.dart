@@ -77,8 +77,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
 
       final downloadTask = downloadAircraftData(
               _aircraftUrl!, _aircraftPassword, downloadProvider)
-          .then<AircraftData?>((AircraftData aircraftData) {
-        appConfig.currentAircraft = aircraftData;
+          .then<AircraftData?>((AircraftData aircraftData) async {
+        await appConfig.setCurrentAircraft(aircraftData);
         appConfig.addAircraft(aircraftData);
         return aircraftData;
       }).catchError((error, StackTrace? stacktrace) {

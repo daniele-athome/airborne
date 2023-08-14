@@ -239,7 +239,7 @@ class FakeAppConfig extends AppConfig {
     );
     await reader.open();
 
-    currentAircraft = reader.toAircraftData();
+    await setCurrentAircraft(reader.toAircraftData());
   }
 
 }

@@ -54,8 +54,8 @@ class _AboutScreenState extends State<AboutScreen> {
         final userpass = value[0];
         final downloadTask = downloadAircraftData(
                 _appConfig.currentAircraft!.url!, userpass, _downloadProvider)
-            .then<AircraftData?>((AircraftData aircraftData) {
-          _appConfig.currentAircraft = aircraftData;
+            .then<AircraftData?>((AircraftData aircraftData) async {
+          await _appConfig.setCurrentAircraft(aircraftData);
           _appConfig.updateAircraft(aircraftData);
           return aircraftData;
         }).catchError((error, StackTrace? stacktrace) {
@@ -106,9 +106,10 @@ class _AboutScreenState extends State<AboutScreen> {
       destructiveOk: true,
       okCallback: () {
         _appConfig.pilotName = null;
-        _appConfig.currentAircraft = null;
-        Navigator.of(context, rootNavigator: true)
-            .popAndPushNamed('aircraft-data');
+        _appConfig.setCurrentAircraft(null).whenComplete(() {
+          Navigator.of(context, rootNavigator: true)
+              .popAndPushNamed('aircraft-data');
+        });
       },
     );
   }

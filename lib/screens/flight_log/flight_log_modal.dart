@@ -196,7 +196,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         // fuel + fuel price
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
-            key: const Key("flight_log_modal_form_fuel_price"),
+            key: const Key("input_flightLogModal_fuel"),
             controller: _fuelController,
             prefix: Text(AppLocalizations.of(context)!
                 .flightLogModal_label_fuel_cupertino),
@@ -209,6 +209,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
           // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
           CupertinoTextFormFieldRow(
+            key: const Key("input_flightLogModal_fuelPrice"),
             controller: _fuelPriceController,
             prefix: Text(AppLocalizations.of(context)!
                 .flightLogModal_label_fuel_cost_cupertino(
@@ -368,7 +369,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           leading: const Icon(Icons.local_gas_station),
           title: TextFormField(
-            key: const Key("flight_log_modal_form_fuel_price"),
+            key: const Key("input_flightLogModal_fuel"),
             controller: _fuelController,
             // TODO cursorColor: widget.model.backgroundColor,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -389,6 +390,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           trailing: SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
             child: _MaterialFuelPriceSelector.totalCost(
+              key: const Key("input_flightLogModal_fuelPrice"),
               textController: _fuelPriceController,
               currencySymbol: _appConfig.fuelPriceCurrency,
             ),
@@ -442,6 +444,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       );
       trailingActions = [
         PlatformTextButton(
+          key: const Key('button_flightLogModal_save'),
           onPressed: () => _onSave(context),
           cupertino: (_, __) => CupertinoTextButtonData(
             // workaround for https://github.com/flutter/flutter/issues/32701
@@ -454,6 +457,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       leadingAction = null;
       trailingActions = [
         PlatformIconButton(
+          key: const Key('button_flightLogModal_save'),
           onPressed: () => _onSave(context),
           icon: const Icon(Icons.check_sharp),
           material: (_, __) => MaterialIconButtonData(

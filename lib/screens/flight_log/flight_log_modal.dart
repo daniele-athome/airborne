@@ -196,6 +196,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         // fuel + fuel price
         CupertinoFormSection(children: <Widget>[
           CupertinoTextFormFieldRow(
+            key: const Key("flight_log_modal_form_fuel_price"),
             controller: _fuelController,
             prefix: Text(AppLocalizations.of(context)!
                 .flightLogModal_label_fuel_cupertino),
@@ -367,6 +368,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
           leading: const Icon(Icons.local_gas_station),
           title: TextFormField(
+            key: const Key("flight_log_modal_form_fuel_price"),
             controller: _fuelController,
             // TODO cursorColor: widget.model.backgroundColor,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),

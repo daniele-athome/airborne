@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.5.0](https://github.com/daniele-athome/airborne/compare/v1.4.0...v1.5.0) (2023-08-15)
+
+
+### Features
+
+* **flight-log:** drop support for pre-configured fuel prices ([aa8482d](https://github.com/daniele-athome/airborne/commit/aa8482dc1d6b3ad2f6ca4c8b76df024a7ff1899f))
+
+
+### Bug Fixes
+
+* **flight-log:** force reload of log book on resume ([6043320](https://github.com/daniele-athome/airborne/commit/60433208378373983ac74f47ac39def03cf8267b)), closes [#74](https://github.com/daniele-athome/airborne/issues/74)
+* **flight-log:** validate fuel quantity if price is entered ([10473f4](https://github.com/daniele-athome/airborne/commit/10473f48accc3eb05cd1a586a98504aca7bc462a)), closes [#76](https://github.com/daniele-athome/airborne/issues/76)
+* wait properly for avatar cache to be evicted ([c5d6b2a](https://github.com/daniele-athome/airborne/commit/c5d6b2ad217fdbe613193036edd2fbea57719244)), closes [#73](https://github.com/daniele-athome/airborne/issues/73)
+
 ## [1.4.0](https://github.com/daniele-athome/airborne/compare/v1.3.0...v1.4.0) (2023-06-23)
 
 

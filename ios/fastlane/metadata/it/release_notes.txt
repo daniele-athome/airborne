@@ -1,2 +1,1 @@
-* inserimento costo totale benzina invece del prezzo al litro
-* sezione attività (sola lettura)
+* correzione di bug

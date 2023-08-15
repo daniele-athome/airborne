@@ -1,2 +1,1 @@
-* input fuel total cost instead of fuel price per liter
-* read-only activity journal
+* bug fixes

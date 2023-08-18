@@ -18,6 +18,7 @@ import '../flight_log/flight_log_screen.dart';
 class MainNavigation extends StatefulWidget {
   final AppConfig appConfig;
 
+  // FIXME these should be provided via dependency injection and not built/given here
   final BookFlightCalendarService? bookFlightCalendarService;
   final FlightLogBookService? flightLogBookService;
   final ActivitiesService? activitiesService;

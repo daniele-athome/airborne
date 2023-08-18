@@ -8,6 +8,7 @@ analyzer:
     - '**/*.mocks.dart'
     # messy code
     #- test_driver/**
+    - screenshots/**
 
 linter:
   rules:

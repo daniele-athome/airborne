@@ -10,7 +10,7 @@ import '../../helpers/pilot_select_list.dart';
 import '../../helpers/utils.dart';
 
 class PilotSelectScreen extends StatelessWidget {
-  const PilotSelectScreen({Key? key}) : super(key: key);
+  const PilotSelectScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

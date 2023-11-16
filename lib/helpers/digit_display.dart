@@ -10,17 +10,14 @@ final NumberFormat kHoursFormatter = NumberFormat("00000.00");
 
 class DigitDisplayFormTextField extends FormField<num> {
   DigitDisplayFormTextField({
-    Key? key,
+    super.key,
     DigitDisplayController? controller,
-    FormFieldSetter<num>? onSaved,
-    FormFieldValidator<num>? validator,
+    super.onSaved,
+    super.validator,
     double fontSize = _kDefaultDigitFontSize,
     EdgeInsetsGeometry padding = _kDefaultDigitPadding,
   }) : super(
-          key: key,
-          onSaved: onSaved,
           initialValue: controller?.value.number,
-          validator: validator,
           builder: (field) {
             return DigitDisplayTextField(
               controller: controller,
@@ -33,13 +30,13 @@ class DigitDisplayFormTextField extends FormField<num> {
 
 class DigitDisplayTextField extends StatefulWidget {
   const DigitDisplayTextField({
-    Key? key,
+    super.key,
     this.controller,
     this.fontSize = _kDefaultDigitFontSize,
     this.errorText,
     this.padding = _kDefaultDigitPadding,
     this.enabled = false,
-  }) : super(key: key);
+  });
 
   final DigitDisplayController? controller;
   final double fontSize;
@@ -145,14 +142,13 @@ class DigitDisplay {
 
 class SingleDigitText extends StatelessWidget {
   const SingleDigitText({
-    Key? key,
+    super.key,
     required this.digit,
     this.decimal = false,
     this.fontSize = _kDefaultDigitFontSize,
     this.active = false,
     this.onTap,
-  })  : assert(digit >= 0 && digit <= 9),
-        super(key: key);
+  })  : assert(digit >= 0 && digit <= 9);
 
   final int digit;
   final bool decimal;
@@ -172,13 +168,14 @@ class SingleDigitText extends StatelessWidget {
 
 class _DigitText extends StatelessWidget {
   const _DigitText({
-    Key? key,
+    // ignore: unused_element
+    super.key,
     required this.text,
     this.alternate = false,
     this.fontSize = _kDefaultDigitFontSize,
     this.active = false,
     this.onTap,
-  }) : super(key: key);
+  });
 
   final String text;
   final bool alternate;

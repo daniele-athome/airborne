@@ -17,10 +17,10 @@ class ActivitiesList extends StatefulWidget {
   final ActivitiesService activitiesService;
 
   const ActivitiesList({
-    Key? key,
+    super.key,
     required this.controller,
     required this.activitiesService,
-  }) : super(key: key);
+  });
 
   @override
   State<ActivitiesList> createState() => _ActivitiesListState();
@@ -205,9 +205,10 @@ class _EntryListItem extends StatelessWidget {
   static final DateFormat _dateFormatter = DateFormat.yMd();
 
   const _EntryListItem({
-    Key? key,
+    // ignore: unused_element
+    super.key,
     required this.entry,
-  }) : super(key: key);
+  });
 
   final ActivityEntry entry;
 

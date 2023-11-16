@@ -25,21 +25,20 @@ class MainNavigation extends StatefulWidget {
 
   // TODO other services one day...
 
-  const MainNavigation(this.appConfig, {Key? key})
+  const MainNavigation(this.appConfig, {super.key})
       : bookFlightCalendarService = null,
         flightLogBookService = null,
-        activitiesService = null,
-        super(key: key);
+        activitiesService = null;
 
   /// Mainly for integration testing.
   @visibleForTesting
   const MainNavigation.withServices(
     this.appConfig, {
-    Key? key,
+    super.key,
     this.bookFlightCalendarService,
     this.flightLogBookService,
     this.activitiesService,
-  }) : super(key: key);
+  });
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();

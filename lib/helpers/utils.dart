@@ -251,7 +251,7 @@ class DownloadProvider extends ChangeNotifier {
 
 /// A basic controller for date and time pickers.
 class DateTimePickerController extends ValueNotifier<DateTime?> {
-  DateTimePickerController(DateTime? value) : super(value);
+  DateTimePickerController(super.value);
 }
 
 /// Basic layout for indicating that an exception occurred.
@@ -261,8 +261,8 @@ class FirstPageExceptionIndicator extends StatelessWidget {
     required this.title,
     this.message,
     this.onTryAgain,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String title;
   final String? message;
@@ -342,8 +342,8 @@ class FirstPageExceptionIndicator extends StatelessWidget {
 class FooterTile extends StatelessWidget {
   const FooterTile({
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Widget child;
 
@@ -360,10 +360,10 @@ class FooterTile extends StatelessWidget {
 /// Forked from [infinite\_scroll\_pagination].
 class NewPageErrorIndicator extends StatelessWidget {
   const NewPageErrorIndicator({
-    Key? key,
+    super.key,
     required this.message,
     this.onTap,
-  }) : super(key: key);
+  });
   final String message;
   final VoidCallback? onTap;
 

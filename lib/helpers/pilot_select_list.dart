@@ -11,12 +11,12 @@ class PilotSelectList extends StatelessWidget {
   final Function(String selected) onSelection;
 
   const PilotSelectList({
-    Key? key,
+    super.key,
     required this.pilotNames,
     required this.avatarProvider,
     required this.onSelection,
     this.selectedName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

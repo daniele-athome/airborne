@@ -20,7 +20,7 @@ final Logger _log = Logger((AboutScreen).toString());
 
 // TODO convert to stateless widget if using only AppConfig
 class AboutScreen extends StatefulWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+  const AboutScreen({super.key});
 
   @override
   State<AboutScreen> createState() => _AboutScreenState();
@@ -358,8 +358,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   leading: CircleAvatar(
                       foregroundImage: _appConfig.getPilotAvatar(e)),
                   title: Text(e),
-                ))
-            .toList(growable: false),
+                )),
         HeaderListTile(AppLocalizations.of(context)!.appName),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -514,9 +513,9 @@ class _AboutScreenState extends State<AboutScreen> {
 class HeaderListTile extends StatelessWidget {
   const HeaderListTile(
     this.text, {
-    Key? key,
+    super.key,
     this.first = false,
-  }) : super(key: key);
+  });
 
   /// The text to be displayed.
   final String text;

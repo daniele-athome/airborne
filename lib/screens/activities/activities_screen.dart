@@ -11,7 +11,7 @@ import '../../services/activities_services.dart';
 import 'activities_list.dart';
 
 class ActivitiesScreen extends StatefulWidget {
-  const ActivitiesScreen({Key? key}) : super(key: key);
+  const ActivitiesScreen({super.key});
 
   @override
   State<ActivitiesScreen> createState() => _ActivitiesScreenState();

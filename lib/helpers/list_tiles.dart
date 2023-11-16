@@ -13,13 +13,13 @@ class DateListTile extends StatelessWidget {
   static final DateFormat _dateFormatter = DateFormat.yMEd();
 
   const DateListTile({
-    Key? key,
+    super.key,
     required this.controller,
     this.onDateSelected,
     // ignore: unused_element
     this.showIcon = true,
     this.textStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +79,12 @@ class DateTimeListTile extends StatelessWidget {
   static final DateFormat _dateFormatter = DateFormat.yMEd();
 
   const DateTimeListTile({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onDateSelected,
     required this.onTimeSelected,
     this.showIcon = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

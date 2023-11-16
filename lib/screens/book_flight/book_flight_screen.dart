@@ -34,7 +34,7 @@ Color _resolveEventBackgroundColor(BuildContext context) =>
 const _kEventDefaultDuration = Duration(hours: 1);
 
 class BookFlightScreen extends StatefulWidget {
-  const BookFlightScreen({Key? key}) : super(key: key);
+  const BookFlightScreen({super.key});
 
   @override
   BookFlightScreenState createState() => BookFlightScreenState();

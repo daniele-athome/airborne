@@ -16,11 +16,11 @@ final Logger _log = Logger((FlightLogItem).toString());
 
 class FlightLogList extends StatefulWidget {
   const FlightLogList({
-    Key? key,
+    super.key,
     required this.controller,
     required this.logBookService,
     required this.onTapItem,
-  }) : super(key: key);
+  });
 
   final FlightLogListController controller;
   final FlightLogBookService logBookService;

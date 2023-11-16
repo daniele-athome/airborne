@@ -54,11 +54,11 @@ Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
 /// An [InkWell] equivalent for Cupertino. Simply colors the background of the container.
 class CupertinoInkWell extends StatefulWidget {
   const CupertinoInkWell({
-    Key? key,
+    super.key,
     required this.child,
     required this.onPressed,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   final Widget child;
   final VoidCallback? onPressed;
@@ -123,9 +123,9 @@ class _CupertinoInkWellState extends State<CupertinoInkWell> {
 /// A standard-sized container for a [CupertinoFormRow] child.
 class CupertinoFormRowContainer extends StatelessWidget {
   const CupertinoFormRowContainer({
-    Key? key,
+    super.key,
     this.child,
-  }) : super(key: key);
+  });
 
   final Widget? child;
 
@@ -143,7 +143,7 @@ class CupertinoFormRowContainer extends StatelessWidget {
 /// A button-like [CupertinoFormRow]. Heavily inspired by [CupertinoButton].
 class CupertinoFormButtonRow extends StatefulWidget {
   const CupertinoFormButtonRow({
-    Key? key,
+    super.key,
     required this.child,
     this.prefix,
     this.padding,
@@ -151,7 +151,7 @@ class CupertinoFormButtonRow extends StatefulWidget {
     this.error,
     this.pressedOpacity = 0.4,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   final Widget? prefix;
   final EdgeInsetsGeometry? padding;
@@ -193,7 +193,7 @@ class _CupertinoFormButtonRowState extends State<CupertinoFormButtonRow>
 class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   // TODO other constructor parameters
   CupertinoDateTimeFormFieldRow({
-    Key? key,
+    super.key,
     this.prefix,
     this.controller,
     this.helper,
@@ -202,13 +202,11 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     required this.doneButtonText,
     DateTime? initialValue,
     void Function(DateTime value, DateTime oldValue)? onChanged,
-    FormFieldSetter<DateTime>? onSaved,
+    super.onSaved,
   })  : assert(showDate || showTime,
             'showDate and showTime cannot be both false!'),
         super(
-          key: key,
           initialValue: controller?.value ?? initialValue ?? DateTime.now(),
-          onSaved: onSaved,
           builder: (FormFieldState<DateTime> field) {
             void onTapDateHandler() {
               showCupertinoModalPopup(

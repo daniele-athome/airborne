@@ -13,7 +13,7 @@ import 'flight_log_list.dart';
 import 'flight_log_modal.dart';
 
 class FlightLogScreen extends StatefulWidget {
-  const FlightLogScreen({Key? key}) : super(key: key);
+  const FlightLogScreen({super.key});
 
   @override
   State<FlightLogScreen> createState() => _FlightLogScreenState();

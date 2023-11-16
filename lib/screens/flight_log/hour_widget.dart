@@ -10,12 +10,12 @@ import '../../helpers/digit_display.dart';
 
 class HourListTile extends StatefulWidget {
   const HourListTile({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     this.showIcon = true,
     this.onTap,
-  }) : super(key: key);
+  });
 
   final DigitDisplayController controller;
   final String hintText;
@@ -99,11 +99,11 @@ class _HourListTileState extends State<HourListTile> {
 
 class CupertinoHourFormRow extends StatefulWidget {
   const CupertinoHourFormRow({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     this.onTap,
-  }) : super(key: key);
+  });
 
   final DigitDisplayController controller;
   final String hintText;
@@ -192,12 +192,12 @@ class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
 
 class HourMeterDialog extends StatefulWidget {
   const HourMeterDialog({
-    Key? key,
+    super.key,
     required this.initialValue,
     this.onChanged,
     this.onConfirm,
     this.onCancel,
-  }) : super(key: key);
+  });
 
   final num initialValue;
   final Function(num value)? onChanged;

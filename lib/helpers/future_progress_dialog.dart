@@ -39,12 +39,12 @@ class FutureProgressDialog extends StatefulWidget {
 
   const FutureProgressDialog(
     this.future, {
-    Key? key,
+    super.key,
     this.decoration,
     this.opacity = 1.0,
     this.progress,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   State<FutureProgressDialog> createState() => _FutureProgressDialogState();

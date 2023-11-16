@@ -48,7 +48,7 @@ num _parseFuelPrice(String text) =>
     roundDouble(_fuelPriceFormatter.parse(text), _kFuelPriceDecimals);
 
 class FlightLogModal extends StatefulWidget {
-  const FlightLogModal(this.item, {Key? key}) : super(key: key);
+  const FlightLogModal(this.item, {super.key});
 
   final FlightLogItem item;
 
@@ -750,12 +750,12 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
   /// Builds a fuel price text input field.
   /// onChanged will give the total cost.
   const _MaterialFuelPriceSelector.totalCost({
-    Key? key,
+    super.key,
     // ignore: unused_element
     this.onChanged,
     required this.currencySymbol,
     required this.textController,
-  }) : super(key: key);
+  });
 
   final TextEditingController? textController;
   final void Function(num? value)? onChanged;

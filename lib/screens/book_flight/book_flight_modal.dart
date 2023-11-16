@@ -21,7 +21,7 @@ import '../../services/book_flight_services.dart';
 final Logger _log = Logger((FlightBooking).toString());
 
 class BookFlightModal extends StatefulWidget {
-  const BookFlightModal(this.event, {Key? key}) : super(key: key);
+  const BookFlightModal(this.event, {super.key});
 
   final FlightBooking event;
 
@@ -526,10 +526,11 @@ class _SunTimesListTile extends StatelessWidget {
   final DateTime sunset;
 
   const _SunTimesListTile({
-    Key? key,
+    // ignore: unused_element
+    super.key,
     required this.sunrise,
     required this.sunset,
-  }) : super(key: key);
+  });
 
   Color? _getIconColor(BuildContext context) =>
       getBrightness(context) == Brightness.dark ? null : Colors.black45;

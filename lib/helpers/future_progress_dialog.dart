@@ -63,12 +63,8 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        return Future(() {
-          return false;
-        });
-      },
+    return PopScope(
+      canPop: false,
       child: _buildDialog(context),
     );
   }

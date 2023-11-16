@@ -27,7 +27,7 @@ dependencies:
   adaptive_dialog: 1.9.0-no-macos.3
   archive: 3.4.2
   auto_size_text: 3.0.0
-  collection: 1.17.2
+  collection: 1.18.0
   cupertino_icons: 1.0.6
   flutter:
     sdk: flutter

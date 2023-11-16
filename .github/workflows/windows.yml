@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: '3.13.6'
+  flutter_version: '3.16.0'
 
 jobs:
   test-build:

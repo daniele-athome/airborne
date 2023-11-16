@@ -6,6 +6,7 @@ analyzer:
   exclude:
     - lib/generated/**
     - '**/*.mocks.dart'
+    - '**/*.g.dart'
     # messy code
     #- test_driver/**
     - screenshots/**

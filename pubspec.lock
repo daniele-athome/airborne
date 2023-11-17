@@ -13,26 +13,26 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: ae92f5d747aee634b87f89d9946000c2de774be1d6ac3e58268224348cd0101a
+      sha256: eb376e9acf6938204f90eb3b1f00b578640d3188b4c8a8ec054f9f479af8d051
       url: "https://pub.dev"
     source: hosted
-    version: "61.0.0"
+    version: "64.0.0"
   adaptive_dialog:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      sha256: "910debe8766eff4b378ed5164bb470debb87c53a3bdf6adee03c79f64fbf7348"
+      sha256: "30dc6deee139cde31e5d10a1d05e1a2a1bb6d592cf0eea27b978884b1ff03405"
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.1"
+    version: "2.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
-      sha256: ea3d8652bda62982addfd92fdc2d0214e5f82e43325104990d4f4c4a2a313562
+      sha256: "69f54f967773f6c26c7dcb13e93d7ccee8b17a641689da39e878d5cf13b06893"
       url: "https://pub.dev"
     source: hosted
-    version: "5.13.0"
+    version: "6.2.0"
   animations:
     dependency: transitive
     description:
@@ -229,10 +229,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "1efa911ca7086affd35f463ca2fc1799584fb6aa89883cf0af8e3664d6a02d55"
+      sha256: abd7625e16f51f554ea244d090292945ec4d4be7bfbaf2ec8cccea568919d334
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.2"
+    version: "2.3.3"
   dynamic_color:
     dependency: transitive
     description:
@@ -308,10 +308,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_platform_widgets
-      sha256: "4e29d811af1814a49f03bf9ef6638ebda45fd7d63cb09e64925adda153041e28"
+      sha256: "4970c211af1dad0a161e6379d04de2cace80283da0439f2f87d31a541f9b2b84"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0"
+    version: "6.0.2"
   flutter_staggered_grid_view:
     dependency: transitive
     description:
@@ -560,10 +560,10 @@ packages:
     dependency: "direct dev"
     description:
       name: mockito
-      sha256: "7d5b53bcd556c1bc7ffbe4e4d5a19c3e112b7e925e9e172dd7c6ad0630812616"
+      sha256: "4b693867cee1853c9d1d7ecc1871f27f39b2ef2c13c0d8d8507dfe5bebd8aaf1"
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.2"
+    version: "5.4.3"
   nested:
     dependency: transitive
     description:
@@ -736,10 +736,10 @@ packages:
     dependency: "direct dev"
     description:
       name: pubspec_generator
-      sha256: "5056a18045508dbbd4cfabf96682840fa4b702050ef62be6cdfe059c429ab7bb"
+      sha256: "7286dfd00b3b7309604c3d5eb23abb46dfd91c216ab9d5f01dcb8ce34a79bc41"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "4.0.0"
   pubspec_parse:
     dependency: transitive
     description:
@@ -1245,5 +1245,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
-  flutter: ">=3.13.0"
+  dart: ">=3.2.0 <4.0.0"
+  flutter: ">=3.16.0"

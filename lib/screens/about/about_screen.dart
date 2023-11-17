@@ -14,7 +14,7 @@ import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/utils.dart';
-import '../../pubspec.yaml.g.dart' as pubspec;
+import '../../pubspec.yaml.g.dart';
 
 final Logger _log = Logger((AboutScreen).toString());
 
@@ -241,14 +241,14 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
           ),
           CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, pubspec.homepage),
+            onPressed: () => openUrl(context, Pubspec.homepage),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
             child: Icon(CupertinoIcons.chevron_forward,
                 color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
           ),
           CupertinoFormButtonRow(
-            onPressed: () => openUrl(context, pubspec.issueTracker),
+            onPressed: () => openUrl(context, Pubspec.issueTracker),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_app_issues),
             child: Icon(CupertinoIcons.chevron_forward,
@@ -386,7 +386,7 @@ class _AboutScreenState extends State<AboutScreen> {
           title: Text(AppLocalizations.of(context)!.about_app_homepage),
           subtitle:
               Text(AppLocalizations.of(context)!.about_app_homepage_subtitle),
-          onTap: () => openUrl(context, pubspec.homepage),
+          onTap: () => openUrl(context, Pubspec.homepage),
         ),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -397,7 +397,7 @@ class _AboutScreenState extends State<AboutScreen> {
           title: Text(AppLocalizations.of(context)!.about_app_issues),
           subtitle:
               Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
-          onTap: () => openUrl(context, pubspec.issueTracker),
+          onTap: () => openUrl(context, Pubspec.issueTracker),
         ),
         if (_appConfig.currentAircraft!.url != null)
           ListTile(

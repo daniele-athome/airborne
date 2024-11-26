@@ -60,6 +60,10 @@ class _AboutScreenState extends State<AboutScreen> {
           return aircraftData;
         }).catchError((error, StackTrace? stacktrace) {
           _log.info('DOWNLOAD ERROR', error, stacktrace);
+          if (!context.mounted) {
+            return null;
+          }
+
           // TODO specialize exceptions (e.g. network errors, others...)
           final String message;
           if (error is TimeoutException) {
@@ -74,26 +78,32 @@ class _AboutScreenState extends State<AboutScreen> {
             message = getExceptionMessage(error);
           }
 
-          Future.delayed(Duration.zero, () => showError(context, message));
+          Future.delayed(Duration.zero, () {
+            if (context.mounted) {
+              return showError(context, message);
+            }
+          });
           return null;
         });
 
-        showPlatformDialog(
-          context: context,
-          builder: (context) {
-            return FutureProgressDialog(
-              downloadTask,
-              message: isCupertino(context)
-                  ? null
-                  : Text(AppLocalizations.of(context)!
-                      .addAircraft_dialog_downloading),
-            );
-          },
-        ).then((value) async {
-          if (value != null) {
-            // TODO maybe notify the user (e.g. toast)?
-          }
-        });
+        if (context.mounted) {
+          showPlatformDialog(
+            context: context,
+            builder: (context) {
+              return FutureProgressDialog(
+                downloadTask,
+                message: isCupertino(context)
+                    ? null
+                    : Text(AppLocalizations.of(context)!
+                    .addAircraft_dialog_downloading),
+              );
+            },
+          ).then((value) async {
+            if (value != null) {
+              // TODO maybe notify the user (e.g. toast)?
+            }
+          });
+        }
       }
     });
   }
@@ -107,8 +117,10 @@ class _AboutScreenState extends State<AboutScreen> {
       okCallback: () {
         _appConfig.pilotName = null;
         _appConfig.setCurrentAircraft(null).whenComplete(() {
-          Navigator.of(context, rootNavigator: true)
-              .popAndPushNamed('aircraft-data');
+          if (context.mounted) {
+            Navigator.of(context, rootNavigator: true)
+                .popAndPushNamed('aircraft-data');
+          }
         });
       },
     );

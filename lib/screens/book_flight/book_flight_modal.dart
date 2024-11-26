@@ -403,8 +403,13 @@ class _BookFlightModalState extends State<BookFlightModal> {
         .timeout(kNetworkRequestTimeout)
         .then((conflict) {
           if (conflict) {
-            throw Exception(AppLocalizations.of(context)!
-                .bookFlightModal_error_timeConflict);
+            if (context.mounted) {
+              throw Exception(AppLocalizations.of(context)!
+                  .bookFlightModal_error_timeConflict);
+            }
+            else {
+              return Future.value(null);
+            }
           } else {
             return (_isEditing
                     ? _service.updateBooking(event)
@@ -415,6 +420,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
         .then((value) => Future<FlightBooking?>.value(value))
         .catchError((error, StackTrace stacktrace) {
           _log.warning('SAVE ERROR', error, stacktrace);
+          if (!context.mounted) {
+            return null;
+          }
+
           final String message;
           // TODO specialize exceptions (e.g. network errors, others...)
           if (error is TimeoutException) {
@@ -439,7 +448,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
     ).then((value) {
-      if (value != null) {
+      if (value != null && context.mounted) {
         Navigator.of(context).pop(value);
       }
     });
@@ -473,6 +482,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
         .then((value) => Future<DeletedFlightBooking?>.value(value))
         .catchError((error, StackTrace stacktrace) {
       _log.warning('DELETE ERROR', error, stacktrace);
+      if (!context.mounted) {
+        return null;
+      }
+
       final String message;
       // TODO specialize exceptions (e.g. network errors, others...)
       if (error is TimeoutException) {
@@ -496,7 +509,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 AppLocalizations.of(context)!.bookFlightModal_dialog_working),
       ),
     ).then((value) {
-      if (value != null) {
+      if (value != null && context.mounted) {
         Navigator.of(context, rootNavigator: true).pop(value);
       }
     });

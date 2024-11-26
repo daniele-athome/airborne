@@ -433,7 +433,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             fullscreenDialog: true,
           );
     Navigator.of(context, rootNavigator: true).push(route).then((result) {
-      if (result != null) {
+      if (result != null && context.mounted) {
         final String message;
         if (event == null) {
           message =

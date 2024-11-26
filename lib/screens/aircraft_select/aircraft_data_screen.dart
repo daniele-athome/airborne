@@ -83,6 +83,10 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         return aircraftData;
       }).catchError((error, StackTrace? stacktrace) {
         _log.info('DOWNLOAD ERROR', error, stacktrace);
+        if (!context.mounted) {
+          return null;
+        }
+
         // TODO specialize exceptions (e.g. network errors, others...)
         final String message;
         if (error is TimeoutException) {
@@ -96,7 +100,11 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           message = getExceptionMessage(error);
         }
 
-        Future.delayed(Duration.zero, () => showError(context, message));
+        Future.delayed(Duration.zero, () {
+          if (context.mounted) {
+            return showError(context, message);
+          }
+        });
         return null;
       });
 

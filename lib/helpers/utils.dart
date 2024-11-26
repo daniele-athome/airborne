@@ -183,8 +183,10 @@ Future<void> showError(BuildContext context, String text) {
 Future<bool> openUrl(BuildContext context, String url) async {
   return launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
       .catchError((_) {
-    // TODO i18n
-    showError(context, 'Cannot open a browser.');
+    if (context.mounted) {
+      // TODO i18n
+      showError(context, 'Cannot open a browser.');
+    }
     return false;
   });
 }

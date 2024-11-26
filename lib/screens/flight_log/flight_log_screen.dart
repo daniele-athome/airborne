@@ -103,6 +103,10 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
     );
     Navigator.of(context, rootNavigator: true).push(route).then((result) {
       if (result != null) {
+        if (!context.mounted) {
+          return;
+        }
+
         final String message;
         if (item == null) {
           message =

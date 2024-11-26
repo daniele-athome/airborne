@@ -642,6 +642,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
             .then((value) => Future<FlightLogItem?>.value(value))
             .catchError((error, StackTrace stacktrace) {
       _log.warning('SAVE ERROR', error, stacktrace);
+      if (!context.mounted) {
+        return null;
+      }
+
       final String message;
       // TODO specialize exceptions (e.g. network errors, others...)
       if (error is TimeoutException) {
@@ -664,7 +668,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             : Text(AppLocalizations.of(context)!.flightLogModal_dialog_working),
       ),
     ).then((value) {
-      if (value != null) {
+      if (value != null && context.mounted) {
         Navigator.of(context).pop(value);
       }
     });
@@ -699,6 +703,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
         .then((value) => Future<FlightLogItem?>.value(value))
         .catchError((error, StackTrace stacktrace) {
       _log.warning('DELETE ERROR', error, stacktrace);
+      if (!context.mounted) {
+        return null;
+      }
+
       final String message;
       // TODO specialize exceptions (e.g. network errors, others...)
       if (error is TimeoutException) {
@@ -721,7 +729,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             : Text(AppLocalizations.of(context)!.flightLogModal_dialog_working),
       ),
     ).then((value) {
-      if (value != null) {
+      if (value != null && context.mounted) {
         Navigator.of(context, rootNavigator: true).pop(value);
       }
     });

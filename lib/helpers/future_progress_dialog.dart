@@ -55,9 +55,13 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
   void initState() {
     super.initState();
     widget.future.then((val) {
-      Navigator.of(context).pop(val);
+      if (mounted) {
+        Navigator.of(context).pop(val);
+      }
     }).catchError((e) {
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     });
   }
 

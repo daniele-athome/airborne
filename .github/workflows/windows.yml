@@ -40,7 +40,7 @@ jobs:
 
       - name: Archive debug build
         if: github.ref_type == 'tag'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows-bundle-debug
           path: build/windows/runner/debug/
@@ -50,7 +50,7 @@ jobs:
 
       - name: Archive release build
         if: github.ref_type == 'tag'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows-bundle-release
           path: build/windows/runner/release/

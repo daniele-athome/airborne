@@ -45,7 +45,7 @@ jobs:
 
       - name: Archive debug build
         if: github.ref_type == 'tag'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: linux-bundle-debug
           path: build/linux/x64/debug/bundle/
@@ -55,7 +55,7 @@ jobs:
 
       - name: Archive release build
         if: github.ref_type == 'tag'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: linux-bundle-release
           path: build/linux/x64/release/bundle/

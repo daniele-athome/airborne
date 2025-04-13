@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +12,7 @@ import 'package:solar_calculator/solar_calculator.dart';
 import 'package:timezone/timezone.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../generated/intl/app_localizations.dart';
 import 'cupertinoplus.dart';
 
 /// Time format for aviation use (i.e. no am/pm)
@@ -154,7 +154,7 @@ void showToast(FToast fToast, String text, Duration duration) {
       child: Text(text),
     ),
     toastDuration: duration,
-    positionedToastBuilder: (context, child) => Positioned(
+    positionedToastBuilder: (context, child, gravity) => Positioned(
         bottom: 50.0 * MediaQuery.of(context).devicePixelRatio + 50.0,
         left: 24.0,
         right: 24.0,

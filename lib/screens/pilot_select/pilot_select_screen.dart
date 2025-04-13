@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../../generated/intl/app_localizations.dart';
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/pilot_select_list.dart';

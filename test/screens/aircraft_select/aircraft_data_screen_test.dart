@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/screens/aircraft_select/aircraft_data_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

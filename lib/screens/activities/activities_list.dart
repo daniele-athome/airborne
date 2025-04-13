@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
+import '../../generated/intl/app_localizations.dart';
 import '../../helpers/utils.dart';
 import '../../models/activities_models.dart';
 import '../../services/activities_services.dart';
@@ -205,7 +205,7 @@ class _EntryListItem extends StatelessWidget {
   static final DateFormat _dateFormatter = DateFormat.yMd();
 
   const _EntryListItem({
-    // ignore: unused_element
+    // ignore: unused_element_parameter
     super.key,
     required this.entry,
   });
@@ -265,8 +265,6 @@ class _EntryListItem extends StatelessWidget {
           text =
               AppLocalizations.of(context)!.activities_activity_type_critical;
           break;
-        default:
-          throw UnsupportedError("Unknown type: ${entry.type.name}");
       }
     }
 

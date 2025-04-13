@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/aircraft_data.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/googleapis.dart';
@@ -12,7 +13,6 @@ import 'package:airborne/services/activities_services.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';

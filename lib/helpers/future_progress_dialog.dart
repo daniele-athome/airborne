@@ -15,7 +15,7 @@ Decoration _defaultDecoration(BuildContext context) => isCupertino(context)
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       )
     : BoxDecoration(
-        color: Theme.of(context).dialogBackgroundColor,
+        color: Theme.of(context).dialogTheme.backgroundColor,
         shape: BoxShape.rectangle,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       );

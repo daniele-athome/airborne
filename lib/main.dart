@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 //import 'package:intl/intl.dart';
@@ -13,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
+import 'generated/intl/app_localizations.dart';
 import 'helpers/config.dart';
 import 'helpers/utils.dart';
 import 'screens/aircraft_select/aircraft_data_screen.dart';

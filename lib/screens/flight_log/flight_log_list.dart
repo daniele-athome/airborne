@@ -1,12 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
+import '../../generated/intl/app_localizations.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';

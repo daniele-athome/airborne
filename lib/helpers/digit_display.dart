@@ -168,7 +168,7 @@ class SingleDigitText extends StatelessWidget {
 
 class _DigitText extends StatelessWidget {
   const _DigitText({
-    // ignore: unused_element
+    // ignore: unused_element_parameter
     super.key,
     required this.text,
     this.alternate = false,

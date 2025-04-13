@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
+import '../../generated/intl/app_localizations.dart';
 import '../../helpers/config.dart';
 import '../../helpers/cupertinoplus.dart';
 import '../../helpers/digit_display.dart';
@@ -759,7 +759,7 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
   /// onChanged will give the total cost.
   const _MaterialFuelPriceSelector.totalCost({
     super.key,
-    // ignore: unused_element
+    // ignore: unused_element_parameter
     this.onChanged,
     required this.currencySymbol,
     required this.textController,

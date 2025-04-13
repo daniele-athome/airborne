@@ -1,9 +1,9 @@
+import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/flight_log/flight_log_modal.dart';
 import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

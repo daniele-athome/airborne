@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:timezone/timezone.dart';
 
+import '../../generated/intl/app_localizations.dart';
 import '../../helpers/config.dart';
 import '../../helpers/utils.dart';
 import '../../models/book_flight_models.dart';
@@ -485,7 +485,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                   selectionIndex: _currentCalendarSwitch,
                   borderColor: Colors.grey,
                   selectedColor: Theme.of(context).colorScheme.secondary,
-                  unselectedColor: Theme.of(context).dialogBackgroundColor,
+                  unselectedColor: Theme.of(context).dialogTheme.backgroundColor,
                   onSegmentTapped: _changeView,
                 ),
         )

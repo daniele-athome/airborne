@@ -49,9 +49,9 @@ dependencies:
   provider: 6.1.4
   shared_preferences: 2.5.3
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 29.1.37
-  syncfusion_localizations: 29.1.37
-  syncfusion_flutter_core: 29.1.37
+  syncfusion_flutter_calendar: 29.1.38
+  syncfusion_localizations: 29.1.38
+  syncfusion_flutter_core: 29.1.38
   timeline_tile: 2.0.0
   timezone: 0.10.0
   url_launcher: 6.3.1

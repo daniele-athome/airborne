@@ -1,6 +1,6 @@
 #!/bin/bash
 
-which standard-version >/dev/null || exit 1
+which commit-and-tag-version >/dev/null || exit 1
 
 usage() {
     echo "Usage: $0 [major|minor|patch|first]"
@@ -43,7 +43,7 @@ case "$command" in
     stdver_args="$stdver_args --first-release"
     ;;
   "")
-    # standard-version will decide
+    # commit-and-tag-version will decide
     ;;
   *)
     usage
@@ -53,7 +53,7 @@ esac
 
 check_branch release || exit 1
 
-# prepare version file for standard-version (only if not first)
+# prepare version file for commit-and-tag-version (only if not first)
 if [ "$command" == "first" ]; then
   dump_first_version
 else
@@ -61,4 +61,4 @@ else
 fi
 
 # shellcheck disable=SC2086
-standard-version -a $stdver_args
+commit-and-tag-version -a $stdver_args

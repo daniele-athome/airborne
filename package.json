@@ -1,14 +1,14 @@
 {
-  "standard-version": {
+  "commit-and-tag-version": {
     "skip": {
       "commit": false,
       "tag": false
     },
     "scripts": {
-      "prebump": "utils/stdver-prebump.sh",
-      "postbump": "utils/stdver-postbump.sh",
-      "postchangelog": "utils/stdver-postchangelog.sh",
-      "postcommit": "utils/stdver-postcommit.sh"
+      "prebump": "utils/dist-prebump.sh",
+      "postbump": "utils/dist-postbump.sh",
+      "postchangelog": "utils/dist-postchangelog.sh",
+      "postcommit": "utils/dist-postcommit.sh"
     }
   }
 }

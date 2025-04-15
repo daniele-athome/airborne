@@ -1,6 +1,6 @@
 #!/bin/bash
-# Called as postbump script by standard-version.
-# At this point, standard-version has bumped the version in the .version file
+# Called as postbump script by commit-and-tag-version.
+# At this point, commit-and-tag-version has bumped the version in the .version file
 # So we update pubspec.yaml with the new version and bump the version code (+1)
 
 set -e

@@ -322,6 +322,8 @@ class FlightLogListItem extends StatelessWidget {
       '${((item.endHour - item.startHour) * 60).round().toString()}′';
 }
 
+// FIXME the way this controller is used triggers an extra useless refresh and it also doesn't play well with infinite_scroll_pagination v5.
+//  Refactor it so we have one single state handling the list (PagingState + our extra stuff) and (maybe) extend PagingController
 class FlightLogListController extends ValueNotifier<FlightLogListState> {
   FlightLogListController() : super(const FlightLogListState());
 

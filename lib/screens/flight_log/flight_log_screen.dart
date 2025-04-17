@@ -32,7 +32,6 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
     _fToast = FToast();
     _fToast.init(context);
     _logBookController = FlightLogListController();
-    _logBookController.addListener(_logBookListChanged);
   }
 
   @override
@@ -57,15 +56,7 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _logBookController.removeListener(_logBookListChanged);
     super.dispose();
-  }
-
-  void _logBookListChanged() {
-    // FIXME triggering a useless extra build: in theory,
-    // the create button widget should be wrapped and given
-    // the controller so it can listen to changes
-    setState(() {});
   }
 
   void _onTapItem(BuildContext context, FlightLogItem item) {
@@ -134,12 +125,12 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
     );
   }
 
+  /// Hide create button until we have the first (actually last) item of the log
+  bool _canShowCreateButton() => _logBookController.lastEndHourMeter != null ||
+      _logBookController.empty == true;
+
   @override
   Widget build(BuildContext context) {
-    // hide create button until we have the first (actually last) item of the log
-    bool showCreateButton = _logBookController.lastEndHourMeter != null ||
-        _logBookController.empty == true;
-
     return PlatformScaffold(
       iosContentPadding: true,
       // not using PlatformAppBar for Cupertino here (see below)
@@ -155,15 +146,17 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
               ),
             ),
       material: (_, __) => MaterialScaffoldData(
-        floatingActionButton: showCreateButton
-            ? FloatingActionButton(
-                key: const Key('button_logFlight'),
-                onPressed: () => _logFlight(context, null),
-                tooltip: AppLocalizations.of(context)!.button_logFlight,
-                child: const Icon(Icons.add),
-                // TODO colors
-              )
-            : null,
+      floatingActionButton: ValueListenableBuilder(
+          valueListenable: _logBookController,
+          builder: (context, value, child) => _canShowCreateButton()
+              ? FloatingActionButton(
+                  key: const Key('button_logFlight'),
+                  onPressed: () => _logFlight(context, null),
+                  tooltip: AppLocalizations.of(context)!.button_logFlight,
+                  child: const Icon(Icons.add),
+                  // TODO colors
+                )
+              : const SizedBox.shrink()),
         body: _buildBody(context),
       ),
       cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
@@ -172,25 +165,28 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
                     CupertinoSliverNavigationBar(
                       largeTitle:
                           Text(AppLocalizations.of(context)!.flightLog_title),
-                      trailing: showCreateButton
-                          ? PlatformIconButton(
-                              key: const Key('button_logFlight'),
-                              onPressed: () => _logFlight(context, null),
-                              icon: Icon(
-                                CupertinoIcons.add,
-                                color: CupertinoColors.systemRed,
-                                semanticLabel: AppLocalizations.of(context)!
-                                    .button_logFlight,
-                              ),
-                              // TODO not ready yet
-                              //color: CupertinoColors.systemRed,
-                              cupertino: (_, __) => CupertinoIconButtonData(
-                                // workaround for https://github.com/flutter/flutter/issues/32701
-                                padding: EdgeInsets.zero,
-                              ),
-                            )
-                          : null,
-                    )
+                      trailing: ValueListenableBuilder(
+                          valueListenable: _logBookController,
+                          builder: (context, value, child) => _canShowCreateButton() ?
+                          PlatformIconButton(
+                            key: const Key('button_logFlight'),
+                            onPressed: () => _logFlight(context, null),
+                            icon: Icon(
+                              CupertinoIcons.add,
+                              color: CupertinoColors.systemRed,
+                              semanticLabel: AppLocalizations.of(context)!
+                                  .button_logFlight,
+                            ),
+                            // TODO not ready yet
+                            //color: CupertinoColors.systemRed,
+                            cupertino: (_, __) => CupertinoIconButtonData(
+                              // workaround for https://github.com/flutter/flutter/issues/32701
+                              padding: EdgeInsets.zero,
+                            ),
+                          )
+                              : const SizedBox.shrink()
+                      )
+                    ),
                   ],
               body: _buildBody(context))),
     );

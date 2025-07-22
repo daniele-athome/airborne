@@ -359,17 +359,17 @@ Future<File> _createAircraftFileWithData({
   encoder.startEncode(zipOutput);
 
   if (jsonData != null) {
-    encoder.addFile(ArchiveFile.stream(
-        'aircraft.json', jsonData.length, InputStream(jsonData.codeUnits)));
+    encoder.add(ArchiveFile.stream(
+        'aircraft.json', InputMemoryStream(jsonData.codeUnits, length: jsonData.length)));
   }
   if (aircraftPicData != null) {
-    encoder.addFile(ArchiveFile.stream(
-        'aircraft.jpg', aircraftPicData.length, InputStream(aircraftPicData)));
+    encoder.add(ArchiveFile.stream(
+        'aircraft.jpg', InputMemoryStream(aircraftPicData)));
   }
   if (pilotAvatarsPicData != null) {
     pilotAvatarsPicData.forEach((name, picData) {
-      encoder.addFile(ArchiveFile.stream(
-          'avatar-$name.jpg', picData.length, InputStream(picData)));
+      encoder.add(ArchiveFile.stream(
+          'avatar-$name.jpg', InputMemoryStream(picData)));
     });
   }
 

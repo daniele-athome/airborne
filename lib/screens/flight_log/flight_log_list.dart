@@ -363,7 +363,7 @@ class FlightLogListState {
 }
 
 class FlightLogListDivider extends PlatformWidget {
-  FlightLogListDivider({super.key});
+  const FlightLogListDivider({super.key});
 
   @override
   Widget createCupertinoWidget(BuildContext context) =>

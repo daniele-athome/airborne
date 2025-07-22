@@ -55,7 +55,7 @@ class ActivitiesService {
   }
 
   /// Data range generator. +2 because the index is 0-based and to skip the header row.
-  _sheetDataRange(first, last) => 'A${first + 2}:J${last + 2}';
+  String _sheetDataRange(int first, int last) => 'A${first + 2}:J${last + 2}';
 
   Future<void> reset() {
     return _ensureService().then((client) => client

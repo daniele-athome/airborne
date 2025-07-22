@@ -61,14 +61,14 @@ class FlightLogBookService {
   }
 
   /// Data range generator. +2 because the index is 0-based and to skip the header row.
-  _sheetDataRange(first, last) => 'A${first + 2}:J${last + 2}';
+  String _sheetDataRange(int first, int last) => 'A${first + 2}:J${last + 2}';
 
   /// Convert item ID to sheet row number. +1 is for skipping the header row.
-  _itemIdToRowNumber(id) => id + 1;
+  int _itemIdToRowNumber(int id) => id + 1;
 
   /// Convert sheet row number to item ID. -1 is for adding the header row.
   // ignore: unused_element
-  _rowNumberToItemId(rowNumber) => rowNumber - 1;
+  int _rowNumberToItemId(int rowNumber) => rowNumber - 1;
 
   Future<void> reset() {
     return _ensureService().then((client) => client

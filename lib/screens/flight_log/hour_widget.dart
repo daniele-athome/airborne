@@ -35,7 +35,7 @@ class _HourListTileState extends State<HourListTile> {
     _controller = DigitDisplayController(widget.controller.number);
   }
 
-  _onTap(BuildContext context) {
+  void _onTap(BuildContext context) {
     Widget pageRouteBuilder(BuildContext dialogContext) => PlatformScaffold(
           appBar: PlatformAppBar(
             title: Text(widget.hintText),
@@ -122,7 +122,7 @@ class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
     _controller = DigitDisplayController(widget.controller.number);
   }
 
-  _onPressed(BuildContext context) {
+  void _onPressed(BuildContext context) {
     Widget pageRouteBuilder(BuildContext dialogContext) => PlatformScaffold(
           iosContentPadding: true,
           appBar: PlatformAppBar(
@@ -221,7 +221,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
   }
 
   /// Insipired by https://github.com/eopeter/flutter_dialpad
-  _buildNumberButton(
+  Widget _buildNumberButton(
     BuildContext context,
     String value, {
     String? text,
@@ -276,7 +276,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
           );
   }
 
-  _onPressed(String value) {
+  void _onPressed(String value) {
     setState(() {
       final activeDigit = _controller.activeDigit!;
       int offset = (activeDigit >= kMaxDisplayIntegerDigits) ? 1 : 0;
@@ -293,7 +293,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     }
   }
 
-  _onBackspace() {
+  void _onBackspace() {
     setState(() {
       final activeDigit = _controller.activeDigit!;
       // clear current digit and go backwards

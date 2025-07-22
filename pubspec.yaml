@@ -90,6 +90,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Generate localizations
+  generate: true
+
   assets:
     - assets/images/
     - assets/aircraft.schema.json

@@ -79,9 +79,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String bookFlight_span_days(int current, int total) {
-    final intl.NumberFormat currentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat currentNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
     final String currentString = currentNumberFormat.format(current);
-    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Giorno $currentString / $totalString';
@@ -124,22 +126,27 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bookFlightModal_hint_notes => 'Note';
 
   @override
-  String get bookFlightModal_error_notOwnBooking_edit => 'La prenotazione non è tua, non puoi modificarla.';
+  String get bookFlightModal_error_notOwnBooking_edit =>
+      'La prenotazione non è tua, non puoi modificarla.';
 
   @override
-  String get bookFlightModal_error_notOwnBooking_delete => 'La prenotazione non è tua, non puoi cancellarla.';
+  String get bookFlightModal_error_notOwnBooking_delete =>
+      'La prenotazione non è tua, non puoi cancellarla.';
 
   @override
-  String get bookFlightModal_error_bookingForOthers => 'Non puoi prenotare voli per un altro pilota.';
+  String get bookFlightModal_error_bookingForOthers =>
+      'Non puoi prenotare voli per un altro pilota.';
 
   @override
-  String get bookFlightModal_error_timeConflict => 'Un\'altra prenotazione è già presente per l\'orario indicato!';
+  String get bookFlightModal_error_timeConflict =>
+      'Un\'altra prenotazione è già presente per l\'orario indicato!';
 
   @override
   String get bookFlightModal_dialog_changePilot_title => 'Cambiare pilota?';
 
   @override
-  String get bookFlightModal_dialog_changePilot_message => 'Stai cambiando il pilota di una prenotazione.';
+  String get bookFlightModal_dialog_changePilot_message =>
+      'Stai cambiando il pilota di una prenotazione.';
 
   @override
   String get bookFlightModal_dialog_working => 'Un attimo...';
@@ -148,7 +155,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bookFlightModal_dialog_delete_title => 'Cancellare?';
 
   @override
-  String get bookFlightModal_dialog_delete_message => 'Non cancellare prenotazioni altrui senza il consenso del pilota.';
+  String get bookFlightModal_dialog_delete_message =>
+      'Non cancellare prenotazioni altrui senza il consenso del pilota.';
 
   @override
   String get bookFlightModal_dialog_selectPilot => 'Seleziona pilota';
@@ -172,7 +180,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get flightLog_error_firstPageIndicator => 'Qualcosa è andato storto.';
 
   @override
-  String get flightLog_error_newPageIndicator => 'Qualcosa è andato storto. Tocca per riprovare.';
+  String get flightLog_error_newPageIndicator =>
+      'Qualcosa è andato storto. Tocca per riprovare.';
 
   @override
   String get flightLogModal_title_create => 'Registra';
@@ -246,55 +255,69 @@ class AppLocalizationsIt extends AppLocalizations {
   String get flightLogModal_error_fuel_invalid_number => 'Numero non valido';
 
   @override
-  String get flightLogModal_error_fuelCost_invalid_number => 'Numero non valido';
+  String get flightLogModal_error_fuelCost_invalid_number =>
+      'Numero non valido';
 
   @override
-  String get flightLogModal_error_notOwnFlight_delete => 'Il volo non è tuo, non puoi cancellarlo.';
+  String get flightLogModal_error_notOwnFlight_delete =>
+      'Il volo non è tuo, non puoi cancellarlo.';
 
   @override
   String get flightLogModal_error_invalid_hourmeter => 'Orametro non valido.';
 
   @override
-  String get flightLogModal_error_invalid_locations => 'Inserisci partenza e arrivo del volo.';
+  String get flightLogModal_error_invalid_locations =>
+      'Inserisci partenza e arrivo del volo.';
 
   @override
-  String get flightLogModal_error_invalid_fuel => 'Quantità di benzina non valida.';
+  String get flightLogModal_error_invalid_fuel =>
+      'Quantità di benzina non valida.';
 
   @override
-  String get flightLogModal_error_invalid_fuel_empty => 'Inserisci la quantità di benzina.';
+  String get flightLogModal_error_invalid_fuel_empty =>
+      'Inserisci la quantità di benzina.';
 
   @override
-  String get flightLogModal_error_invalid_fuelPrice => 'Prezzo benzina non valido.';
+  String get flightLogModal_error_invalid_fuelPrice =>
+      'Prezzo benzina non valido.';
 
   @override
-  String get flightLogModal_error_invalid_fuelCost_empty => 'Inserisci il costo totale della benzina.';
+  String get flightLogModal_error_invalid_fuelCost_empty =>
+      'Inserisci il costo totale della benzina.';
 
   @override
-  String get flightLogModal_error_invalid_fuelCost => 'Costo totale benzina non valido.';
+  String get flightLogModal_error_invalid_fuelCost =>
+      'Costo totale benzina non valido.';
 
   @override
-  String get flightLogModal_error_notOwnFlight_edit => 'Il volo non è tuo, non puoi modificarlo.';
+  String get flightLogModal_error_notOwnFlight_edit =>
+      'Il volo non è tuo, non puoi modificarlo.';
 
   @override
-  String get flightLogModal_error_alteringTestFlight => 'Il volo è una prova tecnica, non puoi cambiare pilota.';
+  String get flightLogModal_error_alteringTestFlight =>
+      'Il volo è una prova tecnica, non puoi cambiare pilota.';
 
   @override
   String get flightLogModal_dialog_changePilot_title => 'Cambiare pilota?';
 
   @override
-  String get flightLogModal_dialog_changePilot_message => 'Stai cambiando il pilota di un volo registrato.';
+  String get flightLogModal_dialog_changePilot_message =>
+      'Stai cambiando il pilota di un volo registrato.';
 
   @override
-  String get flightLogModal_dialog_changePilotNoPilot_message => 'Stai trasformando il volo in una prova tecnica.';
+  String get flightLogModal_dialog_changePilotNoPilot_message =>
+      'Stai trasformando il volo in una prova tecnica.';
 
   @override
-  String get flightLogModal_error_loggingForOthers => 'Non puoi registrare voli di un altro pilota.';
+  String get flightLogModal_error_loggingForOthers =>
+      'Non puoi registrare voli di un altro pilota.';
 
   @override
   String get flightLogModal_dialog_delete_title => 'Cancellare?';
 
   @override
-  String get flightLogModal_dialog_delete_message => 'Stai cancellando un volo registrato. Non potrai recuperarlo!';
+  String get flightLogModal_dialog_delete_message =>
+      'Stai cancellando un volo registrato. Non potrai recuperarlo!';
 
   @override
   String get flightLogModal_dialog_working => 'Un attimo...';
@@ -309,7 +332,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get activities_error_firstPageIndicator => 'Qualcosa è andato storto.';
 
   @override
-  String get activities_error_newPageIndicator => 'Qualcosa è andato storto. Tocca per riprovare.';
+  String get activities_error_newPageIndicator =>
+      'Qualcosa è andato storto. Tocca per riprovare.';
 
   @override
   String get activities_activity_type_note => 'Nota';
@@ -330,7 +354,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addAircraft_title => 'Configura aereo';
 
   @override
-  String get addAircraft_text1 => 'Inserisci l\'indirizzo della configurazione dell\'aereo e la sua password.';
+  String get addAircraft_text1 =>
+      'Inserisci l\'indirizzo della configurazione dell\'aereo e la sua password.';
 
   @override
   String get addAircraft_label_address => 'Indirizzo';
@@ -348,13 +373,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get addAircraft_dialog_downloading => 'Download in corso...';
 
   @override
-  String get addAircraft_error_invalid_address => 'Inserisci un indirizzo valido';
+  String get addAircraft_error_invalid_address =>
+      'Inserisci un indirizzo valido';
 
   @override
-  String get addAircraft_error_storing => 'Errore durante l\'installazione dell\'aereo.';
+  String get addAircraft_error_storing =>
+      'Errore durante l\'installazione dell\'aereo.';
 
   @override
-  String get addAircraft_error_invalid_datafile => 'Configurazione dell\'aereo non valida.';
+  String get addAircraft_error_invalid_datafile =>
+      'Configurazione dell\'aereo non valida.';
 
   @override
   String get pilotSelect_title => 'Chi sei?';
@@ -401,29 +429,34 @@ class AppLocalizationsIt extends AppLocalizations {
   String get about_app_issues => 'Segnala problema';
 
   @override
-  String get about_app_issues_subtitle => 'Apri un bug per segnalare un problema con l\'app';
+  String get about_app_issues_subtitle =>
+      'Apri un bug per segnalare un problema con l\'app';
 
   @override
   String get about_app_update_aircraft => 'Aggiorna aereo';
 
   @override
-  String get about_app_update_aircraft_subtitle => 'Aggiorna i dati dell\'aereo dalla rete';
+  String get about_app_update_aircraft_subtitle =>
+      'Aggiorna i dati dell\'aereo dalla rete';
 
   @override
   String get about_app_disconnect_aircraft => 'Disconnetti aereo';
 
   @override
-  String get about_app_disconnect_aircraft_subtitle => 'Per cambiare aereo e riscaricare i dati';
+  String get about_app_disconnect_aircraft_subtitle =>
+      'Per cambiare aereo e riscaricare i dati';
 
   @override
   String get about_update_password_title => 'Aggiorna aereo';
 
   @override
-  String get about_update_password_message => 'Lascia vuota la password se non serve.';
+  String get about_update_password_message =>
+      'Lascia vuota la password se non serve.';
 
   @override
   String get about_disconnect_confirm_title => 'Disconnettere l\'aereo?';
 
   @override
-  String get about_disconnect_confirm_message => 'Dovrai immettere di nuovo l\'indirizzo dei dati dell\'aereo.';
+  String get about_disconnect_confirm_message =>
+      'Dovrai immettere di nuovo l\'indirizzo dei dati dell\'aereo.';
 }

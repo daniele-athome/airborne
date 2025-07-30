@@ -79,9 +79,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String bookFlight_span_days(int current, int total) {
-    final intl.NumberFormat currentNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat currentNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
     final String currentString = currentNumberFormat.format(current);
-    final intl.NumberFormat totalNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final intl.NumberFormat totalNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
     final String totalString = totalNumberFormat.format(total);
 
     return 'Day $currentString / $totalString';
@@ -91,7 +93,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookFlight_message_flight_added => 'Flight booked successfully.';
 
   @override
-  String get bookFlight_message_flight_canceled => 'Flight canceled successfully.';
+  String get bookFlight_message_flight_canceled =>
+      'Flight canceled successfully.';
 
   @override
   String get bookFlight_message_flight_updated => 'Flight saved successfully.';
@@ -124,22 +127,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookFlightModal_hint_notes => 'Notes';
 
   @override
-  String get bookFlightModal_error_notOwnBooking_edit => 'Flight is not yours, you cannot modify it.';
+  String get bookFlightModal_error_notOwnBooking_edit =>
+      'Flight is not yours, you cannot modify it.';
 
   @override
-  String get bookFlightModal_error_notOwnBooking_delete => 'Flight is not yours, you cannot delete it.';
+  String get bookFlightModal_error_notOwnBooking_delete =>
+      'Flight is not yours, you cannot delete it.';
 
   @override
-  String get bookFlightModal_error_bookingForOthers => 'You can\'t book flight for another pilot.';
+  String get bookFlightModal_error_bookingForOthers =>
+      'You can\'t book flight for another pilot.';
 
   @override
-  String get bookFlightModal_error_timeConflict => 'Another flight is already booked for this time slot!';
+  String get bookFlightModal_error_timeConflict =>
+      'Another flight is already booked for this time slot!';
 
   @override
   String get bookFlightModal_dialog_changePilot_title => 'Change pilot?';
 
   @override
-  String get bookFlightModal_dialog_changePilot_message => 'You are changing the pilot for this flight.';
+  String get bookFlightModal_dialog_changePilot_message =>
+      'You are changing the pilot for this flight.';
 
   @override
   String get bookFlightModal_dialog_working => 'Please wait...';
@@ -148,7 +156,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookFlightModal_dialog_delete_title => 'Delete?';
 
   @override
-  String get bookFlightModal_dialog_delete_message => 'Do not delete flights booked by others without the pilot knowing.';
+  String get bookFlightModal_dialog_delete_message =>
+      'Do not delete flights booked by others without the pilot knowing.';
 
   @override
   String get bookFlightModal_dialog_selectPilot => 'Select pilot';
@@ -157,10 +166,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get flightLog_title => 'Log book';
 
   @override
-  String get flightLog_message_flight_added => 'Flight registered successfully.';
+  String get flightLog_message_flight_added =>
+      'Flight registered successfully.';
 
   @override
-  String get flightLog_message_flight_canceled => 'Flight deleted successfully.';
+  String get flightLog_message_flight_canceled =>
+      'Flight deleted successfully.';
 
   @override
   String get flightLog_message_flight_updated => 'Flight saved successfully.';
@@ -172,7 +183,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get flightLog_error_firstPageIndicator => 'Something went wrong.';
 
   @override
-  String get flightLog_error_newPageIndicator => 'Something went wrong. Tap to retry.';
+  String get flightLog_error_newPageIndicator =>
+      'Something went wrong. Tap to retry.';
 
   @override
   String get flightLogModal_title_create => 'Log flight';
@@ -249,52 +261,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String get flightLogModal_error_fuelCost_invalid_number => 'Invalid number';
 
   @override
-  String get flightLogModal_error_notOwnFlight_delete => 'Flight is not yours, you cannot delete it.';
+  String get flightLogModal_error_notOwnFlight_delete =>
+      'Flight is not yours, you cannot delete it.';
 
   @override
   String get flightLogModal_error_invalid_hourmeter => 'Invalid hour meter.';
 
   @override
-  String get flightLogModal_error_invalid_locations => 'Please provide origin and destination of flight.';
+  String get flightLogModal_error_invalid_locations =>
+      'Please provide origin and destination of flight.';
 
   @override
   String get flightLogModal_error_invalid_fuel => 'Invalid fuel quantity.';
 
   @override
-  String get flightLogModal_error_invalid_fuel_empty => 'Please provide fuel quantity.';
+  String get flightLogModal_error_invalid_fuel_empty =>
+      'Please provide fuel quantity.';
 
   @override
   String get flightLogModal_error_invalid_fuelPrice => 'Invalid fuel price.';
 
   @override
-  String get flightLogModal_error_invalid_fuelCost_empty => 'Please provide total fuel cost.';
+  String get flightLogModal_error_invalid_fuelCost_empty =>
+      'Please provide total fuel cost.';
 
   @override
   String get flightLogModal_error_invalid_fuelCost => 'Invalid fuel cost.';
 
   @override
-  String get flightLogModal_error_notOwnFlight_edit => 'Flight is not yours, you cannot modify it.';
+  String get flightLogModal_error_notOwnFlight_edit =>
+      'Flight is not yours, you cannot modify it.';
 
   @override
-  String get flightLogModal_error_alteringTestFlight => 'This is a test flight, you cannot change the pilot.';
+  String get flightLogModal_error_alteringTestFlight =>
+      'This is a test flight, you cannot change the pilot.';
 
   @override
   String get flightLogModal_dialog_changePilot_title => 'Change pilot?';
 
   @override
-  String get flightLogModal_dialog_changePilot_message => 'You are changing the pilot of a registered flight.';
+  String get flightLogModal_dialog_changePilot_message =>
+      'You are changing the pilot of a registered flight.';
 
   @override
-  String get flightLogModal_dialog_changePilotNoPilot_message => 'You are turning this flight into a test flight.';
+  String get flightLogModal_dialog_changePilotNoPilot_message =>
+      'You are turning this flight into a test flight.';
 
   @override
-  String get flightLogModal_error_loggingForOthers => 'You can\'t log flights for other pilots.';
+  String get flightLogModal_error_loggingForOthers =>
+      'You can\'t log flights for other pilots.';
 
   @override
   String get flightLogModal_dialog_delete_title => 'Delete?';
 
   @override
-  String get flightLogModal_dialog_delete_message => 'You are deleting a registered flight. You won\'t be able to undo this!';
+  String get flightLogModal_dialog_delete_message =>
+      'You are deleting a registered flight. You won\'t be able to undo this!';
 
   @override
   String get flightLogModal_dialog_working => 'Please wait...';
@@ -309,7 +331,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activities_error_firstPageIndicator => 'Something went wrong.';
 
   @override
-  String get activities_error_newPageIndicator => 'Something went wrong. Tap to retry.';
+  String get activities_error_newPageIndicator =>
+      'Something went wrong. Tap to retry.';
 
   @override
   String get activities_activity_type_note => 'Note';
@@ -330,7 +353,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addAircraft_title => 'Setup aircraft';
 
   @override
-  String get addAircraft_text1 => 'Please type in the address to the aircraft data and its password.';
+  String get addAircraft_text1 =>
+      'Please type in the address to the aircraft data and its password.';
 
   @override
   String get addAircraft_label_address => 'Address';
@@ -348,13 +372,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addAircraft_dialog_downloading => 'Downloading...';
 
   @override
-  String get addAircraft_error_invalid_address => 'Please insert a valid address';
+  String get addAircraft_error_invalid_address =>
+      'Please insert a valid address';
 
   @override
   String get addAircraft_error_storing => 'Unable to store aircraft data file.';
 
   @override
-  String get addAircraft_error_invalid_datafile => 'Not a valid aircraft data file.';
+  String get addAircraft_error_invalid_datafile =>
+      'Not a valid aircraft data file.';
 
   @override
   String get pilotSelect_title => 'Who are you?';
@@ -401,29 +427,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about_app_issues => 'Report issue';
 
   @override
-  String get about_app_issues_subtitle => 'Open a bug to report an issue with the app';
+  String get about_app_issues_subtitle =>
+      'Open a bug to report an issue with the app';
 
   @override
   String get about_app_update_aircraft => 'Update aircraft';
 
   @override
-  String get about_app_update_aircraft_subtitle => 'Update aircraft data from network';
+  String get about_app_update_aircraft_subtitle =>
+      'Update aircraft data from network';
 
   @override
   String get about_app_disconnect_aircraft => 'Disconnect aircraft';
 
   @override
-  String get about_app_disconnect_aircraft_subtitle => 'For switching to another aircraft or download aircraft data again';
+  String get about_app_disconnect_aircraft_subtitle =>
+      'For switching to another aircraft or download aircraft data again';
 
   @override
   String get about_update_password_title => 'Update aircraft';
 
   @override
-  String get about_update_password_message => 'Leave empty if a password is not needed.';
+  String get about_update_password_message =>
+      'Leave empty if a password is not needed.';
 
   @override
   String get about_disconnect_confirm_title => 'Disconnect aircraft?';
 
   @override
-  String get about_disconnect_confirm_message => 'You will need to provide aircraft data address again.';
+  String get about_disconnect_confirm_message =>
+      'You will need to provide aircraft data address again.';
 }

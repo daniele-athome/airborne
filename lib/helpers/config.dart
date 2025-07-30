@@ -47,6 +47,10 @@ class AppConfig extends ChangeNotifier {
         return _currentAircraft!.backendInfo['activities_spreadsheet_id'] !=
                 null &&
             _currentAircraft!.backendInfo['activities_sheet_name'] != null;
+      case 'metadata':
+        return _currentAircraft!.backendInfo['metadata_spreadsheet_id'] !=
+                null &&
+            _currentAircraft!.backendInfo['metadata_sheet_name'] != null;
       default:
         throw Exception('Unknown feature: $feature');
     }
@@ -82,6 +86,15 @@ class AppConfig extends ChangeNotifier {
       'spreadsheet_id':
           _currentAircraft!.backendInfo['activities_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['activities_sheet_name'],
+    };
+  }
+
+  // TODO new entries: define backward-compatibility strategy
+  Map<String, String> get metadataBackendInfo {
+    return {
+      'spreadsheet_id':
+          _currentAircraft!.backendInfo['metadata_spreadsheet_id'],
+      'sheet_name': _currentAircraft!.backendInfo['metadata_sheet_name'],
     };
   }
 

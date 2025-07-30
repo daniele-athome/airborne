@@ -10,6 +10,7 @@ import '../../helpers/utils.dart';
 import '../../services/activities_services.dart';
 import '../../services/book_flight_services.dart';
 import '../../services/flight_log_services.dart';
+import '../../services/metadata_services.dart';
 import '../about/about_screen.dart';
 import '../activities/activities_screen.dart';
 import '../book_flight/book_flight_screen.dart';
@@ -22,13 +23,15 @@ class MainNavigation extends StatefulWidget {
   final BookFlightCalendarService? bookFlightCalendarService;
   final FlightLogBookService? flightLogBookService;
   final ActivitiesService? activitiesService;
+  final MetadataService? metadataService;
 
   // TODO other services one day...
 
   const MainNavigation(this.appConfig, {super.key})
       : bookFlightCalendarService = null,
         flightLogBookService = null,
-        activitiesService = null;
+        activitiesService = null,
+        metadataService = null;
 
   /// Mainly for integration testing.
   @visibleForTesting
@@ -38,6 +41,7 @@ class MainNavigation extends StatefulWidget {
     this.bookFlightCalendarService,
     this.flightLogBookService,
     this.activitiesService,
+    this.metadataService,
   });
 
   @override
@@ -78,7 +82,10 @@ class _MainNavigationState extends State<MainNavigation> {
     _flightLogBookService = widget.flightLogBookService ??
         (widget.appConfig.hasFeature('flight_log')
             ? FlightLogBookService(
-                account!, widget.appConfig.flightlogBackendInfo)
+                account!, widget.metadataService ??
+            (widget.appConfig.hasFeature('metadata')
+                ? MetadataService(account, widget.appConfig.metadataBackendInfo)
+                : null), widget.appConfig.flightlogBackendInfo)
             : null);
     _activitiesService = widget.activitiesService ??
         (widget.appConfig.hasFeature('activities')

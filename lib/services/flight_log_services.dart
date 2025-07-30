@@ -64,6 +64,11 @@ class FlightLogBookService {
   @visibleForTesting
   int get lastId => _lastId;
 
+  @visibleForTesting
+  set dataHash(String dataHash) {
+    _dataHash = dataHash;
+  }
+
   Future<GoogleSheetsService> _ensureService() {
     if (_client != null) {
       return Future.value(_client);

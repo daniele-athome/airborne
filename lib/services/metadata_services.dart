@@ -48,7 +48,7 @@ class MetadataService {
         : reload().then((value) => _store!);
   }
 
-  Future<void> reload() {
+  Future<Map<String, String>> reload() {
     return _ensureService().then((client) => client
             .getRows(_spreadsheetId, _sheetName, _kSheetKeyValueRange)
             .then((value) {
@@ -62,6 +62,7 @@ class MetadataService {
 
           _store = store;
           _log.info(store);
+          return store;
         }));
   }
 

@@ -93,6 +93,7 @@
   "flightLogModal_error_invalid_fuelCost": "Costo totale benzina non valido.",
   "flightLogModal_error_notOwnFlight_edit": "Il volo non è tuo, non puoi modificarlo.",
   "flightLogModal_error_alteringTestFlight": "Il volo è una prova tecnica, non puoi cambiare pilota.",
+  "flightLogModal_error_dataChanged": "Qualcun altro ha cambiato il log book. Torna indietro, ricarica il log book e riprova.",
   "flightLogModal_dialog_changePilot_title": "Cambiare pilota?",
   "flightLogModal_dialog_changePilot_message": "Stai cambiando il pilota di un volo registrato.",
   "flightLogModal_dialog_changePilotNoPilot_message": "Stai trasformando il volo in una prova tecnica.",

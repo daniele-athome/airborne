@@ -21,7 +21,11 @@ const _kSheetAppendRange = 'A2:J2';
 /// Flight date formatter
 final _kDateFormatter = DateFormat('yyyy-MM-dd');
 
+/// Metadata key for flight log row counter
 const _kLogCountMetadataKey = 'flight_log.count';
+
+/// Metadata key for flight log hash
+const _kLogHashMetadataKey = 'flight_log.hash';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
@@ -32,7 +36,12 @@ class FlightLogBookService {
   late final String _spreadsheetId;
   late final String _sheetName;
   GoogleSheetsService? _client;
+
+  /// State: last fetched row number
   int _lastId = 0;
+
+  /// State: flight log hash (from last fetch)
+  String? _dataHash;
 
   FlightLogBookService(GoogleServiceAccountService accountService,
       MetadataService? metadataService, Map<String, String> properties) {
@@ -66,6 +75,23 @@ class FlightLogBookService {
     }
   }
 
+  /// Completes correctly if hash has not changed, throws exception otherwise.
+  Future<void> _ensureUnchangedHash() {
+    if (_metadataService != null) {
+      return _metadataService!.reload().then((store) {
+        final newHash = store[_kLogHashMetadataKey];
+        _log.finest('Old hash: $_dataHash, new hash: $newHash');
+        if (newHash == null) {
+          throw const FormatException('No data found on sheet.');
+        } else if (newHash != _dataHash) {
+          throw const DataChangedException();
+        }
+      });
+    } else {
+      return Future.value();
+    }
+  }
+
   /// Data range generator. +2 because the index is 0-based and to skip the header row.
   String _sheetDataRange(int first, int last) => 'A${first + 2}:J${last + 2}';
 
@@ -85,6 +111,7 @@ class FlightLogBookService {
             throw const FormatException('No data found on sheet.');
           }
           _lastId = int.parse(value);
+          _dataHash = value;
           _log.finest('lastId is $_lastId');
         });
       } else {
@@ -109,15 +136,19 @@ class FlightLogBookService {
         final firstId = _lastId;
         _log.fine(
             'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
-        final getDataOp = client
-            .getRows(
-                _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId));
+        final getDataOp = client.getRows(
+            _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId));
 
         final Future<ValueRange> fetchingOp;
         if (_metadataService != null) {
-          fetchingOp = Future.wait([getDataOp, _metadataService!.reload()]).then((value) => value[0] as ValueRange);
-        }
-        else {
+          fetchingOp = Future.wait([getDataOp, _metadataService!.reload()])
+              .then((value) {
+            // update our local copy of the flight log hash
+            final store = value[1] as Map<String, String>;
+            _dataHash = store[_kLogHashMetadataKey];
+            return value[0] as ValueRange;
+          });
+        } else {
           fetchingOp = getDataOp;
         }
 
@@ -128,25 +159,25 @@ class FlightLogBookService {
           _log.finest(value.values);
           return value.values!
               .mapIndexed<FlightLogItem>((index, rowData) => FlightLogItem(
-            (firstId + index + 1).toString(),
-            dateFromGsheets((rowData[1] as int).toDouble()),
-            rowData[2] as String,
-            rowData[5] as String,
-            rowData[6] as String,
-            rowData[3] as num,
-            rowData[4] as num,
-            rowData.length > 7 && rowData[7] is num
-                ? rowData[7] as num
-                : null,
-            rowData.length > 8 && rowData[8] is num
-                ? rowData[8] as num
-                : null,
-            rowData.length > 9 &&
-                rowData[9] is String &&
-                (rowData[9] as String).isNotEmpty
-                ? rowData[9] as String?
-                : null,
-          ));
+                    (firstId + index + 1).toString(),
+                    dateFromGsheets((rowData[1] as int).toDouble()),
+                    rowData[2] as String,
+                    rowData[5] as String,
+                    rowData[6] as String,
+                    rowData[3] as num,
+                    rowData[4] as num,
+                    rowData.length > 7 && rowData[7] is num
+                        ? rowData[7] as num
+                        : null,
+                    rowData.length > 8 && rowData[8] is num
+                        ? rowData[8] as num
+                        : null,
+                    rowData.length > 9 &&
+                            rowData[9] is String &&
+                            (rowData[9] as String).isNotEmpty
+                        ? rowData[9] as String?
+                        : null,
+                  ));
         });
       });
 
@@ -169,52 +200,58 @@ class FlightLogBookService {
         ]
       ];
 
-  // TODO check if flight log hash changed since last metadata reload
-  Future<FlightLogItem> appendItem(FlightLogItem item) =>
-      _ensureService().then((client) => client
-              .appendRows(_spreadsheetId, _sheetName, _kSheetAppendRange,
-                  _formatRowData(item))
-              .then((response) {
-            if (response.updates != null &&
-                response.updates!.updatedRange != null) {
-              // TODO return a copy of item with filled id (parse response)
-              return item;
-            } else {
-              throw Exception('Unable to append rows to sheet');
-            }
-          }));
+  Future<FlightLogItem> appendItem(FlightLogItem item) async {
+    // check if flight log hash changed since last metadata reload
+    // this will throw if hash has changed
+    await _ensureUnchangedHash();
 
-  // TODO check if flight log hash changed since last metadata reload
-  Future<FlightLogItem> updateItem(FlightLogItem item) =>
-      _ensureService().then((client) {
-        // FIXME does -1 but it's not the same as _rowNumberToItemId
-        final rowNum = int.parse(item.id!) - 1;
-        return client
-            .updateRows(_spreadsheetId, _sheetName,
-                _sheetDataRange(rowNum, rowNum), _formatRowData(item))
-            .then((response) {
-          if (response.updatedRange != null &&
-              response.updatedRange!.isNotEmpty) {
-            // TODO return a copy of item (parse response data if available?)
-            return item;
-          } else {
-            throw Exception('Unable to append rows to sheet');
-          }
-        });
-      });
+    final client = await _ensureService();
+    final response = await client.appendRows(
+        _spreadsheetId, _sheetName, _kSheetAppendRange, _formatRowData(item));
+    if (response.updates != null && response.updates!.updatedRange != null) {
+      // TODO return a copy of item with filled id (parse response)
+      return item;
+    } else {
+      throw Exception('Unable to append rows to sheet');
+    }
+  }
 
-  // TODO check if flight log hash changed since last metadata reload
-  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) =>
-      _ensureService().then((client) {
-        final rowNumber = _itemIdToRowNumber(int.parse(item.id!));
-        return client
-            .deleteRows(_spreadsheetId, _sheetName, rowNumber, rowNumber)
-            .then((response) {
-          if (response.replies != null && response.replies!.length == 1) {
-            return DeletedFlightLogItem(item.id!);
-          } else {
-            throw Exception('Unable to delete flight log item ${item.id!}');
-          }
-        });
-      });
+  Future<FlightLogItem> updateItem(FlightLogItem item) async {
+    // check if flight log hash changed since last metadata reload
+    // this will throw if hash has changed
+    await _ensureUnchangedHash();
+
+    final client = await _ensureService();
+    // FIXME does -1 but it's not the same as _rowNumberToItemId
+    final rowNum = int.parse(item.id!) - 1;
+    final response = await client.updateRows(_spreadsheetId, _sheetName,
+        _sheetDataRange(rowNum, rowNum), _formatRowData(item));
+    if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {
+      // TODO return a copy of item (parse response data if available?)
+      return item;
+    } else {
+      throw Exception('Unable to append rows to sheet');
+    }
+  }
+
+  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) async {
+    // check if flight log hash changed since last metadata reload
+    // this will throw if hash has changed
+    await _ensureUnchangedHash();
+
+    final client = await _ensureService();
+    final rowNumber = _itemIdToRowNumber(int.parse(item.id!));
+    final response = await client.deleteRows(
+        _spreadsheetId, _sheetName, rowNumber, rowNumber);
+    if (response.replies != null && response.replies!.length == 1) {
+      return DeletedFlightLogItem(item.id!);
+    } else {
+      throw Exception('Unable to delete flight log item ${item.id!}');
+    }
+  }
+}
+
+/// Exception thrown when the hash of the flight log has changed.
+class DataChangedException implements Exception {
+  const DataChangedException();
 }

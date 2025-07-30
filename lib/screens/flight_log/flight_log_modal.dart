@@ -650,6 +650,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
       // TODO specialize exceptions (e.g. network errors, others...)
       if (error is TimeoutException) {
         message = AppLocalizations.of(context)!.error_generic_network_timeout;
+      } else if (error is DataChangedException) {
+        message = AppLocalizations.of(context)!.flightLogModal_error_dataChanged;
       } else {
         message = getExceptionMessage(error);
       }

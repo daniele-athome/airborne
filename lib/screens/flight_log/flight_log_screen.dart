@@ -48,7 +48,10 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    // ModalRoute has a nice property called isCurrent that will return false
+    // when this screen is covered by another popup.
+    final route = ModalRoute.of(context);
+    if (state == AppLifecycleState.resumed && route != null && route.isCurrent) {
       _logBookController.reset();
     }
   }

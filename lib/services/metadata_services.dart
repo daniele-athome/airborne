@@ -57,7 +57,11 @@ class MetadataService {
           }
           Map<String, String> store = HashMap();
           for (var item in value.values!) {
-            store[item[0] as String] = item[1].toString();
+            if (item.length >= 2) {
+              store[item[0] as String] = item[1].toString();
+            } else {
+              _log.warning('Skipping malformed row in metadata: $item');
+            }
           }
 
           _store = store;
@@ -68,7 +72,7 @@ class MetadataService {
 
   Future<String?> get(String key) {
     return _ensureCache().then((value) {
-      return _store![key]?.toString();
+      return _store![key];
     });
   }
 }

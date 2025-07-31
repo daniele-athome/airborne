@@ -149,6 +149,7 @@ class FlightLogBookService {
               .then((value) {
             // update our local copy of the flight log hash
             final store = value[1] as Map<String, String>;
+            // TODO the hash should be checked between pages, causing interruption of infinite scroll in case of change
             _dataHash = store[_kLogHashMetadataKey];
             return value[0] as ValueRange;
           });

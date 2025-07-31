@@ -50,26 +50,26 @@ class MetadataService {
     }
   }
 
-  Future<Map<String, String>> reload() {
-    return _ensureService().then((client) => client
-            .getRows(_spreadsheetId, _sheetName, _kSheetKeyValueRange)
-            .then((value) {
-          if (value.values == null) {
-            throw const FormatException('No data found on sheet.');
-          }
-          Map<String, String> store = HashMap();
-          for (var item in value.values!) {
-            if (item.length >= 2) {
-              store[item[0].toString()] = item[1].toString();
-            } else {
-              _log.warning('Skipping malformed row in metadata: $item');
-            }
-          }
+  Future<Map<String, String>> reload() async {
+    final client = await _ensureService();
+    final value =
+        await client.getRows(_spreadsheetId, _sheetName, _kSheetKeyValueRange);
+    if (value.values == null) {
+      throw const FormatException('No data found on sheet.');
+    }
 
-          _store = store;
-          _log.info(store);
-          return store;
-        }));
+    Map<String, String> store = HashMap();
+    for (var item in value.values!) {
+      if (item.length >= 2) {
+        store[item[0].toString()] = item[1].toString();
+      } else {
+        _log.warning('Skipping malformed row in metadata: $item');
+      }
+    }
+
+    _store = store;
+    _log.info(store);
+    return store;
   }
 
   Future<String?> get(String key) async {

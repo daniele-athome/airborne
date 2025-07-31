@@ -95,6 +95,7 @@ class FlightLogBookService {
   }
 
   /// Data range generator. +2 because the index is 0-based and to skip the header row.
+  // TODO refactor this +2/-1/+1 stuff, it's too confusing
   String _sheetDataRange(int first, int last) => 'A${first + 2}:J${last + 2}';
 
   /// Convert item ID to sheet row number. +1 is for skipping the header row.

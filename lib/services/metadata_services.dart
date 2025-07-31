@@ -60,7 +60,7 @@ class MetadataService {
           Map<String, String> store = HashMap();
           for (var item in value.values!) {
             if (item.length >= 2) {
-              store[item[0] as String] = item[1].toString();
+              store[item[0].toString()] = item[1].toString();
             } else {
               _log.warning('Skipping malformed row in metadata: $item');
             }

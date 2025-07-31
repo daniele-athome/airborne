@@ -298,6 +298,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Il volo è una prova tecnica, non puoi cambiare pilota.';
 
   @override
+  String get flightLogModal_error_dataChanged =>
+      'Qualcun altro ha cambiato il log book. Torna indietro, ricarica il log book e riprova.';
+
+  @override
   String get flightLogModal_dialog_changePilot_title => 'Cambiare pilota?';
 
   @override

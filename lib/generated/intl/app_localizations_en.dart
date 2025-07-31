@@ -297,6 +297,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This is a test flight, you cannot change the pilot.';
 
   @override
+  String get flightLogModal_error_dataChanged =>
+      'Someone else changed the flight log. Go back, refresh the log book and try again.';
+
+  @override
   String get flightLogModal_dialog_changePilot_title => 'Change pilot?';
 
   @override

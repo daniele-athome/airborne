@@ -190,6 +190,7 @@ class MainNavigationApp extends StatelessWidget {
               bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
               flightLogBookService: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames)),
               activitiesService: FakeActivitiesService(generateFakeActivities(appConfig.pilotNames)),
+              // TODO metadataService: ...
             ),
             'pilot-select': (context) => const PilotSelectScreen(),
           },

@@ -1,6 +1,7 @@
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/services/flight_log_services.dart';
+import 'package:airborne/services/metadata_services.dart';
 import 'package:googleapis/sheets/v4.dart' as gapi_sheets;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
@@ -9,19 +10,24 @@ import 'package:mockito/mockito.dart';
 
 import 'flight_log_services_test.mocks.dart';
 
-@GenerateMocks([GoogleSheetsService, GoogleServiceAccountService])
+@GenerateMocks(
+    [GoogleSheetsService, GoogleServiceAccountService, MetadataService])
 void main() {
   late MockGoogleSheetsService mockSheetsService;
+  late MockMetadataService mockMetadataService;
   late FlightLogBookService testService;
   final datetimeFormatter = DateFormat('yyyy-MM-dd HH:mm:SS');
 
   setUp(() {
     mockSheetsService = MockGoogleSheetsService();
-    testService = FlightLogBookService(MockGoogleServiceAccountService(), {
+    mockMetadataService = MockMetadataService();
+    testService = FlightLogBookService(
+        MockGoogleServiceAccountService(), mockMetadataService, {
       'spreadsheet_id': 'TEST',
       'sheet_name': 'SHEET',
     });
     testService.client = mockSheetsService;
+    testService.dataHash = '12345678';
   });
   tearDown(() {});
 
@@ -55,6 +61,8 @@ void main() {
     );
     when(mockSheetsService.getRows('TEST', 'SHEET', 'A2:J3'))
         .thenAnswer((_) => Future.value(fakeRows));
+    when(mockMetadataService.reload()).thenAnswer((_) => Future.value(<String, String>{}));
+    when(mockMetadataService.get(any)).thenAnswer((_) => Future.value(null));
 
     final dateOnly =
         DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
@@ -82,6 +90,12 @@ void main() {
     );
     when(mockSheetsService.appendRows('TEST', 'SHEET', 'A2:J2', any))
         .thenAnswer((_) => Future.value(fakeAppended));
+    when(mockMetadataService.reload()).thenAnswer((_) => Future.value(<String, String>{
+      'flight_log.count': '0',
+      'flight_log.hash': '12345678'
+    }));
+    when(mockMetadataService.get('flight_log.count')).thenAnswer((_) => Future.value('0'));
+    when(mockMetadataService.get('flight_log.hash')).thenAnswer((_) => Future.value('12345678'));
 
     final dateOnly =
         DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
@@ -101,6 +115,12 @@ void main() {
     );
     when(mockSheetsService.updateRows('TEST', 'SHEET', 'A2:J2', any))
         .thenAnswer((_) => Future.value(fakeAppended));
+    when(mockMetadataService.reload()).thenAnswer((_) => Future.value(<String, String>{
+      'flight_log.count': '1',
+      'flight_log.hash': '12345678'
+    }));
+    when(mockMetadataService.get('flight_log.count')).thenAnswer((_) => Future.value('1'));
+    when(mockMetadataService.get('flight_log.hash')).thenAnswer((_) => Future.value('12345678'));
 
     final dateOnly =
         DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
@@ -125,6 +145,12 @@ void main() {
         );
     when(mockSheetsService.deleteRows('TEST', 'SHEET', 2, 2))
         .thenAnswer((_) => Future.value(fakeAppended));
+    when(mockMetadataService.reload()).thenAnswer((_) => Future.value(<String, String>{
+      'flight_log.count': '1',
+      'flight_log.hash': '12345678'
+    }));
+    when(mockMetadataService.get('flight_log.count')).thenAnswer((_) => Future.value('1'));
+    when(mockMetadataService.get('flight_log.hash')).thenAnswer((_) => Future.value('12345678'));
 
     final dateOnly =
         DateTime.utc(timestamp.year, timestamp.month, timestamp.day);

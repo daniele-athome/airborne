@@ -608,6 +608,12 @@ abstract class AppLocalizations {
   /// **'This is a test flight, you cannot change the pilot.'**
   String get flightLogModal_error_alteringTestFlight;
 
+  /// No description provided for @flightLogModal_error_dataChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else changed the flight log. Go back, refresh the log book and try again.'**
+  String get flightLogModal_error_dataChanged;
+
   /// No description provided for @flightLogModal_dialog_changePilot_title.
   ///
   /// In en, this message translates to:

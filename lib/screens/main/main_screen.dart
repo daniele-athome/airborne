@@ -69,28 +69,29 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _rebuildServices() {
-    final account = (widget.bookFlightCalendarService == null &&
-            widget.flightLogBookService == null)
-        ? GoogleServiceAccountService(
-            json: widget.appConfig.googleServiceAccountJson)
-        : null;
+    // FIXME if the services are already built (or provided) this variable is not used
+    final account = GoogleServiceAccountService(
+        json: widget.appConfig.googleServiceAccountJson);
+
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
         (widget.appConfig.hasFeature('book_flight')
             ? BookFlightCalendarService(
-                account!, widget.appConfig.googleCalendarId)
+                account, widget.appConfig.googleCalendarId)
             : null);
     _flightLogBookService = widget.flightLogBookService ??
         (widget.appConfig.hasFeature('flight_log')
             ? FlightLogBookService(
-                account!, widget.metadataService ??
-            (widget.appConfig.hasFeature('metadata')
-                ? MetadataService(account, widget.appConfig.metadataBackendInfo)
-                : null), widget.appConfig.flightlogBackendInfo)
+                account,
+                widget.metadataService ??
+                    (widget.appConfig.hasFeature('metadata')
+                        ? MetadataService(
+                            account, widget.appConfig.metadataBackendInfo)
+                        : null),
+                widget.appConfig.flightlogBackendInfo)
             : null);
     _activitiesService = widget.activitiesService ??
         (widget.appConfig.hasFeature('activities')
-            ? ActivitiesService(
-                account!, widget.appConfig.activitiesBackendInfo)
+            ? ActivitiesService(account, widget.appConfig.activitiesBackendInfo)
             : null);
   }
 

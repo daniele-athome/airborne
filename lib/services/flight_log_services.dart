@@ -116,7 +116,8 @@ class FlightLogBookService {
             throw const FormatException('No data found on sheet.');
           }
           _lastId = int.parse(value);
-          _dataHash = value;
+          // hash will be retrieved during the first fetch
+          _dataHash = null;
           _log.finest('lastId is $_lastId');
         });
       } else {

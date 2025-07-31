@@ -42,10 +42,12 @@ class MetadataService {
     }
   }
 
-  Future<Map<String, String>> _ensureCache() {
-    return _store != null
-        ? Future.value(_store!)
-        : reload().then((value) => _store!);
+  Future<Map<String, String>> _ensureCache() async {
+    if (_store != null) {
+      return _store!;
+    } else {
+      return await reload();
+    }
   }
 
   Future<Map<String, String>> reload() {

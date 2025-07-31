@@ -72,9 +72,8 @@ class MetadataService {
         }));
   }
 
-  Future<String?> get(String key) {
-    return _ensureCache().then((value) {
-      return _store![key];
-    });
+  Future<String?> get(String key) async {
+    final store = await _ensureCache();
+    return store[key];
   }
 }

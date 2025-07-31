@@ -89,7 +89,6 @@ class AppConfig extends ChangeNotifier {
     };
   }
 
-  // TODO new entries: define backward-compatibility strategy
   Map<String, String> get metadataBackendInfo {
     return {
       'spreadsheet_id':

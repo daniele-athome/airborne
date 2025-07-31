@@ -81,19 +81,16 @@ class FlightLogBookService {
   }
 
   /// Completes correctly if hash has not changed, throws exception otherwise.
-  Future<void> _ensureUnchangedHash() {
+  Future<void> _ensureUnchangedHash() async {
     if (_metadataService != null) {
-      return _metadataService!.reload().then((store) {
-        final newHash = store[_kLogHashMetadataKey];
-        _log.finest('Old hash: $_dataHash, new hash: $newHash');
-        if (newHash == null) {
-          throw const FormatException('No data found on sheet.');
-        } else if (newHash != _dataHash) {
-          throw const DataChangedException();
-        }
-      });
-    } else {
-      return Future.value();
+      final store = await _metadataService!.reload();
+      final newHash = store[_kLogHashMetadataKey];
+      _log.finest('Old hash: $_dataHash, new hash: $newHash');
+      if (newHash == null) {
+        throw const FormatException('No data found on sheet.');
+      } else if (newHash != _dataHash) {
+        throw const DataChangedException();
+      }
     }
   }
 

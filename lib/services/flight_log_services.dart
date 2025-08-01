@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:googleapis/sheets/v4.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
@@ -109,14 +108,23 @@ class FlightLogBookService {
     return _ensureService().then((client) {
       if (_metadataService != null) {
         // get row count from metadata
-        return _metadataService!.get(_kLogCountMetadataKey).then((value) {
-          if (value == null) {
+        return _metadataService!.reload().then((store) {
+          // last row number (i.e. flight log size)
+          final lastIdValue = store[_kLogCountMetadataKey];
+          if (lastIdValue == null) {
             throw const FormatException('No data found on sheet.');
           }
-          _lastId = int.parse(value);
-          // hash will be retrieved during the first fetch
-          _dataHash = null;
-          _log.finest('lastId is $_lastId');
+          _lastId = int.parse(lastIdValue);
+
+          // data hash (i.e. version number)
+          // will increase monotonically with every change
+          final hashValue = store[_kLogHashMetadataKey];
+          if (hashValue == null) {
+            throw const FormatException('No data found on sheet.');
+          }
+          _dataHash = hashValue;
+
+          _log.finest('lastId is $_lastId, hash is $_dataHash');
         });
       } else {
         // legacy method: first cell of the first row of the flight log sheet
@@ -140,24 +148,10 @@ class FlightLogBookService {
         final firstId = _lastId;
         _log.fine(
             'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
-        final getDataOp = client.getRows(
-            _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId));
-
-        final Future<ValueRange> fetchingOp;
-        if (_metadataService != null) {
-          fetchingOp = Future.wait([getDataOp, _metadataService!.reload()])
-              .then((value) {
-            // update our local copy of the flight log hash
-            final store = value[1] as Map<String, String>;
-            // TODO the hash should be checked between pages, causing interruption of infinite scroll in case of change
-            _dataHash = store[_kLogHashMetadataKey];
-            return value[0] as ValueRange;
-          });
-        } else {
-          fetchingOp = getDataOp;
-        }
-
-        return fetchingOp.then((value) {
+        return client
+            .getRows(
+                _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId))
+            .then((value) {
           if (value.values == null) {
             throw const FormatException('No data found on sheet.');
           }
@@ -214,6 +208,7 @@ class FlightLogBookService {
     final response = await client.appendRows(
         _spreadsheetId, _sheetName, _kSheetAppendRange, _formatRowData(item));
     if (response.updates != null && response.updates!.updatedRange != null) {
+      await waitForDataChange();
       // TODO return a copy of item with filled id (parse response)
       return item;
     } else {
@@ -232,6 +227,7 @@ class FlightLogBookService {
     final response = await client.updateRows(_spreadsheetId, _sheetName,
         _sheetDataRange(rowNum, rowNum), _formatRowData(item));
     if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {
+      await waitForDataChange();
       // TODO return a copy of item (parse response data if available?)
       return item;
     } else {
@@ -249,9 +245,27 @@ class FlightLogBookService {
     final response = await client.deleteRows(
         _spreadsheetId, _sheetName, rowNumber, rowNumber);
     if (response.replies != null && response.replies!.length == 1) {
+      await waitForDataChange();
       return DeletedFlightLogItem(item.id!);
     } else {
       throw Exception('Unable to delete flight log item ${item.id!}');
+    }
+  }
+
+  /// Waits for the flight hash value to change, to give time to the script in
+  /// the Google Sheet to run.
+  Future<void> waitForDataChange() async {
+    // TODO even better check: monotonic increase
+    if (_metadataService != null) {
+      var currentVersion = _dataHash;
+      do {
+        final store = await _metadataService!.reload();
+        currentVersion = store[_kLogHashMetadataKey];
+
+        if (currentVersion == _dataHash) {
+          await Future.delayed(Duration(seconds: 1));
+        }
+      } while (currentVersion == _dataHash);
     }
   }
 }

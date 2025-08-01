@@ -30,16 +30,41 @@ Events are created by the app with UTC time zone: the app will use the aircraft 
 
 ### Custom sheet code
 
-This is the function used to calculate the flight log checksum:
+This code, if installed on the "On Change" event for the sheet, will:
+
+* automatically sort the flight log rows by start and end hour
+* update the flight log hash (actually uses the current time)
+* automatically sort the activities log rows by priority and date
 
 ```javascript
-// input must be a scalar value
-function HASH (input) {
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    hash = (hash << 5) - hash + input.charCodeAt(i);
-    hash |= 0;
+/** @OnlyCurrentDoc */
+
+// attached to installed trigger for onChange event
+function onChange(event){
+  var sheet = event.source.getActiveSheet();
+  console.log("activeSheet=" + sheet.getName());
+  var sheetName = sheet.getName();
+  if (sheetName.startsWith('Flight log') || sheetName.startsWith('Registro voli')) {
+    if (sheet.getRange('L1').getValue() != 'LOCKED') {
+      var range = sheet.getRange("A:J");
+      range.sort([{ column : 4 }, { column : 5 }]);
+    }
+
+    // calculate checksum of data
+    var metadataSheet = SpreadsheetApp.getActive().getSheetByName("Metadata");
+    var finder = metadataSheet.createTextFinder("flight_log.hash").matchEntireCell(true);
+    /** @type {SpreadsheetApp.Range} */
+    var hashKeyCell = finder.findNext();
+    if (hashKeyCell) {
+      var hashValueCell = metadataSheet.getRange(hashKeyCell.getRow(), hashKeyCell.getColumn()+1);
+       const currentVersion = hashValueCell.getValue() || 0;
+       hashValueCell.setValue(currentVersion + 1);
+    }
+
   }
-  return Math.abs(hash);
+  else if (sheetName.startsWith('Activites') || sheetName.startsWith('Attività')) {
+    var range = sheet.getRange("A:I");
+    range.sort([{ column : 3, ascending: false }, { column : 2 }]);    
+  }
 }
 ```

@@ -92,16 +92,12 @@ class FlightLogBookService {
     }
   }
 
-  /// Data range generator. +2 because the index is 0-based and to skip the header row.
-  // TODO refactor this +2/-1/+1 stuff, it's too confusing
-  String _sheetDataRange(int first, int last) => 'A${first + 2}:J${last + 2}';
+  /// Data range generator. [first] and [last] are 1-based indexes (i.e. flight log item ID).
+  String _sheetDataRange(int first, int last) =>
+      'A${_itemIdToRowNumber(first)}:J${_itemIdToRowNumber(last)}';
 
   /// Convert item ID to sheet row number. +1 is for skipping the header row.
   int _itemIdToRowNumber(int id) => id + 1;
-
-  /// Convert sheet row number to item ID. -1 is for adding the header row.
-  // ignore: unused_element
-  int _rowNumberToItemId(int rowNumber) => rowNumber - 1;
 
   Future<void> reset() async {
     final client = await _ensureService();
@@ -142,9 +138,9 @@ class FlightLogBookService {
   Future<Iterable<FlightLogItem>> fetchItems() async {
     final client = await _ensureService();
 
-    final lastId = _lastId - 1;
+    final lastId = _lastId;
     _lastId = max(_lastId - _kItemsPerPage, 0);
-    final firstId = _lastId;
+    final firstId = _lastId + 1;
     _log.fine(
         'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
 
@@ -158,7 +154,8 @@ class FlightLogBookService {
     _log.finest(value.values);
     return value.values!.mapIndexed<FlightLogItem>((index, rowData) =>
         FlightLogItem(
-          (firstId + index + 1).toString(),
+          // item ID is a 1-based ordinal
+          (firstId + index).toString(),
           dateFromGsheets((rowData[1] as int).toDouble()),
           rowData[2] as String,
           rowData[5] as String,
@@ -217,8 +214,7 @@ class FlightLogBookService {
     await _ensureUnchangedHash();
 
     final client = await _ensureService();
-    // FIXME does -1 but it's not the same as _rowNumberToItemId
-    final rowNum = int.parse(item.id!) - 1;
+    final rowNum = int.parse(item.id!);
     final response = await client.updateRows(_spreadsheetId, _sheetName,
         _sheetDataRange(rowNum, rowNum), _formatRowData(item));
     if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {

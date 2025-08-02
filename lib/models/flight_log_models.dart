@@ -12,6 +12,8 @@ class FlightLogItem {
     this.notes,
   );
 
+  /// Flight ID: 1-based, sheet row number - 1 (because of the sheet header)
+  /// e.g. row A2:J2 -> id=1
   String? id;
   DateTime date;
   String pilotName;
@@ -36,6 +38,7 @@ class FlightLogItem {
   }
 }
 
+/// A dummy [FlightLogItem] that represents a deletion.
 class DeletedFlightLogItem extends FlightLogItem {
   static final DateTime _dummy = DateTime.now();
 

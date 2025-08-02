@@ -76,19 +76,27 @@ class GoogleCalendarService {
   }
 }
 
+/// A service for interacting with Google Sheets.
 class GoogleSheetsService {
   static const _defaultTimeout = Duration(seconds: 15);
 
   late final http.Client _client;
   late final SheetsApi _api;
 
+  /// Creates a new [GoogleSheetsService] that uses the given [client].
   GoogleSheetsService(http.Client client) {
     _client = client;
     _api = SheetsApi(_client);
   }
 
+  /// Creates a sheet range string in the format "'[sheetName]'![range]".
+  ///
+  /// The [range] is in Excel A1 notation (e.g. "A1:B2").
   String sheetRange(String sheetName, String range) => "'$sheetName'!$range";
 
+  /// Gets rows from a sheet.
+  ///
+  /// The [range] is in Excel A1 notation (e.g. "A1:B2").
   Future<ValueRange> getRows(
       String spreadsheetId, String sheetName, String range) {
     final sheetRange = this.sheetRange(sheetName, range);
@@ -101,6 +109,9 @@ class GoogleSheetsService {
         .timeout(_defaultTimeout);
   }
 
+  /// Appends rows to a sheet.
+  ///
+  /// The [range] is in Excel A1 notation (e.g. "A1:B2").
   Future<AppendValuesResponse> appendRows(String spreadsheetId,
       String sheetName, String range, List<List<Object?>> values) {
     final encodedRange = sheetRange(sheetName, range);
@@ -114,6 +125,9 @@ class GoogleSheetsService {
         valueInputOption: 'USER_ENTERED');
   }
 
+  /// Updates rows in a sheet.
+  ///
+  /// The [range] is in Excel A1 notation (e.g. "A1:B2").
   Future<UpdateValuesResponse> updateRows(String spreadsheetId,
       String sheetName, String range, List<List<Object?>> values) {
     final encodedRange = sheetRange(sheetName, range);
@@ -127,6 +141,10 @@ class GoogleSheetsService {
         valueInputOption: 'USER_ENTERED');
   }
 
+  /// Deletes rows from a sheet.
+  ///
+  /// [startRow] and [endRow] are 1-based indexes of the first and last row of
+  /// the range to delete.
   Future<BatchUpdateSpreadsheetResponse> deleteRows(
       String spreadsheetId, String sheetName, int startRow, int endRow) {
     return _getSheetId(spreadsheetId, sheetName).then((spreadsheet) {
@@ -153,6 +171,7 @@ class GoogleSheetsService {
     });
   }
 
+  /// Gets the sheet ID for a given sheet name.
   Future<Spreadsheet> _getSheetId(String spreadsheetId, String sheetName) {
     return _api.spreadsheets.get(spreadsheetId, $fields: 'sheets.properties');
   }

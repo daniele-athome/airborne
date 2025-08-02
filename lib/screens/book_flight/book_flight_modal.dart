@@ -403,8 +403,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
             if (context.mounted) {
               throw Exception(AppLocalizations.of(context)!
                   .bookFlightModal_error_timeConflict);
-            }
-            else {
+            } else {
               return Future.value(null);
             }
           } else {

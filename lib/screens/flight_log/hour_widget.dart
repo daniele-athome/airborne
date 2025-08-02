@@ -164,15 +164,11 @@ class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
 
   @override
   Widget build(BuildContext context) {
-    // FIXME workaround https://github.com/flutter/flutter/issues/48438
-    final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
-
     return CupertinoFormButtonRow(
       onPressed: widget.onTap ?? () => _onPressed(context),
       padding: kDefaultCupertinoFormRowPadding,
       prefix: Text(
         widget.hintText,
-        style: textStyle,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,

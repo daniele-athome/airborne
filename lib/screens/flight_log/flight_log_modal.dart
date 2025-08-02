@@ -123,9 +123,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) {
-    // FIXME workaround https://github.com/flutter/flutter/issues/48438
-    final TextStyle textStyle = CupertinoTheme.of(context).textTheme.textStyle;
-
     // FIXME something wrong with some left/right paddings here
     return ListView(
       padding: kDefaultCupertinoFormMargin,
@@ -144,14 +141,12 @@ class _FlightLogModalState extends State<FlightLogModal> {
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(
               AppLocalizations.of(context)!.flightLogModal_label_pilot,
-              style: textStyle,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
                   _pilotName,
-                  style: textStyle,
                 ),
                 const SizedBox(width: 14),
                 CircleAvatar(

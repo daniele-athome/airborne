@@ -150,6 +150,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are changing the pilot for this flight.';
 
   @override
+  String get bookFlightModal_dialog_pastDateTime_title => 'Past date/time!';
+
+  @override
+  String get bookFlightModal_dialog_pastDateTime_message =>
+      'You are booking a date or time in the past. Are you sure?';
+
+  @override
   String get bookFlightModal_dialog_working => 'Please wait...';
 
   @override

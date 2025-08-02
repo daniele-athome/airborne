@@ -338,6 +338,18 @@ abstract class AppLocalizations {
   /// **'You are changing the pilot for this flight.'**
   String get bookFlightModal_dialog_changePilot_message;
 
+  /// No description provided for @bookFlightModal_dialog_pastDateTime_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Past date/time!'**
+  String get bookFlightModal_dialog_pastDateTime_title;
+
+  /// No description provided for @bookFlightModal_dialog_pastDateTime_message.
+  ///
+  /// In en, this message translates to:
+  /// **'You are booking a date or time in the past. Are you sure?'**
+  String get bookFlightModal_dialog_pastDateTime_message;
+
   /// No description provided for @bookFlightModal_dialog_working.
   ///
   /// In en, this message translates to:

@@ -149,6 +149,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Stai cambiando il pilota di una prenotazione.';
 
   @override
+  String get bookFlightModal_dialog_pastDateTime_title => 'Data/ora passate!';
+
+  @override
+  String get bookFlightModal_dialog_pastDateTime_message =>
+      'Stai prenotando un volo nel passato. Sei sicuro?';
+
+  @override
   String get bookFlightModal_dialog_working => 'Un attimo...';
 
   @override

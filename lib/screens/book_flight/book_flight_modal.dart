@@ -369,6 +369,21 @@ class _BookFlightModalState extends State<BookFlightModal> {
         }
       }
     } else {
+      // booking a new flight: check for past date/time
+      final startTime = TZDateTime.from(_startDateController.value!, _appConfig.locationTimeZone);
+      final endTime = TZDateTime.from(_endDateController.value!, _appConfig.locationTimeZone);
+      final now = TZDateTime.from(DateTime.now(), _appConfig.locationTimeZone);
+      if (startTime.isBefore(now) || endTime.isBefore(now)) {
+        showConfirm(
+            context: context,
+            text: AppLocalizations.of(context)!
+                .bookFlightModal_dialog_pastDateTime_message,
+            title: AppLocalizations.of(context)!
+                .bookFlightModal_dialog_pastDateTime_title,
+            okCallback: () => _doSave(context));
+        return;
+      }
+
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != _pilotName) {
           showError(

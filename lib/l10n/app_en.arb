@@ -87,6 +87,8 @@
   "bookFlightModal_error_timeConflict": "Another flight is already booked for this time slot!",
   "bookFlightModal_dialog_changePilot_title": "Change pilot?",
   "bookFlightModal_dialog_changePilot_message": "You are changing the pilot for this flight.",
+  "bookFlightModal_dialog_pastDateTime_title": "Past date/time!",
+  "bookFlightModal_dialog_pastDateTime_message": "You are booking a date or time in the past. Are you sure?",
   "bookFlightModal_dialog_working": "Please wait...",
   "bookFlightModal_dialog_delete_title": "Delete?",
   "bookFlightModal_dialog_delete_message": "Do not delete flights booked by others without the pilot knowing.",

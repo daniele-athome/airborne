@@ -46,6 +46,8 @@
   "bookFlightModal_error_timeConflict": "Un'altra prenotazione è già presente per l'orario indicato!",
   "bookFlightModal_dialog_changePilot_title": "Cambiare pilota?",
   "bookFlightModal_dialog_changePilot_message": "Stai cambiando il pilota di una prenotazione.",
+  "bookFlightModal_dialog_pastDateTime_title": "Data/ora passate!",
+  "bookFlightModal_dialog_pastDateTime_message": "Stai prenotando un volo nel passato. Sei sicuro?",
   "bookFlightModal_dialog_working": "Un attimo...",
   "bookFlightModal_dialog_delete_title": "Cancellare?",
   "bookFlightModal_dialog_delete_message": "Non cancellare prenotazioni altrui senza il consenso del pilota.",

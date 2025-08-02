@@ -68,14 +68,13 @@ class FlightLogBookService {
     _dataHash = dataHash;
   }
 
-  Future<GoogleSheetsService> _ensureService() {
+  Future<GoogleSheetsService> _ensureService() async {
     if (_client != null) {
-      return Future.value(_client);
+      return _client!;
     } else {
-      return _accountService.getAuthenticatedClient().then((client) {
-        _client = GoogleSheetsService(client);
-        return _client!;
-      });
+      _client =
+          GoogleSheetsService(await _accountService.getAuthenticatedClient());
+      return _client!;
     }
   }
 
@@ -104,81 +103,77 @@ class FlightLogBookService {
   // ignore: unused_element
   int _rowNumberToItemId(int rowNumber) => rowNumber - 1;
 
-  Future<void> reset() {
-    return _ensureService().then((client) {
-      if (_metadataService != null) {
-        // get row count from metadata
-        return _metadataService!.reload().then((store) {
-          // last row number (i.e. flight log size)
-          final lastIdValue = store[_kLogCountMetadataKey];
-          if (lastIdValue == null) {
-            throw const FormatException('No data found on sheet.');
-          }
-          _lastId = int.parse(lastIdValue);
+  Future<void> reset() async {
+    final client = await _ensureService();
 
-          // data hash (i.e. version number)
-          // will increase monotonically with every change
-          final hashValue = store[_kLogHashMetadataKey];
-          if (hashValue == null) {
-            throw const FormatException('No data found on sheet.');
-          }
-          _dataHash = hashValue;
+    if (_metadataService != null) {
+      // get row count from metadata
+      final store = await _metadataService!.reload();
 
-          _log.finest('lastId is $_lastId, hash is $_dataHash');
-        });
-      } else {
-        // legacy method: first cell of the first row of the flight log sheet
-        return client
-            .getRows(_spreadsheetId, _sheetName, _kSheetCountRange)
-            .then((value) {
-          if (value.values == null) {
-            throw const FormatException('No data found on sheet.');
-          }
-          _lastId = int.parse(value.values![0][0].toString());
-          _log.finest('lastId (legacy) is $_lastId');
-        });
+      // last row number (i.e. flight log size)
+      final lastIdValue = store[_kLogCountMetadataKey];
+      if (lastIdValue == null) {
+        throw const FormatException('No data found on sheet.');
       }
-    });
+      _lastId = int.parse(lastIdValue);
+
+      // data hash (i.e. version number)
+      // will increase monotonically with every change
+      final hashValue = store[_kLogHashMetadataKey];
+      if (hashValue == null) {
+        throw const FormatException('No data found on sheet.');
+      }
+      _dataHash = hashValue;
+
+      _log.finest('lastId is $_lastId, hash is $_dataHash');
+    } else {
+      // legacy method: first cell of the first row of the flight log sheet
+      final value =
+          await client.getRows(_spreadsheetId, _sheetName, _kSheetCountRange);
+
+      if (value.values == null) {
+        throw const FormatException('No data found on sheet.');
+      }
+      _lastId = int.parse(value.values![0][0].toString());
+      _log.finest('lastId (legacy) is $_lastId');
+    }
   }
 
-  Future<Iterable<FlightLogItem>> fetchItems() =>
-      _ensureService().then((client) {
-        final lastId = _lastId - 1;
-        _lastId = max(_lastId - _kItemsPerPage, 0);
-        final firstId = _lastId;
-        _log.fine(
-            'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
-        return client
-            .getRows(
-                _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId))
-            .then((value) {
-          if (value.values == null) {
-            throw const FormatException('No data found on sheet.');
-          }
-          _log.finest(value.values);
-          return value.values!
-              .mapIndexed<FlightLogItem>((index, rowData) => FlightLogItem(
-                    (firstId + index + 1).toString(),
-                    dateFromGsheets((rowData[1] as int).toDouble()),
-                    rowData[2] as String,
-                    rowData[5] as String,
-                    rowData[6] as String,
-                    rowData[3] as num,
-                    rowData[4] as num,
-                    rowData.length > 7 && rowData[7] is num
-                        ? rowData[7] as num
-                        : null,
-                    rowData.length > 8 && rowData[8] is num
-                        ? rowData[8] as num
-                        : null,
-                    rowData.length > 9 &&
-                            rowData[9] is String &&
-                            (rowData[9] as String).isNotEmpty
-                        ? rowData[9] as String?
-                        : null,
-                  ));
-        });
-      });
+  Future<Iterable<FlightLogItem>> fetchItems() async {
+    final client = await _ensureService();
+
+    final lastId = _lastId - 1;
+    _lastId = max(_lastId - _kItemsPerPage, 0);
+    final firstId = _lastId;
+    _log.fine(
+        'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
+
+    final value = await client.getRows(
+        _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId));
+
+    if (value.values == null) {
+      throw const FormatException('No data found on sheet.');
+    }
+
+    _log.finest(value.values);
+    return value.values!.mapIndexed<FlightLogItem>((index, rowData) =>
+        FlightLogItem(
+          (firstId + index + 1).toString(),
+          dateFromGsheets((rowData[1] as int).toDouble()),
+          rowData[2] as String,
+          rowData[5] as String,
+          rowData[6] as String,
+          rowData[3] as num,
+          rowData[4] as num,
+          rowData.length > 7 && rowData[7] is num ? rowData[7] as num : null,
+          rowData.length > 8 && rowData[8] is num ? rowData[8] as num : null,
+          rowData.length > 9 &&
+                  rowData[9] is String &&
+                  (rowData[9] as String).isNotEmpty
+              ? rowData[9] as String?
+              : null,
+        ));
+  }
 
   bool hasMoreData() {
     return _lastId > 0;

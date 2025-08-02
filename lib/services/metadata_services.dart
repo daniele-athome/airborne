@@ -31,14 +31,12 @@ class MetadataService {
     _client = client;
   }
 
-  Future<GoogleSheetsService> _ensureService() {
+  Future<GoogleSheetsService> _ensureService() async {
     if (_client != null) {
-      return Future.value(_client);
+      return _client!;
     } else {
-      return _accountService.getAuthenticatedClient().then((client) {
-        _client = GoogleSheetsService(client);
-        return _client!;
-      });
+      _client = GoogleSheetsService(await _accountService.getAuthenticatedClient());
+      return _client!;
     }
   }
 

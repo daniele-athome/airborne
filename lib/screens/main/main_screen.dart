@@ -69,9 +69,13 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _rebuildServices() {
-    // FIXME if the services are already built (or provided) this variable is not used
+    // FIXME if the services are already built (or provided) these variables are not used
     final account = GoogleServiceAccountService(
         json: widget.appConfig.googleServiceAccountJson);
+    final metadataService = widget.metadataService ??
+        (widget.appConfig.hasFeature('metadata')
+            ? MetadataService(account, widget.appConfig.metadataBackendInfo)
+            : null);
 
     _bookFlightCalendarService = widget.bookFlightCalendarService ??
         (widget.appConfig.hasFeature('book_flight')
@@ -81,17 +85,12 @@ class _MainNavigationState extends State<MainNavigation> {
     _flightLogBookService = widget.flightLogBookService ??
         (widget.appConfig.hasFeature('flight_log')
             ? FlightLogBookService(
-                account,
-                widget.metadataService ??
-                    (widget.appConfig.hasFeature('metadata')
-                        ? MetadataService(
-                            account, widget.appConfig.metadataBackendInfo)
-                        : null),
-                widget.appConfig.flightlogBackendInfo)
+                account, metadataService, widget.appConfig.flightlogBackendInfo)
             : null);
     _activitiesService = widget.activitiesService ??
         (widget.appConfig.hasFeature('activities')
-            ? ActivitiesService(account, widget.appConfig.activitiesBackendInfo)
+            ? ActivitiesService(account, metadataService,
+                widget.appConfig.activitiesBackendInfo)
             : null);
   }
 

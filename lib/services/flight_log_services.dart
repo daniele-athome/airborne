@@ -57,8 +57,3 @@ class FlightLogBookService extends GoogleSheetsStoreService<FlightLogItem> {
         item.notes ?? '',
       ];
 }
-
-/// Exception thrown when the hash of the flight log has changed.
-class DataChangedException implements Exception {
-  const DataChangedException();
-}

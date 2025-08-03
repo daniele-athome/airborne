@@ -366,6 +366,7 @@ class NewPageErrorIndicator extends StatelessWidget {
     required this.message,
     this.onTap,
   });
+
   final String message;
   final VoidCallback? onTap;
 

@@ -134,7 +134,6 @@ class _FlightLogModalState extends State<FlightLogModal> {
             prefix:
                 Text(AppLocalizations.of(context)!.flightLogModal_label_date),
             showTime: false,
-            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
             controller: _dateController,
           ),
           CupertinoFormButtonRow(

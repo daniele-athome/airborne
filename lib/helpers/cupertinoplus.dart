@@ -1,6 +1,6 @@
+import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'utils.dart';
 
@@ -9,15 +9,14 @@ const double kDefaultCupertinoFormRowStartPadding = 20.0;
 const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding = EdgeInsets.symmetric(
     horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 6.0);
 
-const EdgeInsetsGeometry kDefaultCupertinoFormRowWithHelperPadding =
-    EdgeInsets.symmetric(
-        horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 12.0);
-
 const EdgeInsetsGeometry kDefaultCupertinoFormRowHorizontalPadding =
     EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding);
 
 const EdgeInsetsGeometry kDefaultCupertinoFormRowVerticalPadding =
     EdgeInsets.symmetric(vertical: 6.0);
+
+const EdgeInsetsGeometry kDefaultCupertinoDateTimeFormRowPadding =
+    EdgeInsets.symmetric(horizontal: 2.0, vertical: 6.0);
 
 /// Margin between form sections.
 const double kDefaultCupertinoFormSectionMargin = 34.0;
@@ -199,7 +198,6 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     this.helper,
     bool showDate = true,
     bool showTime = true,
-    required this.doneButtonText,
     DateTime? initialValue,
     void Function(DateTime value, DateTime oldValue)? onChanged,
     super.onSaved,
@@ -208,27 +206,25 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
         super(
           initialValue: controller?.value ?? initialValue ?? DateTime.now(),
           builder: (FormFieldState<DateTime> field) {
-            void onTapDateHandler() {
-              showCupertinoModalPopup(
-                context: field.context,
-                builder: (context) => Container(
-                  height: 300,
-                  color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          CupertinoButton(
-                            child: Text(doneButtonText),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.date,
-                          onDateTimeChanged: (value) {
+            return CupertinoFormRowContainer(
+              child: CupertinoFormRow(
+                prefix: prefix,
+                padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: kDefaultCupertinoFormRowStartPadding),
+                helper: helper,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (showDate)
+                      Padding(
+                        padding: kDefaultCupertinoDateTimeFormRowPadding,
+                        child: CupertinoCalendarPickerButton(
+                          initialDateTime: field.value,
+                          // TODO constant or autocalculate from current date
+                          minimumDateTime: DateTime(2020, 1, 1),
+                          // TODO constant or autocalculate from current date
+                          maximumDateTime: DateTime(2099, 1, 1),
+                          onDateSelected: (value) {
                             final oldValue = field.value!;
                             final newValue = DateTime(
                               value.year,
@@ -242,36 +238,15 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                               onChanged(newValue, oldValue);
                             }
                           },
-                          initialDateTime: field.value,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            void onTapTimeHandler() {
-              showCupertinoModalPopup(
-                context: field.context,
-                builder: (context) => Container(
-                  height: 300,
-                  color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          CupertinoButton(
-                            child: Text(doneButtonText),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.time,
-                          onDateTimeChanged: (value) {
+                    if (showTime)
+                      Padding(
+                        padding: kDefaultCupertinoDateTimeFormRowPadding,
+                        child: CupertinoTimePickerButton(
+                          initialTime: TimeOfDay.fromDateTime(field.value!),
+                          use24hFormat: true,
+                          onTimeChanged: (value) {
                             final oldValue = field.value!;
                             final newValue = DateTime(
                               field.value!.year,
@@ -285,85 +260,12 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                               onChanged(newValue, oldValue);
                             }
                           },
-                          use24hFormat: true,
-                          initialDateTime: field.value,
                         ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-              );
-            }
-
-            final TextStyle textStyle =
-                CupertinoTheme.of(field.context).textTheme.textStyle;
-
-            // TODO refactor this
-            return showDate != showTime
-                ? CupertinoFormButtonRow(
-                    onPressed: showDate ? onTapDateHandler : onTapTimeHandler,
-                    padding: kDefaultCupertinoFormRowPadding,
-                    prefix: prefix,
-                    helper: helper,
-                    child: showDate
-                        ? Text(
-                            field.value != null
-                                ? DateFormat.yMEd().format(field.value!)
-                                : '',
-                            style: textStyle,
-                          )
-                        : Text(
-                            field.value != null
-                                ? DateFormat.Hm().format(field.value!)
-                                : '',
-                            style: textStyle,
-                          ),
-                  )
-                : CupertinoFormRowContainer(
-                    child: CupertinoFormRow(
-                      prefix: prefix,
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          kDefaultCupertinoFormRowStartPadding, 0, 0, 0),
-                      helper: helper,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // TODO tap color effect
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: onTapDateHandler,
-                            child: Padding(
-                              padding: helper != null
-                                  ? kDefaultCupertinoFormRowWithHelperPadding
-                                  : kDefaultCupertinoFormRowPadding,
-                              child: Text(
-                                field.value != null
-                                    ? DateFormat.yMEd().format(field.value!)
-                                    : '',
-                                style: textStyle,
-                              ),
-                            ),
-                          ),
-                          // TODO tap color effect
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: onTapTimeHandler,
-                            child: Padding(
-                              padding: helper != null
-                                  ? kDefaultCupertinoFormRowWithHelperPadding
-                                  : kDefaultCupertinoFormRowPadding,
-                              child: Text(
-                                field.value != null
-                                    ? DateFormat.Hm().format(field.value!)
-                                    : '',
-                                style: textStyle,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+              ),
+            );
           },
         );
 
@@ -372,8 +274,6 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
   final DateTimePickerController? controller;
 
   final Widget? helper;
-
-  final String doneButtonText;
 
   @override
   FormFieldState<DateTime> createState() =>

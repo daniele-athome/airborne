@@ -127,7 +127,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
             helper: _SunTimesListTile(
                 sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
-            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
             onChanged: (value, oldValue) =>
                 _onStartDateChanged(value, oldValue),
             controller: _startDateController,
@@ -138,7 +137,6 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 Text(AppLocalizations.of(context)!.bookFlightModal_label_end),
             helper: _SunTimesListTile(
                 sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
-            doneButtonText: AppLocalizations.of(context)!.dialog_button_done,
             onChanged: (value, oldValue) => _onEndDateChanged(value, oldValue),
             controller: _endDateController,
           ),

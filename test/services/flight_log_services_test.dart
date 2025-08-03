@@ -140,7 +140,7 @@ void main() {
         'Fly Arrival', 1000, 2000, null, null, null);
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
-    expect(await testService.updateItem(fakeItem), expectedItem);
+    expect(await testService.updateItem(fakeItem.id!, fakeItem), expectedItem);
   });
 
   test('delete item', () async {
@@ -174,7 +174,6 @@ void main() {
         DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
     final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure',
         'Fly Arrival', 1000, 2000, null, null, null);
-    final expectedItem = DeletedFlightLogItem('1');
-    expect(await testService.deleteItem(fakeItem), expectedItem);
+    expect(await testService.deleteItem(fakeItem.id!), '1');
   });
 }

@@ -629,12 +629,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
       fuelPrice,
       _notesController.text,
     );
-    final Future task =
-        (_isEditing ? _service.updateItem(item) : _service.appendItem(item))
-            .timeout(kNetworkRequestTimeout)
-            // safe typing it for catchError
-            .then((value) => Future<FlightLogItem?>.value(value))
-            .catchError((error, StackTrace stacktrace) {
+    final Future task = (_isEditing
+            ? _service.updateItem(item.id!, item)
+            : _service.appendItem(item))
+        .timeout(kNetworkRequestTimeout)
+        // safe typing it for catchError
+        .then((value) => Future<FlightLogItem?>.value(value))
+        .catchError((error, StackTrace stacktrace) {
       _log.warning('SAVE ERROR', error, stacktrace);
       if (!context.mounted) {
         return null;
@@ -694,10 +695,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   void _doDelete(BuildContext context) {
     final Future task = _service
-        .deleteItem(widget.item)
+        .deleteItem(widget.item.id!)
         .timeout(kNetworkRequestTimeout)
-        // safe typing it for catchError
-        .then((value) => Future<FlightLogItem?>.value(value))
         .catchError((error, StackTrace stacktrace) {
       _log.warning('DELETE ERROR', error, stacktrace);
       if (!context.mounted) {

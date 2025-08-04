@@ -53,14 +53,13 @@ platforms are:
 
 ## Backend
 
-Everything is stored in the Google cloud and data access is achieved through Google API directly:
+Everything is stored in the Google cloud and data is accessed through Google API directly:
 
 * A Google Calendar for booking flights
 * A Google Sheets for logging flights
 
 The app needs a specially crafted zip file containing, among other information, credentials for accessing to Google
-services. Documentation (in a very draft state) can be found in our [backend guide](docs/backend.md) (you can also track
-progress in the [related issue](https://github.com/daniele-athome/airborne/issues/32)).
+services. Documentation about that can be found in our [backend guide](docs/backend.md).
 
 ## Privacy
 

@@ -95,7 +95,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 message: isCupertino(context)
                     ? null
                     : Text(AppLocalizations.of(context)!
-                    .addAircraft_dialog_downloading),
+                        .addAircraft_dialog_downloading),
               );
             },
           ).then((value) async {

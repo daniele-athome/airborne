@@ -59,7 +59,7 @@ Everything is stored in the Google cloud and data is accessed through Google API
 * A Google Sheets for logging flights
 
 The app needs a specially crafted zip file containing, among other information, credentials for accessing to Google
-services. Documentation about that can be found in our [backend guide](docs/backend.md).
+services. Documentation about that is available in our [backend guide](docs/backend.md).
 
 ## Privacy
 

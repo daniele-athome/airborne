@@ -18,7 +18,9 @@ const _kAircraftMetadataFilename = 'aircraft.json';
 const _kAircraftPicFilename = 'aircraft.jpg';
 
 class AircraftData {
+  /// File system path of the uncompressed archive.
   final Directory? dataPath;
+
   final String id;
   final String callSign;
   final Map<String, dynamic> backendInfo;
@@ -30,8 +32,10 @@ class AircraftData {
   final String locationTimeZone;
   final String? locationWeatherLive;
   final String? locationWeatherForecast;
-  final String? url;
   final bool admin;
+
+  /// The URL the aircraft data archive was originally downloaded from.
+  final String? url;
 
   AircraftData({
     required this.dataPath,

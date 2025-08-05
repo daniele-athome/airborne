@@ -425,6 +425,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get about_aircraft_location_weather_forecast => 'Previsioni';
 
   @override
+  String get about_aircraft_documents_archive => 'Archivio documenti';
+
+  @override
+  String get about_aircraft_documents_archive_subtitle =>
+      'Apri l\'archivio dei documenti dell\'aereo';
+
+  @override
   String get about_aircraft_pilots => 'Piloti';
 
   @override

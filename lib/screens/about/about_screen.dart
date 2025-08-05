@@ -142,6 +142,16 @@ class _AboutScreenState extends State<AboutScreen> {
                   style: textStyle.copyWith(fontWeight: FontWeight.bold)),
             ),
           ),
+          if (_appConfig.currentAircraft!.documentsArchive != null)
+            CupertinoFormButtonRow(
+              onPressed: () => openUrl(
+                  context, _appConfig.currentAircraft!.documentsArchive!),
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(AppLocalizations.of(context)!
+                  .about_aircraft_documents_archive),
+              child: Icon(CupertinoIcons.chevron_forward,
+                  color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            ),
           CupertinoFormButtonRow(
             onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
             padding: kDefaultCupertinoFormRowPadding,
@@ -363,14 +373,28 @@ class _AboutScreenState extends State<AboutScreen> {
               ],
             ),
           ),
+        if (_appConfig.currentAircraft!.documentsArchive != null)
+          ListTile(
+            key: const Key('about_button_documents_archive'),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+            leading: SizedBox(
+              height: double.infinity,
+              child: Icon(Icons.folder, color: Colors.blue.shade600),
+            ),
+            title: Text(
+                AppLocalizations.of(context)!.about_aircraft_documents_archive),
+            subtitle: Text(AppLocalizations.of(context)!
+                .about_aircraft_documents_archive_subtitle),
+            onTap: () =>
+                openUrl(context, _appConfig.currentAircraft!.documentsArchive!),
+          ),
         HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
-        ..._appConfig.pilotNames
-            .map((e) => ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  leading: CircleAvatar(
-                      foregroundImage: _appConfig.getPilotAvatar(e)),
-                  title: Text(e),
-                )),
+        ..._appConfig.pilotNames.map((e) => ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+              leading:
+                  CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
+              title: Text(e),
+            )),
         HeaderListTile(AppLocalizations.of(context)!.appName),
         ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),

@@ -48,6 +48,10 @@
         "type": "string"
       }
     },
+    "documents_archive": {
+      "description": "URL to the documents archive of the aircraft.",
+      "type": "string"
+    },
     "location": {
       "description": "The location where the aircraft is parked.",
       "type": "object",

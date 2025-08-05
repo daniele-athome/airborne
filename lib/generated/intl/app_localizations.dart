@@ -836,6 +836,18 @@ abstract class AppLocalizations {
   /// **'Forecast'**
   String get about_aircraft_location_weather_forecast;
 
+  /// No description provided for @about_aircraft_documents_archive.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents archive'**
+  String get about_aircraft_documents_archive;
+
+  /// No description provided for @about_aircraft_documents_archive_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the documents archive of the aircraft'**
+  String get about_aircraft_documents_archive_subtitle;
+
   /// No description provided for @about_aircraft_pilots.
   ///
   /// In en, this message translates to:

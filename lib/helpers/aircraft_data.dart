@@ -32,6 +32,7 @@ class AircraftData {
   final String locationTimeZone;
   final String? locationWeatherLive;
   final String? locationWeatherForecast;
+  final String? documentsArchive;
   final bool admin;
 
   /// The URL the aircraft data archive was originally downloaded from.
@@ -50,6 +51,7 @@ class AircraftData {
     required this.locationTimeZone,
     required this.locationWeatherLive,
     required this.locationWeatherForecast,
+    required this.documentsArchive,
     required this.url,
     this.admin = false,
   });
@@ -230,6 +232,7 @@ class AircraftDataReader {
         locationTimeZone: metadata!['location']?['timezone'] as String,
         locationWeatherLive: metadata!['location']?['weather_live'] as String?,
         locationWeatherForecast: metadata!['location']?['weather_forecast'] as String?,
+        documentsArchive: metadata!['documents_archive'] as String?,
         url: metadata!['url'] as String?,
         admin: metadata!['admin'] != null && metadata!['admin'] as bool,
       );

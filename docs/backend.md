@@ -153,6 +153,8 @@ the spreadsheet.
     "Anna",
     "Simon"
   ],
+  // URL to the documents archive of the aircraft.
+  "documents_archive": "https://...",
   // Hangar location information.
   "location": {
     "name": "Fly Berlin",

@@ -229,8 +229,13 @@ class _EntryListItem extends StatelessWidget {
       bgColor = const Color(0xff6ad192);
       iconColor = Colors.white;
       icon = Icons.check;
-      // TODO i18n
-      text = "Fatto";
+      if (entry.lastStatusUpdate != null) {
+        // TODO i18n
+        text = "Fatto il ${_dateFormatter.format(entry.lastStatusUpdate!)}";
+      } else {
+        // TODO i18n
+        text = "Fatto";
+      }
     } else {
       switch (entry.type) {
         case ActivityType.note:

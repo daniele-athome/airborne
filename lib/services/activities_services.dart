@@ -24,21 +24,24 @@ class ActivitiesService extends GoogleSheetsStoreService<ActivityEntry> {
         status: rowData[3] is String && (rowData[3] as String).isNotEmpty
             ? ActivityStatus.fromLabel(rowData[3] as String)
             : null,
-        dueDate: rowData[4] is int
+        lastStatusUpdate: rowData[4] is int
             ? dateFromGsheets((rowData[4] as int).toDouble())
             : null,
-        author: rowData[5] as String,
-        summary: rowData[6] as String,
-        description: rowData.length > 7 &&
-                rowData[7] is String &&
-                (rowData[7] as String).isNotEmpty
-            ? rowData[7] as String
+        dueDate: rowData[5] is int
+            ? dateFromGsheets((rowData[5] as int).toDouble())
             : null,
-        // TODO alert:
+        author: rowData[6] as String,
+        summary: rowData[7] as String,
+        description: rowData.length > 8 &&
+                rowData[8] is String &&
+                (rowData[8] as String).isNotEmpty
+            ? rowData[8] as String
+            : null,
+        // TODO alert: ... (not really clear how to remember what we already alerted)
       );
 
   @override
-  int getColumnCount() => 9;
+  int getColumnCount() => 10;
 
   @override
   List<Object?> buildRowData(ActivityEntry item) => throw UnimplementedError();

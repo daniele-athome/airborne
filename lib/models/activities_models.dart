@@ -19,8 +19,13 @@ enum ActivityType {
 
   const ActivityType(this.code, this.task, this.alert);
 
+  /// The activity priority number.
   final int code;
+
+  /// Whether this activity is a task to be completed.
   final bool task;
+
+  /// Whether this activity will trigger an alert to all pilots.
   final bool alert;
 
   static ActivityType fromCode(int code) =>
@@ -46,6 +51,7 @@ class ActivityEntry {
     required this.type,
     required this.creationDate,
     this.status,
+    required this.lastStatusUpdate,
     this.dueDate,
     required this.author,
     required this.summary,
@@ -64,6 +70,9 @@ class ActivityEntry {
 
   /// Entry status.
   ActivityStatus? status;
+
+  /// Last status change date.
+  DateTime? lastStatusUpdate;
 
   /// Due date (if any).
   DateTime? dueDate;

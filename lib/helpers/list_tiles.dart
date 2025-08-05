@@ -93,7 +93,7 @@ class DateTimeListTile extends StatelessWidget {
         Expanded(
           flex: 7,
           child: ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+            contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 2, 20, 2),
             leading: showIcon
                 ? const Icon(
                     Icons.access_time,
@@ -142,7 +142,7 @@ class DateTimeListTile extends StatelessWidget {
         Expanded(
           flex: 3,
           child: ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(20, 2, 20, 2),
+            contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 2, 20, 2),
             title: Text(
               controller.value != null
                   ? DateFormat(kAviationTimeFormat).format(controller.value!)

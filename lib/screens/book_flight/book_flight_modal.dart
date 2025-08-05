@@ -189,7 +189,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       padding: EdgeInsets.zero,
       children: <Widget>[
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           leading: CircleAvatar(
               foregroundImage: appConfig.getPilotAvatar(_pilotName)),
           title: Text(
@@ -220,7 +220,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           onTimeSelected: (date, oldDate) => _onEndDateChanged(date, oldDate),
         ),
         Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+          padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
           child: _SunTimesListTile(
               sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
         ),
@@ -230,7 +230,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         ),
         ListTile(
           // FIXME TextField inside ListTile caused enter key to act as onPressed
-          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const Icon(
             Icons.subject,
           ),

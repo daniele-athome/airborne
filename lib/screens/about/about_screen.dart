@@ -161,7 +161,7 @@ class _AboutScreenState extends State<AboutScreen> {
       if (_appConfig.currentAircraft!.locationWeatherLive != null ||
           _appConfig.currentAircraft!.locationWeatherForecast != null)
         Padding(
-          padding: const EdgeInsets.fromLTRB(
+          padding: const EdgeInsetsDirectional.fromSTEB(
               kDefaultCupertinoFormRowStartPadding,
               4.0,
               kDefaultCupertinoFormRowStartPadding,
@@ -334,7 +334,7 @@ class _AboutScreenState extends State<AboutScreen> {
         if (_appConfig.currentAircraft!.locationWeatherLive != null ||
             _appConfig.currentAircraft!.locationWeatherForecast != null)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 6.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
@@ -539,7 +539,7 @@ class HeaderListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: first
-          ? const EdgeInsets.fromLTRB(20, 0, 20, 10)
+          ? const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 10)
           : const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Text(text, style: Theme.of(context).textTheme.headlineSmall),
     );

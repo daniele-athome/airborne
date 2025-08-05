@@ -304,7 +304,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         // take off place
         // TODO identical widget with landing place, just make one with proper parameters
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const SizedBox(
               height: double.infinity, child: Icon(Icons.flight_takeoff)),
           trailing: IconButton(
@@ -332,7 +332,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ),
         // landing place
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const SizedBox(
               height: double.infinity, child: Icon(Icons.flight_land)),
           trailing: IconButton(
@@ -361,7 +361,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ),
         // fuel quantity + type/price
         ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const Icon(Icons.local_gas_station),
           title: TextFormField(
             key: const Key("input_flightLogModal_fuel"),

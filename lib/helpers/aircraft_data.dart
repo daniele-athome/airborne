@@ -236,7 +236,8 @@ class AircraftDataReader {
         locationLongitude: metadata!['location']?['longitude'] as double,
         locationTimeZone: metadata!['location']?['timezone'] as String,
         locationWeatherLive: metadata!['location']?['weather_live'] as String?,
-        locationWeatherForecast: metadata!['location']?['weather_forecast'] as String?,
+        locationWeatherForecast:
+            metadata!['location']?['weather_forecast'] as String?,
         documentsArchive: metadata!['documents_archive'] as String?,
         url: metadata!['url'] as String?,
         admin: metadata!['admin'] != null && metadata!['admin'] as bool,
@@ -267,8 +268,9 @@ Future<File> addAircraftDataFile(AircraftDataReader reader, String url) async {
 /// Decrypts a zip file and stores it unencrypted to another file.
 Future<File> decryptDataFile(String encryptedFilename, String? password,
     String decryptedFilename) async {
-  final Archive encryptedArchive = ZipDecoder()
-      .decodeStream(InputFileStream(encryptedFilename), password: password);
+  final Archive encryptedArchive = ZipDecoder().decodeBytes(
+      await File(encryptedFilename).readAsBytes(),
+      password: password);
   final Archive decryptedArchive = Archive();
 
   for (final inFile in encryptedArchive.files) {
@@ -320,7 +322,7 @@ Future<AircraftData> _validateAndStoreAircraft(
     File file, String url, String? password) async {
   try {
     final encryptedReader =
-    AircraftDataReader(dataFile: file, urlFile: null, password: password);
+        AircraftDataReader(dataFile: file, urlFile: null, password: password);
     final validation = await encryptedReader.validate();
     _log.finest('VALIDATION: $validation');
 

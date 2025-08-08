@@ -123,6 +123,7 @@
   "addAircraft_dialog_downloading": "Download in corso...",
   "addAircraft_error_invalid_address": "Inserisci un indirizzo valido",
   "addAircraft_error_storing": "Errore durante l'installazione dell'aereo.",
+  "addAircraft_error_bad_datafile_format": "File non valido, forse password errata?",
   "addAircraft_error_invalid_datafile": "Configurazione dell'aereo non valida.",
 
   "pilotSelect_title": "Chi sei?",

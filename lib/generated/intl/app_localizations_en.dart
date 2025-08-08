@@ -390,6 +390,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addAircraft_error_storing => 'Unable to store aircraft data file.';
 
   @override
+  String get addAircraft_error_bad_datafile_format =>
+      'Invalid data file, maybe wrong password?';
+
+  @override
   String get addAircraft_error_invalid_datafile =>
       'Not a valid aircraft data file.';
 

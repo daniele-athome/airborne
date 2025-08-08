@@ -776,6 +776,12 @@ abstract class AppLocalizations {
   /// **'Unable to store aircraft data file.'**
   String get addAircraft_error_storing;
 
+  /// No description provided for @addAircraft_error_bad_datafile_format.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid data file, maybe wrong password?'**
+  String get addAircraft_error_bad_datafile_format;
+
   /// No description provided for @addAircraft_error_invalid_datafile.
   ///
   /// In en, this message translates to:

@@ -65,6 +65,7 @@ class AircraftData {
   }
 }
 
+// TODO this class should be split into interface + 2 implementations, one file-based and one buffer-based
 class AircraftDataReader {
   // for main constructor
   File? dataFile;
@@ -75,11 +76,14 @@ class AircraftDataReader {
   String? dataFilename;
   String? url;
 
+  String? password;
+
   Map<String, dynamic>? metadata;
 
   AircraftDataReader({
     required this.dataFile,
     required this.urlFile,
+    this.password,
   });
 
   /// Mainly for integration testing.
@@ -96,7 +100,8 @@ class AircraftDataReader {
     final bytes = dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
     final Archive archive;
     try {
-      archive = ZipDecoder().decodeBytes(bytes, verify: true);
+      archive =
+          ZipDecoder().decodeBytes(bytes, password: password, verify: true);
     } catch (e) {
       _log.warning('Not a valid zip file: $e');
       return false;
@@ -231,7 +236,8 @@ class AircraftDataReader {
         locationLongitude: metadata!['location']?['longitude'] as double,
         locationTimeZone: metadata!['location']?['timezone'] as String,
         locationWeatherLive: metadata!['location']?['weather_live'] as String?,
-        locationWeatherForecast: metadata!['location']?['weather_forecast'] as String?,
+        locationWeatherForecast:
+            metadata!['location']?['weather_forecast'] as String?,
         documentsArchive: metadata!['documents_archive'] as String?,
         url: metadata!['url'] as String?,
         admin: metadata!['admin'] != null && metadata!['admin'] as bool,
@@ -253,9 +259,33 @@ Future<File> addAircraftDataFile(AircraftDataReader reader, String url) async {
   await urlFile.writeAsString(url);
   reader.urlFile = urlFile;
 
+  // decrypt and save again
   final filename = path.join(
       directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
-  return reader.dataFile!.copy(filename);
+  return decryptDataFile(reader.dataFile!.path, reader.password, filename);
+}
+
+/// Decrypts a zip file and stores it unencrypted to another file.
+Future<File> decryptDataFile(String encryptedFilename, String? password,
+    String decryptedFilename) async {
+  final Archive encryptedArchive = ZipDecoder().decodeBytes(
+      await File(encryptedFilename).readAsBytes(),
+      password: password,
+      verify: true);
+  final Archive decryptedArchive = Archive();
+
+  for (final inFile in encryptedArchive.files) {
+    if (!inFile.isFile) {
+      continue;
+    }
+
+    final outFile = ArchiveFile(inFile.name, inFile.size, inFile.content);
+    decryptedArchive.add(outFile);
+  }
+
+  final decryptedBytes =
+      ZipEncoder().encodeBytes(decryptedArchive, level: DeflateLevel.bestSpeed);
+  return await File(decryptedFilename).writeAsBytes(decryptedBytes);
 }
 
 /// Loads an aircraft data file into the cache.
@@ -264,6 +294,7 @@ Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   final dataFile =
       File(path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'));
   final urlFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.url'));
+  // null password because the cached zip file is unencrypted
   final reader = AircraftDataReader(dataFile: dataFile, urlFile: urlFile);
   await reader.open();
   return reader;
@@ -278,6 +309,8 @@ Future<Directory> deleteAircraftCache() async {
       : Future.value(tmpDirectory);
 }
 
+class AircraftBadFileException implements Exception {}
+
 class AircraftValidationException implements Exception {}
 
 class AircraftStoreException implements Exception {
@@ -286,24 +319,35 @@ class AircraftStoreException implements Exception {
   AircraftStoreException(this.cause);
 }
 
-Future<AircraftData> _validateAndStoreAircraft(File file, String url) async {
-  final reader = AircraftDataReader(dataFile: file, urlFile: null);
-  final validation = await reader.validate();
-  _log.finest('VALIDATION: $validation');
-  if (validation) {
-    try {
-      final dataFile = await addAircraftDataFile(reader, url);
+Future<AircraftData> _validateAndStoreAircraft(
+    File file, String url, String? password) async {
+  try {
+    final encryptedReader =
+        AircraftDataReader(dataFile: file, urlFile: null, password: password);
+    final validation = await encryptedReader.validate();
+    _log.finest('VALIDATION: $validation');
+
+    if (validation) {
+      // the returned file will be decrypted
+      final dataFile = await addAircraftDataFile(encryptedReader, url);
       _log.finest(dataFile);
+
       await deleteAircraftCache();
+
+      // open up a new reader for the unencrypted file
+      final reader = AircraftDataReader(
+          dataFile: dataFile, urlFile: encryptedReader.urlFile);
       await reader.open();
-      final aircraftData = reader.toAircraftData();
-      return aircraftData;
-    } catch (e, stacktrace) {
-      _log.warning('Error storing aircraft data file', e, stacktrace);
-      return Future.error(AircraftStoreException(e), stacktrace);
+      return reader.toAircraftData();
+    } else {
+      return Future.error(AircraftValidationException());
     }
-  } else {
-    return Future.error(AircraftValidationException());
+  } on FormatException catch (_) {
+    _log.warning('Error reading aircraft data file, wrong password?');
+    return Future.error(AircraftBadFileException());
+  } catch (e, stacktrace) {
+    _log.warning('Error storing aircraft data file', e, stacktrace);
+    return Future.error(AircraftStoreException(e), stacktrace);
   }
 }
 
@@ -323,7 +367,7 @@ Future<AircraftData> downloadAircraftData(
       .timeout(kNetworkRequestTimeout)
       .then((tempfile) async {
     _log.finest(tempfile);
-    final stored = await _validateAndStoreAircraft(tempfile, url);
+    final stored = await _validateAndStoreAircraft(tempfile, url, userpass);
     tempfile.deleteSync();
     return stored;
   });

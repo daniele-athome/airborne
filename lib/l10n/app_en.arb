@@ -172,6 +172,7 @@
   "addAircraft_dialog_downloading": "Downloading...",
   "addAircraft_error_invalid_address": "Please insert a valid address",
   "addAircraft_error_storing": "Unable to store aircraft data file.",
+  "addAircraft_error_bad_datafile_format": "Invalid data file, maybe wrong password?",
   "addAircraft_error_invalid_datafile": "Not a valid aircraft data file.",
 
   "pilotSelect_title": "Who are you?",

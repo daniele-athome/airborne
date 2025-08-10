@@ -69,6 +69,9 @@ class _AboutScreenState extends State<AboutScreen> {
           if (error is TimeoutException) {
             message =
                 AppLocalizations.of(context)!.error_generic_network_timeout;
+          } else if (error is AircraftBadFileException) {
+            message = AppLocalizations.of(context)!
+                .addAircraft_error_bad_datafile_format;
           } else if (error is AircraftValidationException) {
             message = AppLocalizations.of(context)!
                 .addAircraft_error_invalid_datafile;

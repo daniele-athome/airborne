@@ -392,6 +392,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Errore durante l\'installazione dell\'aereo.';
 
   @override
+  String get addAircraft_error_bad_datafile_format =>
+      'File non valido, forse password errata?';
+
+  @override
   String get addAircraft_error_invalid_datafile =>
       'Configurazione dell\'aereo non valida.';
 

@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'utils.dart';
 
+// dummy mandatory values for the date picker
+final DateTime _kDatePickerMinimumDate =
+    DateTime.now().subtract(Duration(days: 50 * 365));
+final DateTime _kDatePickerMaximumDate =
+    DateTime.now().add(Duration(days: 50 * 365));
+
 const double kDefaultCupertinoFormRowStartPadding = 20.0;
 
 const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding = EdgeInsets.symmetric(
@@ -220,10 +226,8 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                         padding: kDefaultCupertinoDateTimeFormRowPadding,
                         child: CupertinoCalendarPickerButton(
                           initialDateTime: field.value,
-                          // TODO constant or autocalculate from current date
-                          minimumDateTime: DateTime(2020, 1, 1),
-                          // TODO constant or autocalculate from current date
-                          maximumDateTime: DateTime(2099, 1, 1),
+                          minimumDateTime: _kDatePickerMinimumDate,
+                          maximumDateTime: _kDatePickerMaximumDate,
                           onDateSelected: (value) {
                             final oldValue = field.value!;
                             final newValue = DateTime(

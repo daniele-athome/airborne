@@ -385,11 +385,16 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     );
   }
 
-  /// What the fuck is this!?!?
+  /// Calculates the optimal font size for a single digit widget.
+  /// It takes into account the size of the screen and how much space is
+  /// thought (approximately) to be taken by the digits.
   double _getDigitDisplayFontSize(BuildContext context) {
     final mdq = MediaQuery.of(context);
+    // 8% of the screen width for padding
     final paddingRatio = (mdq.size.width * 0.08).roundToDouble();
+    // 48 logical pixels for the backspace button, then divide by 7 (each digit widgets)
     final size = ((mdq.size.width - paddingRatio - 48) / 7).roundToDouble();
+    // no more than 42 logical pixels anyway
     return math.min(size, 42);
   }
 

@@ -414,6 +414,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
               IconButton(
                 // TODO onLongPress should reset the value
                 onPressed: _onBackspace,
+                iconSize: 32,
                 icon: const Icon(Icons.backspace),
               ),
             ],

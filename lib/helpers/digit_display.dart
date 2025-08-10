@@ -187,7 +187,9 @@ class _DigitText extends StatelessWidget {
   Widget build(BuildContext context) {
     final widget = Container(
       alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      // weird combination of sizes to make the active border appear on the inside of the digit
+      padding: EdgeInsets.symmetric(
+          horizontal: active ? 1 : 2, vertical: active ? 1 : 2),
       decoration: alternate
           ? BoxDecoration(
               border: Border.all(

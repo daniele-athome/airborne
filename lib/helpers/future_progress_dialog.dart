@@ -119,9 +119,13 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
     } else {
       if (widget.message == null) {
         content = Center(
+          heightFactor: 1.0,
+          // FIXME width ignored
+          widthFactor: 1.0,
           child: Container(
-            height: 100,
-            width: 100,
+            height: 80,
+            // FIXME width ignored
+            width: 80,
             alignment: Alignment.center,
             decoration: widget.decoration ?? _defaultDecoration(context),
             child: widget.progress ?? const CircularProgressIndicator(),
@@ -129,8 +133,8 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
         );
       } else {
         content = Container(
-          height: 100,
-          padding: const EdgeInsets.all(20),
+          height: 80,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: widget.decoration ?? _defaultDecoration(context),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -144,7 +148,6 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
 
       return PlatformAlertDialog(
         material: (context, platform) => MaterialAlertDialogData(
-          backgroundColor: Colors.transparent,
           elevation: 0,
         ),
         content: Opacity(

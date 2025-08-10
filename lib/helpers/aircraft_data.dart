@@ -270,7 +270,8 @@ Future<File> decryptDataFile(String encryptedFilename, String? password,
     String decryptedFilename) async {
   final Archive encryptedArchive = ZipDecoder().decodeBytes(
       await File(encryptedFilename).readAsBytes(),
-      password: password);
+      password: password,
+      verify: true);
   final Archive decryptedArchive = Archive();
 
   for (final inFile in encryptedArchive.files) {

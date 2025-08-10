@@ -385,6 +385,7 @@ class _HourMeterDialogState extends State<HourMeterDialog> {
     );
   }
 
+  /// What the fuck is this!?!?
   double _getDigitDisplayFontSize(BuildContext context) {
     final mdq = MediaQuery.of(context);
     final paddingRatio = (mdq.size.width * 0.08).roundToDouble();

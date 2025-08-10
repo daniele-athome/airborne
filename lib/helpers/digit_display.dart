@@ -148,7 +148,7 @@ class SingleDigitText extends StatelessWidget {
     this.fontSize = _kDefaultDigitFontSize,
     this.active = false,
     this.onTap,
-  })  : assert(digit >= 0 && digit <= 9);
+  }) : assert(digit >= 0 && digit <= 9);
 
   final int digit;
   final bool decimal;
@@ -187,6 +187,7 @@ class _DigitText extends StatelessWidget {
   Widget build(BuildContext context) {
     final widget = Container(
       alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
       decoration: alternate
           ? BoxDecoration(
               border: Border.all(
@@ -195,12 +196,11 @@ class _DigitText extends StatelessWidget {
               color: Colors.white,
             )
           : BoxDecoration(
-              border: active ? Border.all(color: Colors.red, width: 2) : null,
+              border: Border.all(
+                  color: active ? Colors.red : Colors.black,
+                  width: active ? 2 : 1),
               color: Colors.black,
             ),
-      // TODO test on different screens
-      width: fontSize,
-      height: fontSize + 10,
       child: Text(
         text,
         textAlign: TextAlign.center,

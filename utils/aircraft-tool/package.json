@@ -4,6 +4,7 @@
   "scripts": {},
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.7",
     "jszip": "^3.10.1"
   },
   "type": "module"

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aircraft data tool</title>
+    <link rel="stylesheet" type="text/css" href="./styles.old.css"/>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>
+        <img alt="Airborne logo" class="logo" src="./logo.svg">
+        Airborne aircraft data tool
+        <img alt="Airborne logo" class="logo" src="./logo.svg">
+    </h1>
+    <p class="subtitle">Use this tool to create an aircraft data file for <a
+            href="https://github.com/daniele-athome/airborne">Airborne</a>.</p>
+
+    <div class="section">
+        <div class="section-header">
+            <h3>📋 Aircraft information</h3>
+        </div>
+        <div class="input-group">
+            <label for="callSign">Call sign</label>
+            <input type="text" id="callSign" placeholder="A-1234" required>
+        </div>
+        <div class="input-group">
+            <label for="hangarName">Hangar name</label>
+            <input type="text" id="hangarName" placeholder="Fly Berlin" required>
+        </div>
+        <div class="input-group">
+            <label for="hangarTz">Hangar time zone</label>
+            <input type="text" id="hangarTz" placeholder="Europe/Berlin" required>
+        </div>
+        <div class="input-group-inline">
+            <div class="input-group">
+                <label for="hangarLat">Hangar latitude</label>
+                <input type="number" step="any" id="hangarLat" placeholder="52.8844253" required>
+            </div>
+            <div class="input-group">
+                <label for="hangarLon">Hangar longitude</label>
+                <input type="number" step="any" id="hangarLon" placeholder="12.7143166" required>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="documentsArchiveUrl">Documents archive link</label>
+            <input type="url" id="documentsArchiveUrl" placeholder="https://drive.google.com/drive/folders/...">
+        </div>
+        <div class="input-group">
+            <label for="weatherLiveUrl">Live weather link</label>
+            <input type="url" id="weatherLiveUrl" placeholder="https://...">
+        </div>
+        <div class="input-group">
+            <label for="weatherForecastUrl">Weather forecast link</label>
+            <input type="url" id="weatherForecastUrl" placeholder="https://...">
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h3>🧑‍✈️ Pilots</h3>
+            <!--span class="section-header-subtitle" id="totalSize">Aircraft information</span-->
+        </div>
+
+        <div class="pilots-list" id="pilotsList"></div>
+
+        <div class="actions">
+            <button class="btn-primary" id="addPilotBtn">
+                📦 Add pilot
+            </button>
+            <button class="clear-btn" id="clearPilotsBtn">
+                🗑️ Delete all pilots
+            </button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h3>💾 Cloud storage information</h3>
+        </div>
+
+        <div class="input-group">
+            <label for="googleApiServiceAccount">Google API service account</label>
+            <textarea id="googleApiServiceAccount" rows="10" placeholder="Paste contents of service account JSON file here" required></textarea>
+        </div>
+
+        <div class="input-group">
+            <label for="googleApiKey">Google API key</label>
+            <input type="text" id="googleApiKey" required>
+        </div>
+
+        <div class="input-group">
+            <div id="googleCalendarIdInfoTooltip" class="tooltip" role="tooltip">
+                Skipping this field will disable all flight booking functionality.
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <label for="googleCalendarId">Google Calendar ID <button class="btn-info" id="googleCalendarIdInfoBtn">?</button></label>
+            <input type="text" id="googleCalendarId" placeholder="...@group.calendar.google.com">
+        </div>
+
+        <div class="input-group">
+            <div id="googleSpreadsheetIdInfoTooltip" class="tooltip" role="tooltip">
+                Skipping this field will disable the flight log and the activity log features.
+                <div class="tooltip-arrow" data-popper-arrow></div>
+            </div>
+            <label for="googleSpreadsheetId">Google Spreadsheet ID <button class="btn-info" id="googleSpreadsheetIdInfoBtn">?</button></label>
+            <input type="text" id="googleSpreadsheetId">
+        </div>
+
+        <div class="input-group">
+            <!-- TODO info tooltip -->
+            <label for="flightlogSheetName">Flight log sheet name <button class="btn-info" id="flightlogSheetNameInfoBtn">?</button></label>
+            <input type="text" id="flightlogSheetName">
+        </div>
+
+        <div class="input-group">
+            <!-- TODO info tooltip -->
+            <label for="activitiesSheetName">Activities sheet name <button class="btn-info" id="activitiesSheetNameInfoBtn">?</button></label>
+            <input type="text" id="activitiesSheetName">
+        </div>
+
+        <div class="input-group">
+            <!-- TODO info tooltip -->
+            <label for="metadataSheetName">Metadata sheet name <button class="btn-info" id="metadataSheetNameInfoBtn">?</button></label>
+            <input type="text" id="metadataSheetName">
+        </div>
+
+        <!-- TODO -->
+    </div>
+
+</div>
+
+<template id="pilotNameForm">
+    <div class="input-group input-pilot" id="pilotEntryX">
+        <label for="pilotNameX">Pilot __X__ name</label>
+        <div class="input-with-button">
+            <input type="file" accept="image/jpeg,image/png" id="pilotAvatarFileX">
+            <img class="pilot-avatar" id="pilotAvatarX" alt="Pilot X avatar" src="./avatar.png">
+            <input type="text" id="pilotNameX" placeholder="Insert pilot name" required>
+            <button class="btn-remove" id="removePilotX" title="Remove pilot">✕</button>
+        </div>
+    </div>
+</template>
+
+<script src="./node_modules/jszip/dist/jszip.min.js"></script>
+<script src="./node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+<script src="./scripts.js"></script>
+
+</body>
+</html>

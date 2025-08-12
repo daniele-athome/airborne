@@ -54,6 +54,16 @@ function deletePilots() {
     container.replaceChildren();
 }
 
+function checkValidity(element) {
+    if (element.checkValidity()) {
+        element.classList.add('is-valid');
+        element.classList.remove('is-invalid');
+    } else {
+        element.classList.add('is-invalid');
+        element.classList.remove('is-valid');
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("addPilotBtn")
         .addEventListener("click", () => addPilot());
@@ -64,28 +74,19 @@ document.addEventListener("DOMContentLoaded", () => {
         addPilot();
     }
 
-    // TODO generalize for all tooltips
-    const tooltipButton = document.getElementById("googleCalendarIdInfoBtn");
-    const tooltipElement = document.getElementById("googleCalendarIdInfoTooltip");
-    const popperInstance = Popper.createPopper(tooltipButton, tooltipElement, {
-        placement: 'right',
-        modifiers: [
-            {
-                name: 'offset',
-                options: {
-                    offset: [0, 8],
-                },
-            },
-        ],
-    });
-    tooltipButton.addEventListener("click", () => {
-        if (tooltipElement.hasAttribute("data-show")) {
-            tooltipElement.removeAttribute('data-show');
-        }
-        else {
-            tooltipElement.setAttribute('data-show', '');
-            popperInstance.update();
-        }
-    });
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
+    document.querySelectorAll('input, textarea').forEach(element => {
+        if (element.type === "file") {
+            return;
+        }
+
+        element.addEventListener('change', function () {
+            checkValidity(element);
+        });
+        element.addEventListener('blur', function () {
+            checkValidity(element);
+        });
+    });
 });

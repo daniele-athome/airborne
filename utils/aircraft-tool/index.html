@@ -3,149 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aircraft data tool</title>
+    <title>Airborne aircraft data tool</title>
+    <link rel="stylesheet" type="text/css" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="./styles.css"/>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>
-        <img alt="Airborne logo" class="logo" src="./logo.svg">
-        Airborne aircraft data tool
-        <img alt="Airborne logo" class="logo" src="./logo.svg">
-    </h1>
-    <p class="subtitle">Use this tool to create an aircraft data file for <a
-            href="https://github.com/daniele-athome/airborne">Airborne</a>.</p>
+<div class="container my-4">
+    <div class="p-4 bg-body-tertiary rounded-3">
 
-    <div class="section">
-        <div class="section-header">
-            <h3>📋 Aircraft information</h3>
-        </div>
-        <div class="input-group">
-            <label for="callSign">Call sign</label>
-            <input type="text" id="callSign" placeholder="A-1234" required>
-        </div>
-        <div class="input-group">
-            <label for="hangarName">Hangar name</label>
-            <input type="text" id="hangarName" placeholder="Fly Berlin" required>
-        </div>
-        <div class="input-group">
-            <label for="hangarTz">Hangar time zone</label>
-            <input type="text" id="hangarTz" placeholder="Europe/Berlin" required>
-        </div>
-        <div class="input-group-inline">
-            <div class="input-group">
-                <label for="hangarLat">Hangar latitude</label>
-                <input type="number" step="any" id="hangarLat" placeholder="52.8844253" required>
+        <h1 class="text-body-emphasis text-center">
+            <img alt="Airborne logo" class="logo" src="./logo.svg">
+            Airborne aircraft data tool
+            <img alt="Airborne logo" class="logo" src="./logo.svg">
+        </h1>
+        <p class="text-muted text-center">Use this tool to create an aircraft data file for <a
+                href="https://github.com/daniele-athome/airborne">Airborne</a>.</p>
+
+        <div class="accordion" id="mainAccordion">
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionInfo" aria-expanded="true" aria-controls="accordionInfo">
+                        📋 Aircraft information
+                    </button>
+                </h2>
+                <div id="accordionInfo" class="accordion-collapse collapse show" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            <div class="col-sm-12">
+                                <label class="form-label" for="callSign">Call sign</label>
+                                <input class="form-control" type="text" id="callSign" placeholder="A-1234" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarName">Hangar name</label>
+                                <input class="form-control" type="text" id="hangarName" placeholder="Fly Berlin"
+                                       required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarTz">Hangar time zone</label>
+                                <input class="form-control" type="text" id="hangarTz" placeholder="Europe/Berlin"
+                                       required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarLat">Hangar latitude</label>
+                                <input class="form-control" type="number" step="any" id="hangarLat"
+                                       placeholder="52.8844253" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarLon">Hangar longitude</label>
+                                <input class="form-control" type="number" step="any" id="hangarLon"
+                                       placeholder="12.7143166" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="documentsArchiveUrl">Documents archive link</label>
+                                <input class="form-control" type="url" id="documentsArchiveUrl"
+                                       placeholder="https://drive.google.com/drive/folders/...">
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="weatherLiveUrl">Live weather link</label>
+                                <input class="form-control" type="url" id="weatherLiveUrl" placeholder="https://...">
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="weatherForecastUrl">Weather forecast link</label>
+                                <input class="form-control" type="url" id="weatherForecastUrl"
+                                       placeholder="https://...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="hangarLon">Hangar longitude</label>
-                <input type="number" step="any" id="hangarLon" placeholder="12.7143166" required>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionPilots" aria-expanded="true" aria-controls="accordionPilots">
+                        🧑‍✈️ Pilots
+                    </button>
+                </h2>
+                <div id="accordionPilots" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+
+                        <div class="pilots-list" id="pilotsList"></div>
+
+                        <div class="accordion-actions">
+                            <button class="btn btn-primary" id="addPilotBtn">
+                                📦 Add pilot
+                            </button>
+                            <button class="btn btn-secondary" id="clearPilotsBtn">
+                                🗑️ Delete all pilots
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
             </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionStorage" aria-expanded="true" aria-controls="accordionStorage">
+                        💾 Cloud storage information
+                    </button>
+                </h2>
+                <div id="accordionStorage" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+
+                        <div class="row g-3">
+                            <div class="col-sm-12">
+                                <label class="form-label" for="googleApiServiceAccount">Google API service account</label>
+                                <textarea id="googleApiServiceAccount"  class="form-control" rows="10"
+                                          placeholder="Paste contents of service account JSON file here" required></textarea>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="googleApiKey">Google API key</label>
+                                <input class="form-control" type="text" id="googleApiKey" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label d-flex" for="googleCalendarId">Google Calendar ID
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable all flight booking functionality.">?</button>
+                                </label>
+                                <input class="form-control" type="text" id="googleCalendarId" placeholder="...@group.calendar.google.com">
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label d-flex" for="googleSpreadsheetId">Google Spreadsheet ID
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable the flight log and the activity log features.">?</button>
+                                </label>
+                                <input class="form-control" type="text" id="googleSpreadsheetId">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label d-flex" for="flightlogSheetName">Flight log sheet name
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable flight log functionality.">?</button>
+                                </label>
+                                <input class="form-control" type="text" id="flightlogSheetName">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label d-flex" for="activitiesSheetName">Activities sheet name
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable activity log functionality.">?</button>
+                                </label>
+                                <input class="form-control" type="text" id="activitiesSheetName">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label d-flex" for="metadataSheetName">Metadata sheet name
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="This is required if at least one of the other sheet names are set.">?</button>
+                                </label>
+                                <input class="form-control" type="text" id="metadataSheetName">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="input-group">
-            <label for="documentsArchiveUrl">Documents archive link</label>
-            <input type="url" id="documentsArchiveUrl" placeholder="https://drive.google.com/drive/folders/...">
-        </div>
-        <div class="input-group">
-            <label for="weatherLiveUrl">Live weather link</label>
-            <input type="url" id="weatherLiveUrl" placeholder="https://...">
-        </div>
-        <div class="input-group">
-            <label for="weatherForecastUrl">Weather forecast link</label>
-            <input type="url" id="weatherForecastUrl" placeholder="https://...">
-        </div>
+
     </div>
-
-    <div class="section">
-        <div class="section-header">
-            <h3>🧑‍✈️ Pilots</h3>
-            <!--span class="section-header-subtitle" id="totalSize">Aircraft information</span-->
-        </div>
-
-        <div class="pilots-list" id="pilotsList"></div>
-
-        <div class="actions">
-            <button class="btn-primary" id="addPilotBtn">
-                📦 Add pilot
-            </button>
-            <button class="clear-btn" id="clearPilotsBtn">
-                🗑️ Delete all pilots
-            </button>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-header">
-            <h3>💾 Cloud storage information</h3>
-        </div>
-
-        <div class="input-group">
-            <label for="googleApiServiceAccount">Google API service account</label>
-            <textarea id="googleApiServiceAccount" rows="10" placeholder="Paste contents of service account JSON file here" required></textarea>
-        </div>
-
-        <div class="input-group">
-            <label for="googleApiKey">Google API key</label>
-            <input type="text" id="googleApiKey" required>
-        </div>
-
-        <div class="input-group">
-            <div id="googleCalendarIdInfoTooltip" class="tooltip" role="tooltip">
-                Skipping this field will disable all flight booking functionality.
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-            <label for="googleCalendarId">Google Calendar ID <button class="btn-info" id="googleCalendarIdInfoBtn">?</button></label>
-            <input type="text" id="googleCalendarId" placeholder="...@group.calendar.google.com">
-        </div>
-
-        <div class="input-group">
-            <div id="googleSpreadsheetIdInfoTooltip" class="tooltip" role="tooltip">
-                Skipping this field will disable the flight log and the activity log features.
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-            <label for="googleSpreadsheetId">Google Spreadsheet ID <button class="btn-info" id="googleSpreadsheetIdInfoBtn">?</button></label>
-            <input type="text" id="googleSpreadsheetId">
-        </div>
-
-        <div class="input-group">
-            <!-- TODO info tooltip -->
-            <label for="flightlogSheetName">Flight log sheet name <button class="btn-info" id="flightlogSheetNameInfoBtn">?</button></label>
-            <input type="text" id="flightlogSheetName">
-        </div>
-
-        <div class="input-group">
-            <!-- TODO info tooltip -->
-            <label for="activitiesSheetName">Activities sheet name <button class="btn-info" id="activitiesSheetNameInfoBtn">?</button></label>
-            <input type="text" id="activitiesSheetName">
-        </div>
-
-        <div class="input-group">
-            <!-- TODO info tooltip -->
-            <label for="metadataSheetName">Metadata sheet name <button class="btn-info" id="metadataSheetNameInfoBtn">?</button></label>
-            <input type="text" id="metadataSheetName">
-        </div>
-
-        <!-- TODO -->
-    </div>
-
 </div>
 
 <template id="pilotNameForm">
-    <div class="input-group input-pilot" id="pilotEntryX">
-        <label for="pilotNameX">Pilot __X__ name</label>
-        <div class="input-with-button">
-            <input type="file" accept="image/jpeg,image/png" id="pilotAvatarFileX">
-            <img class="pilot-avatar" id="pilotAvatarX" alt="Pilot X avatar" src="./avatar.png">
-            <input type="text" id="pilotNameX" placeholder="Insert pilot name" required>
-            <button class="btn-remove" id="removePilotX" title="Remove pilot">✕</button>
+    <div class="row mb-3 pilot-entry" id="pilotEntryX">
+        <div class="col-sm-12">
+            <div class="d-flex align-items-center">
+                <input type="file" accept="image/jpeg,image/png" id="pilotAvatarFileX">
+                <img class="pilot-avatar" id="pilotAvatarX" alt="Pilot X avatar" src="./avatar.png">
+                <label class="form-label visually-hidden" for="pilotNameX">Pilot __X__ name</label>
+                <input type="text" class="form-control" id="pilotNameX" placeholder="Insert pilot name"
+                       aria-label="Insert pilot name" required>
+                <button class="btn btn-circle btn-danger" title="Remove pilot" id="removePilotX" type="button">&times;
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script src="./node_modules/jszip/dist/jszip.min.js"></script>
 <script src="./node_modules/@popperjs/core/dist/umd/popper.min.js"></script>
+<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="./scripts.js"></script>
 
 </body>

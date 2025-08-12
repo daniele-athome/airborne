@@ -1,26 +1,7 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.container {
-    max-width: 1280px;
-    width: 100%;
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
 .logo {
@@ -29,22 +10,8 @@ body {
     vertical-align: middle;
 }
 
-h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 2.5rem;
-}
-
-.subtitle {
-    text-align: center;
-    color: #666;
-    margin-bottom: 30px;
-}
-
-.upload-section {
-    text-align: center;
-    margin-bottom: 30px;
+#mainAccordion .accordion-header button {
+    font-weight: bold;
 }
 
 input[type="file"] {
@@ -52,280 +19,28 @@ input[type="file"] {
 }
 
 .pilot-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     margin: 0 8px;
     cursor: pointer;
 }
 
-.section {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.section-header h3 {
-    margin: 0;
-    color: #333;
-}
-
-.section-header-subtitle {
-    color: #666;
-    font-weight: bold;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: 500;
-}
-
-.input-group input[type="text"],
-.input-group input[type="number"],
-.input-group input[type="url"],
-.input-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background: white;
-}
-
-.input-group input[type="text"]:focus,
-.input-group input[type="number"]:focus,
-.input-group input[type="url"]:focus,
-.input-group textarea:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.input-group input[type="text"]::placeholder,
-.input-group input[type="number"]::placeholder,
-.input-group input[type="url"]::placeholder,
-.input-group textarea::placeholder {
-    color: #999;
-}
-
-.input-group input[type="text"]:invalid,
-.input-group input[type="number"]:invalid,
-.input-group input[type="url"]:invalid,
-.input-group textarea:invalid {
-    border-color: #ff4757;
-}
-
-.input-group-inline {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.input-group-inline .input-group {
-    margin-bottom: 0;
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.input-with-button {
-    display: flex;
-    align-items: center;
-}
-
-.input-with-button input {
-    flex: 1;
-}
-
-.input-with-button button {
+.pilot-entry button.btn-circle {
     margin: 0 8px;
 }
 
-.btn-primary {
-    background: #1976D2;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background: #0867b3;
-}
-
-.btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.pilots-list label {
-    display: none;
-}
-
-.clear-btn {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.clear-btn:hover {
-    background: #5a6268;
-}
-
-.tooltip {
-    background-color: #333;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 13px;
-    display: none;
-}
-
-.tooltip[data-show] {
-    display: block;
-}
-
-.tooltip-arrow,
-.tooltip-arrow::before {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: inherit;
-}
-
-.tooltip-arrow {
-    visibility: hidden;
-}
-
-.tooltip-arrow::before {
-    visibility: visible;
-    content: '';
-    transform: rotate(45deg);
-}
-
-.tooltip[data-popper-placement^='top'] > .tooltip-arrow {
-    bottom: -4px;
-}
-
-.tooltip[data-popper-placement^='bottom'] > .tooltip-arrow {
-    top: -4px;
-}
-
-.tooltip[data-popper-placement^='left'] > .tooltip-arrow {
-    right: -4px;
-}
-
-.tooltip[data-popper-placement^='right'] > .tooltip-arrow {
-    left: -4px;
-}
-
-.btn-info {
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    flex-shrink: 0;
-}
-
-.btn-info:hover {
-    background: #5a6268;
-}
-
-.btn-remove {
-    background: #ff4757;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-    flex-shrink: 0;
-}
-
-.btn-remove:hover {
-    background: #ff3742;
-}
-
-.drop-zone {
-    border: 3px dashed #ddd;
-    border-radius: 12px;
-    padding: 40px 20px;
+.accordion-actions {
     text-align: center;
-    margin-bottom: 20px;
-    transition: border-color 0.3s, background-color 0.3s;
-    cursor: pointer;
 }
 
-.drop-zone:hover,
-.drop-zone.drag-over {
-    border-color: #4CAF50;
-    background-color: #f0f8f0;
-}
-
-.drop-zone-text {
-    color: #666;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-.drop-zone-subtext {
-    color: #999;
-    font-size: 0.9rem;
-}
-
-@media (max-width: 600px) {
-    .container {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 2rem;
-    }
+.btn-circle {
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
 }

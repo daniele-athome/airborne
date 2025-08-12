@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZIP Creator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .info-section,
+        .files-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .files-section {
+            display: none;
+        }
+
+        .files-section.show {
+            display: block;
+        }
+
+        .info-section h3 {
+            margin: 0 0 20px 0;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: white;
+        }
+
+        .input-group input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .input-group input[type="text"]::placeholder {
+            color: #999;
+        }
+
+        .coordinates-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .coordinates-group .input-group {
+            margin-bottom: 0;
+        }
+
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: white;
+        }
+
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .input-group input[type="number"]::placeholder {
+            color: #999;
+        }
+
+        .input-group input[type="number"]:invalid {
+            border-color: #ff4757;
+        }
+
+        .files-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .files-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .total-size {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .files-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .file-name {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+            word-break: break-all;
+            margin-right: 10px;
+        }
+
+        .file-size {
+            margin: 0 15px;
+            color: #666;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .remove-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .remove-btn:hover {
+            background: #ff3742;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .create-zip-btn {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .create-zip-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .create-zip-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        .drop-zone {
+            border: 3px dashed #ddd;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: border-color 0.3s, background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.drag-over {
+            border-color: #4CAF50;
+            background-color: #f0f8f0;
+        }
+
+        .drop-zone-text {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .drop-zone-subtext {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .files-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .coordinates-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .file-size {
+                margin: 0;
+            }
+            
+            .remove-btn {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗃️ ZIP Creator</h1>
+        <p class="subtitle">Seleziona o trascina file (max 2MB ciascuno) per creare un archivio ZIP</p>
+        
+        <div class="info-section">
+            <h3>📋 Informazioni ZIP</h3>
+            <div class="input-group">
+                <label for="callSign">Call sign:</label>
+                <input type="text" id="callSign" placeholder="Inserisci il call sign">
+            </div>
+            <div class="input-group">
+                <label for="hangarName">Hangar name:</label>
+                <input type="text" id="hangarName" placeholder="Inserisci il nome dell'hangar">
+            </div>
+            <div class="coordinates-group">
+                <div class="input-group">
+                    <label for="latitude">Latitudine:</label>
+                    <input type="number" id="latitude" step="any" placeholder="es. 41.9028" min="-90" max="90">
+                </div>
+                <div class="input-group">
+                    <label for="longitude">Longitudine:</label>
+                    <input type="number" id="longitude" step="any" placeholder="es. 12.4964" min="-180" max="180">
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-text">📁 Trascina i file qui</div>
+                <div class="drop-zone-subtext">oppure clicca per selezionare</div>
+            </div>
+            <input type="file" multiple accept="*/*" id="fileInput">
+        </div>
+
+        <div class="files-section" id="filesSection">
+            <div class="files-header">
+                <h3 id="filesCount">File selezionati (0)</h3>
+                <span class="total-size" id="totalSize">Dimensione totale: 0 MB</span>
+            </div>
+            
+            <div class="files-list" id="filesList"></div>
+
+            <div class="actions">
+                <button class="create-zip-btn" id="createZipBtn">
+                    📦 Crea ZIP
+                </button>
+                <button class="clear-btn" id="clearBtn">
+                    🗑️ Cancella tutto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ZipCreator {
+            constructor() {
+                this.files = [];
+                this.maxFileSize = 2 * 1024 * 1024; // 2MB
+                this.isCreatingZip = false;
+                
+                this.initElements();
+                this.bindEvents();
+            }
+
+            initElements() {
+                this.fileInput = document.getElementById('fileInput');
+                this.dropZone = document.getElementById('dropZone');
+                this.filesSection = document.getElementById('filesSection');
+                this.filesList = document.getElementById('filesList');
+                this.filesCount = document.getElementById('filesCount');
+                this.totalSize = document.getElementById('totalSize');
+                this.createZipBtn = document.getElementById('createZipBtn');
+                this.clearBtn = document.getElementById('clearBtn');
+                this.callSignInput = document.getElementById('callSign');
+                this.hangarNameInput = document.getElementById('hangarName');
+                this.latitudeInput = document.getElementById('latitude');
+                this.longitudeInput = document.getElementById('longitude');
+            }
+
+            bindEvents() {
+                // File input
+                this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+                
+                // Drop zone
+                this.dropZone.addEventListener('click', () => this.fileInput.click());
+                this.dropZone.addEventListener('dragover', (e) => this.handleDragOver(e));
+                this.dropZone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                this.dropZone.addEventListener('drop', (e) => this.handleDrop(e));
+                
+                // Buttons
+                this.createZipBtn.addEventListener('click', () => this.createZip());
+                this.clearBtn.addEventListener('click', () => this.clearFiles());
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                this.dropZone.classList.add('drag-over');
+            }
+
+            handleDragLeave(e) {
+                e.preventDefault();
+                this.dropZone.classList.remove('drag-over');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                this.dropZone.classList.remove('drag-over');
+                const files = Array.from(e.dataTransfer.files);
+                this.addFiles(files);
+            }
+
+            handleFileSelect(e) {
+                const files = Array.from(e.target.files);
+                this.addFiles(files);
+            }
+
+            addFiles(newFiles) {
+                const validFiles = [];
+                
+                newFiles.forEach(file => {
+                    // Controllo dimensione
+                    if (file.size > this.maxFileSize) {
+                        alert(`File "${file.name}" troppo grande (max 2MB)`);
+                        return;
+                    }
+                    
+                    // Controllo duplicati
+                    const isDuplicate = this.files.some(existingFile => 
+                        existingFile.name === file.name && existingFile.size === file.size
+                    );
+                    
+                    if (isDuplicate) {
+                        alert(`File "${file.name}" già presente`);
+                        return;
+                    }
+                    
+                    validFiles.push(file);
+                });
+                
+                this.files.push(...validFiles);
+                this.updateUI();
+            }
+
+            removeFile(index) {
+                this.files.splice(index, 1);
+                this.updateUI();
+            }
+
+            updateUI() {
+                // Mostra/nascondi sezione file
+                if (this.files.length > 0) {
+                    this.filesSection.classList.add('show');
+                } else {
+                    this.filesSection.classList.remove('show');
+                }
+
+                // Aggiorna contatori
+                this.filesCount.textContent = `File selezionati (${this.files.length})`;
+                
+                const totalBytes = this.files.reduce((sum, file) => sum + file.size, 0);
+                const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+                this.totalSize.textContent = `Dimensione totale: ${totalMB} MB`;
+
+                // Aggiorna lista file
+                this.filesList.innerHTML = '';
+                this.files.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    const fileName = document.createElement('span');
+                    fileName.className = 'file-name';
+                    fileName.textContent = file.name;
+                    
+                    const fileSize = document.createElement('span');
+                    fileSize.className = 'file-size';
+                    fileSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '✕';
+                    removeBtn.title = 'Rimuovi file';
+                    removeBtn.addEventListener('click', () => this.removeFile(index));
+                    
+                    fileItem.appendChild(fileName);
+                    fileItem.appendChild(fileSize);
+                    fileItem.appendChild(removeBtn);
+                    
+                    this.filesList.appendChild(fileItem);
+                });
+
+                // Reset input file
+                this.fileInput.value = '';
+            }
+
+            async createZip() {
+                if (this.files.length === 0 || this.isCreatingZip) return;
+                
+                this.isCreatingZip = true;
+                this.createZipBtn.disabled = true;
+                this.createZipBtn.innerHTML = '🔄 Creando ZIP...';
+                
+                try {
+                    const zip = new JSZip();
+                    
+                    // Crea info.txt con call sign e hangar name se compilati
+                    const callSign = this.callSignInput.value.trim();
+                    const hangarName = this.hangarNameInput.value.trim();
+                    const latitude = parseFloat(this.latitudeInput.value);
+                    const longitude = parseFloat(this.longitudeInput.value);
+                    
+                    if (callSign || hangarName || (!isNaN(latitude) && !isNaN(longitude))) {
+                        let infoContent = '';
+                        if (callSign) infoContent += `Call sign: ${callSign}\n`;
+                        if (hangarName) infoContent += `Hangar name: ${hangarName}\n`;
+                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                            infoContent += `Coordinate: ${latitude}, ${longitude}\n`;
+                            infoContent += `Google Maps: https://maps.google.com/?q=${latitude},${longitude}\n`;
+                        }
+                        infoContent += `\nCreato il: ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT')}`;
+                        
+                        zip.file('info.txt', infoContent);
+                    }
+                    
+                    // Aggiungi ogni file allo zip
+                    this.files.forEach(file => {
+                        zip.file(file.name, file);
+                    });
+                    
+                    // Genera il file ZIP
+                    const zipBlob = await zip.generateAsync({
+                        type: 'blob',
+                        compression: 'DEFLATE',
+                        compressionOptions: { level: 6 }
+                    });
+                    
+                    // Download automatico
+                    const url = URL.createObjectURL(zipBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    
+                    // Nome file ZIP basato su call sign o data
+                    const zipCallSign = this.callSignInput.value.trim();
+                    const fileName = zipCallSign 
+                        ? `${zipCallSign}_${new Date().toISOString().slice(0,10)}.zip`
+                        : `files_${new Date().toISOString().slice(0,10)}.zip`;
+                    
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                } catch (error) {
+                    alert('Errore nella creazione dello ZIP: ' + error.message);
+                    console.error('Errore ZIP:', error);
+                } finally {
+                    this.isCreatingZip = false;
+                    this.createZipBtn.disabled = false;
+                    this.createZipBtn.innerHTML = '📦 Crea ZIP';
+                }
+            }
+
+            clearFiles() {
+                this.files = [];
+                this.updateUI();
+            }
+        }
+
+        // Inizializza l'applicazione quando il DOM è pronto
+        document.addEventListener('DOMContentLoaded', () => {
+            new ZipCreator();
+        });
+    </script>
+</body>
+</html>

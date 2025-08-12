@@ -1,0 +1,10 @@
+{
+  "name": "airborne-aircraft-tool",
+  "version": "0.0.1",
+  "scripts": {},
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "jszip": "^3.10.1"
+  },
+  "type": "module"
+}

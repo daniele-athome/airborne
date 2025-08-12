@@ -1,7 +1,7 @@
 
 function getPilotCount() {
     let maxIndex = 0;
-    for (const entry of document.querySelectorAll('#pilotsList .input-pilot')) {
+    for (const entry of document.querySelectorAll('#pilotsList .pilot-entry')) {
         const entryIndex = parseInt(entry.id.replace("pilotEntry", ""));
         maxIndex = Math.max(maxIndex, entryIndex);
     }

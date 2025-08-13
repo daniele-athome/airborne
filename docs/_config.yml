@@ -1,7 +1,6 @@
 title: Airborne
 description: Aircraft Management
-theme: jekyll-theme-architect
-show_downloads: false
+theme: architect
 exclude:
   - Gemfile
   - Gemfile.lock

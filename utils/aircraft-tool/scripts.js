@@ -1,4 +1,101 @@
 
+function buildAircraftId() {
+    return document.getElementById("callsign").value.trim().toLowerCase().replaceAll("-", "");
+}
+
+function createAircraftJson(adminMode) {
+    return JSON.stringify({
+        "admin": adminMode,
+        "aircraft_id": buildAircraftId(),
+        "callsign": document.getElementById("callsign").value.trim(),
+        "backend_info": {
+            "google_api_service_account": document.getElementById("googleApiServiceAccount").value,
+            "google_api_key": document.getElementById("googleApiKey").value,
+            "google_calendar_id": document.getElementById("googleCalendarId").value?.trim() || null,
+            "flightlog_spreadsheet_id": document.getElementById("googleSpreadsheetId").value?.trim() || null,
+            "flightlog_sheet_name": document.getElementById("flightlogSheetName").value?.trim() || null,
+            "activities_spreadsheet_id": document.getElementById("googleSpreadsheetId").value?.trim() || null,
+            "activities_sheet_name": document.getElementById("activitiesSheetName").value?.trim() || null,
+            "metadata_spreadsheet_id": document.getElementById("googleSpreadsheetId").value?.trim() || null,
+            "metadata_sheet_name": document.getElementById("metadataSheetName").value?.trim() || null,
+        },
+        "no_pilot_name": document.getElementById("pilotNameNone").value.trim(),
+        "pilot_names": document.querySelectorAll("#pilotsList input.pilot-name")
+            .values()
+            .filter(element => element.value.trim().length > 0)
+            .map(element => element.value.trim())
+            .toArray(),
+        "documents_archive": document.getElementById("documentsArchiveUrl").value?.trim() || null,
+        "location": {
+            "name": document.getElementById("hangarName").value.trim(),
+            "latitude": document.getElementById("hangarLat").valueAsNumber,
+            "longitude": document.getElementById("hangarLon").valueAsNumber,
+            "timezone": document.getElementById("hangarTz").value.trim(),
+            "weather_live": document.getElementById("weatherLiveUrl").value?.trim() || null,
+            "weather_forecast": document.getElementById("weatherForecastUrl").value?.trim() || null,
+        },
+    }, null, 2);
+}
+
+async function generateAndDownloadZip(adminMode) {
+    // TODO progress indicator
+
+    try {
+        const zip = new JSZip();
+
+        zip.file("aircraft.json", createAircraftJson(adminMode));
+
+        // pilot avatars
+        const pilotNames = document.querySelectorAll("#pilotsList input.pilot-name")
+            .values()
+            .filter(element => element.value.trim().length > 0)
+            .map(element => element.value)
+            .toArray();
+        const pilotAvatars = document.querySelectorAll("#pilotsList img.pilot-avatar")
+            .values()
+            .map(element => element.src)
+            .toArray();
+        for (const pilotIndex in pilotAvatars) {
+            const avatarData = await fetch(pilotAvatars[pilotIndex]);
+            const avatar = await avatarData.blob();
+            const name = pilotNames[pilotIndex].toLowerCase();
+            zip.file(`avatar-${name}.jpg`, avatar);
+        }
+
+        // aircraft photo
+        const photoData = await fetch(document.getElementById("aircraftPhoto").src);
+        const photo = await photoData.blob();
+        zip.file("aircraft.jpg", photo);
+
+        const zipBlob = await zip.generateAsync({
+            type: 'blob',
+            compression: 'DEFLATE',
+            compressionOptions: { level: 6 }
+        });
+
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        a.download = `${buildAircraftId()}${adminMode ? "-admin" : ""}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+    }
+    catch (error) {
+        // TODO display error
+        console.error("Error generating zip file", error);
+    }
+    finally {
+        // TODO stop progress indicator
+    }
+
+    // TODO
+
+}
+
 function openBlobStorage(dbName) {
     const request = indexedDB.open(dbName, 1);
 
@@ -195,11 +292,36 @@ function checkValidity(element) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // setup button events
+    // setup events
     document.getElementById("addPilotBtn")
         .addEventListener("click", () => addPilot());
     document.getElementById("clearPilotsBtn")
         .addEventListener("click", () => deletePilots());
+
+    const photoDropZone = document.getElementById("aircraftPhotoDropZone");
+    photoDropZone.addEventListener('click', () => document.getElementById("aircraftPhotoFile").click());
+    photoDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.target.classList.add('drag-over');
+    });
+    photoDropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('drag-over');
+    });
+    photoDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('drag-over');
+        // TODO handle file
+        //const files = Array.from(e.dataTransfer.files[0]);
+    });
+
+    const photoFile = document.getElementById("aircraftPhotoFile");
+    photoFile.addEventListener('change', (e) => {
+        // TODO handle file (persist + reload as data URL)
+        document.getElementById("aircraftPhoto").src = URL.createObjectURL(e.target.files[0]);
+        document.getElementById("aircraftPhoto").classList.remove('visually-hidden');
+        document.getElementById("aircraftPhotoDropZone").classList.add('visually-hidden');
+    });
 
     // tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -234,6 +356,8 @@ document.addEventListener("DOMContentLoaded", () => {
         else {
             document.getElementById('mainFormInvalid').classList.add('visually-hidden');
             document.getElementById('mainFormValid').classList.remove('visually-hidden');
+
+            generateAndDownloadZip(e.submitter.id === "generateAdminBtn");
         }
     }, false);
 

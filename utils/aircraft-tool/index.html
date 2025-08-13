@@ -38,10 +38,19 @@
                 </h2>
                 <div id="accordionInfo" class="accordion-collapse collapse show" data-bs-parent="#mainAccordion">
                     <div class="accordion-body">
-                        <div class="row g-3">
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-md-6 col-sm-12 upload-section text-center">
+                                <img class="aircraft-photo h-100 w-100 visually-hidden" alt="Aircraft photo" id="aircraftPhoto" src="">
+                                <div class="drop-zone" id="aircraftPhotoDropZone">
+                                    <div class="drop-zone-text">📷 Drop aircraft photo here</div>
+                                    <div class="drop-zone-subtext">or click to browse</div>
+                                </div>
+                                <input type="file" accept="image/jpeg" id="aircraftPhotoFile">
+                            </div>
+
                             <div class="col-sm-12">
-                                <label class="form-label" for="callSign">Call sign</label>
-                                <input class="form-control" type="text" id="callSign" placeholder="A-1234" required>
+                                <label class="form-label" for="callsign">Call sign</label>
+                                <input class="form-control" type="text" id="callsign" placeholder="A-1234" required>
                             </div>
                             <div class="col-sm-6">
                                 <label class="form-label" for="hangarName">Hangar name</label>
@@ -239,7 +248,7 @@
     <div class="row mb-3 pilot-entry" id="pilotEntryX">
         <div class="col-sm-12">
             <div class="d-flex align-items-center">
-                <input type="file" accept="image/jpeg,image/png" id="pilotAvatarFileX">
+                <input type="file" accept="image/jpeg" id="pilotAvatarFileX">
                 <img class="pilot-avatar" id="pilotAvatarX" alt="Pilot X avatar" src="./avatar.png">
                 <label class="form-label visually-hidden" for="pilotNameX">Pilot __X__ name</label>
                 <input type="text" class="form-control pilot-name" id="pilotNameX" placeholder="Insert pilot name"

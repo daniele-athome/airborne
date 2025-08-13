@@ -46,3 +46,30 @@ input[type="file"] {
     font-size: 0.9em;
     font-weight: bold;
 }
+
+.drop-zone {
+    border: 3px dashed #ddd;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: #4CAF50;
+    background-color: #f0f8f0;
+}
+
+.drop-zone-text {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.drop-zone-subtext {
+    color: #999;
+    font-size: 0.9rem;
+}

@@ -20,11 +20,9 @@ function createAircraftJson(adminMode) {
             "metadata_sheet_name": document.getElementById("metadataSheetName").value?.trim() || null,
         },
         "no_pilot_name": document.getElementById("pilotNameNone").value.trim(),
-        "pilot_names": document.querySelectorAll("#pilotsList input.pilot-name")
-            .values()
+        "pilot_names": Array.from(document.querySelectorAll("#pilotsList input.pilot-name"))
             .filter(element => element.value.trim().length > 0)
-            .map(element => element.value.trim())
-            .toArray(),
+            .map(element => element.value.trim()),
         "documents_archive": document.getElementById("documentsArchiveUrl").value?.trim() || null,
         "location": {
             "name": document.getElementById("hangarName").value.trim(),
@@ -56,15 +54,11 @@ async function generateAndDownloadZip(adminMode) {
         zip.file("aircraft.json", createAircraftJson(adminMode));
 
         // pilot avatars
-        const pilotNames = document.querySelectorAll("#pilotsList input.pilot-name")
-            .values()
+        const pilotNames = Array.from(document.querySelectorAll("#pilotsList input.pilot-name"))
             .filter(element => element.value.trim().length > 0)
-            .map(element => element.value)
-            .toArray();
-        const pilotAvatars = document.querySelectorAll("#pilotsList img.pilot-avatar")
-            .values()
-            .map(element => element.src)
-            .toArray();
+            .map(element => element.value);
+        const pilotAvatars = Array.from(document.querySelectorAll("#pilotsList img.pilot-avatar"))
+            .map(element => element.src);
         for (const pilotIndex in pilotAvatars) {
             const avatarData = await fetch(pilotAvatars[pilotIndex]);
             const avatar = await avatarData.blob();
@@ -244,18 +238,14 @@ function deletePilots() {
 }
 
 function persistPilots() {
-    const pilotNames = document.querySelectorAll("#pilotsList input.pilot-name")
-        .values()
+    const pilotNames = Array.from(document.querySelectorAll("#pilotsList input.pilot-name"))
         .filter(element => element.value.trim().length > 0)
-        .map(element => element.value)
-        .toArray();
+        .map(element => element.value);
     localStorage.setItem(`autosave-pilotNames`, pilotNames.join("|"));
 
     deleteStore("pilotAvatars").then(() => {
-        const pilotAvatars = document.querySelectorAll("#pilotsList img.pilot-avatar")
-            .values()
-            .map(element => element.src)
-            .toArray();
+        const pilotAvatars = Array.from(document.querySelectorAll("#pilotsList img.pilot-avatar"))
+            .map(element => element.src);
         for (const pilotIndex in pilotAvatars) {
             persistBlob("pilotAvatars", `pilotAvatar${parseInt(pilotIndex) + 1}`, pilotAvatars[pilotIndex])
         }

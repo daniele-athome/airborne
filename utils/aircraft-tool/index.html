@@ -39,11 +39,13 @@
                 <div id="accordionInfo" class="accordion-collapse collapse show" data-bs-parent="#mainAccordion">
                     <div class="accordion-body">
                         <div class="row g-3 justify-content-center">
-                            <div class="col-md-6 col-sm-12 upload-section text-center">
-                                <img class="aircraft-photo h-100 w-100 visually-hidden" alt="Aircraft photo" id="aircraftPhoto" src="">
+                            <div class="col-lg-9 col-xl-6 col-md-12 col-sm-12 upload-section text-center">
                                 <div class="drop-zone" id="aircraftPhotoDropZone">
-                                    <div class="drop-zone-text">📷 Drop aircraft photo here</div>
-                                    <div class="drop-zone-subtext">or click to browse</div>
+                                    <img class="aircraft-photo visually-hidden" alt="Aircraft photo" id="aircraftPhoto" src="">
+                                    <div id="aircraftPhotoDropZoneHelp">
+                                        <div class="drop-zone-text">📷 Drop aircraft photo here</div>
+                                        <div class="drop-zone-subtext">or click to browse</div>
+                                    </div>
                                 </div>
                                 <input type="file" accept="image/jpeg" id="aircraftPhotoFile">
                             </div>
@@ -225,14 +227,24 @@
                             </div>
                         </div>
 
-                        <div class="accordion-actions">
-                            <button class="btn btn-primary" id="generateStandardBtn">
-                                📦 Generate
-                            </button>
-                            <button class="btn btn-danger" id="generateAdminBtn">
-                                🗃️ Generate (admin)
-                            </button>
+                        <div class="row mb-3 accordion-actions" id="generateActions">
+                            <div class="col-sm-12">
+                                <button class="btn btn-primary" id="generateStandardBtn">
+                                    📦 Generate
+                                </button>
+                                <button class="btn btn-danger" id="generateAdminBtn">
+                                    🗃️ Generate (admin)
+                                </button>
+                            </div>
                         </div>
+
+                        <dov class="row g-3 visually-hidden" id="progressIndicator">
+                            <div class="col-sm-12 text-center">
+                                <div class="text-primary-emphasis fs-5">
+                                    🔄 Generating...
+                                </div>
+                            </div>
+                        </dov>
 
                     </div>
                 </div>

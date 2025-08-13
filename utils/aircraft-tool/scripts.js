@@ -37,8 +37,18 @@ function createAircraftJson(adminMode) {
     }, null, 2);
 }
 
+function startProgress() {
+    document.querySelectorAll("#generateActions button").forEach(button => button.disabled = true);
+    document.getElementById('progressIndicator').classList.remove('visually-hidden');
+}
+
+function stopProgress() {
+    document.querySelectorAll("#generateActions button").forEach(button => button.disabled = false);
+    document.getElementById('progressIndicator').classList.add('visually-hidden');
+}
+
 async function generateAndDownloadZip(adminMode) {
-    // TODO progress indicator
+    startProgress();
 
     try {
         const zip = new JSZip();
@@ -85,15 +95,12 @@ async function generateAndDownloadZip(adminMode) {
 
     }
     catch (error) {
-        // TODO display error
         console.error("Error generating zip file", error);
+        alert("Error generating zip file.");
     }
     finally {
-        // TODO stop progress indicator
+        stopProgress();
     }
-
-    // TODO
-
 }
 
 function openBlobStorage(dbName) {
@@ -264,7 +271,7 @@ function restorePilots() {
             // restore pilot name
             document.getElementById(`pilotName${pilotIndex + 1}`).value = pilotName;
             // restore avatar
-            restoreBlob("pilotAvatars",  `pilotAvatar${pilotIndex + 1}`).then(blob => {
+            restoreBlob("pilotAvatars", `pilotAvatar${pilotIndex + 1}`).then(blob => {
                 if (blob) {
                     const reader = new FileReader();
                     reader.onload = () => document.getElementById(`pilotAvatar${pilotIndex + 1}`).src = reader.result
@@ -279,6 +286,35 @@ function restorePilots() {
             addPilot();
         }
     }
+}
+
+function restoreAircraftPhoto() {
+    restoreBlob("aircraft", "photo").then(blob => {
+        if (blob) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.getElementById(`aircraftPhoto`).src = reader.result;
+                displayAircraftPhoto();
+            }
+            reader.readAsDataURL(blob);
+        }
+    });
+}
+
+function updateAircraftPhoto(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+        persistBlob("aircraft", "photo", reader.result);
+        document.getElementById(`aircraftPhoto`).src = reader.result;
+    }
+    reader.readAsDataURL(file);
+
+    displayAircraftPhoto();
+}
+
+function displayAircraftPhoto() {
+    document.getElementById("aircraftPhoto").classList.remove('visually-hidden');
+    document.getElementById("aircraftPhotoDropZoneHelp").classList.add('visually-hidden');
 }
 
 function checkValidity(element) {
@@ -311,16 +347,12 @@ document.addEventListener("DOMContentLoaded", () => {
     photoDropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         e.target.classList.remove('drag-over');
-        // TODO handle file
-        //const files = Array.from(e.dataTransfer.files[0]);
+        updateAircraftPhoto(e.dataTransfer.files[0]);
     });
 
     const photoFile = document.getElementById("aircraftPhotoFile");
     photoFile.addEventListener('change', (e) => {
-        // TODO handle file (persist + reload as data URL)
-        document.getElementById("aircraftPhoto").src = URL.createObjectURL(e.target.files[0]);
-        document.getElementById("aircraftPhoto").classList.remove('visually-hidden');
-        document.getElementById("aircraftPhotoDropZone").classList.add('visually-hidden');
+        updateAircraftPhoto(e.target.files[0]);
     });
 
     // tooltips
@@ -381,4 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // restore or create pilot entries
     // we do this after setting the autosave event handlers because another method is used to persist pilots
     restorePilots();
+
+    // restore aircraft photo
+    restoreAircraftPhoto();
 });

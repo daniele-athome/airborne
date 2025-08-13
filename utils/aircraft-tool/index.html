@@ -18,8 +18,13 @@
             Airborne aircraft data tool
             <img alt="Airborne logo" class="logo" src="./logo.svg">
         </h1>
-        <p class="text-muted text-center">Use this tool to create an aircraft data file for <a
-                href="https://github.com/daniele-athome/airborne">Airborne</a>.</p>
+        <p class="text-muted text-center">
+            Use this tool to create an aircraft data file for <a target="_blank"
+                                                                 href="https://github.com/daniele-athome/airborne">Airborne</a>.<br>
+            <strong>Please read the documentation first: <a target="_blank"
+                                                            href="https://github.com/daniele-athome/airborne/blob/master/docs/backend.md">backend
+                guide</a></strong>.
+        </p>
 
         <div class="accordion" id="mainAccordion">
 
@@ -86,6 +91,19 @@
                 <div id="accordionPilots" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
                     <div class="accordion-body">
 
+                        <div class="row mb-3 pilot-entry" id="pilotEntryNone">
+                            <div class="col-sm-12">
+                                <div class="d-flex align-items-center">
+                                    <img class="pilot-avatar" id="pilotAvatarNone" alt="No name pilot avatar"
+                                         src="./noname_avatar.png">
+                                    <label class="form-label visually-hidden" for="pilotNameNone">Pilot no name</label>
+                                    <input type="text" class="form-control" id="pilotNameNone"
+                                           placeholder="Insert maintenance pilot name"
+                                           aria-label="Insert maintenance name" value="(maintenance)" required>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="pilots-list" id="pilotsList"></div>
 
                         <div class="accordion-actions">
@@ -113,48 +131,82 @@
 
                         <div class="row g-3">
                             <div class="col-sm-12">
-                                <label class="form-label" for="googleApiServiceAccount">Google API service account</label>
-                                <textarea id="googleApiServiceAccount"  class="form-control" rows="10"
-                                          placeholder="Paste contents of service account JSON file here" required></textarea>
+                                <label class="form-label" for="googleApiServiceAccount">Google API service account
+                                    <span class="text-muted">(<a target="_blank"
+                                                                 href="https://cloud.google.com/iam/docs/service-accounts-create#iam-service-accounts-create-console">Guide</a>)</span>
+                                </label>
+                                <textarea id="googleApiServiceAccount" class="form-control" rows="10"
+                                          placeholder="Paste contents of service account JSON file here"
+                                          required></textarea>
                             </div>
                             <div class="col-sm-12">
-                                <label class="form-label" for="googleApiKey">Google API key</label>
+                                <label class="form-label" for="googleApiKey">Google API key
+                                    <span class="text-muted">(<a target="_blank"
+                                                                 href="https://cloud.google.com/docs/authentication/api-keys#console_2">Guide</a>)</span>
+                                </label>
                                 <input class="form-control" type="text" id="googleApiKey" required>
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label d-flex" for="googleCalendarId">Google Calendar ID
                                     <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
-                                            title="Skipping this field will disable all flight booking functionality.">?</button>
+                                            title="Skipping this field will disable all flight booking functionality.">?
+                                    </button>
                                 </label>
-                                <input class="form-control" type="text" id="googleCalendarId" placeholder="...@group.calendar.google.com">
+                                <input class="form-control" type="text" id="googleCalendarId"
+                                       placeholder="...@group.calendar.google.com">
                             </div>
                             <div class="col-sm-12">
                                 <label class="form-label d-flex" for="googleSpreadsheetId">Google Spreadsheet ID
                                     <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
-                                            title="Skipping this field will disable the flight log and the activity log features.">?</button>
+                                            title="Skipping this field will disable the flight log and the activity log features.">
+                                        ?
+                                    </button>
                                 </label>
                                 <input class="form-control" type="text" id="googleSpreadsheetId">
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label d-flex" for="flightlogSheetName">Flight log sheet name
                                     <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
-                                            title="Skipping this field will disable flight log functionality.">?</button>
+                                            title="Skipping this field will disable flight log functionality.">?
+                                    </button>
                                 </label>
                                 <input class="form-control" type="text" id="flightlogSheetName">
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label d-flex" for="activitiesSheetName">Activities sheet name
                                     <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
-                                            title="Skipping this field will disable activity log functionality.">?</button>
+                                            title="Skipping this field will disable activity log functionality.">?
+                                    </button>
                                 </label>
                                 <input class="form-control" type="text" id="activitiesSheetName">
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label d-flex" for="metadataSheetName">Metadata sheet name
                                     <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
-                                            title="This is required if at least one of the other sheet names are set.">?</button>
+                                            title="This is required if at least one of the other sheet names are set.">?
+                                    </button>
                                 </label>
                                 <input class="form-control" type="text" id="metadataSheetName">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionFinalize" aria-expanded="true" aria-controls="accordionFinalize">
+                        🪄 Validate &amp; generate configuration
+                    </button>
+                </h2>
+                <div id="accordionFinalize" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+
+                        <div class="row g-3">
+                            <div class="col-sm-12">
+                                <!-- TODO -->
                             </div>
                         </div>
 
@@ -174,7 +226,7 @@
                 <input type="file" accept="image/jpeg,image/png" id="pilotAvatarFileX">
                 <img class="pilot-avatar" id="pilotAvatarX" alt="Pilot X avatar" src="./avatar.png">
                 <label class="form-label visually-hidden" for="pilotNameX">Pilot __X__ name</label>
-                <input type="text" class="form-control" id="pilotNameX" placeholder="Insert pilot name"
+                <input type="text" class="form-control pilot-name" id="pilotNameX" placeholder="Insert pilot name"
                        aria-label="Insert pilot name" required>
                 <button class="btn btn-circle btn-danger" title="Remove pilot" id="removePilotX" type="button">&times;
                 </button>

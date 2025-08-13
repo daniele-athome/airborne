@@ -107,7 +107,7 @@ function openBlobStorage(dbName) {
     const request = indexedDB.open(dbName, 1);
 
     request.onupgradeneeded = e => {
-        /** @type IDBDatabase */
+        /** @type {IDBDatabase} */
         const db = e.target.result;
         if (!db.objectStoreNames.contains("files")) {
             db.createObjectStore("files");
@@ -121,7 +121,7 @@ function deleteStore(dbName) {
     return new Promise((resolve, reject) => {
         const request = openBlobStorage(dbName);
         request.onsuccess = e => {
-            /** @type IDBDatabase */
+            /** @type {IDBDatabase} */
             const db = e.target.result;
             const tx = db.transaction("files", "readwrite");
             tx.oncomplete = () => resolve();
@@ -145,7 +145,7 @@ function persistBlob(dbName, key, blobUrl) {
                 const request = openBlobStorage(dbName);
 
                 request.onsuccess = e => {
-                    /** @type IDBDatabase */
+                    /** @type {IDBDatabase} */
                     const db = e.target.result;
                     const tx = db.transaction("files", "readwrite");
                     tx.oncomplete = () => resolve();
@@ -166,7 +166,7 @@ function restoreBlob(dbName, key) {
         const request = openBlobStorage(dbName);
 
         request.onsuccess = e => {
-            /** @type IDBDatabase */
+            /** @type {IDBDatabase} */
             const db = e.target.result;
             const tx = db.transaction("files", "readonly");
             const store = tx.objectStore("files");

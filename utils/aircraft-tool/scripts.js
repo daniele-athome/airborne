@@ -219,6 +219,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // form validation and submit
+    document.getElementById('mainForm').addEventListener('submit', e => {
+        // we handle the submit ourselves
+        e.preventDefault();
+        e.stopPropagation();
+
+        e.target.classList.add('was-validated');
+
+        if (!e.target.checkValidity()) {
+            document.getElementById('mainFormInvalid').classList.remove('visually-hidden');
+            document.getElementById('mainFormValid').classList.add('visually-hidden');
+        }
+        else {
+            document.getElementById('mainFormInvalid').classList.add('visually-hidden');
+            document.getElementById('mainFormValid').classList.remove('visually-hidden');
+        }
+    }, false);
+
     // save/restore state to/from local storage
     // pilots state needs special handling because it's dynamic and has files (avatars)
     document.querySelectorAll("input, textarea").forEach(element => {

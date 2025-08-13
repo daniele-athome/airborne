@@ -26,6 +26,7 @@
                 guide</a></strong>.
         </p>
 
+        <form id="mainForm" novalidate>
         <div class="accordion" id="mainAccordion">
 
             <div class="accordion-item">
@@ -108,7 +109,7 @@
 
                         <div class="accordion-actions">
                             <button class="btn btn-primary" id="addPilotBtn">
-                                📦 Add pilot
+                                💺 Add pilot
                             </button>
                             <button class="btn btn-secondary" id="clearPilotsBtn">
                                 🗑️ Delete all pilots
@@ -204,10 +205,24 @@
                 <div id="accordionFinalize" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
                     <div class="accordion-body">
 
-                        <div class="row g-3">
-                            <div class="col-sm-12">
-                                <!-- TODO -->
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 text-center">
+                                <div class="form-validity text-danger fs-5 visually-hidden" id="mainFormInvalid">
+                                    ❌ Please check all validation errors above and fix them.
+                                </div>
+                                <div class="form-validity text-success fs-5 visually-hidden" id="mainFormValid">
+                                    ✅ Configuration is valid.
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="accordion-actions">
+                            <button class="btn btn-primary" id="generateStandardBtn">
+                                📦 Generate
+                            </button>
+                            <button class="btn btn-danger" id="generateAdminBtn">
+                                🗃️ Generate (admin)
+                            </button>
                         </div>
 
                     </div>
@@ -215,6 +230,7 @@
             </div>
 
         </div>
+        </form>
 
     </div>
 </div>

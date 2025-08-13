@@ -1,4 +1,5 @@
-name: Build and deploy website to GitHub Pages
+name: docs
+
 on:
   push:
     branches:

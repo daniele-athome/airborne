@@ -175,7 +175,10 @@ the spreadsheet.
 }
 ```
 
-## Aircraft archive file
+## Aircraft data file
+
+There is a [nice web tool to build an aircraft data file](https://daniele-athome.github.io/airborne/aircraft-tool/) (BETA);
+if the tool doesn't work you can proceed with the manual process.
 
 Create a zip file with the following:
 

@@ -78,3 +78,10 @@ input[type="file"] {
 .aircraft-photo {
     height: 200px;
 }
+
+@include media-breakpoint-down(sm) {
+  .aircraft-photo {
+    height: 100%;
+    width: 100%;
+  }
+}

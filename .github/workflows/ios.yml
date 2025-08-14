@@ -11,7 +11,7 @@ env:
 jobs:
   # Since Fastlane also builds, there is no way to split jobs without sacrificing build time
   test-build-deploy:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

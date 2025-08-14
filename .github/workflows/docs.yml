@@ -38,7 +38,8 @@ jobs:
 
       - name: Copy aircraft-tool to docs
         run: |
-          cp -rv ./utils/aircraft-tool/dist/* ./docs/
+          mkdir ./docs/aircraft-tool
+          cp -rv ./utils/aircraft-tool/dist/* ./docs/aircraft-tool/
 
       # Use GitHub Deploy Action to build and deploy to Github
       # For latest version: `jeffreytse/jekyll-deploy-action@master`

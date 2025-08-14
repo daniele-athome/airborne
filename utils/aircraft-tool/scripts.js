@@ -1,3 +1,7 @@
+import './styles.scss';
+
+import JSZip from "jszip";
+import * as bootstrap from 'bootstrap'
 
 function buildAircraftId() {
     return document.getElementById("callsign").value.trim().toLowerCase().replaceAll("-", "");

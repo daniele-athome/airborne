@@ -32,9 +32,13 @@ jobs:
         run: npm ci
         working-directory: ./utils/aircraft-tool
 
+      - name: Build aircraft-tool
+        run: npm run build
+        working-directory: ./utils/aircraft-tool
+
       - name: Copy aircraft-tool to docs
         run: |
-          cp -rv ./utils/aircraft-tool ./docs
+          cp -rv ./utils/aircraft-tool/dist/* ./docs/
 
       # Use GitHub Deploy Action to build and deploy to Github
       # For latest version: `jeffreytse/jekyll-deploy-action@master`
@@ -43,4 +47,3 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: 'gh-pages'
           jekyll_src: './docs/'
-

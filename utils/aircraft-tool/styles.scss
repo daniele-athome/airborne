@@ -1,0 +1,80 @@
+@import "~bootstrap/scss/bootstrap";
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+}
+
+#mainAccordion .accordion-header button {
+    font-weight: bold;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.pilot-avatar {
+    width: 36px;
+    height: 36px;
+    margin: 0 8px;
+    cursor: pointer;
+}
+
+.pilot-entry button.btn-circle {
+    margin: 0 8px;
+}
+
+.accordion-actions {
+    text-align: center;
+}
+
+.btn-circle {
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.drop-zone {
+    border: 3px dashed #ddd;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, background-color 0.3s;
+    cursor: pointer;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: #4CAF50;
+    background-color: #f0f8f0;
+}
+
+.drop-zone-text {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.drop-zone-subtext {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.aircraft-photo {
+    height: 200px;
+}

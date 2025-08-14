@@ -1,5 +1,6 @@
 ---
 title: Airborne privacy policy
+layout: default
 ---
 
 Data collection

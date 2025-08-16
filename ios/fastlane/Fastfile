@@ -31,6 +31,9 @@ platform :ios do
         type: "appstore",
         git_url: "https://github.com/daniele-athome/airborne-deploy.git",
         git_basic_authorization: ENV["MATCH_GIT_AUTHORIZATION"],
+        # https://github.com/fastlane/fastlane/issues/21956#issuecomment-2427256837
+        # https://github.com/fastlane/fastlane/issues/29431
+        force_legacy_encryption: true,
     )
     build_app(scheme: "Runner")
     upload_to_app_store(

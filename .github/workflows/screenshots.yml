@@ -47,12 +47,10 @@ jobs:
             flutter doctor
             flutter devices
             flutter drive --device-id=emulator-5554 --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
-            ls -lA
-            ls -lR .screenshots
+            ls -R .screenshots
 
       - name: Archive screenshots
         uses: actions/upload-artifact@v4
         with:
           name: android-screenshots
-          # FIXME screenshots tree doesn't seem to comply with what's in screenshots_driver.dart
-          path: '.screenshots/'
+          path: '.screenshots/**'

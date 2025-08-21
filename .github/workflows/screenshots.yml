@@ -41,7 +41,12 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: flutter drive --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
+          script: |
+            flutter config --android-sdk /usr/local/lib/android/sdk
+            flutter doctor
+            flutter devices
+            flutter emulators
+            flutter drive --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
 
       - name: Archive screenshots
         uses: actions/upload-artifact@v4

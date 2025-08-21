@@ -45,10 +45,19 @@ jobs:
           mkdir ./docs/aircraft-tool
           cp -rv ./utils/aircraft-tool/dist/* ./docs/aircraft-tool/
 
+      - name: Copy screenshots for README to docs
+        run: |
+          mkdir ./docs/screenshots
+          cp ./android/fastlane/metadata/android/en-US/images/phoneScreenshots/* ./docs/screenshots/
+          cp ./ios/fastlane/screenshots/en-US/* ./docs/screenshots/
+
       - name: Copy main README to docs
         run: |
           echo -e "---\ntitle: Airborne aircraft management\nlayout: default\n---\n\n" >./docs/index.md
           cat ./README.md >>./docs/index.md
+          sed -i 's/(docs\/\([a-z-]*\)\.md)/(\1)/' ./docs/index.md
+          sed -i 's/\/ios\/fastlane\/screenshots\/en-US/screenshots/' ./docs/index.md
+          sed -i 's/\/android\/fastlane\/metadata\/android\/en-US\/images\/phoneScreenshots/screenshots/' ./docs/index.md
 
       # Use GitHub Deploy Action to build and deploy to Github
       # For latest version: `jeffreytse/jekyll-deploy-action@master`

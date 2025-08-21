@@ -47,6 +47,8 @@ jobs:
             flutter doctor
             flutter devices
             flutter drive --device-id=emulator-5554 --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
+            ls -lA
+            ls -lR .screenshots
 
       - name: Archive screenshots
         uses: actions/upload-artifact@v4

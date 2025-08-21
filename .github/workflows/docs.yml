@@ -5,6 +5,11 @@ on:
     branches:
       - master
       - release
+    paths:
+      - README.md
+      - 'docs/**'
+      - 'utils/aircraft-tool/**'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 jobs:

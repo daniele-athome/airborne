@@ -2,7 +2,15 @@ name: windows
 
 on:
   push:
+    paths_ignore:
+      - README.md
+      - 'docs/**'
+      - 'utils/**'
   pull_request:
+    paths_ignore:
+      - README.md
+      - 'docs/**'
+      - 'utils/**'
   workflow_dispatch:
 
 env:

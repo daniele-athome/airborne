@@ -40,7 +40,8 @@ jobs:
       - name: Run screenshots tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 29
+          arch: x86_64
           script: |
             flutter config --android-sdk /usr/local/lib/android/sdk
             flutter doctor

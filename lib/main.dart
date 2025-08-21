@@ -130,11 +130,27 @@ class _MyAppState extends State<MyApp> {
                 //themeMode: ThemeMode.dark,
                 theme: ThemeData(
                   brightness: Brightness.light,
-                  primarySwatch: Colors.deepOrange,
+                  colorScheme: ColorScheme.fromSeed(
+                    brightness: Brightness.light,
+                    seedColor: Colors.orange,
+                    primary: Colors.deepOrange,
+                    secondary: Colors.red,
+                    tertiary: Colors.lightGreen,
+                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                  ),
+                  useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
                   brightness: Brightness.dark,
-                  primarySwatch: Colors.deepOrange,
+                  colorScheme: ColorScheme.fromSeed(
+                    brightness: Brightness.dark,
+                    seedColor: Colors.orange,
+                    primary: Colors.deepOrange,
+                    secondary: Colors.red,
+                    tertiary: Colors.lightGreen,
+                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                  ),
+                  useMaterial3: true,
                 ),
               ),
               cupertino: (_, __) => CupertinoAppData(

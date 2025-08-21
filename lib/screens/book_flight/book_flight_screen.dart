@@ -484,8 +484,8 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                   children: _buildCalendarSwitches(context),
                   selectionIndex: _currentCalendarSwitch,
                   borderColor: Colors.grey,
-                  selectedColor: Theme.of(context).colorScheme.secondary,
-                  unselectedColor: Theme.of(context).dialogTheme.backgroundColor,
+                  selectedColor: Theme.of(context).colorScheme.primaryContainer,
+                  unselectedColor: Theme.of(context).colorScheme.surface,
                   onSegmentTapped: _changeView,
                 ),
         )

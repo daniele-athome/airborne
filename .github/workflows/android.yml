@@ -1,18 +1,18 @@
 name: android
 
 on:
-  push:
-    paths-ignore:
-      - README.md
-      - 'docs/**'
-      - 'utils/**'
-      - '.github/workflows/docs.yml'
-  pull_request:
-    paths-ignore:
-      - README.md
-      - 'docs/**'
-      - 'utils/**'
-      - '.github/workflows/docs.yml'
+#  push:
+#    paths-ignore:
+#      - README.md
+#      - 'docs/**'
+#      - 'utils/**'
+#      - '.github/workflows/docs.yml'
+#  pull_request:
+#    paths-ignore:
+#      - README.md
+#      - 'docs/**'
+#      - 'utils/**'
+#      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 env:

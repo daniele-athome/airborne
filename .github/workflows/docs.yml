@@ -46,7 +46,7 @@ jobs:
           cp -rv ./utils/aircraft-tool/dist/* ./docs/aircraft-tool/
 
       - name: Copy main README to docs
-        run: cp ./README.md ./docs/
+        run: cp ./README.md ./docs/index.md
 
       # Use GitHub Deploy Action to build and deploy to Github
       # For latest version: `jeffreytse/jekyll-deploy-action@master`

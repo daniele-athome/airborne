@@ -158,6 +158,7 @@ List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
       dueDate: random.nextBool() ? DateTime.now() : null,
       // status should be compatible with type
       status: type.task ? ActivityStatus.values[random.nextInt(ActivityStatus.values.length)] : null,
+      lastStatusUpdate: DateTime.now(),
       alert: random.nextBool() ? random.nextBool() : null,
     );
   }, growable: false);
@@ -166,7 +167,7 @@ List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
 // FIXME copied from the main app, but it could be useful to steer stuff for testing (locale, theme, ...).
 // Another way could be by accepting a few constructor parameters...
 class MainNavigationApp extends StatelessWidget {
-  const MainNavigationApp({Key? key}) : super(key: key);
+  const MainNavigationApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -200,11 +201,27 @@ class MainNavigationApp extends StatelessWidget {
             //themeMode: ThemeMode.dark,
             theme: ThemeData(
               brightness: Brightness.light,
-              primarySwatch: Colors.deepOrange,
+              colorScheme: ColorScheme.fromSeed(
+                brightness: Brightness.light,
+                seedColor: Colors.orange,
+                primary: Colors.deepOrange,
+                secondary: Colors.red,
+                tertiary: Colors.lightGreen,
+                dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+              ),
+              useMaterial3: true,
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
-              primarySwatch: Colors.deepOrange,
+              colorScheme: ColorScheme.fromSeed(
+                brightness: Brightness.dark,
+                seedColor: Colors.orange,
+                primary: Colors.deepOrange,
+                secondary: Colors.red,
+                tertiary: Colors.lightGreen,
+                dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+              ),
+              useMaterial3: true,
             ),
           ),
           cupertino: (_, __) => CupertinoAppData(
@@ -406,9 +423,12 @@ class FakeLogBookService implements FlightLogBookService {
   }
 
   @override
-  Future<DeletedFlightLogItem> deleteItem(FlightLogItem item) {
+  Future<String?> deleteItem(String id) {
     throw UnimplementedError();
   }
+
+  @override
+  int getColumnCount() => 10;
 
   @override
   Future<Iterable<FlightLogItem>> fetchItems() {
@@ -419,6 +439,18 @@ class FakeLogBookService implements FlightLogBookService {
     else {
       return Future.value(List.empty());
     }
+  }
+
+  /// Not used: [fetchItems] is overridden.
+  @override
+  FlightLogItem buildItem(String rowId, List<Object?> rowData) {
+    throw UnimplementedError();
+  }
+
+  /// Not used: writing operations are not implemented.
+  @override
+  List<Object?> buildRowData(FlightLogItem item) {
+    throw UnimplementedError();
   }
 
   @override
@@ -433,7 +465,7 @@ class FakeLogBookService implements FlightLogBookService {
   }
 
   @override
-  Future<FlightLogItem> updateItem(FlightLogItem item) {
+  Future<FlightLogItem> updateItem(String id, FlightLogItem item) {
     throw UnimplementedError();
   }
 
@@ -447,6 +479,16 @@ class FakeLogBookService implements FlightLogBookService {
 
   @override
   set lastId(int lastId) {
+    throw UnimplementedError();
+  }
+
+  @override
+  set dataHash(String dataHash) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String getMetadataPrefixKey() {
     throw UnimplementedError();
   }
 
@@ -493,5 +535,29 @@ class FakeActivitiesService implements ActivitiesService {
   set lastId(int lastId) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<ActivityEntry> appendItem(ActivityEntry item) => throw UnimplementedError();
+
+  @override
+  ActivityEntry buildItem(String rowId, List<Object?> rowData) => throw UnimplementedError();
+
+  @override
+  List<Object?> buildRowData(ActivityEntry item) => throw UnimplementedError();
+
+  @override
+  set dataHash(String dataHash) => throw UnimplementedError();
+
+  @override
+  Future<String?> deleteItem(String id) => throw UnimplementedError();
+
+  @override
+  int getColumnCount() => 10;
+
+  @override
+  String getMetadataPrefixKey() => throw UnimplementedError();
+
+  @override
+  Future<ActivityEntry> updateItem(String id, ActivityEntry item) => throw UnimplementedError();
 
 }

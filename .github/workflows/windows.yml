@@ -2,13 +2,13 @@ name: windows
 
 on:
   push:
-    paths_ignore:
+    paths-ignore:
       - README.md
       - 'docs/**'
       - 'utils/**'
       - '.github/workflows/docs.yml'
   pull_request:
-    paths_ignore:
+    paths-ignore:
       - README.md
       - 'docs/**'
       - 'utils/**'

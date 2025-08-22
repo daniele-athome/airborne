@@ -25,7 +25,7 @@ void main() async {
   }*/
 
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  final locale = await findSystemLocale();
+  final locale = (await findSystemLocale()).replaceAll('_', '-');
   tz_data.initializeTimeZones();
 
   appMain({String? pilotName}) async {

@@ -832,8 +832,8 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: master
-      resolved-ref: "288cce1d26e3a029de52fbbd6794970316c46ab3"
+      ref: e5d77e7b52cdf84af3b32defe0a23c931bec92ef
+      resolved-ref: e5d77e7b52cdf84af3b32defe0a23c931bec92ef
       url: "https://github.com/daniele-athome/screenshots.git"
     source: git
     version: "3.1.0"
@@ -1107,7 +1107,7 @@ packages:
     source: hosted
     version: "1.0.2"
   tool_base:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       path: "."
       ref: HEAD

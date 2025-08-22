@@ -1,5 +1,7 @@
+driver: screenshots/screenshots_driver.dart
+
 tests:
-  - --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
+  - screenshots/app_screenshots.dart
 
 staging: ./.screenshots
 
@@ -24,4 +26,4 @@ devices:
         # FIXME doesn't work yet - LandscapeLeft
         - Portrait
 
-frame: false
+frame: true

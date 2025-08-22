@@ -764,6 +764,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5+1"
+  pub_cache:
+    dependency: transitive
+    description:
+      name: pub_cache
+      sha256: "6dda58dc069d153b7373977244ee6da4e6cb726c6e50903c1c4f278d0c111db5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2"
   pub_semver:
     dependency: transitive
     description:
@@ -812,6 +820,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  screenshots:
+    dependency: "direct dev"
+    description:
+      path: "."
+      ref: ba8ec4d
+      resolved-ref: ba8ec4d448591dc82945109908bf010fe2bf9e13
+      url: "https://github.com/daniele-athome/screenshots.git"
+    source: git
+    version: "3.1.2"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1081,6 +1098,24 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  tool_base:
+    dependency: transitive
+    description:
+      path: "."
+      ref: ng
+      resolved-ref: "950396e2795f77640276dd2ed73b83316f825191"
+      url: "https://github.com/daniele-athome/tool_base.git"
+    source: git
+    version: "2.0.0"
+  tool_mobile:
+    dependency: transitive
+    description:
+      path: "."
+      ref: ng
+      resolved-ref: e758633406e3d99b055be3439d26df5076b35e7b
+      url: "https://github.com/daniele-athome/tool_mobile"
+    source: git
+    version: "3.0.0"
   typed_data:
     dependency: transitive
     description:

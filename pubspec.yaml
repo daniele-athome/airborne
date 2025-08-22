@@ -75,6 +75,10 @@ dev_dependencies:
   process: any
   pubspec_generator: any
   random_date: any
+  screenshots:
+    git:
+      url: https://github.com/daniele-athome/screenshots.git
+      ref: ba8ec4d
   test: any
 
 # For information on the generic Dart part of this file, see the

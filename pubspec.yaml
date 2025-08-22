@@ -77,7 +77,10 @@ dev_dependencies:
   screenshots:
     git:
       url: https://github.com/daniele-athome/screenshots.git
-      ref: master
+      ref: e5d77e7b52cdf84af3b32defe0a23c931bec92ef
+  tool_base:
+    git:
+      url: https://github.com/felixgabler/tool_base.git
   test: any
 
 # For information on the generic Dart part of this file, see the

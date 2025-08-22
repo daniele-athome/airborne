@@ -749,7 +749,7 @@ packages:
     source: hosted
     version: "6.0.3"
   process:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: process
       sha256: c6248e4526673988586e8c00bb22a49210c258dc91df5227d5da9748ecf79744
@@ -764,14 +764,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5+1"
-  pub_cache:
-    dependency: transitive
-    description:
-      name: pub_cache
-      sha256: "6dda58dc069d153b7373977244ee6da4e6cb726c6e50903c1c4f278d0c111db5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.2"
   pub_semver:
     dependency: transitive
     description:
@@ -812,14 +804,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.7"
-  resource_portable:
-    dependency: transitive
-    description:
-      name: resource_portable
-      sha256: "8ffa33b0769645e26d82c8f4e79adde3dd34b9e0bba981166d4e3798f39cffd9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.2"
   rfc_6901:
     dependency: transitive
     description:
@@ -828,15 +812,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
-  screenshots:
-    dependency: "direct dev"
-    description:
-      path: "."
-      ref: e5d77e7b52cdf84af3b32defe0a23c931bec92ef
-      resolved-ref: e5d77e7b52cdf84af3b32defe0a23c931bec92ef
-      url: "https://github.com/daniele-athome/screenshots.git"
-    source: git
-    version: "3.1.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1106,24 +1081,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  tool_base:
-    dependency: "direct dev"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "69643f1cbdeb51a0999c332df1ae8af4babd542c"
-      url: "https://github.com/felixgabler/tool_base.git"
-    source: git
-    version: "2.0.0"
-  tool_mobile:
-    dependency: transitive
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "23ccef76d27912e63d7b9602d58af521c7df065b"
-      url: "https://github.com/felixgabler/tool_mobile.git"
-    source: git
-    version: "1.9.5+1"
   typed_data:
     dependency: transitive
     description:

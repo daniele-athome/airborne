@@ -61,7 +61,7 @@ jobs:
       - name: Run screenshots tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 35
           arch: x86_64
           profile: '${{ matrix.device }}'
           avd-name: '${{ env.DEVICE_NAME }}'

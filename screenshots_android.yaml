@@ -7,7 +7,7 @@ staging: ./.screenshots
 
 locales:
   - en-US
-  - it-IT
+#  - it-IT
 
 devices:
   android:
@@ -16,14 +16,14 @@ devices:
       orientation:
         - Portrait
     # sevenInch
-    Nexus 6P:
-      orientation:
-        # FIXME doesn't work yet - LandscapeLeft
-        - Portrait
-    # tenInch
-    Nexus 9:
-      orientation:
-        # FIXME doesn't work yet - LandscapeLeft
-        - Portrait
+#    Nexus 6P:
+#      orientation:
+#        # FIXME doesn't work yet - LandscapeLeft
+#        - Portrait
+#    # tenInch
+#    Nexus 9:
+#      orientation:
+#        # FIXME doesn't work yet - LandscapeLeft
+#        - Portrait
 
 frame: true

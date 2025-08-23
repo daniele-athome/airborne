@@ -51,10 +51,10 @@ jobs:
         # TODO get specific dependency from pubspec.yaml
         run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 4edd186f3bb0d23c8c9d10effa8b1238451171c8
 
-#      - name: Normalize device name
-#        run: |
-#          DEVICE_NAME="${{ matrix.device }}"
-#          echo "DEVICE_NAME=${DEVICE_NAME// /_}" >>$GITHUB_ENV
+      - name: Normalize device name
+        run: |
+          AVD_NAME="${{ matrix.device.avd_name }}"
+          echo "AVD_NAME=${AVD_NAME// /_}" >>$GITHUB_ENV
 
       - name: Prepare screenshots tool configuration
         run: |
@@ -85,7 +85,7 @@ jobs:
           api-level: 35
           arch: x86_64
           profile: '${{ matrix.device.device_name }}'
-          avd-name: '${{ matrix.device.avd_name }}'
+          avd-name: '${{ env.AVD_NAME }}'
           emulator-options: '-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics'
           script: |
             flutter config --android-sdk /usr/local/lib/android/sdk

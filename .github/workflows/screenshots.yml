@@ -53,13 +53,18 @@ jobs:
         # TODO get specific dependency from pubspec.yaml
         run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 6e1efc54a13e6087496a7b359887796a7d223267
 
+      - name: Normalize device name
+        run: |
+          DEVICE_NAME="${{ matrix.device }}"
+          echo "DEVICE_NAME=${DEVICE_NAME// /_}" >>$GITHUB_ENV
+
       - name: Run screenshots tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86_64
           profile: '${{ matrix.device }}'
-          avd-name: '\"${{ matrix.device }}\"'
+          avd-name: '${{ env.DEVICE_NAME }}'
           emulator-options: '-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics'
           script: |
             flutter config --android-sdk /usr/local/lib/android/sdk

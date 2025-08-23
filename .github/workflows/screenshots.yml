@@ -12,11 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        locale:
-          - en-US
-#          - it-IT
         device:
-          - Nexus 5X
+          - Pixel 5
 #          - Nexus 6P
 #          - Nexus 9
     steps:
@@ -51,12 +48,35 @@ jobs:
 
       - name: Install screenshots tool
         # TODO get specific dependency from pubspec.yaml
-        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 6e1efc54a13e6087496a7b359887796a7d223267
+        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 4edd186f3bb0d23c8c9d10effa8b1238451171c8
 
       - name: Normalize device name
         run: |
           DEVICE_NAME="${{ matrix.device }}"
           echo "DEVICE_NAME=${DEVICE_NAME// /_}" >>$GITHUB_ENV
+
+      - name: Prepare screenshots tool configuration
+        run: |
+          echo <<<EOF >/tmp/screenshots.yaml
+          driver: screenshots/screenshots_driver.dart
+          tests:
+            - screenshots/app_screenshots.dart
+          
+          staging: ./.screenshots
+          
+          locales:
+            - en-US
+            - it-IT
+          
+          devices:
+            android:
+              # phone
+              ${{ matrix.device }}:
+                orientation:
+                  - Portrait
+          frame: true
+          EOF
+          cat /tmp/screenshots.yaml 
 
       - name: Run screenshots tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -70,7 +90,7 @@ jobs:
             flutter config --android-sdk /usr/local/lib/android/sdk
             flutter doctor
             flutter devices
-            ~/.pub-cache/bin/screenshots -c screenshots_android.yaml
+            ~/.pub-cache/bin/screenshots -c >/tmp/screenshots.yaml
 
       - name: Archive screenshots
         uses: actions/upload-artifact@v4

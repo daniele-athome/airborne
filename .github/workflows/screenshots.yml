@@ -51,7 +51,7 @@ jobs:
 
       - name: Install screenshots tool
         # TODO get specific dependency from pubspec.yaml
-        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref ba8ec4d
+        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 6e1efc54a13e6087496a7b359887796a7d223267
 
       - name: Run screenshots tests
         uses: reactivecircus/android-emulator-runner@v2

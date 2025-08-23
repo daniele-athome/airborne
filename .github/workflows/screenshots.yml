@@ -58,7 +58,7 @@ jobs:
 
       - name: Prepare screenshots tool configuration
         run: |
-          cat << EOF >/tmp/screenshots.yaml
+          cat << EOF >./screenshots.yaml
           driver: screenshots/screenshots_driver.dart
           tests:
             - screenshots/app_screenshots.dart
@@ -72,12 +72,11 @@ jobs:
           devices:
             android:
               # phone
-              ${{ matrix.device.device_name }}:
+              ${{ matrix.device.avd_name }}:
                 orientation:
                   - Portrait
           frame: true
           EOF
-          cat /tmp/screenshots.yaml 
 
       - name: Run screenshots tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -91,7 +90,7 @@ jobs:
             flutter config --android-sdk /usr/local/lib/android/sdk
             flutter doctor
             flutter devices
-            ~/.pub-cache/bin/screenshots -c >/tmp/screenshots.yaml
+            ~/.pub-cache/bin/screenshots -c ./screenshots.yaml
 
       - name: Archive screenshots
         uses: actions/upload-artifact@v4

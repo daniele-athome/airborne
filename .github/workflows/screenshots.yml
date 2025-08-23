@@ -13,7 +13,8 @@ jobs:
     strategy:
       matrix:
         device:
-          - Pixel 5
+          - avd_name: Pixel 5
+            device_name: pixel_5
 #          - Nexus 6P
 #          - Nexus 9
     steps:
@@ -71,7 +72,7 @@ jobs:
           devices:
             android:
               # phone
-              ${{ matrix.device }}:
+              ${{ matrix.device.device_name }}:
                 orientation:
                   - Portrait
           frame: true
@@ -83,8 +84,8 @@ jobs:
         with:
           api-level: 35
           arch: x86_64
-          profile: '${{ matrix.device }}'
-          avd-name: '${{ env.DEVICE_NAME }}'
+          profile: '${{ matrix.device.device_name }}'
+          avd-name: '${{ matrix.device.avd_name }}'
           emulator-options: '-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics'
           script: |
             flutter config --android-sdk /usr/local/lib/android/sdk

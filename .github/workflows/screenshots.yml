@@ -49,7 +49,7 @@ jobs:
 
       - name: Install screenshots tool
         # TODO get specific dependency from pubspec.yaml
-        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 4edd186f3bb0d23c8c9d10effa8b1238451171c8
+        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 35827cce4ad1a0f72803f877c6a82da98ad89e25
 
       - name: Normalize device name
         run: |

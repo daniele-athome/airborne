@@ -57,7 +57,7 @@ jobs:
 
       - name: Prepare screenshots tool configuration
         run: |
-          echo <<<EOF >/tmp/screenshots.yaml
+          cat << EOF >/tmp/screenshots.yaml
           driver: screenshots/screenshots_driver.dart
           tests:
             - screenshots/app_screenshots.dart

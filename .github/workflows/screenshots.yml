@@ -15,8 +15,10 @@ jobs:
         device:
           - avd_name: Pixel 5
             device_name: pixel_5
-#          - Nexus 6P
-#          - Nexus 9
+          - avd_name: Nexus 6P
+            device_name: Nexus 6P
+          - avd_name: Nexus 9
+            device_name: Nexus 9
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,7 +36,7 @@ jobs:
           java-version: 21
 
       - name: Install tools
-        run: sudo apt-get install -y imagemagick
+        run: sudo apt-get install -y imagemagick yq
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v2
@@ -48,8 +50,10 @@ jobs:
         run: dart run build_runner build
 
       - name: Install screenshots tool
-        # TODO get specific dependency from pubspec.yaml
-        run: flutter pub global activate -sgit https://github.com/daniele-athome/screenshots.git --git-ref 35827cce4ad1a0f72803f877c6a82da98ad89e25
+        run: |
+          screenshots_repo="$(yq -r '.dev_dependencies.screenshots.git.url' < pubspec.yaml)"
+          screenshots_version="$(yq -r '.dev_dependencies.screenshots.git.ref' < pubspec.yaml)"
+          flutter pub global activate -sgit "$screenshots_repo" --git-ref "$screenshots_version"
 
       - name: Normalize device name
         run: |
@@ -95,5 +99,5 @@ jobs:
       - name: Archive screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: 'android-screenshots'
+          name: 'android-screenshots-${{ env.AVD_NAME }}'
           path: './android/fastlane/metadata/android/*/images/*/*.png'

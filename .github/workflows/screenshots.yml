@@ -35,6 +35,9 @@ jobs:
           distribution: zulu
           java-version: 21
 
+      - name: Install tools
+        run: apt-get install -y imagemagick
+
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v2
         with:

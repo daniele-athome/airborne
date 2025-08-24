@@ -15,10 +15,10 @@ jobs:
         device:
           - avd_name: Pixel 5
             device_name: pixel_5
-          - avd_name: Nexus 6P
-            device_name: Nexus 6P
-          - avd_name: Nexus 9
-            device_name: Nexus 9
+          - avd_name: Nexus 7
+            device_name: Nexus 7 2013
+          - avd_name: Pixel Tablet
+            device_name: pixel_tablet
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

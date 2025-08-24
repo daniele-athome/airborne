@@ -16,14 +16,13 @@ devices:
       orientation:
         - Portrait
     # sevenInch
-    Nexus 6P:
+    Nexus 7:
       orientation:
         # FIXME doesn't work yet - LandscapeLeft
         - Portrait
     # tenInch
-    Nexus 9:
+    Pixel Tablet:
       orientation:
-        # FIXME doesn't work yet - LandscapeLeft
         - Portrait
 
 frame: true

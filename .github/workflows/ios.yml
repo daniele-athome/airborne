@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: '3.35.1'
+  flutter_version: '3.35.2'
 
 jobs:
   # Since Fastlane also builds, there is no way to split jobs without sacrificing build time
@@ -27,7 +27,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v2

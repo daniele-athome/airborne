@@ -78,7 +78,7 @@ dev_dependencies:
   screenshots:
     git:
       url: https://github.com/daniele-athome/screenshots.git
-      ref: 96f6b9aa67b3c3c12d69d138d89baa2fdb02348b
+      ref: 047482eb555cc61e7853471eed2fd193d92ba4f3
   test: any
 
 # For information on the generic Dart part of this file, see the

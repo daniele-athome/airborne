@@ -15,7 +15,7 @@ jobs:
         device:
           - avd_name: Pixel 5
             device_name: pixel_5
-            api_level: 29
+            api_level: 31
           - avd_name: Nexus 7
             device_name: Nexus 7 2013
             api_level: 35

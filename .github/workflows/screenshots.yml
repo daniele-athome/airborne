@@ -9,18 +9,22 @@ env:
 
 jobs:
   android:
+    name: Generate Android screenshots
     runs-on: ubuntu-latest
     strategy:
       matrix:
         device:
           - avd_name: Pixel 5
             device_name: pixel_5
+            # nav bar and status bar templates are taken from this Android version
             api_level: 31
           - avd_name: Nexus 7
             device_name: Nexus 7 2013
+            # nav bar and status bar templates are taken from this Android version
             api_level: 35
           - avd_name: Pixel Tablet
             device_name: pixel_tablet
+            # nav bar and status bar templates are taken from this Android version
             api_level: 35
     steps:
       - name: Checkout repository
@@ -103,4 +107,46 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'android-screenshots-${{ env.AVD_NAME }}'
-          path: './android/fastlane/metadata/android/*/images/*/*.png'
+          path: './android/fastlane/metadata/android/*/images/*/${{ matrix.device.avd_name }}-*.png'
+
+  pull_request:
+    name: Create a pull request
+    needs: [ android ]
+    runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ci/screenshots-update
+    steps:
+
+      - name: Setup git repository
+        run: |
+          # TODO LABEL="release changelog"
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git checkout -b "${{ env.TARGET_BRANCH }}"
+          #gh label create "$LABEL" \
+          #  --description "Pull requests with release changelog update" \
+          #  --force \
+          #  || true
+
+      - name: Delete old screenshots
+        run: |
+          rm -f ./android/fastlane/metadata/android/*/images/*/*.png
+
+      - name: Downloading screenshot artifacts
+        uses: actions/download-artifact@v5
+
+      - name: Debug
+        run: ls -R ./android/fastlane
+
+      - name: Create pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git commit -am "Update screenshots"
+          git push --set-upstream origin "${{ env.TARGET_BRANCH }}"
+
+          # TODO --label "$LABEL" \
+          gh pr create \
+            --title "Screenshots update" \
+            --body "Screenshots automatically created with current version." \
+            --head "${{ env.TARGET_BRANCH }}"

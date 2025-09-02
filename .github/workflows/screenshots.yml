@@ -134,10 +134,14 @@ jobs:
         run: |
           rm -f ./android/fastlane/metadata/android/*/images/*/*.png
 
-      - name: Downloading screenshot artifacts
+      - name: Download Android screenshot artifacts
         uses: actions/download-artifact@v5
         with:
           path: ./android/fastlane/metadata/android
+          pattern: android-screenshots-*
+          merge-multiple: true
+
+      # TODO - name: Download iOS screenshot artifacts
 
       - name: Debug
         run: ls -R ./android/fastlane
@@ -146,6 +150,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git add ./android/fastlane/metadata/android ./ios/fastlane/screenshots
           git commit -am "Update screenshots"
           git push --set-upstream origin "${{ env.TARGET_BRANCH }}"
 

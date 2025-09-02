@@ -109,9 +109,82 @@ jobs:
           name: 'android-screenshots-${{ env.AVD_NAME }}'
           path: './android/fastlane/metadata/android/*/images/*/${{ matrix.device.avd_name }}-*.png'
 
+  ios:
+    name: Generate iOS screenshots
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        device:
+          - "iPhone 8 Plus"
+          - "iPhone 11 Pro Max"
+          - "iPad Pro (12.9-inch) (4th generation)"
+    steps:
+      - name: Switch to latest XCode
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter environment
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Building generated source code
+        run: dart run build_runner build
+
+      - name: Install screenshots tool
+        run: |
+          screenshots_repo="$(yq -r '.dev_dependencies.screenshots.git.url' < pubspec.yaml)"
+          screenshots_version="$(yq -r '.dev_dependencies.screenshots.git.ref' < pubspec.yaml)"
+          flutter pub global activate -sgit "$screenshots_repo" --git-ref "$screenshots_version"
+
+      - name: Prepare screenshots tool configuration
+        run: |
+          cat << EOF >./screenshots.yaml
+          driver: screenshots/screenshots_driver.dart
+          tests:
+            - screenshots/app_screenshots.dart
+
+          staging: ./.screenshots
+          
+          locales:
+            - en-US
+            - it
+
+          devices:
+            ios:
+              ${{ matrix.device }}:
+                orientation:
+                  - Portrait
+          frame: true
+          EOF
+
+      - name: Launch iOS simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: '${{ matrix.device }}'
+          wait_for_boot: true
+          shutdown_after_job: true
+
+      - name: Run screenshots tests
+        run: |
+          flutter doctor
+          flutter devices
+          ~/.pub-cache/bin/screenshots -c ./screenshots.yaml
+
+      - name: Archive screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'ios-screenshots-${{ matrix.device }}'
+          path: './ios/fastlane/screenshots/*/${{ matrix.device }}-*.png'
+
   pull_request:
-    name: Create a pull request
-    needs: [ android ]
+    name: Create pull request
+    needs: [ android, ios ]
     runs-on: ubuntu-latest
     env:
       TARGET_BRANCH: ci/screenshots-update
@@ -121,18 +194,13 @@ jobs:
 
       - name: Setup git repository
         run: |
-          # TODO LABEL="release changelog"
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           git checkout -b "${{ env.TARGET_BRANCH }}"
-          #gh label create "$LABEL" \
-          #  --description "Pull requests with release changelog update" \
-          #  --force \
-          #  || true
 
       - name: Delete old screenshots
         run: |
-          rm -f ./android/fastlane/metadata/android/*/images/*/*.png
+          rm -f ./ios/fastlane/screenshots/*/*.png
 
       - name: Download Android screenshot artifacts
         uses: actions/download-artifact@v5
@@ -141,10 +209,19 @@ jobs:
           pattern: android-screenshots-*
           merge-multiple: true
 
-      # TODO - name: Download iOS screenshot artifacts
+      - name: Download iOS screenshot artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: ./ios/fastlane/screenshots
+          pattern: ios-screenshots-*
+          merge-multiple: true
 
       - name: Debug
-        run: ls -R ./android/fastlane
+        run: |
+          echo '#### ANDROID'
+          ls -R ./android/fastlane/metadata/android
+          echo '#### IOS'
+          ls -R ./ios/fastlane
 
       - name: Create pull request
         env:
@@ -154,8 +231,8 @@ jobs:
           git commit -am "Update screenshots"
           git push --set-upstream origin "${{ env.TARGET_BRANCH }}"
 
-          # TODO --label "$LABEL" \
           gh pr create \
             --title "Screenshots update" \
+            --label ":book: documentation" \
             --body "Screenshots automatically created with current version." \
             --head "${{ env.TARGET_BRANCH }}"

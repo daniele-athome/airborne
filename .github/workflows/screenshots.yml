@@ -116,6 +116,8 @@ jobs:
     env:
       TARGET_BRANCH: ci/screenshots-update
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
       - name: Setup git repository
         run: |

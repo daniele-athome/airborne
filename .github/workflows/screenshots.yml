@@ -115,9 +115,8 @@ jobs:
     strategy:
       matrix:
         device:
-          - "iPhone 8 Plus"
-          - "iPhone 11 Pro Max"
-          - "iPad Pro (12.9-inch) (4th generation)"
+          - "iPhone 16 Pro Max"
+          - "iPad Pro 13-inch (M4)"
     steps:
       - name: Switch to latest XCode
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app

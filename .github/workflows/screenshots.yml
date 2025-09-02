@@ -134,6 +134,8 @@ jobs:
 
       - name: Downloading screenshot artifacts
         uses: actions/download-artifact@v5
+        with:
+          path: ./android/fastlane/metadata/android
 
       - name: Debug
         run: ls -R ./android/fastlane

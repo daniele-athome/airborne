@@ -129,8 +129,8 @@ jobs:
         with:
           flutter-version: ${{ env.flutter_version }}
 
-      - name: Install imagemagick
-        run: brew install imagemagick
+      - name: Install tools
+        run: brew install imagemagick ios-deploy
 
       - name: Install dependencies
         run: flutter pub get

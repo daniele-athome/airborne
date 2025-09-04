@@ -116,7 +116,7 @@ jobs:
       matrix:
         device:
           - "iPhone 16 Pro Max"
-          - "iPad Pro 13-inch (M4)"
+          # TODO unsupported for now - "iPad Pro 13-inch (M4)"
     steps:
       - name: Switch to latest XCode
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app

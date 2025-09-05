@@ -231,7 +231,7 @@ jobs:
         run: |
           git add ./android/fastlane/metadata/android ./ios/fastlane/screenshots
           git commit -am "Update screenshots"
-          git push --set-upstream origin "${{ env.TARGET_BRANCH }}"
+          git push --force --set-upstream origin "${{ env.TARGET_BRANCH }}"
 
           gh pr create \
             --title "Screenshots update" \

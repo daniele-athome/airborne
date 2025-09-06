@@ -218,13 +218,6 @@ jobs:
           pattern: ios-screenshots-*
           merge-multiple: true
 
-      - name: Debug
-        run: |
-          echo '#### ANDROID'
-          ls -R ./android/fastlane/metadata/android
-          echo '#### IOS'
-          ls -R ./ios/fastlane
-
       - name: Create pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

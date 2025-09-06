@@ -5,7 +5,7 @@ import 'package:airborne/helpers/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:intl/intl_standalone.dart';
+//import 'package:intl/intl_standalone.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshots/src/capture_screen.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -13,8 +13,8 @@ import 'package:timezone/data/latest.dart' as tz_data;
 import 'fake_data.dart';
 
 void main() async {
-  final deviceName = const String.fromEnvironment("device");
-  final orientation = const String.fromEnvironment("orientation");
+  //final deviceName = const String.fromEnvironment("device");
+  //final orientation = const String.fromEnvironment("orientation");
 
   //enableFlutterDriverExtension();
 
@@ -28,7 +28,7 @@ void main() async {
   }*/
 
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  final locale = (await findSystemLocale()).replaceAll('_', '-');
+  //final locale = (await findSystemLocale()).replaceAll('_', '-');
   tz_data.initializeTimeZones();
 
   appMain({String? pilotName}) async {

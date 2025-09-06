@@ -53,7 +53,6 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   late PlatformTabController _tabController;
-  late GoogleServiceAccountService _googleServiceAccountService;
   late BookFlightCalendarService? _bookFlightCalendarService;
   late FlightLogBookService? _flightLogBookService;
   late ActivitiesService? _activitiesService;

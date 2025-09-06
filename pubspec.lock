@@ -812,14 +812,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.7"
-  resource_portable:
-    dependency: transitive
-    description:
-      name: resource_portable
-      sha256: "8ffa33b0769645e26d82c8f4e79adde3dd34b9e0bba981166d4e3798f39cffd9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.2"
   rfc_6901:
     dependency: transitive
     description:
@@ -832,11 +824,11 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: master
-      resolved-ref: "288cce1d26e3a029de52fbbd6794970316c46ab3"
+      ref: "13cd765c1f009622b9df64fe857fd0e9fb07509f"
+      resolved-ref: "13cd765c1f009622b9df64fe857fd0e9fb07509f"
       url: "https://github.com/daniele-athome/screenshots.git"
     source: git
-    version: "3.1.0"
+    version: "3.1.2"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1110,20 +1102,20 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: "69643f1cbdeb51a0999c332df1ae8af4babd542c"
-      url: "https://github.com/felixgabler/tool_base.git"
+      ref: "950396e2795f77640276dd2ed73b83316f825191"
+      resolved-ref: "950396e2795f77640276dd2ed73b83316f825191"
+      url: "https://github.com/daniele-athome/tool_base.git"
     source: git
     version: "2.0.0"
   tool_mobile:
     dependency: transitive
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: "23ccef76d27912e63d7b9602d58af521c7df065b"
-      url: "https://github.com/felixgabler/tool_mobile.git"
+      ref: "1135d7a0949f605c4e2f1a4ab4d678999cfd1a86"
+      resolved-ref: "1135d7a0949f605c4e2f1a4ab4d678999cfd1a86"
+      url: "https://github.com/daniele-athome/tool_mobile.git"
     source: git
-    version: "1.9.5+1"
+    version: "3.0.0"
   typed_data:
     dependency: transitive
     description:

@@ -1,5 +1,7 @@
+driver: screenshots/screenshots_driver.dart
+
 tests:
-  - --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
+  - screenshots/app_screenshots.dart
 
 staging: ./.screenshots
 
@@ -9,18 +11,12 @@ locales:
 
 devices:
   ios:
-    # 5.5 inch
-    iPhone 8 Plus:
+    iPhone 16 Pro Max:
       orientation:
         - Portrait
-    # 6.5 inch
-    iPhone 11 Pro Max:
-      orientation:
-        - Portrait
-    # 12.9 inches
-    iPad Pro (12.9-inch) (4th generation):
+    iPad Pro 13-inch (M4):
       orientation:
         # FIXME doesn't work yet - LandscapeLeft
         - Portrait
 
-frame: false
+frame: true

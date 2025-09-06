@@ -20,6 +20,7 @@ class MainNavigation extends StatefulWidget {
   final AppConfig appConfig;
 
   // FIXME these should be provided via dependency injection and not built/given here
+  final GoogleServiceAccountService? googleServiceAccountService;
   final BookFlightCalendarService? bookFlightCalendarService;
   final FlightLogBookService? flightLogBookService;
   final ActivitiesService? activitiesService;
@@ -28,7 +29,8 @@ class MainNavigation extends StatefulWidget {
   // TODO other services one day...
 
   const MainNavigation(this.appConfig, {super.key})
-      : bookFlightCalendarService = null,
+      : googleServiceAccountService = null,
+        bookFlightCalendarService = null,
         flightLogBookService = null,
         activitiesService = null,
         metadataService = null;
@@ -38,6 +40,7 @@ class MainNavigation extends StatefulWidget {
   const MainNavigation.withServices(
     this.appConfig, {
     super.key,
+    this.googleServiceAccountService,
     this.bookFlightCalendarService,
     this.flightLogBookService,
     this.activitiesService,
@@ -70,8 +73,9 @@ class _MainNavigationState extends State<MainNavigation> {
 
   void _rebuildServices() {
     // FIXME if the services are already built (or provided) these variables are not used
-    final account = GoogleServiceAccountService(
-        json: widget.appConfig.googleServiceAccountJson);
+    final account = widget.googleServiceAccountService ??
+        GoogleServiceAccountService(
+            json: widget.appConfig.googleServiceAccountJson);
     final metadataService = widget.metadataService ??
         (widget.appConfig.hasFeature('metadata')
             ? MetadataService(account, widget.appConfig.metadataBackendInfo)

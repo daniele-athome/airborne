@@ -1,7 +1,6 @@
 name: screenshots
 
 on:
-  push:
   workflow_dispatch:
 
 env:

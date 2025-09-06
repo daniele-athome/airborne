@@ -824,8 +824,8 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: ed98f283c5496de26d1931a8f7b962f147fc508e
-      resolved-ref: ed98f283c5496de26d1931a8f7b962f147fc508e
+      ref: "2a9436875827c3718dd90591f38941427d966e54"
+      resolved-ref: "2a9436875827c3718dd90591f38941427d966e54"
       url: "https://github.com/daniele-athome/screenshots.git"
     source: git
     version: "3.1.2"

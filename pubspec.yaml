@@ -72,12 +72,13 @@ dev_dependencies:
   nock: 1.2.3
   path_provider_platform_interface: any
   plugin_platform_interface: any
+  process: any
   pubspec_generator: any
   random_date: any
   screenshots:
     git:
       url: https://github.com/daniele-athome/screenshots.git
-      ref: master
+      ref: 13cd765c1f009622b9df64fe857fd0e9fb07509f
   test: any
 
 # For information on the generic Dart part of this file, see the

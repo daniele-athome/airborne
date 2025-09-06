@@ -1,5 +1,7 @@
+driver: screenshots/screenshots_driver.dart
+
 tests:
-  - --target=screenshots/app_screenshots.dart --driver=screenshots/screenshots_driver.dart
+  - screenshots/app_screenshots.dart
 
 staging: ./.screenshots
 
@@ -10,18 +12,17 @@ locales:
 devices:
   android:
     # phone
-    Nexus 5X:
+    Pixel 5:
       orientation:
         - Portrait
     # sevenInch
-    Nexus 6P:
+    Nexus 7:
       orientation:
         # FIXME doesn't work yet - LandscapeLeft
         - Portrait
     # tenInch
-    Nexus 9:
+    Pixel Tablet:
       orientation:
-        # FIXME doesn't work yet - LandscapeLeft
         - Portrait
 
-frame: false
+frame: true

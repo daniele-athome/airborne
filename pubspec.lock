@@ -749,7 +749,7 @@ packages:
     source: hosted
     version: "6.0.3"
   process:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: process
       sha256: c6248e4526673988586e8c00bb22a49210c258dc91df5227d5da9748ecf79744

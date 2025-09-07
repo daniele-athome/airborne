@@ -212,7 +212,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) =>
       ListView(
         children: [
-          CupertinoFormSection(
+          CupertinoFormSection.insetGrouped(
             header: Text(AppLocalizations.of(context)!.addAircraft_text1,
                 // FIXME workaround for https://github.com/flutter/flutter/issues/48438
                 // FIXME background color is not consistent with scaffold background color (of course)

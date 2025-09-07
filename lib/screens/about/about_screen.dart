@@ -132,7 +132,7 @@ class _AboutScreenState extends State<AboutScreen> {
   List<Widget> _buildCupertinoItems(BuildContext context) {
     final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
     return [
-      CupertinoFormSection(
+      CupertinoFormSection.insetGrouped(
         header: Text(
             AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
         children: [
@@ -228,7 +228,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ],
           ),
         ),
-      CupertinoFormSection(
+      CupertinoFormSection.insetGrouped(
         header: Text(
             AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
         children: [
@@ -247,7 +247,7 @@ class _AboutScreenState extends State<AboutScreen> {
               )),
         ],
       ),
-      CupertinoFormSection(
+      CupertinoFormSection.insetGrouped(
         header: Text(AppLocalizations.of(context)!.appName.toUpperCase()),
         children: [
           CupertinoFormRowContainer(
@@ -282,7 +282,7 @@ class _AboutScreenState extends State<AboutScreen> {
         ],
       ),
       const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-      CupertinoFormSection(children: <Widget>[
+      CupertinoFormSection.insetGrouped(children: <Widget>[
         if (_appConfig.currentAircraft!.url != null)
           Row(
             children: [

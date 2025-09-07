@@ -25,7 +25,7 @@ const EdgeInsetsGeometry kDefaultCupertinoDateTimeFormRowPadding =
     EdgeInsets.symmetric(horizontal: 2.0, vertical: 6.0);
 
 /// Margin between form sections.
-const double kDefaultCupertinoFormSectionMargin = 34.0;
+const double kDefaultCupertinoFormSectionMargin = 22.0;
 
 /// Top and bottom margins for the first and last [CupertinoFormSection] (use as padding for the ListView)
 const kDefaultCupertinoFormMargin = EdgeInsets.only(

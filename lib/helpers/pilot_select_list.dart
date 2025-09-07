@@ -25,7 +25,7 @@ class PilotSelectList extends StatelessWidget {
       return ListView(
         padding: kDefaultCupertinoFormMargin,
         children: [
-          CupertinoFormSection(
+          CupertinoFormSection.insetGrouped(
             children: pilotNames
                 .map((e) => CupertinoFormButtonRow(
                       key: Key('pilot_select_list:$e'),

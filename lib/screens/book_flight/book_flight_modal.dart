@@ -93,7 +93,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
     return ListView(
       padding: kDefaultCupertinoFormMargin,
       children: [
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           CupertinoFormButtonRow(
             onPressed: () => _onTapPilot(context),
             padding: kDefaultCupertinoFormRowPadding,
@@ -120,7 +120,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           // start date/time
           CupertinoDateTimeFormFieldRow(
             prefix:
@@ -142,7 +142,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           CupertinoTextFormFieldRow(
             // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
             controller: TextEditingController(text: _notes),
@@ -162,7 +162,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         if (_isEditing)
           const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         if (_isEditing)
-          CupertinoFormSection(children: <Widget>[
+          CupertinoFormSection.insetGrouped(children: <Widget>[
             Row(
               children: [
                 Expanded(

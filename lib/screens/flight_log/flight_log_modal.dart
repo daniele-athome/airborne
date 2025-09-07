@@ -129,7 +129,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
       padding: kDefaultCupertinoFormMargin,
       children: [
         // flight date
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           CupertinoDateTimeFormFieldRow(
             prefix:
                 Text(AppLocalizations.of(context)!.flightLogModal_label_date),
@@ -157,7 +157,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // start/end hour
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           CupertinoHourFormRow(
             controller: _startHourController,
             hintText:
@@ -171,7 +171,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // departure/arrival place
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           // TODO home location button
           CupertinoTextFormFieldRow(
             controller: _originController,
@@ -189,7 +189,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // fuel + fuel price
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           CupertinoTextFormFieldRow(
             key: const Key("input_flightLogModal_fuel"),
             controller: _fuelController,
@@ -218,7 +218,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           ),
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection(children: <Widget>[
+        CupertinoFormSection.insetGrouped(children: <Widget>[
           CupertinoTextFormFieldRow(
             // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
             controller: _notesController,
@@ -235,7 +235,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         if (_isEditing)
           const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         if (_isEditing)
-          CupertinoFormSection(children: <Widget>[
+          CupertinoFormSection.insetGrouped(children: <Widget>[
             Row(
               children: [
                 Expanded(

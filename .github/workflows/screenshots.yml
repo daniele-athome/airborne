@@ -201,6 +201,7 @@ jobs:
 
       - name: Delete old screenshots
         run: |
+          rm -f ./android/fastlane/metadata/android/*/images/*/*.png
           rm -f ./ios/fastlane/screenshots/*/*.png
 
       - name: Download Android screenshot artifacts

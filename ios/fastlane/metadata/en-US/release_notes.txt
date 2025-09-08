@@ -1,1 +1,5 @@
+* link to documents archive
+* better date/time pickers
+* modernize user interface
+* support for encrypted aircraft data files
 * bug fixes

@@ -66,7 +66,9 @@ jobs:
       - name: Install Fastlane
         if: github.ref_type == 'tag'
         run: |
-          gem install fastlane -N
+          # custom version of fastlane: https://github.com/fastlane/fastlane/pull/22288
+          gem install specific_install -N 
+          gem specific_install -l https://github.com/daniele-athome/fastlane.git -b stable
           # https://github.com/fastlane/fastlane/issues/29183#issuecomment-2567093826
           gem install abbrev mutex_m ostruct -N
 

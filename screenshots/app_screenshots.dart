@@ -31,8 +31,9 @@ void main() async {
   //final locale = (await findSystemLocale()).replaceAll('_', '-');
   tz_data.initializeTimeZones();
 
+  late AppConfig appConfig;
+
   appMain({String? pilotName}) async {
-    final AppConfig appConfig;
     if (pilotName != null) {
       appConfig = FakeAppConfig.withPilotName(pilotName);
     }
@@ -53,18 +54,31 @@ void main() async {
     );
   }
 
+  /// Precaches all images that will be loaded by the UI.
+  /// This prevents empty [Image] widgets while doing screenshots.
+  precacheImages(WidgetTester tester) async {
+    final BuildContext context = tester.element(find.byType(MainNavigationApp));
+    for (String name in appConfig.pilotNames) {
+      await precacheImage(appConfig.getPilotAvatar(name), context);
+    }
+  }
+
   // because of an integration_test bug, only one screenshot per test is allowed
-  // https://github.com/flutter/flutter/issues/923811
+  // https://github.com/flutter/flutter/issues/92381
 
   group('Screenshots', () {
     testWidgets('Onboarding - Select pilot', (WidgetTester tester) async {
       runApp(await appMain());
+      await tester.pumpAndSettle();
+      await precacheImages(tester);
       await tester.pumpAndSettle();
       await screenshot(binding, tester, '50-onboarding-pilotselect');
     });
 
     testWidgets('Book flight - Agenda view', (WidgetTester tester) async {
       runApp(await appMain(pilotName: 'Anna'));
+      await tester.pumpAndSettle();
+      await precacheImages(tester);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('button_bookFlight_view_schedule')));
       await tester.pumpAndSettle();
@@ -74,6 +88,8 @@ void main() async {
     testWidgets('Book flight - Month view', (WidgetTester tester) async {
       runApp(await appMain(pilotName: 'Anna'));
       await tester.pumpAndSettle();
+      await precacheImages(tester);
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('button_bookFlight_view_month')));
       await tester.pumpAndSettle();
       await screenshot(binding, tester, '02-bookflight-month');
@@ -81,6 +97,8 @@ void main() async {
 
     testWidgets('Book flight - Flight editor', (WidgetTester tester) async {
       runApp(await appMain(pilotName: 'Anna'));
+      await tester.pumpAndSettle();
+      await precacheImages(tester);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('button_bookFlight')));
       await tester.pumpAndSettle();
@@ -90,6 +108,8 @@ void main() async {
     testWidgets('Log book - List view', (WidgetTester tester) async {
       runApp(await appMain(pilotName: 'Anna'));
       await tester.pumpAndSettle();
+      await precacheImages(tester);
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('nav_flight_log')));
       await tester.pumpAndSettle();
       await screenshot(binding, tester, '04-logbook-list');
@@ -97,6 +117,8 @@ void main() async {
 
     testWidgets('Log book - Flight editor', (WidgetTester tester) async {
       runApp(await appMain(pilotName: 'Anna'));
+      await tester.pumpAndSettle();
+      await precacheImages(tester);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('nav_flight_log')));
       await tester.pumpAndSettle();
@@ -107,6 +129,8 @@ void main() async {
 
     testWidgets('Activities - List view', (WidgetTester tester) async {
       runApp(await appMain(pilotName: 'Anna'));
+      await tester.pumpAndSettle();
+      await precacheImages(tester);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('nav_activities')));
       await tester.pumpAndSettle();

@@ -61,11 +61,14 @@ jobs:
         if: github.ref_type == 'tag'
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '3.4'
 
       - name: Install Fastlane
         if: github.ref_type == 'tag'
-        run: gem install fastlane -N
+        run: |
+          gem install fastlane -N
+          # https://github.com/fastlane/fastlane/issues/29183#issuecomment-2567093826
+          gem install abbrev mutex_m ostruct -N
 
       - name: Build and deploy to App Store
         if: github.ref_type == 'tag'

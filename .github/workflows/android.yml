@@ -101,10 +101,13 @@ jobs:
       - name: Setup Ruby environment
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '3.4'
 
       - name: Install Fastlane
-        run: gem install fastlane -N
+        run: |
+          gem install fastlane -N
+          # https://github.com/fastlane/fastlane/issues/29183#issuecomment-2567093826
+          gem install abbrev mutex_m ostruct -N
 
       - name: Deploy to Google Play
         run: |

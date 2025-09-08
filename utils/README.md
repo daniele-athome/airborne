@@ -1,5 +1,11 @@
 # Utility scripts
 
+Install [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) first:
+
+```shell
+npm install -g commit-and-tag-version
+```
+
 To make a new release:
 
 * switch to branch `release`

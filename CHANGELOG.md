@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.6.0](https://github.com/daniele-athome/airborne/compare/v1.5.0...v1.6.0) (2025-09-08)
+
+
+### Features
+
+* **about:** link to documents archive ([7913e9d](https://github.com/daniele-athome/airborne/commit/7913e9dd0366a4bdaf675903f47a83867b18ab3a)), closes [#82](https://github.com/daniele-athome/airborne/issues/82)
+* **activities:** support for last status change date ([e0d29ae](https://github.com/daniele-athome/airborne/commit/e0d29ae116dbe38d277db244c3d4dc9b2716e094))
+* aircraft data file creation tool ([5ed1ef5](https://github.com/daniele-athome/airborne/commit/5ed1ef5435ce2d24ca416174a5277a454e967a31)), closes [#31](https://github.com/daniele-athome/airborne/issues/31)
+* better date/time pickers on iOS ([e29dcef](https://github.com/daniele-athome/airborne/commit/e29dcef73bea5f8acbd20cccbc6ecf4a95fafe1a)), closes [#47](https://github.com/daniele-athome/airborne/issues/47)
+* **book-flight:** warn when trying to book a flight in the past ([f0a9283](https://github.com/daniele-athome/airborne/commit/f0a92833e746890251fb36d33aa03752e5c6db0e)), closes [#69](https://github.com/daniele-athome/airborne/issues/69)
+* Material 3 theme ([48268c8](https://github.com/daniele-athome/airborne/commit/48268c893cd2341cfd96e097c92e94f7d051a0ef)), closes [#86](https://github.com/daniele-athome/airborne/issues/86)
+* metadata key-value store and flight log hash check (close [#79](https://github.com/daniele-athome/airborne/issues/79)) ([3df9b5b](https://github.com/daniele-athome/airborne/commit/3df9b5b690f61105b0a008647ba4b558865a2e1f))
+* modernize iOS user interface ([c42186a](https://github.com/daniele-athome/airborne/commit/c42186a0db6f127c791d2fd75b46dc5358f57974))
+* support for encrypted aircraft data files ([9c0d69d](https://github.com/daniele-athome/airborne/commit/9c0d69dfc62730bc8ad8c1a506df6baa67049ad4)), closes [#83](https://github.com/daniele-athome/airborne/issues/83)
+
+
+### Bug Fixes
+
+* **aircraft-tool:** fix aircraft photo layout issue ([942c765](https://github.com/daniele-athome/airborne/commit/942c7650ab26ad206361307bb4f9e971b7546185))
+* correctly handle RTL locales ([97b8a04](https://github.com/daniele-athome/airborne/commit/97b8a04362956e3a9304a5efbf3175f7e789b11e))
+* fix progress dialog background and size issues ([373069d](https://github.com/daniele-athome/airborne/commit/373069da1ff5277f9754e1db16944cb7469f2dff))
+* **flight-log:** fix autorefresh on resume ([a018334](https://github.com/daniele-athome/airborne/commit/a01833447452af7a5bd843e2f5f8dc545a19fe97))
+* **flight-log:** fix hour meter sizing issues ([d275649](https://github.com/daniele-athome/airborne/commit/d2756491c6a1fd50226f1a18fb244064606abe15))
+* **flight-log:** fix hour meter sizing issues ([c1b5dff](https://github.com/daniele-athome/airborne/commit/c1b5dff2b4efb6d53d058b6684444f1df80a2a9c))
+
 ## [1.5.0](https://github.com/daniele-athome/airborne/compare/v1.4.0...v1.5.0) (2023-08-15)
 
 

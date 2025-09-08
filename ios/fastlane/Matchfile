@@ -1,4 +1,4 @@
-git_url("git@github.com:daniele-athome/airborne-deploy.git")
+git_url("https://github.com/daniele-athome/airborne-deploy.git")
 git_branch("ios")
 
 storage_mode("git")

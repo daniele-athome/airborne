@@ -1,6 +1,0 @@
-// https://docs.flutter.dev/reference/supported-platforms
-ext {
-    minSdkVersion = 24
-    compileSdkVersion = 36
-    targetSdkVersion = 36
-}

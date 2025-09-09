@@ -10,7 +10,7 @@ on:
       - 'docs/**'
       - 'utils/aircraft-tool/**'
       - '.github/workflows/docs.yml'
-      - 'android/fastlane/metadata/android/*/images/*'
+      - 'android/fastlane/metadata/android/*/images/**'
       - 'ios/fastlane/screenshots/*/*'
   workflow_dispatch:
 

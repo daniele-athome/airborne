@@ -21,4 +21,23 @@ void main() {
         SunTimes(TZDateTime.parse(UTC, "2020-01-01 05:59:35.000Z"),
             TZDateTime.parse(UTC, "2020-01-01 18:07:03.000Z")));
   });
+
+  test('Duration.toFlightTimeSpec', () {
+    expect(
+      Duration(minutes: 10).toFlightTimeSpec(),
+      "0h 10m"
+    );
+    expect(
+      Duration(minutes: 60).toFlightTimeSpec(),
+      "1h 00m"
+    );
+    expect(
+      Duration(minutes: 65).toFlightTimeSpec(),
+      "1h 05m"
+    );
+    expect(
+      Duration(minutes: 123).toFlightTimeSpec(),
+      "2h 03m"
+    );
+  });
 }

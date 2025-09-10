@@ -22,6 +22,11 @@ import 'hour_widget.dart';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
+/// HourListTile start and end paddings (20) + icon size at start (36).
+/// Bottom was measured with inspection tool from ListTile
+const _kMaterialTotalFlightTimePadding =
+    EdgeInsetsDirectional.only(start: 20 + 36, end: 20.0, bottom: 8.0);
+
 // TODO move all this fuel stuff somewhere else
 
 const _kFuelDecimals = 1;
@@ -123,6 +128,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
         : '';
   }
 
+  /// Computes the total flight time from the hour meters value.
+  /// Hour meters show hours in the integer part and hundredth of hours in the decimal part.
+  Duration get _totalFlightTime {
+    final num totalHours =
+        _endHourController.number - _startHourController.number;
+    return Duration(minutes: (totalHours * 60).round());
+  }
+
   Widget _buildCupertinoForm(BuildContext context) {
     // FIXME something wrong with some left/right paddings here
     return ListView(
@@ -157,18 +170,30 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // start/end hour
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          CupertinoHourFormRow(
-            controller: _startHourController,
-            hintText:
-                AppLocalizations.of(context)!.flightLogModal_label_startHour,
-          ),
-          CupertinoHourFormRow(
-            controller: _endHourController,
-            hintText:
-                AppLocalizations.of(context)!.flightLogModal_label_endHour,
-          ),
-        ]),
+        CupertinoFormSection.insetGrouped(
+            footer: ListenableBuilder(
+              // trigger a local rebuild when either hour meters change
+              listenable:
+                  Listenable.merge([_startHourController, _endHourController]),
+              builder: (context, child) => Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultCupertinoFormRowStartPadding),
+                child:
+                    Text(formatFlightTimeDuration(context, _totalFlightTime)),
+              ),
+            ),
+            children: <Widget>[
+              CupertinoHourFormRow(
+                controller: _startHourController,
+                hintText: AppLocalizations.of(context)!
+                    .flightLogModal_label_startHour,
+              ),
+              CupertinoHourFormRow(
+                controller: _endHourController,
+                hintText:
+                    AppLocalizations.of(context)!.flightLogModal_label_endHour,
+              ),
+            ]),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // departure/arrival place
         CupertinoFormSection.insetGrouped(children: <Widget>[
@@ -296,6 +321,17 @@ class _FlightLogModalState extends State<FlightLogModal> {
           controller: _endHourController,
           hintText: AppLocalizations.of(context)!.flightLogModal_label_endHour,
           showIcon: false,
+        ),
+        Padding(
+          padding: _kMaterialTotalFlightTimePadding,
+          child: ListenableBuilder(
+            // trigger a local rebuild when either hour meters change
+            listenable:
+                Listenable.merge([_startHourController, _endHourController]),
+            builder: (context, child) => Text(
+                formatFlightTimeDuration(context, _totalFlightTime),
+                style: TextTheme.of(context).labelMedium),
+          ),
         ),
         const Divider(
           height: 1.0,

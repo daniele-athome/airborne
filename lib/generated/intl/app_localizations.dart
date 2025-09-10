@@ -542,6 +542,18 @@ abstract class AppLocalizations {
   /// **'Notes'**
   String get flightLogModal_hint_notes;
 
+  /// No description provided for @flightLogModal_text_totalFlightTime_simple.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{Total flight time: 1 minute} other{Total flight time: {minutes} minutes}}'**
+  String flightLogModal_text_totalFlightTime_simple(int minutes);
+
+  /// No description provided for @flightLogModal_text_totalFlightTime_extended.
+  ///
+  /// In en, this message translates to:
+  /// **'Total flight time: {minutes} minutes ({spec})'**
+  String flightLogModal_text_totalFlightTime_extended(int minutes, String spec);
+
   /// No description provided for @flightLogModal_dialog_selectPilot.
   ///
   /// In en, this message translates to:

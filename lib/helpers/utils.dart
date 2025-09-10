@@ -74,6 +74,29 @@ String getRelativeDateString(
   }
 }
 
+String formatFlightTimeDuration(BuildContext context, Duration duration) {
+  if (duration.inMinutes >= 60) {
+    // format in minutes + hour/minutes
+    return AppLocalizations.of(context)!
+        .flightLogModal_text_totalFlightTime_extended(
+            duration.inMinutes, duration.toFlightTimeSpec());
+  } else {
+    // format in minutes only
+    return AppLocalizations.of(context)!
+        .flightLogModal_text_totalFlightTime_simple(duration.inMinutes);
+  }
+}
+
+extension DurationHelpers on Duration {
+  String toFlightTimeSpec() {
+    final totalMinutes = inMinutes;
+
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    return '${hours}h ${minutes.toString().padLeft(2, '0')}m';
+  }
+}
+
 extension DateHelpers on DateTime {
   bool get isToday {
     final now = DateTime.now();

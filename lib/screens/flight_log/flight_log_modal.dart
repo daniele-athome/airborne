@@ -22,6 +22,11 @@ import 'hour_widget.dart';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
+/// HourListTile start and end paddings (20) + icon size at start (36).
+/// Bottom was measured with inspection tool from ListTile
+const _kMaterialTotalFlightTimePadding =
+    EdgeInsetsDirectional.only(start: 20 + 36, end: 20.0, bottom: 8.0);
+
 // TODO move all this fuel stuff somewhere else
 
 const _kFuelDecimals = 1;
@@ -128,11 +133,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
   Duration get _totalFlightTime {
     final num totalHours =
         _endHourController.number - _startHourController.number;
-
-    final hours = totalHours.truncate();
-    final minutes = ((totalHours - hours) * 60).round();
-
-    return Duration(hours: hours, minutes: minutes);
+    return Duration(minutes: (totalHours * 60).round());
   }
 
   Widget _buildCupertinoForm(BuildContext context) {
@@ -322,10 +323,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           showIcon: false,
         ),
         Padding(
-          // HourListTile start and end paddings (20) + icon size at start (36)
-          // Bottom was measured with inspection tool from ListTile
-          padding: const EdgeInsetsDirectional.only(
-              start: 20 + 36, end: 20.0, bottom: 8.0),
+          padding: _kMaterialTotalFlightTimePadding,
           child: ListenableBuilder(
             // trigger a local rebuild when either hour meters change
             listenable:

@@ -123,7 +123,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         : '';
   }
 
-  Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) {
+  Widget _buildCupertinoForm(BuildContext context) {
     // FIXME something wrong with some left/right paddings here
     return ListView(
       padding: kDefaultCupertinoFormMargin,
@@ -150,7 +150,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 ),
                 const SizedBox(width: 14),
                 CircleAvatar(
-                    foregroundImage: appConfig.getPilotAvatar(_pilotName)),
+                    foregroundImage: _appConfig.getPilotAvatar(_pilotName)),
               ],
             ),
           ),
@@ -419,10 +419,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
     );
   }
 
-  Widget _getItemEditor(BuildContext context) => Form(
+  Widget _buildForm(BuildContext context) => Form(
       key: _formKey,
       child: isCupertino(context)
-          ? _buildCupertinoForm(context, _appConfig)
+          ? _buildCupertinoForm(context)
           : _buildMaterialForm(context));
 
   @override
@@ -488,7 +488,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
       body: Stack(
-        children: <Widget>[_getItemEditor(context)],
+        children: <Widget>[_buildForm(context)],
       ),
     );
   }

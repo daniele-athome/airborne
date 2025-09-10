@@ -256,6 +256,23 @@ class AppLocalizationsIt extends AppLocalizations {
   String get flightLogModal_hint_notes => 'Note';
 
   @override
+  String flightLogModal_text_totalFlightTime_simple(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Tempo di volo: $minutes minuti',
+      one: 'Tempo di volo: 1 minuto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String flightLogModal_text_totalFlightTime_extended(
+      int minutes, String spec) {
+    return 'Tempo di volo: $minutes minuti ($spec)';
+  }
+
+  @override
   String get flightLogModal_dialog_selectPilot => 'Seleziona pilota';
 
   @override

@@ -131,6 +131,28 @@
   },
   "flightLogModal_label_fuel_myfuel": "My price",
   "flightLogModal_hint_notes": "Notes",
+  "flightLogModal_text_totalFlightTime_simple": "{minutes, plural, =1{Total flight time: 1 minute} other{Total flight time: {minutes} minutes}}",
+  "@flightLogModal_text_totalFlightTime_simple": {
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "36"
+      }
+    }
+  },
+  "flightLogModal_text_totalFlightTime_extended": "Total flight time: {minutes} minutes ({spec})",
+  "@flightLogModal_text_totalFlightTime_extended": {
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "78"
+      },
+      "spec": {
+        "type": "String",
+        "example": "1h 18m"
+      }
+    }
+  },
   "flightLogModal_dialog_selectPilot": "Select pilot",
   "flightLogModal_error_fuel_invalid_number": "Invalid number",
   "flightLogModal_error_fuelCost_invalid_number": "Invalid number",

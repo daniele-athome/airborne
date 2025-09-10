@@ -123,6 +123,18 @@ class _FlightLogModalState extends State<FlightLogModal> {
         : '';
   }
 
+  /// Computes the total flight time from the hour meters value.
+  /// Hour meters show the hour in the integer part and hundredth of hours in the decimal part.
+  Duration get _totalFlightTime {
+    final num totalHours =
+        _endHourController.number - _startHourController.number;
+
+    final hours = totalHours.truncate();
+    final minutes = ((totalHours - hours) * 60).round();
+
+    return Duration(hours: hours, minutes: minutes);
+  }
+
   Widget _buildCupertinoForm(BuildContext context) {
     // FIXME something wrong with some left/right paddings here
     return ListView(
@@ -296,6 +308,20 @@ class _FlightLogModalState extends State<FlightLogModal> {
           controller: _endHourController,
           hintText: AppLocalizations.of(context)!.flightLogModal_label_endHour,
           showIcon: false,
+        ),
+        Padding(
+          // HourListTile start and end paddings (20) + icon size at start (36)
+          // Bottom was measured with inspection tool from ListTile
+          padding: const EdgeInsetsDirectional.only(
+              start: 20 + 36, end: 20.0, bottom: 8.0),
+          child: ListenableBuilder(
+            // trigger a local rebuild when either hour meters change
+            listenable:
+                Listenable.merge([_startHourController, _endHourController]),
+            builder: (context, child) => Text(
+                formatFlightTimeDuration(context, _totalFlightTime),
+                style: TextTheme.of(context).labelMedium),
+          ),
         ),
         const Divider(
           height: 1.0,

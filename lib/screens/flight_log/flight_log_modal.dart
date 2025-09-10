@@ -124,7 +124,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   /// Computes the total flight time from the hour meters value.
-  /// Hour meters show the hour in the integer part and hundredth of hours in the decimal part.
+  /// Hour meters show hours in the integer part and hundredth of hours in the decimal part.
   Duration get _totalFlightTime {
     final num totalHours =
         _endHourController.number - _startHourController.number;

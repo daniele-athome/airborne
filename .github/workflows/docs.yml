@@ -65,6 +65,7 @@ jobs:
       # For latest version: `jeffreytse/jekyll-deploy-action@master`
       - uses: jeffreytse/jekyll-deploy-action@v0.6.0
         with:
+          provider: 'github'
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: 'gh-pages'
           jekyll_src: './docs/'

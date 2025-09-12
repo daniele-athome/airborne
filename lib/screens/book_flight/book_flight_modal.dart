@@ -268,9 +268,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
         _endDateController.value!,
         appConfig.locationTimeZone);
 
-    return isCupertino(context)
-        ? _buildCupertinoForm(context, appConfig, startSunTimes, endSunTimes)
-        : _buildMaterialForm(context, appConfig, startSunTimes, endSunTimes);
+    return PlatformWidget(
+      cupertino: (context, platform) =>
+          _buildCupertinoForm(context, appConfig, startSunTimes, endSunTimes),
+      material: (context, platform) =>
+          _buildMaterialForm(context, appConfig, startSunTimes, endSunTimes),
+    );
   }
 
   @override

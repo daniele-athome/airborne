@@ -474,20 +474,21 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     return Row(
       children: [
         Expanded(
-          child: isCupertino(context)
-              ? CupertinoSegmentedControl<int>(
-                  children: _buildCalendarSwitches(context),
-                  groupValue: _currentCalendarSwitch,
-                  onValueChanged: _changeView,
-                )
-              : MaterialSegmentedControl<int>(
-                  children: _buildCalendarSwitches(context),
-                  selectionIndex: _currentCalendarSwitch,
-                  borderColor: Colors.grey,
-                  selectedColor: Theme.of(context).colorScheme.primaryContainer,
-                  unselectedColor: Theme.of(context).colorScheme.surface,
-                  onSegmentTapped: _changeView,
-                ),
+          child: PlatformWidget(
+            cupertino: (context, platform) => CupertinoSegmentedControl<int>(
+              children: _buildCalendarSwitches(context),
+              groupValue: _currentCalendarSwitch,
+              onValueChanged: _changeView,
+            ),
+            material: (context, platform) => MaterialSegmentedControl<int>(
+              children: _buildCalendarSwitches(context),
+              selectionIndex: _currentCalendarSwitch,
+              borderColor: Colors.grey,
+              selectedColor: Theme.of(context).colorScheme.primaryContainer,
+              unselectedColor: Theme.of(context).colorScheme.surface,
+              onSegmentTapped: _changeView,
+            ),
+          ),
         )
       ],
     );
@@ -739,12 +740,15 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                         .alignment
                     : Alignment.center,
                 color: getModalBarrierColor(context),
-                child: isCupertino(context)
-                    ? const CupertinoActivityIndicator(
-                        radius: 20,
-                      )
-                    : const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(Colors.blue)),
+                child: PlatformWidget(
+                  cupertino: (context, platform) =>
+                      const CupertinoActivityIndicator(
+                    radius: 20,
+                  ),
+                  material: (context, platform) =>
+                      const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(Colors.blue)),
+                ),
               );
             },
           );

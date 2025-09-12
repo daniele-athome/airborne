@@ -20,9 +20,8 @@ class PilotSelectList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isCupertino(context)) {
-      final textStyle = CupertinoTheme.of(context).textTheme.textStyle;
-      return ListView(
+    return PlatformWidget(
+      cupertino: (context, platform) => ListView(
         padding: kDefaultCupertinoFormMargin,
         children: [
           CupertinoFormSection.insetGrouped(
@@ -36,16 +35,19 @@ class PilotSelectList extends StatelessWidget {
                         children: [
                           CircleAvatar(foregroundImage: avatarProvider(e)),
                           const SizedBox(width: 14),
-                          Expanded(child: Text(e, style: textStyle)),
+                          Expanded(
+                              child: Text(e,
+                                  style: CupertinoTheme.of(context)
+                                      .textTheme
+                                      .textStyle)),
                         ],
                       ),
                     ))
                 .toList(growable: false),
           ),
         ],
-      );
-    } else {
-      return ListView(
+      ),
+      material: (context, platform) => ListView(
         shrinkWrap: true,
         children: pilotNames
             .map((e) => ListTile(
@@ -58,8 +60,8 @@ class PilotSelectList extends StatelessWidget {
                   },
                 ))
             .toList(growable: false),
-      );
-    }
+      ),
+    );
   }
 }
 

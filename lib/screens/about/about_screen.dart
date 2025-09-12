@@ -537,15 +537,16 @@ class _AboutScreenState extends State<AboutScreen> {
             : _buildMaterialItems(context),
       ],
     );
-    return isCupertino(context)
-        ? Container(
-            color: CupertinoColors.systemGroupedBackground.resolveFrom(context),
-            child: list,
-          )
-        : Ink(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: list,
-          );
+    return PlatformWidget(
+        cupertino: (context, platform) => Container(
+              color:
+                  CupertinoColors.systemGroupedBackground.resolveFrom(context),
+              child: list,
+            ),
+        material: (context, platform) => Ink(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: list,
+            ));
   }
 }
 

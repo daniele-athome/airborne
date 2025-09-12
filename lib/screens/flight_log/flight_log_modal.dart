@@ -457,9 +457,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   Widget _buildForm(BuildContext context) => Form(
       key: _formKey,
-      child: isCupertino(context)
-          ? _buildCupertinoForm(context)
-          : _buildMaterialForm(context));
+      child: PlatformWidget(
+          cupertino: (context, platform) => _buildCupertinoForm(context),
+          material: (context, platform) => _buildMaterialForm(context)));
 
   @override
   Widget build(BuildContext context) {

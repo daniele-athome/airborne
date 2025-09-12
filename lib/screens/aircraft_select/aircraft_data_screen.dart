@@ -135,6 +135,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     }
   }
 
+  // FIXME very bad use of isCupertino here
   List<Widget> _buildFormSections(BuildContext context, AppConfig appConfig) =>
       <Widget>[
         if (!isCupertino(context))
@@ -227,7 +228,9 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
 
   Widget _buildForm(BuildContext context, AppConfig appConfig) => Form(
       key: _formKey,
-      child: isCupertino(context)
-          ? _buildCupertinoForm(context, appConfig)
-          : _buildMaterialForm(context, appConfig));
+      child: PlatformWidget(
+        cupertino: (context, platform) =>
+            _buildCupertinoForm(context, appConfig),
+        material: (context, platform) => _buildMaterialForm(context, appConfig),
+      ));
 }

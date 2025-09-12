@@ -115,8 +115,8 @@ class _ActivitiesListState extends State<ActivitiesList> {
   @override
   Widget build(BuildContext context) {
     // TODO test scrolling physics with no content
-    if (isCupertino(context)) {
-      return CustomScrollView(
+    return PlatformWidget(
+      cupertino: (context, platform) => CustomScrollView(
         slivers: <Widget>[
           CupertinoSliverRefreshControl(
             onRefresh: () => _refresh(),
@@ -145,9 +145,8 @@ class _ActivitiesListState extends State<ActivitiesList> {
             ),
           ),
         ],
-      );
-    } else {
-      return RefreshIndicator(
+      ),
+      material: (context, platform) => RefreshIndicator(
         onRefresh: () => _refresh(),
         child: PagedListView.separated(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -164,8 +163,8 @@ class _ActivitiesListState extends State<ActivitiesList> {
                 noItemsFoundIndicator(context),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -406,24 +405,25 @@ class _EntryListItem extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: isCupertino(context)
-          ? Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                color: _backgroundColor(context, entry),
-              ),
-              // no shadow, so we manually create a margin
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              child: content,
-            )
-          : Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              color: _backgroundColor(context, entry),
-              elevation: 5,
-              child: content,
-            ),
+      child: PlatformWidget(
+        cupertino: (context, platform) => Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            color: _backgroundColor(context, entry),
+          ),
+          // no shadow, so we manually create a margin
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: content,
+        ),
+        material: (context, platform) => Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: _backgroundColor(context, entry),
+          elevation: 5,
+          child: content,
+        ),
+      ),
     );
   }
 }

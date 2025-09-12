@@ -49,6 +49,11 @@ jobs:
         with:
           flutter-version: ${{ env.flutter_version }}
 
+      - name: Patch Flutter
+        run: |
+          git apply "${{ github.workspace }}/.github/workflows/patches/0001-Workaround-for-wrong-list-divider-margin-119895.patch"
+        working-directory: ${{ env.FLUTTER_ROOT }}
+
       - name: Install dependencies
         run: flutter pub get
 

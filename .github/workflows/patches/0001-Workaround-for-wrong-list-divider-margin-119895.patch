@@ -1,0 +1,25 @@
+From 4ae1033bd856916bc356710d3566ea02cf0b9c8f Mon Sep 17 00:00:00 2001
+From: Daniele Ricci <daniele@casaricci.it>
+Date: Fri, 12 Sep 2025 11:38:46 +0200
+Subject: [PATCH] Workaround for wrong list divider margin (#119895)
+
+---
+ packages/flutter/lib/src/cupertino/list_section.dart | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packages/flutter/lib/src/cupertino/list_section.dart b/packages/flutter/lib/src/cupertino/list_section.dart
+index 5defd941d17..3fc6b8342d9 100644
+--- a/packages/flutter/lib/src/cupertino/list_section.dart
++++ b/packages/flutter/lib/src/cupertino/list_section.dart
+@@ -90,7 +90,7 @@ const double _kInsetAdditionalDividerMargin = 42.0;
+ 
+ // Additional margin of divider used in inset grouped version of list section
+ // when there is no leading widgets. Estimated from iOS 14.4 SDK Notes app.
+-const double _kInsetAdditionalDividerMarginWithoutLeading = 14.0;
++const double _kInsetAdditionalDividerMarginWithoutLeading = 6.0;
+ 
+ // Color of header and footer text in edge-to-edge variant.
+ const Color _kHeaderFooterColor = CupertinoDynamicColor(
+-- 
+2.51.0
+

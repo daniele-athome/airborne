@@ -21,10 +21,10 @@ packages:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      sha256: b04fb01be3223f0a9efb110159fef4e1cc1f0beaa5660938595dbedf37e1bfd6
+      sha256: d02f6a593503156fc0d7b2d748ddb5663729a03dd1ac9f98695a15bb5c108e39
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.5.0"
   analyzer:
     dependency: transitive
     description:
@@ -189,10 +189,10 @@ packages:
     dependency: transitive
     description:
       name: code_builder
-      sha256: "0ec10bf4a89e4c613960bf1e8b42c64127021740fb21640c29c909826a5eea3e"
+      sha256: "11654819532ba94c34de52ff5feb52bd81cba1de00ef2ed622fd50295f9d4243"
       url: "https://pub.dev"
     source: hosted
-    version: "4.10.1"
+    version: "4.11.0"
   collection:
     dependency: "direct main"
     description:
@@ -504,10 +504,10 @@ packages:
     dependency: transitive
     description:
       name: leak_tracker
-      sha256: "8dcda04c3fc16c14f48a7bb586d4be1f0d1572731b6d81d51772ef47c02081e0"
+      sha256: "33e2e26bdd85a0112ec15400c8cbffea70d0f9c3407491f672a2fad47915e2de"
       url: "https://pub.dev"
     source: hosted
-    version: "11.0.1"
+    version: "11.0.2"
   leak_tracker_flutter_testing:
     dependency: transitive
     description:
@@ -648,10 +648,10 @@ packages:
     dependency: "direct main"
     description:
       name: package_info_plus
-      sha256: "16eee997588c60225bda0488b6dcfac69280a6b7a3cf02c741895dd370a02968"
+      sha256: f69da0d3189a4b4ceaeb1a3defb0f329b3b352517f52bed4290f83d4f06bc08d
       url: "https://pub.dev"
     source: hosted
-    version: "8.3.1"
+    version: "9.0.0"
   package_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -1014,34 +1014,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: "24bfd30e538eab8834851a9374119e40dc4b88423e0e6beedbce9d29ba26fe3c"
+      sha256: d7e331d1067a2fe99ebfcd5874c39af7620e17c7f036360486c5f68925222d06
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.17"
+    version: "31.1.19"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "917022225a57ddf1287f9cd840acdcfab3197b92e84964476f6a2f9e87a78ace"
+      sha256: "2d878bce96c4fd1092205a4f72b328f7f05d86b27c3bd55db7fd440e6017352a"
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.17"
+    version: "31.1.19"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: b3662135e1553a7fae40260a9c3b1f1f87aa76bb519294a68c1607bb94345d51
+      sha256: bbd2135dcfed085fca2296a9b1492b2ecf1d288e5aa0758d8827ece58e26df0b
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.17"
+    version: "31.1.19"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: "82fbcf20a0d4ef959d4a7143e0cff323f1a9375d8855b6bd3b4cd5373bd84ce5"
+      sha256: "4cd832b1fdb7219ebec13fde2358ff10f07c01e2dff605596d16205cd1bce03e"
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.17"
+    version: "31.1.19"
   term_glyph:
     dependency: transitive
     description:
@@ -1144,10 +1144,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "69ee86740f2847b9a4ba6cffa74ed12ce500bbe2b07f3dc1e643439da60637b7"
+      sha256: "07cffecb7d68cbc6437cd803d5f11a86fe06736735c3dfe46ff73bcb0f958eed"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.18"
+    version: "6.3.21"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1293,5 +1293,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.8.0 <4.0.0"
-  flutter: ">=3.32.0"
+  dart: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.0"

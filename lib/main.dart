@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
               material: (_, __) => MaterialAppData(
                 // TEST
                 //themeMode: ThemeMode.dark,
-                theme: ThemeData(
+                theme: ThemeData.light(useMaterial3: true).copyWith(
                   brightness: Brightness.light,
                   colorScheme: ColorScheme.fromSeed(
                     brightness: Brightness.light,
@@ -138,9 +138,8 @@ class _MyAppState extends State<MyApp> {
                     tertiary: Colors.lightGreen,
                     dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                   ),
-                  useMaterial3: true,
                 ),
-                darkTheme: ThemeData(
+                darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
                   brightness: Brightness.dark,
                   colorScheme: ColorScheme.fromSeed(
                     brightness: Brightness.dark,
@@ -150,7 +149,6 @@ class _MyAppState extends State<MyApp> {
                     tertiary: Colors.lightGreen,
                     dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                   ),
-                  useMaterial3: true,
                 ),
               ),
               cupertino: (_, __) => CupertinoAppData(

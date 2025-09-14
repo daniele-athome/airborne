@@ -22,10 +22,10 @@ import 'hour_widget.dart';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
-/// HourListTile start and end paddings (20) + icon size at start (36).
+/// HourListTile start and end paddings (20) + icon size at start (40).
 /// Bottom was measured with inspection tool from ListTile
 const _kMaterialTotalFlightTimePadding =
-    EdgeInsetsDirectional.only(start: 20 + 36, end: 20.0, bottom: 8.0);
+    EdgeInsetsDirectional.only(start: 20 + 40, end: 20.0, bottom: 8.0);
 
 // TODO move all this fuel stuff somewhere else
 

@@ -350,10 +350,10 @@ packages:
     dependency: "direct main"
     description:
       name: fluttertoast
-      sha256: "25e51620424d92d3db3832464774a6143b5053f15e382d8ffbfd40b6e795dcf1"
+      sha256: ee344570bf50770ee50ba983655d2bc672839f95e1612fbb1182695030ffa597
       url: "https://pub.dev"
     source: hosted
-    version: "8.2.12"
+    version: "8.2.13"
   frontend_server_client:
     dependency: transitive
     description:
@@ -736,10 +736,10 @@ packages:
     dependency: transitive
     description:
       name: pool
-      sha256: "20fe868b6314b322ea036ba325e6fc0711a22948856475e2c2b6306e8ab39c2a"
+      sha256: "978783255c543aa3586a1b3c21f6e9d720eb315376a915872c61ef8b5c20177d"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.1"
+    version: "1.5.2"
   posix:
     dependency: transitive
     description:
@@ -1014,34 +1014,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: d7e331d1067a2fe99ebfcd5874c39af7620e17c7f036360486c5f68925222d06
+      sha256: "3ad4e319a4d979153e9dab9144d3e3a4129fd03abfdbe060ca30e5d757e24f17"
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.19"
+    version: "31.1.20"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "2d878bce96c4fd1092205a4f72b328f7f05d86b27c3bd55db7fd440e6017352a"
+      sha256: e8e351522b7c3442609e04f1613f29b7917147bb3de41dbd3c1ec4169cf1888d
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.19"
+    version: "31.1.20"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: bbd2135dcfed085fca2296a9b1492b2ecf1d288e5aa0758d8827ece58e26df0b
+      sha256: a57184b6feb08e7547711e4cd3bfdf2338fc4673103cc0242c33858a8d22ce5d
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.19"
+    version: "31.1.20"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: "4cd832b1fdb7219ebec13fde2358ff10f07c01e2dff605596d16205cd1bce03e"
+      sha256: "47712853fbef0644bc062d014242dd45753187623c1c1c87a3df85881dee6db9"
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.19"
+    version: "31.1.20"
   term_glyph:
     dependency: transitive
     description:
@@ -1294,4 +1294,4 @@ packages:
     version: "3.1.3"
 sdks:
   dart: ">=3.9.0 <4.0.0"
-  flutter: ">=3.35.0"
+  flutter: ">=3.35.1"

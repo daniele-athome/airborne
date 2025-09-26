@@ -188,6 +188,7 @@ class MainNavigationApp extends StatelessWidget {
           //locale: const Locale('it', ''),
           initialRoute: appConfig.pilotName != null ? '/' : 'pilot-select',
           routes: <String, WidgetBuilder>{
+            // TODO provide service via providers
             // ignore: invalid_use_of_visible_for_testing_member
             '/': (context) => main_screen.MainNavigation.withServices(appConfig,
               googleServiceAccountService: FakeGoogleServiceAccountService(),

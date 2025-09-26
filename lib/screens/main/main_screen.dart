@@ -26,8 +26,6 @@ class MainNavigation extends StatefulWidget {
   final ActivitiesService? activitiesService;
   final MetadataService? metadataService;
 
-  // TODO other services one day...
-
   const MainNavigation(this.appConfig, {super.key})
       : googleServiceAccountService = null,
         bookFlightCalendarService = null,
@@ -53,54 +51,12 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   late PlatformTabController _tabController;
-  late BookFlightCalendarService? _bookFlightCalendarService;
-  late FlightLogBookService? _flightLogBookService;
-  late ActivitiesService? _activitiesService;
 
   @override
   void initState() {
     _tabController = PlatformTabController();
     widget.appConfig.addListener(_resetTabController);
-    _rebuildServices();
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant MainNavigation oldWidget) {
-    _rebuildServices();
-    super.didUpdateWidget(oldWidget);
-  }
-
-  void _rebuildServices() {
-    // FIXME if the services are already built (or provided) these variables are not used
-    final account = widget.googleServiceAccountService ??
-        GoogleServiceAccountService(
-            json: widget.appConfig.googleServiceAccountJson);
-    final metadataService = widget.metadataService ??
-        (widget.appConfig.hasFeature('metadata')
-            ? MetadataService(account, widget.appConfig.metadataBackendInfo)
-            : null);
-
-    _bookFlightCalendarService = widget.bookFlightCalendarService ??
-        (widget.appConfig.hasFeature('book_flight')
-            ? BookFlightCalendarService(
-                account, widget.appConfig.googleCalendarId)
-            : null);
-    _flightLogBookService = widget.flightLogBookService ??
-        (widget.appConfig.hasFeature('flight_log')
-            ? FlightLogBookService(
-                account, metadataService, widget.appConfig.flightlogBackendInfo)
-            : null);
-    _activitiesService = widget.activitiesService ??
-        (widget.appConfig.hasFeature('activities')
-            ? ActivitiesService(account, metadataService,
-                widget.appConfig.activitiesBackendInfo)
-            : null);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   void _resetTabController() {
@@ -116,23 +72,13 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   Widget _buildTab(BuildContext context, int index) {
-    // FIXME find a more efficient way to do this
     return [
       if (widget.appConfig.hasFeature('book_flight'))
-        () => Provider.value(
-              value: _bookFlightCalendarService,
-              child: const BookFlightScreen(),
-            ),
+        () => const BookFlightScreen(),
       if (widget.appConfig.hasFeature('flight_log'))
-        () => Provider.value(
-              value: _flightLogBookService,
-              child: const FlightLogScreen(),
-            ),
+        () => const FlightLogScreen(),
       if (widget.appConfig.hasFeature('activities'))
-        () => Provider.value(
-              value: _activitiesService,
-              child: const ActivitiesScreen(),
-            ),
+        () => const ActivitiesScreen(),
       () => const AboutScreen(),
     ][index]();
   }
@@ -194,21 +140,71 @@ class _MainNavigationState extends State<MainNavigation> {
     ];
 
     if (items.length >= 2) {
-      return PlatformTabScaffold(
-        iosContentBottomPadding: true,
-        // appBar is owned by screen
-        bodyBuilder: (context, index) => _buildTab(context, index),
-        tabController: _tabController,
-        items: items,
-        materialTabs: (_, __) => MaterialNavBarData(
-          type: BottomNavigationBarType.fixed,
+      // we build the service dependency tree here.
+      return MultiProvider(
+        providers: [
+          // account service: the dependency tree root
+          Provider<GoogleServiceAccountService>(
+            create: (_) =>
+                widget.googleServiceAccountService ??
+                GoogleServiceAccountService(
+                    json: widget.appConfig.googleServiceAccountJson),
+          ),
+          // metadata service: depends on account service
+          ProxyProvider<GoogleServiceAccountService, MetadataService?>(
+            update: (_, account, __) => widget.appConfig.hasFeature('metadata')
+                ? widget.metadataService ??
+                    MetadataService(
+                        account, widget.appConfig.metadataBackendInfo)
+                : null,
+          ),
+          // other application services: depend on account and metadata services.
+          // Metadata service is optional since they can work without it.
+          ProxyProvider<GoogleServiceAccountService,
+              BookFlightCalendarService?>(
+            update: (_, account, __) =>
+                widget.appConfig.hasFeature('book_flight')
+                    ? widget.bookFlightCalendarService ??
+                        BookFlightCalendarService(
+                            account, widget.appConfig.googleCalendarId)
+                    : null,
+          ),
+          ProxyProvider2<GoogleServiceAccountService, MetadataService?,
+              FlightLogBookService?>(
+            update: (_, account, metadataService, __) {
+              return widget.appConfig.hasFeature('flight_log')
+                  ? widget.flightLogBookService ??
+                      FlightLogBookService(account, metadataService,
+                          widget.appConfig.flightlogBackendInfo)
+                  : null;
+            },
+          ),
+          ProxyProvider2<GoogleServiceAccountService, MetadataService?,
+              ActivitiesService?>(
+            update: (_, account, metadataService, __) =>
+                widget.appConfig.hasFeature('activities')
+                    ? widget.activitiesService ??
+                        ActivitiesService(account, metadataService,
+                            widget.appConfig.activitiesBackendInfo)
+                    : null,
+          ),
+        ],
+        child: PlatformTabScaffold(
+          iosContentBottomPadding: true,
+          // appBar is owned by screen
+          bodyBuilder: (context, index) => _buildTab(context, index),
+          tabController: _tabController,
+          items: items,
+          materialTabs: (_, __) => MaterialNavBarData(
+            type: BottomNavigationBarType.fixed,
+          ),
+          material: (_, __) => MaterialTabScaffoldData(
+              // TODO
+              ),
+          cupertino: (_, __) => CupertinoTabScaffoldData(
+              // TODO
+              ),
         ),
-        material: (_, __) => MaterialTabScaffoldData(
-            // TODO
-            ),
-        cupertino: (_, __) => CupertinoTabScaffoldData(
-            // TODO
-            ),
       );
     } else {
       return PlatformScaffold(

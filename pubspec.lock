@@ -387,10 +387,10 @@ packages:
     dependency: "direct main"
     description:
       name: googleapis
-      sha256: "5c9e0f25be1dec13d8d2158263141104c51b5ba83487537c17a2330581e505ee"
+      sha256: "692fb9e90c321b61a7a2123de0353ec8a20691cd979db2553d8d732f710f6535"
       url: "https://pub.dev"
     source: hosted
-    version: "14.0.0"
+    version: "15.0.0"
   googleapis_auth:
     dependency: "direct main"
     description:
@@ -841,10 +841,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: a2608114b1ffdcbc9c120eb71a0e207c71da56202852d4aab8a5e30a82269e74
+      sha256: bd14436108211b0d4ee5038689a56d4ae3620fd72fd6036e113bf1345bc74d9e
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.12"
+    version: "2.4.13"
   shared_preferences_foundation:
     dependency: transitive
     description:
@@ -1014,34 +1014,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: "3ad4e319a4d979153e9dab9144d3e3a4129fd03abfdbe060ca30e5d757e24f17"
+      sha256: "24a1c46ee5dee7fbc8dc66f998eadccd36e1b6a0a514a4dee7939b160e914015"
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.20"
+    version: "31.1.21"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: e8e351522b7c3442609e04f1613f29b7917147bb3de41dbd3c1ec4169cf1888d
+      sha256: "7c700778e2b390412f3a364aa38fbc010570ade19684b9d6613d17e7ca284898"
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.20"
+    version: "31.1.21"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: a57184b6feb08e7547711e4cd3bfdf2338fc4673103cc0242c33858a8d22ce5d
+      sha256: f4cea1c28175a858875507e30d553acfefd2465ed8954052c5a3cb32958d443a
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.20"
+    version: "31.1.21"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: "47712853fbef0644bc062d014242dd45753187623c1c1c87a3df85881dee6db9"
+      sha256: beb82c9f9012320f87627cfcebc51a74d9cb950941f6a248f41d11f409b0a71b
       url: "https://pub.dev"
     source: hosted
-    version: "31.1.20"
+    version: "31.1.21"
   term_glyph:
     dependency: transitive
     description:

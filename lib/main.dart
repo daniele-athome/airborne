@@ -3,23 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-//import 'package:intl/intl.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
-import 'generated/intl/app_localizations.dart';
 import 'helpers/config.dart';
 import 'helpers/utils.dart';
-import 'screens/aircraft_select/aircraft_data_screen.dart';
-import 'screens/main/main_screen.dart';
-import 'screens/pilot_select/pilot_select_screen.dart';
-
-final Logger _log = Logger("main");
+import 'screens/app.dart';
 
 Future<void> main() async {
   Logger.root.level = kReleaseMode ? Level.INFO : Level.ALL;
@@ -73,89 +64,4 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  String _getInitialRoute(AppConfig appConfig) {
-    if (appConfig.aircrafts.isEmpty && appConfig.currentAircraft == null) {
-      return 'aircraft-data';
-    } else {
-      return appConfig.pilotName != null ? '/' : 'pilot-select';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _log.finest('MAIN-BUILD');
-    return Consumer<AppConfig>(
-        builder: (context, appConfig, child) => PlatformApp(
-              onGenerateTitle: (BuildContext context) =>
-                  AppLocalizations.of(context)!.appName,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                SfGlobalLocalizations.delegate,
-              ],
-              supportedLocales: AppLocalizations.supportedLocales,
-              // TEST
-              //locale: const Locale('it', ''),
-              initialRoute: _getInitialRoute(appConfig),
-              routes: <String, WidgetBuilder>{
-                // there is probably a better way to avoid loading the routes...
-                '/': (context) => appConfig.currentAircraft != null
-                    ? MainNavigation(appConfig)
-                    : const SizedBox.shrink(),
-                'pilot-select': (context) => appConfig.currentAircraft != null
-                    ? const PilotSelectScreen()
-                    : const SizedBox.shrink(),
-                'aircraft-data': (context) => const SetAircraftDataScreen(),
-              },
-              debugShowCheckedModeBanner: false,
-              material: (_, __) => MaterialAppData(
-                // TEST
-                //themeMode: ThemeMode.dark,
-                theme: ThemeData.light(useMaterial3: true).copyWith(
-                  brightness: Brightness.light,
-                  colorScheme: ColorScheme.fromSeed(
-                    brightness: Brightness.light,
-                    seedColor: Colors.orange,
-                    primary: Colors.deepOrange,
-                    secondary: Colors.red,
-                    tertiary: Colors.lightGreen,
-                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                  ),
-                ),
-                darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
-                  brightness: Brightness.dark,
-                  colorScheme: ColorScheme.fromSeed(
-                    brightness: Brightness.dark,
-                    seedColor: Colors.orange,
-                    primary: Colors.deepOrange,
-                    secondary: Colors.red,
-                    tertiary: Colors.lightGreen,
-                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                  ),
-                ),
-              ),
-              cupertino: (_, __) => CupertinoAppData(
-                  // TEST
-                  //theme: const CupertinoThemeData(brightness: Brightness.dark),
-                  // TODO
-                  ),
-            ));
-  }
 }

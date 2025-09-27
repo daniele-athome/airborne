@@ -37,60 +37,57 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     _log.finest('MAIN-BUILD');
-    return Consumer<AppConfig>(
-        builder: (context, appConfig, child) => PlatformApp(
-              onGenerateTitle: (BuildContext context) =>
-                  AppLocalizations.of(context)!.appName,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                SfGlobalLocalizations.delegate,
-              ],
-              supportedLocales: AppLocalizations.supportedLocales,
-              // TEST locale: const Locale('it', ''),
-              initialRoute: _getInitialRoute(appConfig),
-              routes: <String, WidgetBuilder>{
-                // there is probably a better way to avoid loading the routes...
-                '/': (context) => appConfig.currentAircraft != null
-                    ? MainNavigation(appConfig)
-                    : const SizedBox.shrink(),
-                'pilot-select': (context) => appConfig.currentAircraft != null
-                    ? const PilotSelectScreen()
-                    : const SizedBox.shrink(),
-                'aircraft-data': (context) => const SetAircraftDataScreen(),
-              },
-              debugShowCheckedModeBanner: false,
-              material: (_, __) => MaterialAppData(
-                // TEST themeMode: ThemeMode.dark,
-                theme: ThemeData.light(useMaterial3: true).copyWith(
-                  brightness: Brightness.light,
-                  colorScheme: ColorScheme.fromSeed(
-                    brightness: Brightness.light,
-                    seedColor: Colors.orange,
-                    primary: Colors.deepOrange,
-                    secondary: Colors.red,
-                    tertiary: Colors.lightGreen,
-                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                  ),
-                ),
-                darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
-                  brightness: Brightness.dark,
-                  colorScheme: ColorScheme.fromSeed(
-                    brightness: Brightness.dark,
-                    seedColor: Colors.orange,
-                    primary: Colors.deepOrange,
-                    secondary: Colors.red,
-                    tertiary: Colors.lightGreen,
-                    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                  ),
-                ),
-              ),
-              cupertino: (_, __) => CupertinoAppData(
-                  // TEST theme: const CupertinoThemeData(brightness: Brightness.dark),
-                  // TODO
-                  ),
-            ));
+    final AppConfig appConfig = Provider.of<AppConfig>(context, listen: false);
+    return PlatformApp(
+      onGenerateTitle: (BuildContext context) =>
+          AppLocalizations.of(context)!.appName,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        SfGlobalLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      // TEST locale: const Locale('it', ''),
+      initialRoute: _getInitialRoute(appConfig),
+      routes: <String, WidgetBuilder>{
+        // there is probably a better way to avoid loading the routes...
+        '/': (context) => Consumer<AppConfig>(
+            builder: (context, appConfig, child) => MainNavigation(appConfig)),
+        'pilot-select': (context) => const PilotSelectScreen(),
+        'aircraft-data': (context) => const SetAircraftDataScreen(),
+      },
+      debugShowCheckedModeBanner: false,
+      material: (_, __) => MaterialAppData(
+        // TEST themeMode: ThemeMode.dark,
+        theme: ThemeData.light(useMaterial3: true).copyWith(
+          brightness: Brightness.light,
+          colorScheme: ColorScheme.fromSeed(
+            brightness: Brightness.light,
+            seedColor: Colors.orange,
+            primary: Colors.deepOrange,
+            secondary: Colors.red,
+            tertiary: Colors.lightGreen,
+            dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+          ),
+        ),
+        darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
+          brightness: Brightness.dark,
+          colorScheme: ColorScheme.fromSeed(
+            brightness: Brightness.dark,
+            seedColor: Colors.orange,
+            primary: Colors.deepOrange,
+            secondary: Colors.red,
+            tertiary: Colors.lightGreen,
+            dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+          ),
+        ),
+      ),
+      cupertino: (_, __) => CupertinoAppData(
+          // TEST theme: const CupertinoThemeData(brightness: Brightness.dark),
+          // TODO
+          ),
+    );
   }
 }

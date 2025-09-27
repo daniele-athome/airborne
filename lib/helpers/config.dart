@@ -167,7 +167,7 @@ class AppConfig extends ChangeNotifier {
       _log.fine('Selecting no aircraft');
     }
     if (_currentAircraft != null) {
-      _clearPictureCache();
+      await _clearPictureCache();
     }
     _currentAircraft = data;
     _currentAircraftId = data?.id;
@@ -204,7 +204,7 @@ class AppConfig extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _clearPictureCache() async {
+  Future<void> _clearPictureCache() async {
     await aircraftPicture.evict();
     for (var name in pilotNames) {
       await getPilotAvatar(name).evict();

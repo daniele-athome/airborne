@@ -118,6 +118,7 @@ class _AboutScreenState extends State<AboutScreen> {
       text: AppLocalizations.of(context)!.about_disconnect_confirm_message,
       destructiveOk: true,
       okCallback: () {
+        // FIXME AboutScreen is rebuilt after this but will find null objects
         _appConfig.pilotName = null;
         _appConfig.setCurrentAircraft(null).whenComplete(() {
           if (context.mounted) {

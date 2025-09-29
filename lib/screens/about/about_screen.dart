@@ -470,6 +470,11 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // workaround for race-condition after a logout
+    if (_appConfig.currentAircraft == null) {
+      return const SizedBox();
+    }
+
     final list = ListView(
       children: [
         Stack(

@@ -9,8 +9,15 @@ import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'helpers/config.dart';
+import 'helpers/googleapis.dart';
 import 'helpers/utils.dart';
 import 'screens/app.dart';
+import 'services/activities_services.dart';
+import 'services/book_flight_services.dart';
+import 'services/flight_log_services.dart';
+import 'services/metadata_services.dart';
+
+final Logger _log = Logger("main");
 
 Future<void> main() async {
   Logger.root.level = kReleaseMode ? Level.INFO : Level.ALL;
@@ -60,6 +67,57 @@ Future<void> main() async {
         ChangeNotifierProvider<AppConfig>.value(value: appConfig),
         ChangeNotifierProvider<DownloadProvider>(
             create: (context) => DownloadProvider(() => HttpClient())),
+        // account service: the dependency tree root
+        ProxyProvider<AppConfig, GoogleServiceAccountService?>(
+          update: (_, appConfig, __) {
+            _log.finest('build account_service');
+            return appConfig.currentAircraft != null
+                ? GoogleServiceAccountService(
+                    json: appConfig.googleServiceAccountJson)
+                : null;
+          },
+        ),
+        // metadata service: depends on account service
+        ProxyProvider2<AppConfig, GoogleServiceAccountService?,
+            MetadataService?>(
+          update: (_, appConfig, account, __) {
+            _log.finest('build metadata');
+            return appConfig.hasFeature('metadata') && account != null
+                ? MetadataService(account, appConfig.metadataBackendInfo)
+                : null;
+          },
+        ),
+        // other application services: depend on account and metadata services.
+        // Metadata service is optional since they can work without it.
+        ProxyProvider2<AppConfig, GoogleServiceAccountService?,
+            BookFlightCalendarService?>(
+          update: (_, appConfig, account, __) {
+            _log.finest('build book_flight');
+            return appConfig.hasFeature('book_flight') && account != null
+                ? BookFlightCalendarService(account, appConfig.googleCalendarId)
+                : null;
+          },
+        ),
+        ProxyProvider3<AppConfig, GoogleServiceAccountService?,
+            MetadataService?, FlightLogBookService?>(
+          update: (_, appConfig, account, metadataService, __) {
+            _log.finest('build flight_log');
+            return appConfig.hasFeature('flight_log') && account != null
+                ? FlightLogBookService(
+                    account, metadataService, appConfig.flightlogBackendInfo)
+                : null;
+          },
+        ),
+        ProxyProvider3<AppConfig, GoogleServiceAccountService, MetadataService?,
+            ActivitiesService?>(
+          update: (_, appConfig, account, metadataService, __) {
+            _log.finest('build activities');
+            return appConfig.hasFeature('activities')
+                ? ActivitiesService(
+                    account, metadataService, appConfig.activitiesBackendInfo)
+                : null;
+          },
+        ),
       ],
       child: const MyApp(),
     ),

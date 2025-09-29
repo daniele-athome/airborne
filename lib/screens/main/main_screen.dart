@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:provider/provider.dart';
 
 import '../../generated/intl/app_localizations.dart';
 import '../../helpers/config.dart';
@@ -34,6 +33,7 @@ class MainNavigation extends StatefulWidget {
         metadataService = null;
 
   /// Mainly for integration testing.
+  @Deprecated('Use dependency injection')
   @visibleForTesting
   const MainNavigation.withServices(
     this.appConfig, {
@@ -140,71 +140,21 @@ class _MainNavigationState extends State<MainNavigation> {
     ];
 
     if (items.length >= 2) {
-      // we build the service dependency tree here.
-      return MultiProvider(
-        providers: [
-          // account service: the dependency tree root
-          Provider<GoogleServiceAccountService>(
-            create: (_) =>
-                widget.googleServiceAccountService ??
-                GoogleServiceAccountService(
-                    json: widget.appConfig.googleServiceAccountJson),
-          ),
-          // metadata service: depends on account service
-          ProxyProvider<GoogleServiceAccountService, MetadataService?>(
-            update: (_, account, __) => widget.appConfig.hasFeature('metadata')
-                ? widget.metadataService ??
-                    MetadataService(
-                        account, widget.appConfig.metadataBackendInfo)
-                : null,
-          ),
-          // other application services: depend on account and metadata services.
-          // Metadata service is optional since they can work without it.
-          ProxyProvider<GoogleServiceAccountService,
-              BookFlightCalendarService?>(
-            update: (_, account, __) =>
-                widget.appConfig.hasFeature('book_flight')
-                    ? widget.bookFlightCalendarService ??
-                        BookFlightCalendarService(
-                            account, widget.appConfig.googleCalendarId)
-                    : null,
-          ),
-          ProxyProvider2<GoogleServiceAccountService, MetadataService?,
-              FlightLogBookService?>(
-            update: (_, account, metadataService, __) {
-              return widget.appConfig.hasFeature('flight_log')
-                  ? widget.flightLogBookService ??
-                      FlightLogBookService(account, metadataService,
-                          widget.appConfig.flightlogBackendInfo)
-                  : null;
-            },
-          ),
-          ProxyProvider2<GoogleServiceAccountService, MetadataService?,
-              ActivitiesService?>(
-            update: (_, account, metadataService, __) =>
-                widget.appConfig.hasFeature('activities')
-                    ? widget.activitiesService ??
-                        ActivitiesService(account, metadataService,
-                            widget.appConfig.activitiesBackendInfo)
-                    : null,
-          ),
-        ],
-        child: PlatformTabScaffold(
-          iosContentBottomPadding: true,
-          // appBar is owned by screen
-          bodyBuilder: (context, index) => _buildTab(context, index),
-          tabController: _tabController,
-          items: items,
-          materialTabs: (_, __) => MaterialNavBarData(
-            type: BottomNavigationBarType.fixed,
-          ),
-          material: (_, __) => MaterialTabScaffoldData(
-              // TODO
-              ),
-          cupertino: (_, __) => CupertinoTabScaffoldData(
-              // TODO
-              ),
+      return PlatformTabScaffold(
+        iosContentBottomPadding: true,
+        // appBar is owned by screen
+        bodyBuilder: (context, index) => _buildTab(context, index),
+        tabController: _tabController,
+        items: items,
+        materialTabs: (_, __) => MaterialNavBarData(
+          type: BottomNavigationBarType.fixed,
         ),
+        material: (_, __) => MaterialTabScaffoldData(
+            // TODO
+            ),
+        cupertino: (_, __) => CupertinoTabScaffoldData(
+            // TODO
+            ),
       );
     } else {
       return PlatformScaffold(

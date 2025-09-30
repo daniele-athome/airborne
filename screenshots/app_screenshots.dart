@@ -1,7 +1,11 @@
 import 'dart:io';
 
 import 'package:airborne/helpers/config.dart';
+import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/helpers/utils.dart';
+import 'package:airborne/services/activities_services.dart';
+import 'package:airborne/services/book_flight_services.dart';
+import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -49,6 +53,11 @@ void main() async {
         ChangeNotifierProvider<DownloadProvider>(
             create: (context) => DownloadProvider(() => HttpClient())
         ),
+        Provider<GoogleServiceAccountService>.value(value: FakeGoogleServiceAccountService()),
+        Provider<BookFlightCalendarService>.value(value: FakeCalendarService(generateFakeEvents(appConfig.pilotNames))),
+        Provider<FlightLogBookService>.value(value: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames))),
+        Provider<ActivitiesService>.value(value: FakeActivitiesService(generateFakeActivities(appConfig.pilotNames))),
+        // TODO metadataService...
       ],
       child: const MainNavigationApp(),
     );

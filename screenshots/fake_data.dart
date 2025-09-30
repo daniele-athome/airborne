@@ -188,15 +188,7 @@ class MainNavigationApp extends StatelessWidget {
           //locale: const Locale('it', ''),
           initialRoute: appConfig.pilotName != null ? '/' : 'pilot-select',
           routes: <String, WidgetBuilder>{
-            // TODO provide service via providers
-            // ignore: invalid_use_of_visible_for_testing_member
-            '/': (context) => main_screen.MainNavigation.withServices(appConfig,
-              googleServiceAccountService: FakeGoogleServiceAccountService(),
-              bookFlightCalendarService: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
-              flightLogBookService: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames)),
-              activitiesService: FakeActivitiesService(generateFakeActivities(appConfig.pilotNames)),
-              // TODO metadataService: ...
-            ),
+            '/': (context) => main_screen.MainNavigation(appConfig),
             'pilot-select': (context) => const PilotSelectScreen(),
           },
           debugShowCheckedModeBanner: false,

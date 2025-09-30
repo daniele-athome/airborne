@@ -4,12 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 import '../../generated/intl/app_localizations.dart';
 import '../../helpers/config.dart';
-import '../../helpers/googleapis.dart';
 import '../../helpers/utils.dart';
-import '../../services/activities_services.dart';
-import '../../services/book_flight_services.dart';
-import '../../services/flight_log_services.dart';
-import '../../services/metadata_services.dart';
 import '../about/about_screen.dart';
 import '../activities/activities_screen.dart';
 import '../book_flight/book_flight_screen.dart';
@@ -18,32 +13,7 @@ import '../flight_log/flight_log_screen.dart';
 class MainNavigation extends StatefulWidget {
   final AppConfig appConfig;
 
-  // FIXME these should be provided via dependency injection and not built/given here
-  final GoogleServiceAccountService? googleServiceAccountService;
-  final BookFlightCalendarService? bookFlightCalendarService;
-  final FlightLogBookService? flightLogBookService;
-  final ActivitiesService? activitiesService;
-  final MetadataService? metadataService;
-
-  const MainNavigation(this.appConfig, {super.key})
-      : googleServiceAccountService = null,
-        bookFlightCalendarService = null,
-        flightLogBookService = null,
-        activitiesService = null,
-        metadataService = null;
-
-  /// Mainly for integration testing.
-  @Deprecated('Use dependency injection')
-  @visibleForTesting
-  const MainNavigation.withServices(
-    this.appConfig, {
-    super.key,
-    this.googleServiceAccountService,
-    this.bookFlightCalendarService,
-    this.flightLogBookService,
-    this.activitiesService,
-    this.metadataService,
-  });
+  const MainNavigation(this.appConfig, {super.key});
 
   @override
   State<MainNavigation> createState() => _MainNavigationState();

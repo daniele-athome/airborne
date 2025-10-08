@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/models/flight_log_models.dart';
+import 'package:airborne/screens/flight_log/flight_log_list.dart';
 import 'package:airborne/screens/flight_log/flight_log_screen.dart';
 import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter/material.dart';
@@ -24,22 +25,36 @@ void main() async {
   // used for asserting on text labels (e.g. specific error messages)
   final lang = await AppLocalizations.delegate.load(locale);
 
-  Widget createSkeletonApp(FlightLogBookService flightLogService) => MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+  Widget createSkeletonApp(FlightLogBookService flightLogService) {
+    return MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      locale: locale,
+      home: MultiProvider(
+        providers: [
+          _provideAppConfigForSampleAircraft(),
+          Provider.value(value: flightLogService),
         ],
-        locale: locale,
-        home: MultiProvider(
-          providers: [
-            _provideAppConfigForSampleAircraft(),
-            Provider.value(value: flightLogService),
-          ],
-          child: FlightLogScreen(),
+        child: SizedBox(
+          key: const Key('golden_box'),
+          height: 800,
+          width: 400,
+          child: RepaintBoundary(
+            child: Material(
+              child: FlightLogList(
+                  controller: FlightLogListController(),
+                  logBookService: flightLogService,
+                  onTapItem: (context, item) => {}),
+            ),
+          ),
         ),
-      );
+      ),
+    );
+  }
 
   group('Load flight log items', () {
     testWidgets('First page', (tester) async {
@@ -58,13 +73,13 @@ void main() async {
         return Future.value(List<FlightLogItem>.generate(20, (index) {
           return FlightLogItem(
             // TODO 1-based index?
-            (index+1).toString(),
+            (index + 1).toString(),
             DateTime.now(),
             pilots[random.nextInt(pilots.length)],
             'Fly@localhost',
             'Fly@localhost',
-            1238+index,
-            1238+index+1,
+            1238 + index,
+            1238 + index + 1,
             null,
             null,
             null,
@@ -75,10 +90,22 @@ void main() async {
       await tester.pumpWidget(createSkeletonApp(service));
 
       // verify list item count
-      final listFinder = find.descendant(of: find.byKey(const Key('list_flight_log')),
-          matching: find.byType(PagedListView<int, FlightLogItem>));
-      final listWidget = tester.widget<PagedListView<int, FlightLogItem>>(listFinder);
+      final listFinder = find.byType(PagedListView<int, FlightLogItem>);
+      final listWidget =
+          tester.widget<PagedListView<int, FlightLogItem>>(listFinder);
       expect(listWidget.pagingController.value.itemList!.length, 20);
+
+      await tester.pumpWidget(RepaintBoundary(
+        key: const Key('golden_box'),
+        child:
+            Material(
+              child: Directionality(textDirection: TextDirection.ltr, child: listWidget)
+            ),
+      ));
+
+      await tester.pumpAndSettle();
+      //await expectLater(find.byKey(const Key('golden_box')), matchesGoldenFile('test.png'));
+      await expectLater(find.byType(PagedListView<int, FlightLogItem>), matchesGoldenFile('test.png'));
     });
   });
 }

@@ -38,10 +38,13 @@ void main() async {
         locale: locale,
         home: RepaintBoundary(
           key: const Key('golden_box'),
-          child: FlightLogList(
-              controller: FlightLogListController(),
-              logBookService: flightLogService,
-              onTapItem: (context, item) => {}),
+          // Material is needed by some child widget
+          child: Material(
+            child: FlightLogList(
+                controller: FlightLogListController(),
+                logBookService: flightLogService,
+                onTapItem: (context, item) => {}),
+          ),
         ),
       ),
     );
@@ -80,6 +83,7 @@ void main() async {
       });
 
       await tester.pumpWidget(createSkeletonApp(service));
+      await tester.pumpAndSettle();
 
       // verify list item count
       final listFinder = find.byType(PagedListView<int, FlightLogItem>);
@@ -88,7 +92,6 @@ void main() async {
       expect(listWidget.pagingController.value.itemList!.length, 20);
 
       // check against golden
-      await tester.pumpAndSettle();
       await expectLater(find.byKey(const Key('golden_box')),
           matchesGoldenFile('goldens/flight_log_list_first_page.png'),
           skip: !Platform.isLinux);

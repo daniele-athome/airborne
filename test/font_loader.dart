@@ -1,13 +1,13 @@
 // Adapted from https://github.com/eBay/flutter_glove_box/tree/master/packages/golden_toolkit
 // Package was discontinued.
 
-/// ***************************************************
-/// Copyright 2019-2020 eBay Inc.
-///
-/// Use of this source code is governed by a BSD-style
-/// license that can be found in the LICENSE file or at
-/// https://opensource.org/licenses/BSD-3-Clause
-/// ***************************************************
+// ***************************************************
+// Copyright 2019-2020 eBay Inc.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://opensource.org/licenses/BSD-3-Clause
+// ***************************************************
 
 import 'dart:convert';
 import 'dart:io';
@@ -50,7 +50,7 @@ Future<void> loadAppFonts() async {
 /// GoldenToolkit supplies Roboto because it is free to use.
 ///
 /// However, when a downstream package includes a font, the font family will be prefixed with
-/// /packages/<package name>/<fontFamily> in order to disambiguate when multiple packages include
+/// /packages/&lt;package name&gt;/&lt;fontFamily&gt; in order to disambiguate when multiple packages include
 /// fonts with the same name.
 ///
 /// Ultimately, the font loader will load whatever we tell it, so if we see a font that looks like

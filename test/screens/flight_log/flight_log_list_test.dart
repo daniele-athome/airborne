@@ -18,7 +18,7 @@ import 'flight_log_modal_test.mocks.dart';
 void main() async {
   const locale = Locale('en');
   // used for asserting on text labels (e.g. specific error messages)
-  final lang = await AppLocalizations.delegate.load(locale);
+  //final lang = await AppLocalizations.delegate.load(locale);
 
   Widget createSkeletonApp(FlightLogBookService flightLogService) {
     return MaterialApp(

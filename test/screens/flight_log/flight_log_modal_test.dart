@@ -18,20 +18,20 @@ void main() async {
   const locale = Locale('en');
   final lang = await AppLocalizations.delegate.load(locale);
 
-  Widget createSkeletonApp(FlightLogItem model) => MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+  Widget createSkeletonApp(FlightLogItem model) => MultiProvider(
+        providers: [
+          _provideAppConfigForSampleAircraft(),
+          _provideFlightLogBookService(),
         ],
-        locale: locale,
-        home: MultiProvider(
-          providers: [
-            _provideAppConfigForSampleAircraft(),
-            _provideFlightLogBookService(),
+        child: MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
           ],
-          child: FlightLogModal(model),
+          locale: locale,
+          home: FlightLogModal(model),
         ),
       );
 

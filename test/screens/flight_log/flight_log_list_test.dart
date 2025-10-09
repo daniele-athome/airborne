@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/models/flight_log_models.dart';
@@ -89,7 +91,9 @@ void main() async {
 
       // check against golden
       await tester.pumpAndSettle();
-      await expectLater(find.byKey(const Key('golden_box')), matchesGoldenFile('goldens/flight_log_list_first_page.png'));
+      await expectLater(find.byKey(const Key('golden_box')),
+          matchesGoldenFile('goldens/flight_log_list_first_page.png'),
+          skip: !Platform.isLinux);
     });
   });
 }

@@ -23,27 +23,25 @@ void main() async {
   //final lang = await AppLocalizations.delegate.load(locale);
 
   Widget createSkeletonApp(FlightLogBookService flightLogService) {
-    return MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiProvider(
+      providers: [
+        _provideAppConfigForSampleAircraft(),
+        Provider.value(value: flightLogService),
       ],
-      locale: locale,
-      home: MultiProvider(
-        providers: [
-          _provideAppConfigForSampleAircraft(),
-          Provider.value(value: flightLogService),
+      child: MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
-        child: RepaintBoundary(
+        locale: locale,
+        home: RepaintBoundary(
           key: const Key('golden_box'),
-          child: Material(
-            child: FlightLogList(
-                controller: FlightLogListController(),
-                logBookService: flightLogService,
-                onTapItem: (context, item) => {}),
-          ),
+          child: FlightLogList(
+              controller: FlightLogListController(),
+              logBookService: flightLogService,
+              onTapItem: (context, item) => {}),
         ),
       ),
     );

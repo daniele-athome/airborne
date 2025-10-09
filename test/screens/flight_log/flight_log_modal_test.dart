@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/models/flight_log_models.dart';
@@ -11,6 +13,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import '../../golden_config.dart';
 import 'flight_log_modal_test.mocks.dart';
 
 @GenerateMocks([AppConfig, FlightLogBookService])
@@ -31,9 +34,35 @@ void main() async {
             GlobalCupertinoLocalizations.delegate,
           ],
           locale: locale,
-          home: FlightLogModal(model),
+          home: RepaintBoundary(
+              key: const Key('golden_box'), child: FlightLogModal(model)),
         ),
       );
+
+  group('Flight log editor appearance', () {
+    testWidgets('Launch appearance', (tester) async {
+      await setupGolden(tester);
+
+      FlightLogItem item = FlightLogItem(
+        null,
+        DateTime.now(),
+        'Sara',
+        'Fly@localhost',
+        'Fly@localhost',
+        1238,
+        1240.5,
+        null,
+        null,
+        null,
+      );
+      await tester.pumpWidget(createSkeletonApp(item));
+      await tester.pumpAndSettle();
+
+      await expectLater(find.byKey(const Key('golden_box')),
+          matchesGoldenFile('goldens/flight_log_modal_launch.png'),
+          skip: !Platform.isLinux);
+    });
+  });
 
   group('Register a new flight in log book', () {
     testWidgets('Fuel price validation', (tester) async {
@@ -194,6 +223,14 @@ ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   when(appConfig.getPilotAvatar(any))
       .thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
   when(appConfig.fuelPriceCurrency).thenReturn('€');
+  when(appConfig.pilotName).thenReturn('Sara');
+  when(appConfig.pilotNames).thenReturn([
+    'Sara',
+    'Anna',
+    'John',
+    'Peter',
+  ]);
+
   // TODO stub some stuff
   return ChangeNotifierProvider<AppConfig>.value(
     value: appConfig,

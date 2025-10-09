@@ -13,7 +13,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-import '../../font_loader.dart';
 import 'flight_log_screen_test.mocks.dart';
 
 @GenerateMocks([
@@ -23,8 +22,6 @@ import 'flight_log_screen_test.mocks.dart';
   MockSpec<NavigatorObserver>(onMissingStub: OnMissingStub.returnDefault)
 ])
 void main() async {
-  await loadAppFonts();
-
   const locale = Locale('en');
   // used for asserting on text labels (e.g. specific error messages)
   //final lang = await AppLocalizations.delegate.load(locale);

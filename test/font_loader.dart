@@ -1,3 +1,6 @@
+// Adapted from https://github.com/eBay/flutter_glove_box/tree/master/packages/golden_toolkit
+// Package was discontinued.
+
 /// ***************************************************
 /// Copyright 2019-2020 eBay Inc.
 ///
@@ -7,6 +10,7 @@
 /// ***************************************************
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,6 +35,13 @@ Future<void> loadAppFonts() async {
     }
     await fontLoader.load();
   }
+
+  // Load the designated test font.
+  // We cannot use anything bundle-related because the font is not declared as an asset
+  final fontData = await File('test_assets/fonts/Roboto-Regular.ttf').readAsBytes();
+  final fontLoader = FontLoader('Roboto');
+  fontLoader.addFont(Future.value(ByteData.view(fontData.buffer)));
+  await fontLoader.load();
 }
 
 /// There is no way to easily load the Roboto or Cupertino fonts.

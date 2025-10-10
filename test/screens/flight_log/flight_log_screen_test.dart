@@ -65,8 +65,8 @@ void main() async {
           return FlightLogItem(
             // TODO 1-based index?
             (index + 1).toString(),
-            DateTime.now(),
-            pilots[random.nextInt(pilots.length)],
+            DateTime.parse('2023-10-27T10:00:00Z'),
+            pilots[index % pilots.length],
             'Fly@localhost',
             'Fly@localhost',
             1238 + index,

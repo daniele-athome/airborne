@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/models/flight_log_models.dart';
@@ -55,7 +53,6 @@ void main() async {
         'John',
         'Peter',
       ];
-      final random = Random();
       final service = MockFlightLogBookService();
       // generate the first page of data
       when(service.reset()).thenAnswer((_) => Future.value());

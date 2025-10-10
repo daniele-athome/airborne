@@ -45,7 +45,7 @@ void main() async {
 
       FlightLogItem item = FlightLogItem(
         null,
-        DateTime.now(),
+        DateTime.parse('2023-10-27T10:00:00Z'),
         'Sara',
         'Fly@localhost',
         'Fly@localhost',

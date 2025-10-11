@@ -333,26 +333,14 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                         key: const Key('button_error_retry'),
                         onPressed: onTryAgain,
                         child: Text(
-                          AppLocalizations.of(context)!.button_error_retry,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
+                            AppLocalizations.of(context)!.button_error_retry),
                       )
                     : ElevatedButton.icon(
                         key: const Key('button_error_retry'),
                         onPressed: onTryAgain,
-                        icon: const Icon(
-                          Icons.refresh,
-                          color: Colors.white,
-                        ),
+                        icon: const Icon(Icons.refresh),
                         label: Text(
                           AppLocalizations.of(context)!.button_error_retry,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
                         ),
                       ),
               ),

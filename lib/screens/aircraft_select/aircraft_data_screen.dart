@@ -147,6 +147,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           ),
         PlatformTextFormField(
           keyboardType: TextInputType.url,
+          autofillHints: [AutofillHints.url],
+          autocorrect: false,
           material: (context, platform) => MaterialTextFormFieldData(
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.addAircraft_hint_address,
@@ -172,7 +174,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         ),
         PlatformTextFormField(
           obscureText: true,
-          enableSuggestions: false,
+          autofillHints: [AutofillHints.password],
+          autocorrect: false,
           keyboardType: TextInputType.visiblePassword,
           onSaved: (newValue) => _aircraftPassword = newValue,
           material: (context, platform) => MaterialTextFormFieldData(

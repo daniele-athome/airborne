@@ -1,5 +1,2 @@
-* link to documents archive
-* better date/time pickers
-* modernize user interface
-* support for encrypted aircraft data files
+* preview total flight time in editor
 * bug fixes

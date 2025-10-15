@@ -1,5 +1,2 @@
-* link ad archivio documenti
-* miglioramento selettori data/ora
-* modernizzazione interfaccia utente
-* supporto per file di configurazione aereo cifrato
+* anteprima del tempo di volo
 * correzione di bug

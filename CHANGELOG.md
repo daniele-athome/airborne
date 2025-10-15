@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.7.0](https://github.com/daniele-athome/airborne/compare/v1.6.0...v1.7.0) (2025-10-15)
+
+
+### Features
+
+* **flight-log:** preview total flight time in editor ([5a68c05](https://github.com/daniele-athome/airborne/commit/5a68c05032f0748ab36568b307aa3f36489cf900)), closes [#98](https://github.com/daniele-athome/airborne/issues/98)
+
+
+### Bug Fixes
+
+* correctly handle actual network timeouts ([73b74f1](https://github.com/daniele-athome/airborne/commit/73b74f1fc39b36dfb97270f8fe0f7c3bb0c03627)), closes [#105](https://github.com/daniele-athome/airborne/issues/105)
+* do not use invalid data after logout ([8536ba1](https://github.com/daniele-athome/airborne/commit/8536ba112993cda5346013d6605f70904622ef07))
+* fix retry button text color ([348f373](https://github.com/daniele-athome/airborne/commit/348f373487894f08cf6015832d404e0fe6027148)), closes [#102](https://github.com/daniele-athome/airborne/issues/102)
+* **onboarding:** fix keyboard hints ([5fe03cc](https://github.com/daniele-athome/airborne/commit/5fe03cc9420e7674a774457950ae6dc552887922))
+
 ## [1.6.0](https://github.com/daniele-athome/airborne/compare/v1.5.0...v1.6.0) (2025-09-08)
 
 

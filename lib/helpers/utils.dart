@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -255,21 +256,28 @@ class DownloadProvider extends ChangeNotifier {
       String? password, bool temp) async {
     final uri = Uri.parse(url);
     HttpClient client = clientBuilder();
+    client.connectionTimeout = kNetworkRequestTimeout;
     client.findProxy = HttpClient.findProxyFromEnvironment;
     if (username != null && password != null) {
       client.addCredentials(
           uri, "", HttpClientBasicCredentials(username, password));
     }
-    final request = await client.getUrl(uri);
-    final response = await request.close();
-    if (response.statusCode == 200) {
-      final directory = await (temp
-          ? getTemporaryDirectory()
-          : getApplicationSupportDirectory());
-      final file = File(path.join(directory.path, filename));
-      return response.pipe(file.openWrite()).then((value) => file);
-    } else {
-      return Future.error(Exception('Download error (${response.statusCode})'));
+    try {
+      final request = await client.getUrl(uri);
+      final response = await request.close();
+      if (response.statusCode == 200) {
+        final directory = await (temp
+            ? getTemporaryDirectory()
+            : getApplicationSupportDirectory());
+        final file = File(path.join(directory.path, filename));
+        return response.pipe(file.openWrite()).then((value) => file);
+      } else {
+        return Future.error(
+            Exception('Download error (${response.statusCode})'));
+      }
+    } on SocketException catch (e) {
+      // do not expose SocketException
+      throw TimeoutException(e.message);
     }
   }
 }

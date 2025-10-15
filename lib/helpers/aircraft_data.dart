@@ -364,7 +364,6 @@ Future<AircraftData> downloadAircraftData(
   }
   return downloadProvider
       .downloadToFile(url, 'aircraft.zip', username, password, true)
-      .timeout(kNetworkRequestTimeout)
       .then((tempfile) async {
     _log.finest(tempfile);
     final stored = await _validateAndStoreAircraft(tempfile, url, userpass);

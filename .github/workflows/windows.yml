@@ -45,7 +45,7 @@ jobs:
         run: flutter analyze .
 
       - name: Run tests
-        run: flutter test --no-pub -r expanded
+        run: flutter test --no-pub -r github
 
       - name: Configure Flutter for Windows
         run: flutter config --enable-windows-desktop

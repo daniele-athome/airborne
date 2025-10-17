@@ -30,6 +30,7 @@
 /build/
 *.g.dart
 *.mocks.dart
+/coverage/
 
 # Web related
 lib/generated_plugin_registrant.dart

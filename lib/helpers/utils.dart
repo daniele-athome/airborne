@@ -246,6 +246,35 @@ Future<T?> showConfirm<T>(
   );
 }
 
+/// Creates an [InlineSpan] from a Markdown string.
+/// Only supports a single bold text span for now.
+InlineSpan formatMarkdown(String text) {
+  // very naive implementation: only 1 bold section supported
+  // regex: https://stackoverflow.com/a/73023711/1045199
+  final boldMatch = RegExp(r'\*\*(.+?)\*\*(?!\*)').firstMatch(text);
+  if (boldMatch != null) {
+    final spans = <TextSpan>[];
+
+    if (boldMatch.start > 0) {
+      // first bold found is after the beginning of the string: add text before this span
+      spans.add(TextSpan(text: text.substring(0, boldMatch.start)));
+    }
+    // add the bold text span
+    spans.add(TextSpan(
+        text: text.substring(boldMatch.start + 2, boldMatch.end - 2),
+        style: TextStyle(fontWeight: FontWeight.bold)));
+    // add the rest of the text (if any)
+    if (text.length > boldMatch.end) {
+      spans.add(TextSpan(text: text.substring(boldMatch.end, text.length)));
+    }
+
+    return TextSpan(children: spans);
+  } else {
+    // no markdown content found, use a single span for the whole text
+    return TextSpan(text: text);
+  }
+}
+
 class DownloadProvider extends ChangeNotifier {
   DownloadProvider(this.clientBuilder);
 

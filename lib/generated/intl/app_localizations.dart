@@ -815,7 +815,7 @@ abstract class AppLocalizations {
   /// No description provided for @pilotSelect_confirm_message.
   ///
   /// In en, this message translates to:
-  /// **'So you are {name}.'**
+  /// **'So you are **{name}**.'**
   String pilotSelect_confirm_message(String name);
 
   /// No description provided for @about_aircraft_info.

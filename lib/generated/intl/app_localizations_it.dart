@@ -424,7 +424,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String pilotSelect_confirm_message(String name) {
-    return 'Dici di essere $name.';
+    return 'Dici di essere **$name**.';
   }
 
   @override

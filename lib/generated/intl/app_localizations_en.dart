@@ -422,7 +422,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String pilotSelect_confirm_message(String name) {
-    return 'So you are $name.';
+    return 'So you are **$name**.';
   }
 
   @override

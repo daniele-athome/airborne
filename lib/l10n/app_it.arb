@@ -130,7 +130,7 @@
 
   "pilotSelect_title": "Chi sei?",
   "pilotSelect_confirm_title": "Confermi?",
-  "pilotSelect_confirm_message": "Dici di essere {name}.",
+  "pilotSelect_confirm_message": "Dici di essere **{name}**.",
 
   "about_aircraft_info": "Aeromobile",
   "about_aircraft_callsign": "Marche",

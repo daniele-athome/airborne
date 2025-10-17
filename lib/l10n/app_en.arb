@@ -199,7 +199,7 @@
 
   "pilotSelect_title": "Who are you?",
   "pilotSelect_confirm_title": "Confirm?",
-  "pilotSelect_confirm_message": "So you are {name}.",
+  "pilotSelect_confirm_message": "So you are **{name}**.",
   "@pilotSelect_confirm_message": {
     "placeholders": {
       "name": {

@@ -14,3 +14,4 @@ linter:
     avoid_positional_boolean_parameters: false
     prefer_relative_imports: true
     use_key_in_widget_constructors: true
+    always_declare_return_types: true

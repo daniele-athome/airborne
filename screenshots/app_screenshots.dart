@@ -37,7 +37,7 @@ void main() async {
 
   late AppConfig appConfig;
 
-  appMain({String? pilotName}) async {
+  Future<Widget> appMain({String? pilotName}) async {
     if (pilotName != null) {
       appConfig = FakeAppConfig.withPilotName(pilotName);
     } else {
@@ -74,7 +74,7 @@ void main() async {
 
   /// Precaches all images that will be loaded by the UI.
   /// This prevents empty [Image] widgets while doing screenshots.
-  precacheImages(WidgetTester tester) async {
+  Future<void> precacheImages(WidgetTester tester) async {
     final BuildContext context = tester.element(find.byType(MainNavigationApp));
     for (String name in appConfig.pilotNames) {
       await precacheImage(appConfig.getPilotAvatar(name), context);

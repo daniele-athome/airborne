@@ -25,6 +25,7 @@ class SetAircraftDataScreen extends StatefulWidget {
 
 class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final ValueNotifier<bool> _obscurePasswordNotifier = ValueNotifier(true);
 
   String? _aircraftUrl;
   String? _aircraftPassword;
@@ -172,25 +173,40 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             return null;
           },
         ),
-        PlatformTextFormField(
-          obscureText: true,
-          autofillHints: [AutofillHints.password],
-          autocorrect: false,
-          keyboardType: TextInputType.visiblePassword,
-          onSaved: (newValue) => _aircraftPassword = newValue,
-          material: (context, platform) => MaterialTextFormFieldData(
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
-            ),
-          ),
-          cupertino: (context, platform) => CupertinoTextFormFieldData(
-            prefix:
-                Text(AppLocalizations.of(context)!.addAircraft_hint_password),
-            placeholder:
-                AppLocalizations.of(context)!.addAircraft_hint_password,
-            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
-          ),
-        ),
+        ValueListenableBuilder<bool>(
+            valueListenable: _obscurePasswordNotifier,
+            builder: (context, obscureText, child) {
+              return PlatformTextFormField(
+                obscureText: obscureText,
+                autofillHints: [AutofillHints.password],
+                autocorrect: false,
+                keyboardType: TextInputType.visiblePassword,
+                onSaved: (newValue) => _aircraftPassword = newValue,
+                material: (context, platform) => MaterialTextFormFieldData(
+                  decoration: InputDecoration(
+                    hintText:
+                        AppLocalizations.of(context)!.addAircraft_hint_password,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _obscurePasswordNotifier.value = !obscureText;
+                      },
+                      icon: Icon(obscureText
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                    ),
+                  ),
+                ),
+                cupertino: (context, platform) => CupertinoTextFormFieldData(
+                  // no suffix for cupertino: https://github.com/flutter/flutter/issues/103385
+                  prefix: Text(
+                      AppLocalizations.of(context)!.addAircraft_hint_password),
+                  placeholder:
+                      AppLocalizations.of(context)!.addAircraft_hint_password,
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
+                ),
+              );
+            }),
         if (!isCupertino(context))
           const SizedBox(
             height: 10,

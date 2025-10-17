@@ -6,6 +6,7 @@ OUTPUT="$(dirname "$0")/screenshots_data.dart"
 
 cat >"$OUTPUT" <<EOF
 // Automatically generated from $(basename "$INPUT"). DO NOT EDIT.
+// dart format off
 import 'dart:typed_data';
 
 final kScreenshotsData = Uint8List.fromList(<int>[

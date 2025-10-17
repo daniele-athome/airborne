@@ -1,4 +1,5 @@
 // Automatically generated from screenshots_data.zip. DO NOT EDIT.
+// dart format off
 import 'dart:typed_data';
 
 final kScreenshotsData = Uint8List.fromList(<int>[

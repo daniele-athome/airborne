@@ -17,8 +17,10 @@ void main() {
     mockSheetsService = MockGoogleSheetsService();
     mockAccountService = MockGoogleServiceAccountService();
 
-    testService =
-        MetadataService(mockAccountService, {'spreadsheet_id': 'test_id', 'sheet_name': 'test_sheet'});
+    testService = MetadataService(mockAccountService, {
+      'spreadsheet_id': 'test_id',
+      'sheet_name': 'test_sheet',
+    });
     testService.client = mockSheetsService;
   });
 
@@ -29,8 +31,9 @@ void main() {
         ['key2', 'value2'],
       ],
     );
-    when(mockSheetsService.getRows('test_id', 'test_sheet', any))
-        .thenAnswer((_) => Future.value(fakeRows));
+    when(
+      mockSheetsService.getRows('test_id', 'test_sheet', any),
+    ).thenAnswer((_) => Future.value(fakeRows));
 
     // First call, should fetch from sheets
     expect(await testService.get('key1'), 'value1');
@@ -42,13 +45,14 @@ void main() {
   });
 
   test('get() should return null for non-existent key', () async {
-     final fakeRows = gapi_sheets.ValueRange(
+    final fakeRows = gapi_sheets.ValueRange(
       values: [
         ['key1', 'value1'],
       ],
     );
-    when(mockSheetsService.getRows('test_id', 'test_sheet', any))
-        .thenAnswer((_) => Future.value(fakeRows));
+    when(
+      mockSheetsService.getRows('test_id', 'test_sheet', any),
+    ).thenAnswer((_) => Future.value(fakeRows));
 
     expect(await testService.get('non_existent_key'), isNull);
   });
@@ -59,24 +63,26 @@ void main() {
         ['key1', 'value1'],
       ],
     );
-    when(mockSheetsService.getRows('test_id', 'test_sheet', any))
-        .thenAnswer((_) => Future.value(fakeRows1));
+    when(
+      mockSheetsService.getRows('test_id', 'test_sheet', any),
+    ).thenAnswer((_) => Future.value(fakeRows1));
 
     expect(await testService.get('key1'), 'value1');
     verify(mockSheetsService.getRows('test_id', 'test_sheet', any)).called(1);
 
-     final fakeRows2 = gapi_sheets.ValueRange(
+    final fakeRows2 = gapi_sheets.ValueRange(
       values: [
         ['key1', 'new_value'],
       ],
     );
-    when(mockSheetsService.getRows('test_id', 'test_sheet', any))
-        .thenAnswer((_) => Future.value(fakeRows2));
+    when(
+      mockSheetsService.getRows('test_id', 'test_sheet', any),
+    ).thenAnswer((_) => Future.value(fakeRows2));
 
     final reloadedData = await testService.reload();
     expect(reloadedData['key1'], 'new_value');
     expect(await testService.get('key1'), 'new_value');
-     verify(mockSheetsService.getRows('test_id', 'test_sheet', any)).called(1);
+    verify(mockSheetsService.getRows('test_id', 'test_sheet', any)).called(1);
   });
 
   test('reload() should handle malformed rows', () async {
@@ -87,8 +93,9 @@ void main() {
         ['key2', 'value2'],
       ],
     );
-     when(mockSheetsService.getRows('test_id', 'test_sheet', any))
-        .thenAnswer((_) => Future.value(fakeRows));
+    when(
+      mockSheetsService.getRows('test_id', 'test_sheet', any),
+    ).thenAnswer((_) => Future.value(fakeRows));
 
     final data = await testService.reload();
     expect(data.containsKey('key1'), isTrue);
@@ -96,12 +103,13 @@ void main() {
     expect(data.containsKey('malformed_key'), isFalse);
   });
 
-    test('reload() should throw FormatException on no data', () async {
+  test('reload() should throw FormatException on no data', () async {
     final fakeRows = gapi_sheets.ValueRange(
       values: null, // No data
     );
-     when(mockSheetsService.getRows('test_id', 'test_sheet', any))
-        .thenAnswer((_) => Future.value(fakeRows));
+    when(
+      mockSheetsService.getRows('test_id', 'test_sheet', any),
+    ).thenAnswer((_) => Future.value(fakeRows));
 
     expect(testService.reload(), throwsA(isA<FormatException>()));
   });

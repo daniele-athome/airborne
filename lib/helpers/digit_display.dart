@@ -3,8 +3,9 @@ import 'package:intl/intl.dart';
 
 const int kMaxDisplayIntegerDigits = 5;
 const double _kDefaultDigitFontSize = 20;
-const EdgeInsetsGeometry _kDefaultDigitPadding =
-    EdgeInsets.symmetric(vertical: 4);
+const EdgeInsetsGeometry _kDefaultDigitPadding = EdgeInsets.symmetric(
+  vertical: 4,
+);
 const String kDigitDisplayFontName = 'MajorMonoDisplay';
 final NumberFormat kHoursFormatter = NumberFormat("00000.00");
 
@@ -17,15 +18,15 @@ class DigitDisplayFormTextField extends FormField<num> {
     double fontSize = _kDefaultDigitFontSize,
     EdgeInsetsGeometry padding = _kDefaultDigitPadding,
   }) : super(
-          initialValue: controller?.value.number,
-          builder: (field) {
-            return DigitDisplayTextField(
-              controller: controller,
-              fontSize: fontSize,
-              padding: padding,
-            );
-          },
-        );
+         initialValue: controller?.value.number,
+         builder: (field) {
+           return DigitDisplayTextField(
+             controller: controller,
+             fontSize: fontSize,
+             padding: padding,
+           );
+         },
+       );
 }
 
 class DigitDisplayTextField extends StatefulWidget {
@@ -53,11 +54,13 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
   Widget build(BuildContext context) {
     if (widget.controller != null && widget.controller!.number > 99999) {
       throw UnsupportedError(
-          'Numbers with more than 5 integer digits are not supported.');
+        'Numbers with more than 5 integer digits are not supported.',
+      );
     }
 
-    final num number =
-        widget.controller != null ? widget.controller!.number : 0;
+    final num number = widget.controller != null
+        ? widget.controller!.number
+        : 0;
     final numDigits = kHoursFormatter.format(number).split('');
 
     final children = <Widget>[];
@@ -70,29 +73,29 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
         continue;
       }
       final digitNumber = i++;
-      children.add(Padding(
-        padding: widget.padding,
-        child: SingleDigitText(
-          digit: digit,
-          decimal: decimal,
-          fontSize: widget.fontSize,
-          active: widget.controller?.activeDigit == digitNumber,
-          onTap: widget.enabled
-              ? () {
-                  if (widget.controller != null) {
-                    setState(() {
-                      widget.controller?.activeDigit = digitNumber;
-                    });
+      children.add(
+        Padding(
+          padding: widget.padding,
+          child: SingleDigitText(
+            digit: digit,
+            decimal: decimal,
+            fontSize: widget.fontSize,
+            active: widget.controller?.activeDigit == digitNumber,
+            onTap: widget.enabled
+                ? () {
+                    if (widget.controller != null) {
+                      setState(() {
+                        widget.controller?.activeDigit = digitNumber;
+                      });
+                    }
                   }
-                }
-              : null,
+                : null,
+          ),
         ),
-      ));
+      );
     }
 
-    final field = Row(
-      children: children,
-    );
+    final field = Row(children: children);
     return widget.errorText != null
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,33 +111,24 @@ class _DigitDisplayTextFieldState extends State<DigitDisplayTextField> {
 
 class DigitDisplayController extends ValueNotifier<DigitDisplay> {
   DigitDisplayController(num number, [int? activeDigit])
-      : super(DigitDisplay(number: number, activeDigit: activeDigit));
+    : super(DigitDisplay(number: number, activeDigit: activeDigit));
 
   num get number => value.number;
 
   set number(num newNumber) {
-    value = DigitDisplay(
-      number: newNumber,
-      activeDigit: value.activeDigit,
-    );
+    value = DigitDisplay(number: newNumber, activeDigit: value.activeDigit);
   }
 
   int? get activeDigit => value.activeDigit;
 
   set activeDigit(int? digit) {
-    value = DigitDisplay(
-      number: value.number,
-      activeDigit: digit,
-    );
+    value = DigitDisplay(number: value.number, activeDigit: digit);
   }
 }
 
 @immutable
 class DigitDisplay {
-  const DigitDisplay({
-    this.number = 0,
-    this.activeDigit,
-  });
+  const DigitDisplay({this.number = 0, this.activeDigit});
 
   final num number;
   final int? activeDigit;
@@ -158,12 +152,12 @@ class SingleDigitText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _DigitText(
-        text: digit.toString(),
-        alternate: decimal,
-        fontSize: fontSize,
-        active: active,
-        onTap: onTap,
-      );
+    text: digit.toString(),
+    alternate: decimal,
+    fontSize: fontSize,
+    active: active,
+    onTap: onTap,
+  );
 }
 
 class _DigitText extends StatelessWidget {
@@ -189,18 +183,22 @@ class _DigitText extends StatelessWidget {
       alignment: Alignment.center,
       // weird combination of sizes to make the active border appear on the inside of the digit
       padding: EdgeInsets.symmetric(
-          horizontal: active ? 1 : 2, vertical: active ? 1 : 2),
+        horizontal: active ? 1 : 2,
+        vertical: active ? 1 : 2,
+      ),
       decoration: alternate
           ? BoxDecoration(
               border: Border.all(
-                  color: active ? Colors.red : Colors.black,
-                  width: active ? 2 : 1),
+                color: active ? Colors.red : Colors.black,
+                width: active ? 2 : 1,
+              ),
               color: Colors.white,
             )
           : BoxDecoration(
               border: Border.all(
-                  color: active ? Colors.red : Colors.black,
-                  width: active ? 2 : 1),
+                color: active ? Colors.red : Colors.black,
+                width: active ? 2 : 1,
+              ),
               color: Colors.black,
             ),
       child: Text(
@@ -215,10 +213,7 @@ class _DigitText extends StatelessWidget {
       ),
     );
     return onTap != null
-        ? GestureDetector(
-            onTap: onTap,
-            child: widget,
-          )
+        ? GestureDetector(onTap: onTap, child: widget)
         : widget;
   }
 }

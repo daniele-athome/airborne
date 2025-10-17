@@ -40,15 +40,23 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
   final now = DateTime.now();
   // matches with the one in the zip file
   final location = getLocation('Europe/Rome');
-  final startDate = TZDateTime.from(DateTime(now.year, now.month, now.day), location).subtract(const Duration(days: 30));
-  final endDate = TZDateTime.from(DateTime(now.year, now.month, now.day), location).add(const Duration(days: 30));
+  final startDate = TZDateTime.from(
+    DateTime(now.year, now.month, now.day),
+    location,
+  ).subtract(const Duration(days: 30));
+  final endDate = TZDateTime.from(
+    DateTime(now.year, now.month, now.day),
+    location,
+  ).add(const Duration(days: 30));
   TZDateTime currentDate = startDate;
   final events = <FlightBooking>[];
   final random = Random();
   while (currentDate.isBefore(endDate)) {
     // 40% chance of having events on any given day (except for today)
     final numEventsPerDay = random.nextInt(4) + 1;
-    final numEvents = !DateUtils.isSameDay(currentDate, now) ? (random.nextInt(100 ~/ 40) == 0 ? numEventsPerDay : 0) : numEventsPerDay;
+    final numEvents = !DateUtils.isSameDay(currentDate, now)
+        ? (random.nextInt(100 ~/ 40) == 0 ? numEventsPerDay : 0)
+        : numEventsPerDay;
     int currentHour = startHour;
     int numDayEvents = 0;
     while (currentHour < endHour && numDayEvents < numEvents) {
@@ -58,13 +66,17 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
         eventHours = random.nextInt(4) + 1;
       } while ((currentHour + eventHours) > endHour);
 
-      events.add(FlightBooking(
-        'EVENT-${random.nextInt(10000000)}',
-        pilotNames[random.nextInt(pilotNames.length)],
-        currentDate.add(Duration(hours: currentHour)),
-        currentDate.add(Duration(hours: currentHour + eventHours)),
-        random.nextBool() ? fakeNotes[random.nextInt(fakeNotes.length)] : null,
-      ));
+      events.add(
+        FlightBooking(
+          'EVENT-${random.nextInt(10000000)}',
+          pilotNames[random.nextInt(pilotNames.length)],
+          currentDate.add(Duration(hours: currentHour)),
+          currentDate.add(Duration(hours: currentHour + eventHours)),
+          random.nextBool()
+              ? fakeNotes[random.nextInt(fakeNotes.length)]
+              : null,
+        ),
+      );
       currentHour += eventHours + random.nextInt(4);
       numDayEvents++;
     }
@@ -76,13 +88,7 @@ List<FlightBooking> generateFakeEvents(List<String> pilotNames) {
 
 /// Generates some random log book items.
 List<FlightLogItem> generateFakeLogBookItems(List<String> pilotNames) {
-  const fakePlaces = [
-    'Fly Berlin',
-    'Elba',
-    'NYC',
-    'LIRU',
-    'London',
-  ];
+  const fakePlaces = ['Fly Berlin', 'Elba', 'NYC', 'LIRU', 'London'];
   final random = Random();
   double startHour = 2180;
   double lastDuration = 0.2;
@@ -113,32 +119,66 @@ List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
   // summary, type, description
   const allFakeEntries = {
     'en': [
-      ['Landing gear damaged', ActivityType.critical, 'The landing gear was damaged during a hard landing. The crossbow needs to be replaced.'],
-      ['New app version!', ActivityType.note, 'Version 3.0.4 was released in app stores!'],
+      [
+        'Landing gear damaged',
+        ActivityType.critical,
+        'The landing gear was damaged during a hard landing. The crossbow needs to be replaced.',
+      ],
+      [
+        'New app version!',
+        ActivityType.note,
+        'Version 3.0.4 was released in app stores!',
+      ],
       ['Battery cable damage', ActivityType.important, null],
       ['Washing needed!', ActivityType.minor, null],
       ['August 2022 hangar payment', ActivityType.important, null],
-      ['Transponder not working properly', ActivityType.important, 'Some glitch there.'],
-      ['Relevant NOTAM warning', ActivityType.notice, 'Beware of the dangerous zone above mount Everest.'],
+      [
+        'Transponder not working properly',
+        ActivityType.important,
+        'Some glitch there.',
+      ],
+      [
+        'Relevant NOTAM warning',
+        ActivityType.notice,
+        'Beware of the dangerous zone above mount Everest.',
+      ],
     ],
     'it': [
-      ['Carrello distrutto', ActivityType.critical, 'Distrutto durante l\'ultimo atterraggio. La balestra deve essere sostituita.'],
-      ['Nuova versione app!', ActivityType.note, 'Versione 3.0.4 rilasciata negli app store!'],
+      [
+        'Carrello distrutto',
+        ActivityType.critical,
+        'Distrutto durante l\'ultimo atterraggio. La balestra deve essere sostituita.',
+      ],
+      [
+        'Nuova versione app!',
+        ActivityType.note,
+        'Versione 3.0.4 rilasciata negli app store!',
+      ],
       ['Cavo batteria danneggiato', ActivityType.important, null],
       ['Aereo da lavare!', ActivityType.minor, null],
       ['Pagamento hangar agosto 2022', ActivityType.important, null],
       ['Transponder non funziona', ActivityType.important, 'Qualche problema.'],
-      ['NOTAM rilevante', ActivityType.notice, 'Attenzione alla zona pericolosa sopra il monte Everest.'],
+      [
+        'NOTAM rilevante',
+        ActivityType.notice,
+        'Attenzione alla zona pericolosa sopra il monte Everest.',
+      ],
     ],
   };
   final language = Intl.shortLocale(Intl.getCurrentLocale());
-  final fakeEntries = List.of(allFakeEntries[language]!.reversed, growable: false);
+  final fakeEntries = List.of(
+    allFakeEntries[language]!.reversed,
+    growable: false,
+  );
 
   final random = Random();
   final now = DateTime.now();
   // matches with the one in the zip file
   final location = getLocation('Europe/Rome');
-  final startDate = TZDateTime.from(DateTime(now.year, now.month, now.day), location).subtract(const Duration(days: 30));
+  final startDate = TZDateTime.from(
+    DateTime(now.year, now.month, now.day),
+    location,
+  ).subtract(const Duration(days: 30));
   TZDateTime currentDate = startDate;
 
   return List<ActivityEntry>.generate(fakeEntries.length, (index) {
@@ -158,7 +198,9 @@ List<ActivityEntry> generateFakeActivities(List<String> pilotNames) {
       // TODO proper random due date
       dueDate: random.nextBool() ? DateTime.now() : null,
       // status should be compatible with type
-      status: type.task ? ActivityStatus.values[random.nextInt(ActivityStatus.values.length)] : null,
+      status: type.task
+          ? ActivityStatus.values[random.nextInt(ActivityStatus.values.length)]
+          : null,
       lastStatusUpdate: DateTime.now(),
       alert: random.nextBool() ? random.nextBool() : null,
     );
@@ -173,61 +215,61 @@ class MainNavigationApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppConfig>(
-        builder: (context, appConfig, child) => PlatformApp(
-          onGenerateTitle: (BuildContext context) =>
-          AppLocalizations.of(context)!.appName,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            SfGlobalLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
+      builder: (context, appConfig, child) => PlatformApp(
+        onGenerateTitle: (BuildContext context) =>
+            AppLocalizations.of(context)!.appName,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          SfGlobalLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        // TEST
+        //locale: const Locale('it', ''),
+        initialRoute: appConfig.pilotName != null ? '/' : 'pilot-select',
+        routes: <String, WidgetBuilder>{
+          '/': (context) => main_screen.MainNavigation(appConfig),
+          'pilot-select': (context) => const PilotSelectScreen(),
+        },
+        debugShowCheckedModeBanner: false,
+        material: (_, __) => MaterialAppData(
           // TEST
-          //locale: const Locale('it', ''),
-          initialRoute: appConfig.pilotName != null ? '/' : 'pilot-select',
-          routes: <String, WidgetBuilder>{
-            '/': (context) => main_screen.MainNavigation(appConfig),
-            'pilot-select': (context) => const PilotSelectScreen(),
-          },
-          debugShowCheckedModeBanner: false,
-          material: (_, __) => MaterialAppData(
-            // TEST
-            //themeMode: ThemeMode.dark,
-            theme: ThemeData(
+          //themeMode: ThemeMode.dark,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            colorScheme: ColorScheme.fromSeed(
               brightness: Brightness.light,
-              colorScheme: ColorScheme.fromSeed(
-                brightness: Brightness.light,
-                seedColor: Colors.orange,
-                primary: Colors.deepOrange,
-                secondary: Colors.red,
-                tertiary: Colors.lightGreen,
-                dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-              ),
-              useMaterial3: true,
+              seedColor: Colors.orange,
+              primary: Colors.deepOrange,
+              secondary: Colors.red,
+              tertiary: Colors.lightGreen,
+              dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
             ),
-            darkTheme: ThemeData(
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            colorScheme: ColorScheme.fromSeed(
               brightness: Brightness.dark,
-              colorScheme: ColorScheme.fromSeed(
-                brightness: Brightness.dark,
-                seedColor: Colors.orange,
-                primary: Colors.deepOrange,
-                secondary: Colors.red,
-                tertiary: Colors.lightGreen,
-                dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-              ),
-              useMaterial3: true,
+              seedColor: Colors.orange,
+              primary: Colors.deepOrange,
+              secondary: Colors.red,
+              tertiary: Colors.lightGreen,
+              dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
             ),
+            useMaterial3: true,
           ),
-          cupertino: (_, __) => CupertinoAppData(
-            // TEST
-            //theme: const CupertinoThemeData(brightness: Brightness.dark),
-            // TODO
-          ),
-        ));
+        ),
+        cupertino: (_, __) => CupertinoAppData(
+          // TEST
+          //theme: const CupertinoThemeData(brightness: Brightness.dark),
+          // TODO
+        ),
+      ),
+    );
   }
-
 }
 
 class FakeAppConfig extends AppConfig {
@@ -255,7 +297,6 @@ class FakeAppConfig extends AppConfig {
 
     await setCurrentAircraft(reader.toAircraftData());
   }
-
 }
 
 /// Just mocked but not used.
@@ -267,7 +308,6 @@ class FakeGoogleServiceAccountService implements GoogleServiceAccountService {
 }
 
 class FakeSharedPreferences implements SharedPreferences {
-
   FakeSharedPreferences(this.values);
 
   Map<String, Object?> values;
@@ -366,11 +406,9 @@ class FakeSharedPreferences implements SharedPreferences {
     // TODO: implement setStringList
     throw UnimplementedError();
   }
-
 }
 
 class FakeCalendarService implements BookFlightCalendarService {
-
   final Iterable<FlightBooking> events;
 
   const FakeCalendarService(this.events);
@@ -395,9 +433,13 @@ class FakeCalendarService implements BookFlightCalendarService {
 
   @override
   Future<Iterable<FlightBooking>> search(DateTime timeMin, DateTime timeMax) {
-    return Future.value(events.where((element) =>
-    (element.from.isAfter(timeMin) || element.from == timeMin) && (element.to.isBefore(timeMax) || element.to == timeMax)
-    ));
+    return Future.value(
+      events.where(
+        (element) =>
+            (element.from.isAfter(timeMin) || element.from == timeMin) &&
+            (element.to.isBefore(timeMax) || element.to == timeMax),
+      ),
+    );
   }
 
   @override
@@ -411,11 +453,9 @@ class FakeCalendarService implements BookFlightCalendarService {
     // should be never called for making screenshots
     throw UnimplementedError();
   }
-
 }
 
 class FakeLogBookService implements FlightLogBookService {
-
   final Iterable<FlightLogItem> items;
   bool _fetched = false;
 
@@ -439,8 +479,7 @@ class FakeLogBookService implements FlightLogBookService {
     if (!_fetched) {
       _fetched = true;
       return Future.value(items);
-    }
-    else {
+    } else {
       return Future.value(List.empty());
     }
   }
@@ -495,11 +534,9 @@ class FakeLogBookService implements FlightLogBookService {
   String getMetadataPrefixKey() {
     throw UnimplementedError();
   }
-
 }
 
 class FakeActivitiesService implements ActivitiesService {
-
   final Iterable<ActivityEntry> items;
   bool _fetched = false;
 
@@ -510,8 +547,7 @@ class FakeActivitiesService implements ActivitiesService {
     if (!_fetched) {
       _fetched = true;
       return Future.value(items);
-    }
-    else {
+    } else {
       return Future.value(List.empty());
     }
   }
@@ -541,10 +577,12 @@ class FakeActivitiesService implements ActivitiesService {
   }
 
   @override
-  Future<ActivityEntry> appendItem(ActivityEntry item) => throw UnimplementedError();
+  Future<ActivityEntry> appendItem(ActivityEntry item) =>
+      throw UnimplementedError();
 
   @override
-  ActivityEntry buildItem(String rowId, List<Object?> rowData) => throw UnimplementedError();
+  ActivityEntry buildItem(String rowId, List<Object?> rowData) =>
+      throw UnimplementedError();
 
   @override
   List<Object?> buildRowData(ActivityEntry item) => throw UnimplementedError();
@@ -562,6 +600,6 @@ class FakeActivitiesService implements ActivitiesService {
   String getMetadataPrefixKey() => throw UnimplementedError();
 
   @override
-  Future<ActivityEntry> updateItem(String id, ActivityEntry item) => throw UnimplementedError();
-
+  Future<ActivityEntry> updateItem(String id, ActivityEntry item) =>
+      throw UnimplementedError();
 }

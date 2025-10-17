@@ -24,8 +24,11 @@ final Logger _log = Logger((FlightLogItem).toString());
 
 /// HourListTile start and end paddings (20) + icon size at start (40).
 /// Bottom was measured with inspection tool from ListTile
-const _kMaterialTotalFlightTimePadding =
-    EdgeInsetsDirectional.only(start: 20 + 40, end: 20.0, bottom: 8.0);
+const _kMaterialTotalFlightTimePadding = EdgeInsetsDirectional.only(
+  start: 20 + 40,
+  end: 20.0,
+  bottom: 8.0,
+);
 
 // TODO move all this fuel stuff somewhere else
 
@@ -86,15 +89,17 @@ class _FlightLogModalState extends State<FlightLogModal> {
   void initState() {
     _pilotName = widget.item.pilotName;
     _originController = TextEditingController(text: widget.item.origin);
-    _destinationController =
-        TextEditingController(text: widget.item.destination);
+    _destinationController = TextEditingController(
+      text: widget.item.destination,
+    );
     _startHourController = DigitDisplayController(widget.item.startHour);
     _endHourController = DigitDisplayController(widget.item.endHour);
     // TODO this controller should handle numeric values natively (i.e. it should parse/format text)
     _fuelController = TextEditingController(
-        text: widget.item.fuel != null
-            ? _fuelFormatter.format(widget.item.fuel)
-            : '');
+      text: widget.item.fuel != null
+          ? _fuelFormatter.format(widget.item.fuel)
+          : '',
+    );
     // TODO this controller should handle numeric values natively (i.e. it should parse/format text)
     _fuelPriceController = TextEditingController(text: _fuelTotalCostToText());
     _notesController = TextEditingController(text: widget.item.notes);
@@ -142,141 +147,174 @@ class _FlightLogModalState extends State<FlightLogModal> {
       padding: kDefaultCupertinoFormMargin,
       children: [
         // flight date
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          CupertinoDateTimeFormFieldRow(
-            prefix:
-                Text(AppLocalizations.of(context)!.flightLogModal_label_date),
-            showTime: false,
-            controller: _dateController,
-          ),
-          CupertinoFormButtonRow(
-            onPressed: () => _onTapPilot(context),
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(
-              AppLocalizations.of(context)!.flightLogModal_label_pilot,
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            CupertinoDateTimeFormFieldRow(
+              prefix: Text(
+                AppLocalizations.of(context)!.flightLogModal_label_date,
+              ),
+              showTime: false,
+              controller: _dateController,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  _pilotName,
-                ),
-                const SizedBox(width: 14),
-                CircleAvatar(
-                    foregroundImage: _appConfig.getPilotAvatar(_pilotName)),
-              ],
+            CupertinoFormButtonRow(
+              onPressed: () => _onTapPilot(context),
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(
+                AppLocalizations.of(context)!.flightLogModal_label_pilot,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(_pilotName),
+                  const SizedBox(width: 14),
+                  CircleAvatar(
+                    foregroundImage: _appConfig.getPilotAvatar(_pilotName),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // start/end hour
         CupertinoFormSection.insetGrouped(
-            footer: ListenableBuilder(
-              // trigger a local rebuild when either hour meters change
-              listenable:
-                  Listenable.merge([_startHourController, _endHourController]),
-              builder: (context, child) => Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultCupertinoFormRowStartPadding),
-                child:
-                    Text(formatFlightTimeDuration(context, _totalFlightTime)),
-              ),
-            ),
-            children: <Widget>[
-              CupertinoHourFormRow(
-                controller: _startHourController,
-                hintText: AppLocalizations.of(context)!
-                    .flightLogModal_label_startHour,
-              ),
-              CupertinoHourFormRow(
-                controller: _endHourController,
-                hintText:
-                    AppLocalizations.of(context)!.flightLogModal_label_endHour,
-              ),
+          footer: ListenableBuilder(
+            // trigger a local rebuild when either hour meters change
+            listenable: Listenable.merge([
+              _startHourController,
+              _endHourController,
             ]),
+            builder: (context, child) => Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: kDefaultCupertinoFormRowStartPadding,
+              ),
+              child: Text(formatFlightTimeDuration(context, _totalFlightTime)),
+            ),
+          ),
+          children: <Widget>[
+            CupertinoHourFormRow(
+              controller: _startHourController,
+              hintText: AppLocalizations.of(
+                context,
+              )!.flightLogModal_label_startHour,
+            ),
+            CupertinoHourFormRow(
+              controller: _endHourController,
+              hintText: AppLocalizations.of(
+                context,
+              )!.flightLogModal_label_endHour,
+            ),
+          ],
+        ),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // departure/arrival place
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          // TODO home location button
-          CupertinoTextFormFieldRow(
-            controller: _originController,
-            prefix:
-                Text(AppLocalizations.of(context)!.flightLogModal_label_origin),
-            textAlign: TextAlign.end,
-          ),
-          // TODO home location button
-          CupertinoTextFormFieldRow(
-            controller: _destinationController,
-            prefix: Text(
-                AppLocalizations.of(context)!.flightLogModal_label_destination),
-            textAlign: TextAlign.end,
-          ),
-        ]),
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            // TODO home location button
+            CupertinoTextFormFieldRow(
+              controller: _originController,
+              prefix: Text(
+                AppLocalizations.of(context)!.flightLogModal_label_origin,
+              ),
+              textAlign: TextAlign.end,
+            ),
+            // TODO home location button
+            CupertinoTextFormFieldRow(
+              controller: _destinationController,
+              prefix: Text(
+                AppLocalizations.of(context)!.flightLogModal_label_destination,
+              ),
+              textAlign: TextAlign.end,
+            ),
+          ],
+        ),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         // fuel + fuel price
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          CupertinoTextFormFieldRow(
-            key: const Key("input_flightLogModal_fuel"),
-            controller: _fuelController,
-            prefix: Text(AppLocalizations.of(context)!
-                .flightLogModal_label_fuel_cupertino),
-            textAlign: TextAlign.end,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            validator: (value) => !_validateFuel(value)
-                ? AppLocalizations.of(context)!
-                    .flightLogModal_error_fuel_invalid_number
-                : null,
-          ),
-          // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
-          CupertinoTextFormFieldRow(
-            key: const Key("input_flightLogModal_fuelPrice"),
-            controller: _fuelPriceController,
-            prefix: Text(AppLocalizations.of(context)!
-                .flightLogModal_label_fuel_cost_cupertino(
-                    _appConfig.fuelPriceCurrency)),
-            textAlign: TextAlign.end,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            validator: (value) => !_validateFuelPrice(value)
-                ? AppLocalizations.of(context)!
-                    .flightLogModal_error_fuelCost_invalid_number
-                : null,
-          ),
-        ]),
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            CupertinoTextFormFieldRow(
+              key: const Key("input_flightLogModal_fuel"),
+              controller: _fuelController,
+              prefix: Text(
+                AppLocalizations.of(
+                  context,
+                )!.flightLogModal_label_fuel_cupertino,
+              ),
+              textAlign: TextAlign.end,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (value) => !_validateFuel(value)
+                  ? AppLocalizations.of(
+                      context,
+                    )!.flightLogModal_error_fuel_invalid_number
+                  : null,
+            ),
+            // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
+            CupertinoTextFormFieldRow(
+              key: const Key("input_flightLogModal_fuelPrice"),
+              controller: _fuelPriceController,
+              prefix: Text(
+                AppLocalizations.of(
+                  context,
+                )!.flightLogModal_label_fuel_cost_cupertino(
+                  _appConfig.fuelPriceCurrency,
+                ),
+              ),
+              textAlign: TextAlign.end,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (value) => !_validateFuelPrice(value)
+                  ? AppLocalizations.of(
+                      context,
+                    )!.flightLogModal_error_fuelCost_invalid_number
+                  : null,
+            ),
+          ],
+        ),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          CupertinoTextFormFieldRow(
-            // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
-            controller: _notesController,
-            // TODO cursorColor: widget.model.backgroundColor,
-            keyboardType: TextInputType.multiline,
-            textCapitalization: TextCapitalization.sentences,
-            minLines: 3,
-            maxLines: 3,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-            placeholder:
-                AppLocalizations.of(context)!.flightLogModal_hint_notes,
-          ),
-        ]),
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            CupertinoTextFormFieldRow(
+              // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
+              controller: _notesController,
+              // TODO cursorColor: widget.model.backgroundColor,
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 3,
+              maxLines: 3,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+              placeholder: AppLocalizations.of(
+                context,
+              )!.flightLogModal_hint_notes,
+            ),
+          ],
+        ),
         if (_isEditing)
           const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         if (_isEditing)
-          CupertinoFormSection.insetGrouped(children: <Widget>[
-            Row(
-              children: [
-                Expanded(
-                  child: CupertinoButton(
-                    onPressed: () => _onDelete(context),
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .bookFlightModal_button_delete,
-                      style: const TextStyle(
-                          color: CupertinoColors.destructiveRed),
+          CupertinoFormSection.insetGrouped(
+            children: <Widget>[
+              Row(
+                children: [
+                  Expanded(
+                    child: CupertinoButton(
+                      onPressed: () => _onDelete(context),
+                      child: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.bookFlightModal_button_delete,
+                        style: const TextStyle(
+                          color: CupertinoColors.destructiveRed,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
-          ]),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }
@@ -291,30 +329,28 @@ class _FlightLogModalState extends State<FlightLogModal> {
           onDateSelected: (_) => setState(() {}),
           textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         // pilot
         ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 15,
+            vertical: 5,
+          ),
           leading: CircleAvatar(
-              foregroundImage: _appConfig.getPilotAvatar(_pilotName)),
+            foregroundImage: _appConfig.getPilotAvatar(_pilotName),
+          ),
           title: Text(
             _pilotName,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
           ),
           onTap: () => _onTapPilot(context),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         HourListTile(
           controller: _startHourController,
-          hintText:
-              AppLocalizations.of(context)!.flightLogModal_label_startHour,
+          hintText: AppLocalizations.of(
+            context,
+          )!.flightLogModal_label_startHour,
           showIcon: true,
         ),
         HourListTile(
@@ -326,23 +362,25 @@ class _FlightLogModalState extends State<FlightLogModal> {
           padding: _kMaterialTotalFlightTimePadding,
           child: ListenableBuilder(
             // trigger a local rebuild when either hour meters change
-            listenable:
-                Listenable.merge([_startHourController, _endHourController]),
+            listenable: Listenable.merge([
+              _startHourController,
+              _endHourController,
+            ]),
             builder: (context, child) => Text(
-                formatFlightTimeDuration(context, _totalFlightTime),
-                style: TextTheme.of(context).labelMedium),
+              formatFlightTimeDuration(context, _totalFlightTime),
+              style: TextTheme.of(context).labelMedium,
+            ),
           ),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         // take off place
         // TODO identical widget with landing place, just make one with proper parameters
         ListTile(
           contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const SizedBox(
-              height: double.infinity, child: Icon(Icons.flight_takeoff)),
+            height: double.infinity,
+            child: Icon(Icons.flight_takeoff),
+          ),
           trailing: IconButton(
             icon: const Icon(Icons.home),
             tooltip: AppLocalizations.of(context)!.flightLogModal_label_home,
@@ -357,20 +395,20 @@ class _FlightLogModalState extends State<FlightLogModal> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
-              labelText:
-                  AppLocalizations.of(context)!.flightLogModal_label_origin,
+              labelText: AppLocalizations.of(
+                context,
+              )!.flightLogModal_label_origin,
             ),
           ),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         // landing place
         ListTile(
           contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const SizedBox(
-              height: double.infinity, child: Icon(Icons.flight_land)),
+            height: double.infinity,
+            child: Icon(Icons.flight_land),
+          ),
           trailing: IconButton(
             icon: const Icon(Icons.home),
             tooltip: AppLocalizations.of(context)!.flightLogModal_label_home,
@@ -386,15 +424,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
-              labelText: AppLocalizations.of(context)!
-                  .flightLogModal_label_destination,
+              labelText: AppLocalizations.of(
+                context,
+              )!.flightLogModal_label_destination,
             ),
           ),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         // fuel quantity + type/price
         ListTile(
           contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
@@ -414,8 +450,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => !_validateFuel(value)
-                ? AppLocalizations.of(context)!
-                    .flightLogModal_error_fuel_invalid_number
+                ? AppLocalizations.of(
+                    context,
+                  )!.flightLogModal_error_fuel_invalid_number
                 : null,
           ),
           trailing: SizedBox(
@@ -427,17 +464,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
             ),
           ),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         ListTile(
           // FIXME TextField inside ListTile caused enter key to act as onPressed
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          leading: const Icon(
-            Icons.subject,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 5,
           ),
+          leading: const Icon(Icons.subject),
           title: TextFormField(
             controller: _notesController,
             // TODO cursorColor: widget.model.backgroundColor,
@@ -456,10 +490,12 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   Widget _buildForm(BuildContext context) => Form(
-      key: _formKey,
-      child: PlatformWidget(
-          cupertino: (context, platform) => _buildCupertinoForm(context),
-          material: (context, platform) => _buildMaterialForm(context)));
+    key: _formKey,
+    child: PlatformWidget(
+      cupertino: (context, platform) => _buildCupertinoForm(context),
+      material: (context, platform) => _buildMaterialForm(context),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -482,7 +518,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             padding: EdgeInsets.zero,
           ),
           child: Text(AppLocalizations.of(context)!.flightLogModal_button_save),
-        )
+        ),
       ];
     } else {
       leadingAction = null;
@@ -503,8 +539,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
             material: (_, __) => MaterialIconButtonData(
-              tooltip:
-                  AppLocalizations.of(context)!.flightLogModal_button_delete,
+              tooltip: AppLocalizations.of(
+                context,
+              )!.flightLogModal_button_delete,
             ),
           ),
         );
@@ -514,46 +551,54 @@ class _FlightLogModalState extends State<FlightLogModal> {
     return PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
-        title: Text(_isEditing
-            ? AppLocalizations.of(context)!.flightLogModal_title_edit
-            : AppLocalizations.of(context)!.flightLogModal_title_create),
+        title: Text(
+          _isEditing
+              ? AppLocalizations.of(context)!.flightLogModal_title_edit
+              : AppLocalizations.of(context)!.flightLogModal_title_create,
+        ),
         leading: leadingAction,
         trailingActions: trailingActions,
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
         backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
-      body: Stack(
-        children: <Widget>[_buildForm(context)],
-      ),
+      body: Stack(children: <Widget>[_buildForm(context)]),
     );
   }
 
   void _onSave(BuildContext context) {
     if (_startHourController.value.number > _endHourController.value.number) {
-      showError(context,
-          AppLocalizations.of(context)!.flightLogModal_error_invalid_hourmeter);
+      showError(
+        context,
+        AppLocalizations.of(context)!.flightLogModal_error_invalid_hourmeter,
+      );
       return;
     }
 
     if (_originController.text.trim().isEmpty ||
         _destinationController.text.trim().isEmpty) {
-      showError(context,
-          AppLocalizations.of(context)!.flightLogModal_error_invalid_locations);
+      showError(
+        context,
+        AppLocalizations.of(context)!.flightLogModal_error_invalid_locations,
+      );
       return;
     }
 
     String fuelValue = _fuelController.text;
     if (!_validateFuel(fuelValue)) {
-      showError(context,
-          AppLocalizations.of(context)!.flightLogModal_error_invalid_fuel);
+      showError(
+        context,
+        AppLocalizations.of(context)!.flightLogModal_error_invalid_fuel,
+      );
       return;
     }
 
     String fuelCostValue = _fuelPriceController.text;
     if (!_validateFuelPrice(fuelCostValue)) {
-      showError(context,
-          AppLocalizations.of(context)!.flightLogModal_error_invalid_fuelCost);
+      showError(
+        context,
+        AppLocalizations.of(context)!.flightLogModal_error_invalid_fuelCost,
+      );
       return;
     }
 
@@ -564,9 +609,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
         String fuelCostValue = _fuelPriceController.text;
         if (fuelCostValue.isEmpty) {
           showError(
+            context,
+            AppLocalizations.of(
               context,
-              AppLocalizations.of(context)!
-                  .flightLogModal_error_invalid_fuelCost_empty);
+            )!.flightLogModal_error_invalid_fuelCost_empty,
+          );
           return;
         }
       }
@@ -577,9 +624,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
       num fuelCostAmount = _parseFuelPrice(_fuelPriceController.text);
       if (fuelCostAmount > 0 && fuelValue.isEmpty) {
         showError(
-            context,
-            AppLocalizations.of(context)!
-                .flightLogModal_error_invalid_fuel_empty);
+          context,
+          AppLocalizations.of(context)!.flightLogModal_error_invalid_fuel_empty,
+        );
         return;
       }
     }
@@ -590,9 +637,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
           widget.item.pilotName != _appConfig.noPilotName) {
         if (_appConfig.pilotName != widget.item.pilotName) {
           showError(
+            context,
+            AppLocalizations.of(
               context,
-              AppLocalizations.of(context)!
-                  .flightLogModal_error_notOwnFlight_edit);
+            )!.flightLogModal_error_notOwnFlight_edit,
+          );
           return;
         }
       } else {
@@ -601,27 +650,33 @@ class _FlightLogModalState extends State<FlightLogModal> {
           if (!_appConfig.admin &&
               widget.item.pilotName == _appConfig.noPilotName) {
             showError(
+              context,
+              AppLocalizations.of(
                 context,
-                AppLocalizations.of(context)!
-                    .flightLogModal_error_alteringTestFlight);
+              )!.flightLogModal_error_alteringTestFlight,
+            );
             return;
           }
 
           final String message;
           if (_pilotName == _appConfig.noPilotName) {
-            message = AppLocalizations.of(context)!
-                .flightLogModal_dialog_changePilotNoPilot_message;
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_dialog_changePilotNoPilot_message;
           } else {
-            message = AppLocalizations.of(context)!
-                .flightLogModal_dialog_changePilot_message;
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_dialog_changePilot_message;
           }
 
           showConfirm(
-              context: context,
-              text: message,
-              title: AppLocalizations.of(context)!
-                  .flightLogModal_dialog_changePilot_title,
-              okCallback: () => _doSave(context));
+            context: context,
+            text: message,
+            title: AppLocalizations.of(
+              context,
+            )!.flightLogModal_dialog_changePilot_title,
+            okCallback: () => _doSave(context),
+          );
           return;
         }
       }
@@ -629,9 +684,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
       if (!_appConfig.admin && _pilotName != _appConfig.noPilotName) {
         if (_appConfig.pilotName != _pilotName) {
           showError(
-              context,
-              AppLocalizations.of(context)!
-                  .flightLogModal_error_loggingForOthers);
+            context,
+            AppLocalizations.of(context)!.flightLogModal_error_loggingForOthers,
+          );
           return;
         }
       }
@@ -665,33 +720,37 @@ class _FlightLogModalState extends State<FlightLogModal> {
       fuelPrice,
       _notesController.text,
     );
-    final Future task = (_isEditing
-            ? _service.updateItem(item.id!, item)
-            : _service.appendItem(item))
-        .timeout(kNetworkRequestTimeout)
-        // safe typing it for catchError
-        .then((value) => Future<FlightLogItem?>.value(value))
-        .catchError((error, StackTrace stacktrace) {
-      _log.warning('SAVE ERROR', error, stacktrace);
-      if (!context.mounted) {
-        return null;
-      }
+    final Future task =
+        (_isEditing
+                ? _service.updateItem(item.id!, item)
+                : _service.appendItem(item))
+            .timeout(kNetworkRequestTimeout)
+            // safe typing it for catchError
+            .then((value) => Future<FlightLogItem?>.value(value))
+            .catchError((error, StackTrace stacktrace) {
+              _log.warning('SAVE ERROR', error, stacktrace);
+              if (!context.mounted) {
+                return null;
+              }
 
-      final String message;
-      // TODO specialize exceptions (e.g. network errors, others...)
-      if (error is TimeoutException) {
-        message = AppLocalizations.of(context)!.error_generic_network_timeout;
-      } else if (error is DataChangedException) {
-        message =
-            AppLocalizations.of(context)!.flightLogModal_error_dataChanged;
-      } else {
-        message = getExceptionMessage(error);
-      }
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        showError(context, message);
-      });
-      return null;
-    });
+              final String message;
+              // TODO specialize exceptions (e.g. network errors, others...)
+              if (error is TimeoutException) {
+                message = AppLocalizations.of(
+                  context,
+                )!.error_generic_network_timeout;
+              } else if (error is DataChangedException) {
+                message = AppLocalizations.of(
+                  context,
+                )!.flightLogModal_error_dataChanged;
+              } else {
+                message = getExceptionMessage(error);
+              }
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                showError(context, message);
+              });
+              return null;
+            });
 
     showPlatformDialog(
       context: context,
@@ -713,9 +772,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
     if (!_appConfig.admin && widget.item.pilotName != _appConfig.noPilotName) {
       if (_appConfig.pilotName != widget.item.pilotName) {
         showError(
+          context,
+          AppLocalizations.of(
             context,
-            AppLocalizations.of(context)!
-                .flightLogModal_error_notOwnFlight_delete);
+          )!.flightLogModal_error_notOwnFlight_delete,
+        );
         return;
       }
     }
@@ -734,23 +795,25 @@ class _FlightLogModalState extends State<FlightLogModal> {
         .deleteItem(widget.item.id!)
         .timeout(kNetworkRequestTimeout)
         .catchError((error, StackTrace stacktrace) {
-      _log.warning('DELETE ERROR', error, stacktrace);
-      if (!context.mounted) {
-        return null;
-      }
+          _log.warning('DELETE ERROR', error, stacktrace);
+          if (!context.mounted) {
+            return null;
+          }
 
-      final String message;
-      // TODO specialize exceptions (e.g. network errors, others...)
-      if (error is TimeoutException) {
-        message = AppLocalizations.of(context)!.error_generic_network_timeout;
-      } else {
-        message = getExceptionMessage(error);
-      }
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        showError(context, message);
-      });
-      return null;
-    });
+          final String message;
+          // TODO specialize exceptions (e.g. network errors, others...)
+          if (error is TimeoutException) {
+            message = AppLocalizations.of(
+              context,
+            )!.error_generic_network_timeout;
+          } else {
+            message = getExceptionMessage(error);
+          }
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showError(context, message);
+          });
+          return null;
+        });
 
     showPlatformDialog(
       context: context,
@@ -769,11 +832,12 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   void _onTapPilot(BuildContext context) {
     final dialog = createPilotSelectDialog(
-        context: context,
-        pilotNames: _appConfig.pilotNamesWithNoPilot,
-        title: AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
-        avatarProvider: (name) => _appConfig.getPilotAvatar(name),
-        selectedPilot: _pilotName);
+      context: context,
+      pilotNames: _appConfig.pilotNamesWithNoPilot,
+      title: AppLocalizations.of(context)!.flightLogModal_dialog_selectPilot,
+      avatarProvider: (name) => _appConfig.getPilotAvatar(name),
+      selectedPilot: _pilotName,
+    );
 
     dialog.then((value) {
       if (value != null) {
@@ -811,7 +875,8 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
       onChanged: (value) => onChanged != null
           ? onChanged!(
-              _validateFuelPrice(value) ? _parseFuelPrice(value) : null)
+              _validateFuelPrice(value) ? _parseFuelPrice(value) : null,
+            )
           : {},
       decoration: InputDecoration(
         border: InputBorder.none,
@@ -821,8 +886,9 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) => !_validateFuelPrice(value)
-          ? AppLocalizations.of(context)!
-              .flightLogModal_error_fuelCost_invalid_number
+          ? AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_fuelCost_invalid_number
           : null,
     );
   }

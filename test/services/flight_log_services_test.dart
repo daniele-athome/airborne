@@ -10,8 +10,11 @@ import 'package:mockito/mockito.dart';
 
 import 'flight_log_services_test.mocks.dart';
 
-@GenerateMocks(
-    [GoogleSheetsService, GoogleServiceAccountService, MetadataService])
+@GenerateMocks([
+  GoogleSheetsService,
+  GoogleServiceAccountService,
+  MetadataService,
+])
 void main() {
   late MockGoogleSheetsService mockSheetsService;
   late MockMetadataService mockMetadataService;
@@ -22,10 +25,10 @@ void main() {
     mockSheetsService = MockGoogleSheetsService();
     mockMetadataService = MockMetadataService();
     testService = FlightLogBookService(
-        MockGoogleServiceAccountService(), mockMetadataService, {
-      'spreadsheet_id': 'TEST',
-      'sheet_name': 'SHEET',
-    });
+      MockGoogleServiceAccountService(),
+      mockMetadataService,
+      {'spreadsheet_id': 'TEST', 'sheet_name': 'SHEET'},
+    );
     testService.client = mockSheetsService;
   });
   tearDown(() {});
@@ -58,19 +61,44 @@ void main() {
       range: 'A2:J11',
       values: rows,
     );
-    when(mockSheetsService.getRows('TEST', 'SHEET', 'A2:J3'))
-        .thenAnswer((_) => Future.value(fakeRows));
-    when(mockMetadataService.reload())
-        .thenAnswer((_) => Future.value(<String, String>{}));
+    when(
+      mockSheetsService.getRows('TEST', 'SHEET', 'A2:J3'),
+    ).thenAnswer((_) => Future.value(fakeRows));
+    when(
+      mockMetadataService.reload(),
+    ).thenAnswer((_) => Future.value(<String, String>{}));
     when(mockMetadataService.get(any)).thenAnswer((_) => Future.value(null));
 
-    final dateOnly =
-        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
+    final dateOnly = DateTime.utc(
+      timestamp.year,
+      timestamp.month,
+      timestamp.day,
+    );
     final expectedItems = [
-      FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure', 'Fly Arrival', 1000,
-          2000, null, null, null),
-      FlightLogItem('2', dateOnly, 'Anna', 'Fly Start', 'Fly End', 2000, 3000,
-          null, null, null),
+      FlightLogItem(
+        '1',
+        dateOnly,
+        'Anna',
+        'Fly Departure',
+        'Fly Arrival',
+        1000,
+        2000,
+        null,
+        null,
+        null,
+      ),
+      FlightLogItem(
+        '2',
+        dateOnly,
+        'Anna',
+        'Fly Start',
+        'Fly End',
+        2000,
+        3000,
+        null,
+        null,
+        null,
+      ),
     ];
     expect(await testService.fetchItems(), expectedItems);
     expect(testService.lastId, 0);
@@ -88,8 +116,9 @@ void main() {
       ),
       // TODO other values one day...?
     );
-    when(mockSheetsService.appendRows('TEST', 'SHEET', 'A2:J2', any))
-        .thenAnswer((_) => Future.value(fakeAppended));
+    when(
+      mockSheetsService.appendRows('TEST', 'SHEET', 'A2:J2', any),
+    ).thenAnswer((_) => Future.value(fakeAppended));
 
     // flight log only uses reload, no get call
     var metadataCallCount = 0;
@@ -97,16 +126,29 @@ void main() {
       metadataCallCount++;
       return Future.value(<String, String>{
         'flight_log.count': '0',
-        'flight_log.hash': (metadataCallCount < 2) ? '0' : '1'
+        'flight_log.hash': (metadataCallCount < 2) ? '0' : '1',
       });
     });
 
     testService.dataHash = '0';
 
-    final dateOnly =
-        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
-    final fakeItem = FlightLogItem(null, dateOnly, 'Anna', 'Fly Departure',
-        'Fly Arrival', 1000, 2000, null, null, null);
+    final dateOnly = DateTime.utc(
+      timestamp.year,
+      timestamp.month,
+      timestamp.day,
+    );
+    final fakeItem = FlightLogItem(
+      null,
+      dateOnly,
+      'Anna',
+      'Fly Departure',
+      'Fly Arrival',
+      1000,
+      2000,
+      null,
+      null,
+      null,
+    );
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
     expect(await testService.appendItem(fakeItem), expectedItem);
@@ -119,8 +161,9 @@ void main() {
       updatedRange: 'A2:J2',
       // TODO other values one day...?
     );
-    when(mockSheetsService.updateRows('TEST', 'SHEET', 'A2:J2', any))
-        .thenAnswer((_) => Future.value(fakeAppended));
+    when(
+      mockSheetsService.updateRows('TEST', 'SHEET', 'A2:J2', any),
+    ).thenAnswer((_) => Future.value(fakeAppended));
 
     // flight log only uses reload, no get call
     var metadataCallCount = 0;
@@ -128,16 +171,29 @@ void main() {
       metadataCallCount++;
       return Future.value(<String, String>{
         'flight_log.count': '0',
-        'flight_log.hash': (metadataCallCount < 2) ? '0' : '1'
+        'flight_log.hash': (metadataCallCount < 2) ? '0' : '1',
       });
     });
 
     testService.dataHash = '0';
 
-    final dateOnly =
-        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
-    final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure',
-        'Fly Arrival', 1000, 2000, null, null, null);
+    final dateOnly = DateTime.utc(
+      timestamp.year,
+      timestamp.month,
+      timestamp.day,
+    );
+    final fakeItem = FlightLogItem(
+      '1',
+      dateOnly,
+      'Anna',
+      'Fly Departure',
+      'Fly Arrival',
+      1000,
+      2000,
+      null,
+      null,
+      null,
+    );
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
     expect(await testService.updateItem(fakeItem.id!, fakeItem), expectedItem);
@@ -146,17 +202,18 @@ void main() {
   test('delete item', () async {
     final timestamp = DateTime.now();
     final fakeAppended = gapi_sheets.BatchUpdateSpreadsheetResponse(
-        spreadsheetId: 'TEST!SHEET',
-        replies: [
-          gapi_sheets.Response(
-            // TODO what here?
-            deleteDimensionGroup: gapi_sheets.DeleteDimensionGroupResponse(),
-          )
-        ]
-        // TODO other values one day...?
-        );
-    when(mockSheetsService.deleteRows('TEST', 'SHEET', 2, 2))
-        .thenAnswer((_) => Future.value(fakeAppended));
+      spreadsheetId: 'TEST!SHEET',
+      replies: [
+        gapi_sheets.Response(
+          // TODO what here?
+          deleteDimensionGroup: gapi_sheets.DeleteDimensionGroupResponse(),
+        ),
+      ],
+      // TODO other values one day...?
+    );
+    when(
+      mockSheetsService.deleteRows('TEST', 'SHEET', 2, 2),
+    ).thenAnswer((_) => Future.value(fakeAppended));
 
     // flight log only uses reload, no get call
     var metadataCallCount = 0;
@@ -164,16 +221,29 @@ void main() {
       metadataCallCount++;
       return Future.value(<String, String>{
         'flight_log.count': '0',
-        'flight_log.hash': (metadataCallCount < 2) ? '0' : '1'
+        'flight_log.hash': (metadataCallCount < 2) ? '0' : '1',
       });
     });
 
     testService.dataHash = '0';
 
-    final dateOnly =
-        DateTime.utc(timestamp.year, timestamp.month, timestamp.day);
-    final fakeItem = FlightLogItem('1', dateOnly, 'Anna', 'Fly Departure',
-        'Fly Arrival', 1000, 2000, null, null, null);
+    final dateOnly = DateTime.utc(
+      timestamp.year,
+      timestamp.month,
+      timestamp.day,
+    );
+    final fakeItem = FlightLogItem(
+      '1',
+      dateOnly,
+      'Anna',
+      'Fly Departure',
+      'Fly Arrival',
+      1000,
+      2000,
+      null,
+      null,
+      null,
+    );
     expect(await testService.deleteItem(fakeItem.id!), '1');
   });
 }

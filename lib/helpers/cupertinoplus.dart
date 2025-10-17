@@ -5,15 +5,19 @@ import 'package:flutter/material.dart';
 import 'utils.dart';
 
 // dummy mandatory values for the date picker
-final DateTime _kDatePickerMinimumDate =
-    DateTime.now().subtract(Duration(days: 50 * 365));
-final DateTime _kDatePickerMaximumDate =
-    DateTime.now().add(Duration(days: 50 * 365));
+final DateTime _kDatePickerMinimumDate = DateTime.now().subtract(
+  Duration(days: 50 * 365),
+);
+final DateTime _kDatePickerMaximumDate = DateTime.now().add(
+  Duration(days: 50 * 365),
+);
 
 const double kDefaultCupertinoFormRowStartPadding = 20.0;
 
 const EdgeInsetsGeometry kDefaultCupertinoFormRowPadding = EdgeInsets.symmetric(
-    horizontal: kDefaultCupertinoFormRowStartPadding, vertical: 6.0);
+  horizontal: kDefaultCupertinoFormRowStartPadding,
+  vertical: 6.0,
+);
 
 const EdgeInsetsGeometry kDefaultCupertinoFormRowHorizontalPadding =
     EdgeInsets.symmetric(horizontal: kDefaultCupertinoFormRowStartPadding);
@@ -35,13 +39,13 @@ const kDefaultCupertinoFormMargin = EdgeInsets.only(
 
 /// A trick for making the background of dialogs a little darker when in light mode.
 CupertinoDynamicColor kCupertinoDialogScaffoldBackgroundColor(
-        BuildContext context) =>
-    CupertinoDynamicColor.withBrightness(
-      //color: CupertinoTheme.of(context).barBackgroundColor,
-      // FIXME non-transparent version of the above color, since it was causing problems with page transitions
-      color: const Color(0xFFF2F2F7),
-      darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
-    );
+  BuildContext context,
+) => CupertinoDynamicColor.withBrightness(
+  //color: CupertinoTheme.of(context).barBackgroundColor,
+  // FIXME non-transparent version of the above color, since it was causing problems with page transitions
+  color: const Color(0xFFF2F2F7),
+  darkColor: CupertinoTheme.of(context).scaffoldBackgroundColor,
+);
 
 /// From [CupertinoFormSection].
 Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
@@ -49,8 +53,9 @@ Widget buildCupertinoFormRowDivider(BuildContext context, bool shortDivider) {
   final double dividerHeight = 1.0 / MediaQuery.of(context).devicePixelRatio;
 
   return Container(
-    margin:
-        (shortDivider) ? const EdgeInsetsDirectional.only(start: 15.0) : null,
+    margin: (shortDivider)
+        ? const EdgeInsetsDirectional.only(start: 15.0)
+        : null,
     color: dividerColor,
     height: dividerHeight,
   );
@@ -127,18 +132,16 @@ class _CupertinoInkWellState extends State<CupertinoInkWell> {
 
 /// A standard-sized container for a [CupertinoFormRow] child.
 class CupertinoFormRowContainer extends StatelessWidget {
-  const CupertinoFormRowContainer({
-    super.key,
-    this.child,
-  });
+  const CupertinoFormRowContainer({super.key, this.child});
 
   final Widget? child;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints:
-          const BoxConstraints(minHeight: kMinInteractiveDimensionCupertino),
+      constraints: const BoxConstraints(
+        minHeight: kMinInteractiveDimensionCupertino,
+      ),
       alignment: Alignment.center,
       child: child,
     );
@@ -179,15 +182,17 @@ class _CupertinoFormButtonRowState extends State<CupertinoFormButtonRow>
     return CupertinoInkWell(
       onPressed: widget.onPressed,
       child: Container(
-        constraints:
-            const BoxConstraints(minHeight: kMinInteractiveDimensionCupertino),
+        constraints: const BoxConstraints(
+          minHeight: kMinInteractiveDimensionCupertino,
+        ),
         alignment: Alignment.center,
         child: CupertinoFormRow(
-            prefix: widget.prefix,
-            helper: widget.helper,
-            error: widget.error,
-            padding: widget.padding,
-            child: widget.child),
+          prefix: widget.prefix,
+          helper: widget.helper,
+          error: widget.error,
+          padding: widget.padding,
+          child: widget.child,
+        ),
       ),
     );
   }
@@ -207,71 +212,74 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
     DateTime? initialValue,
     void Function(DateTime value, DateTime oldValue)? onChanged,
     super.onSaved,
-  })  : assert(showDate || showTime,
-            'showDate and showTime cannot be both false!'),
-        super(
-          initialValue: controller?.value ?? initialValue ?? DateTime.now(),
-          builder: (FormFieldState<DateTime> field) {
-            return CupertinoFormRowContainer(
-              child: CupertinoFormRow(
-                prefix: prefix,
-                padding: const EdgeInsetsDirectional.symmetric(
-                    horizontal: kDefaultCupertinoFormRowStartPadding),
-                helper: helper,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (showDate)
-                      Padding(
-                        padding: kDefaultCupertinoDateTimeFormRowPadding,
-                        child: CupertinoCalendarPickerButton(
-                          initialDateTime: field.value,
-                          minimumDateTime: _kDatePickerMinimumDate,
-                          maximumDateTime: _kDatePickerMaximumDate,
-                          onDateSelected: (value) {
-                            final oldValue = field.value!;
-                            final newValue = DateTime(
-                              value.year,
-                              value.month,
-                              value.day,
-                              field.value!.hour,
-                              field.value!.minute,
-                            );
-                            field.didChange(newValue);
-                            if (onChanged != null) {
-                              onChanged(newValue, oldValue);
-                            }
-                          },
-                        ),
-                      ),
-                    if (showTime)
-                      Padding(
-                        padding: kDefaultCupertinoDateTimeFormRowPadding,
-                        child: CupertinoTimePickerButton(
-                          initialTime: TimeOfDay.fromDateTime(field.value!),
-                          use24hFormat: true,
-                          onTimeChanged: (value) {
-                            final oldValue = field.value!;
-                            final newValue = DateTime(
-                              field.value!.year,
-                              field.value!.month,
-                              field.value!.day,
-                              value.hour,
-                              value.minute,
-                            );
-                            field.didChange(newValue);
-                            if (onChanged != null) {
-                              onChanged(newValue, oldValue);
-                            }
-                          },
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
+  }) : assert(
+         showDate || showTime,
+         'showDate and showTime cannot be both false!',
+       ),
+       super(
+         initialValue: controller?.value ?? initialValue ?? DateTime.now(),
+         builder: (FormFieldState<DateTime> field) {
+           return CupertinoFormRowContainer(
+             child: CupertinoFormRow(
+               prefix: prefix,
+               padding: const EdgeInsetsDirectional.symmetric(
+                 horizontal: kDefaultCupertinoFormRowStartPadding,
+               ),
+               helper: helper,
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.end,
+                 children: [
+                   if (showDate)
+                     Padding(
+                       padding: kDefaultCupertinoDateTimeFormRowPadding,
+                       child: CupertinoCalendarPickerButton(
+                         initialDateTime: field.value,
+                         minimumDateTime: _kDatePickerMinimumDate,
+                         maximumDateTime: _kDatePickerMaximumDate,
+                         onDateSelected: (value) {
+                           final oldValue = field.value!;
+                           final newValue = DateTime(
+                             value.year,
+                             value.month,
+                             value.day,
+                             field.value!.hour,
+                             field.value!.minute,
+                           );
+                           field.didChange(newValue);
+                           if (onChanged != null) {
+                             onChanged(newValue, oldValue);
+                           }
+                         },
+                       ),
+                     ),
+                   if (showTime)
+                     Padding(
+                       padding: kDefaultCupertinoDateTimeFormRowPadding,
+                       child: CupertinoTimePickerButton(
+                         initialTime: TimeOfDay.fromDateTime(field.value!),
+                         use24hFormat: true,
+                         onTimeChanged: (value) {
+                           final oldValue = field.value!;
+                           final newValue = DateTime(
+                             field.value!.year,
+                             field.value!.month,
+                             field.value!.day,
+                             value.hour,
+                             value.minute,
+                           );
+                           field.didChange(newValue);
+                           if (onChanged != null) {
+                             onChanged(newValue, oldValue);
+                           }
+                         },
+                       ),
+                     ),
+                 ],
+               ),
+             ),
+           );
+         },
+       );
 
   final Widget? prefix;
 

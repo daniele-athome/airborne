@@ -40,23 +40,32 @@ void main() async {
   appMain({String? pilotName}) async {
     if (pilotName != null) {
       appConfig = FakeAppConfig.withPilotName(pilotName);
-    }
-    else {
+    } else {
       appConfig = FakeAppConfig();
     }
     await appConfig.init();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppConfig>.value(
-            value: appConfig
-        ),
+        ChangeNotifierProvider<AppConfig>.value(value: appConfig),
         ChangeNotifierProvider<DownloadProvider>(
-            create: (context) => DownloadProvider(() => HttpClient())
+          create: (context) => DownloadProvider(() => HttpClient()),
         ),
-        Provider<GoogleServiceAccountService>.value(value: FakeGoogleServiceAccountService()),
-        Provider<BookFlightCalendarService>.value(value: FakeCalendarService(generateFakeEvents(appConfig.pilotNames))),
-        Provider<FlightLogBookService>.value(value: FakeLogBookService(generateFakeLogBookItems(appConfig.pilotNames))),
-        Provider<ActivitiesService>.value(value: FakeActivitiesService(generateFakeActivities(appConfig.pilotNames))),
+        Provider<GoogleServiceAccountService>.value(
+          value: FakeGoogleServiceAccountService(),
+        ),
+        Provider<BookFlightCalendarService>.value(
+          value: FakeCalendarService(generateFakeEvents(appConfig.pilotNames)),
+        ),
+        Provider<FlightLogBookService>.value(
+          value: FakeLogBookService(
+            generateFakeLogBookItems(appConfig.pilotNames),
+          ),
+        ),
+        Provider<ActivitiesService>.value(
+          value: FakeActivitiesService(
+            generateFakeActivities(appConfig.pilotNames),
+          ),
+        ),
         // TODO metadataService...
       ],
       child: const MainNavigationApp(),
@@ -89,7 +98,9 @@ void main() async {
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('button_bookFlight_view_schedule')));
+      await tester.tap(
+        find.byKey(const Key('button_bookFlight_view_schedule')),
+      );
       await tester.pumpAndSettle();
       await screenshot(binding, tester, '01-bookflight-agenda');
     });

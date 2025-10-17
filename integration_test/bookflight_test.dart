@@ -38,51 +38,60 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          await waitForWidget(
-              tester, find.byKey(const Key('nav_book_flight')), 10),
-          true);
+        await waitForWidget(
+          tester,
+          find.byKey(const Key('nav_book_flight')),
+          10,
+        ),
+        true,
+      );
 
       // TODO what are we testing here?
 
-      await tester
-          .tap(find.byKey(const Key("button_bookFlight_view_schedule")));
+      await tester.tap(
+        find.byKey(const Key("button_bookFlight_view_schedule")),
+      );
       await tester.pumpAndSettle();
       expect(
-          tester
-              .state<BookFlightScreenState>(find.byType(BookFlightScreen))
-              .calendarController
-              .view,
-          CalendarView.schedule);
+        tester
+            .state<BookFlightScreenState>(find.byType(BookFlightScreen))
+            .calendarController
+            .view,
+        CalendarView.schedule,
+      );
       // TODO check that http interceptor was called
 
       await tester.tap(find.byKey(const Key("button_bookFlight_view_month")));
       await tester.pumpAndSettle();
       expect(
-          tester
-              .state<BookFlightScreenState>(find.byType(BookFlightScreen))
-              .calendarController
-              .view,
-          CalendarView.month);
+        tester
+            .state<BookFlightScreenState>(find.byType(BookFlightScreen))
+            .calendarController
+            .view,
+        CalendarView.month,
+      );
       // TODO check that http interceptor was called
 
       await tester.tap(find.byKey(const Key("button_bookFlight_view_week")));
       await tester.pumpAndSettle();
       expect(
-          tester
-              .state<BookFlightScreenState>(find.byType(BookFlightScreen))
-              .calendarController
-              .view,
-          CalendarView.week);
+        tester
+            .state<BookFlightScreenState>(find.byType(BookFlightScreen))
+            .calendarController
+            .view,
+        CalendarView.week,
+      );
       // TODO check that http interceptor was called
 
       await tester.tap(find.byKey(const Key("button_bookFlight_view_day")));
       await tester.pumpAndSettle();
       expect(
-          tester
-              .state<BookFlightScreenState>(find.byType(BookFlightScreen))
-              .calendarController
-              .view,
-          CalendarView.day);
+        tester
+            .state<BookFlightScreenState>(find.byType(BookFlightScreen))
+            .calendarController
+            .view,
+        CalendarView.day,
+      );
       // TODO check that http interceptor was called
     });
     testWidgets('book flight: edit event', (WidgetTester tester) async {
@@ -91,8 +100,9 @@ void main() {
       await tester.pumpAndSettle();
       // TODO
     });
-    testWidgets('book flight: create event (no conflict)',
-        (WidgetTester tester) async {
+    testWidgets('book flight: create event (no conflict)', (
+      WidgetTester tester,
+    ) async {
       app.main();
 
       await tester.pumpAndSettle();
@@ -102,7 +112,9 @@ void main() {
       await tester.tap(find.byKey(const Key('button_bookFlight')));
       await tester.pumpAndSettle();
       expect(
-          await waitForWidget(tester, find.byType(BookFlightModal), 10), true);
+        await waitForWidget(tester, find.byType(BookFlightModal), 10),
+        true,
+      );
 
       // TODO play with the form
 
@@ -164,8 +176,9 @@ void main() {
   });
 }
 
-Map<String, Interceptor> mockGoogleCalendarCreateApi(
-    {bool replyConflict = false}) {
+Map<String, Interceptor> mockGoogleCalendarCreateApi({
+  bool replyConflict = false,
+}) {
   final fakeEvent = gapi_calendar.Event(
     id: Random().nextInt(10000).toString(),
     summary: 'Anna',
@@ -175,27 +188,27 @@ Map<String, Interceptor> mockGoogleCalendarCreateApi(
   );
   final interceptors = <String, Interceptor>{};
   final base = nock('https://www.googleapis.com/calendar/v3');
-  interceptors['create'] = base.post(
-    startsWith('/calendars/NONE/events'),
-    (List<int> body, ContentType contentType) => true,
-  )
-    ..query((Map<String, String> params) => true)
-    ..reply(200, json.encode(fakeEvent), headers: {
-      'content-type': 'application/json',
-    });
+  interceptors['create'] =
+      base.post(
+          startsWith('/calendars/NONE/events'),
+          (List<int> body, ContentType contentType) => true,
+        )
+        ..query((Map<String, String> params) => true)
+        ..reply(
+          200,
+          json.encode(fakeEvent),
+          headers: {'content-type': 'application/json'},
+        );
   // warning: this will conflict with the generic persistent mock (it should be disabled first)
   interceptors['conflicts'] = base.get(startsWith('/calendars/NONE/events'))
     ..query((Map<String, String> params) => true)
     ..persist()
     ..reply(
-        200,
-        json.encode({
-          "items": [
-            if (replyConflict) fakeEvent,
-          ],
-        }),
-        headers: {
-          'content-type': 'application/json',
-        });
+      200,
+      json.encode({
+        "items": [if (replyConflict) fakeEvent],
+      }),
+      headers: {'content-type': 'application/json'},
+    );
   return interceptors;
 }

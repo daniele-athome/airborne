@@ -19,7 +19,8 @@ class FlightLogScreen extends StatefulWidget {
   State<FlightLogScreen> createState() => _FlightLogScreenState();
 }
 
-class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingObserver {
+class _FlightLogScreenState extends State<FlightLogScreen>
+    with WidgetsBindingObserver {
   late FToast _fToast;
   late FlightLogListController _logBookController;
   late AppConfig _appConfig;
@@ -51,7 +52,9 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
     // ModalRoute has a nice property called isCurrent that will return false
     // when this screen is covered by another popup.
     final route = ModalRoute.of(context);
-    if (state == AppLifecycleState.resumed && route != null && route.isCurrent) {
+    if (state == AppLifecycleState.resumed &&
+        route != null &&
+        route.isCurrent) {
       _logBookController.reset();
     }
   }
@@ -85,10 +88,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
       model = item;
     }
 
-    Widget pageRouteBuilder(BuildContext context) => Provider.value(
-          value: _logBookService,
-          child: FlightLogModal(model),
-        );
+    Widget pageRouteBuilder(BuildContext context) =>
+        Provider.value(value: _logBookService, child: FlightLogModal(model));
 
     final route = platformPageRoute(
       context: context,
@@ -103,14 +104,17 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
 
         final String message;
         if (item == null) {
-          message =
-              AppLocalizations.of(context)!.flightLog_message_flight_added;
+          message = AppLocalizations.of(
+            context,
+          )!.flightLog_message_flight_added;
         } else if (result is DeletedFlightLogItem) {
-          message =
-              AppLocalizations.of(context)!.flightLog_message_flight_canceled;
+          message = AppLocalizations.of(
+            context,
+          )!.flightLog_message_flight_canceled;
         } else {
-          message =
-              AppLocalizations.of(context)!.flightLog_message_flight_updated;
+          message = AppLocalizations.of(
+            context,
+          )!.flightLog_message_flight_updated;
         }
         showToast(_fToast, message, const Duration(seconds: 2));
         // refresh list
@@ -129,7 +133,8 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
   }
 
   /// Hide create button until we have the first (actually last) item of the log
-  bool _canShowCreateButton() => _logBookController.lastEndHourMeter != null ||
+  bool _canShowCreateButton() =>
+      _logBookController.lastEndHourMeter != null ||
       _logBookController.empty == true;
 
   @override
@@ -144,12 +149,12 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
               material: (context, platform) => MaterialAppBarData(
                 toolbarHeight:
                     MediaQuery.of(context).orientation == Orientation.portrait
-                        ? kPortraitToolbarHeight
-                        : kLandscapeToolbarHeight,
+                    ? kPortraitToolbarHeight
+                    : kLandscapeToolbarHeight,
               ),
             ),
       material: (_, __) => MaterialScaffoldData(
-      floatingActionButton: ValueListenableBuilder(
+        floatingActionButton: ValueListenableBuilder(
           valueListenable: _logBookController,
           builder: (context, value, child) => _canShowCreateButton()
               ? FloatingActionButton(
@@ -159,39 +164,42 @@ class _FlightLogScreenState extends State<FlightLogScreen> with WidgetsBindingOb
                   child: const Icon(Icons.add),
                   // TODO colors
                 )
-              : const SizedBox.shrink()),
+              : const SizedBox.shrink(),
+        ),
         body: _buildBody(context),
       ),
       cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
-          body: NestedScrollView(
-              headerSliverBuilder: (_, __) => [
-                    CupertinoSliverNavigationBar(
-                      largeTitle:
-                          Text(AppLocalizations.of(context)!.flightLog_title),
-                      trailing: ValueListenableBuilder(
-                          valueListenable: _logBookController,
-                          builder: (context, value, child) => _canShowCreateButton() ?
-                          PlatformIconButton(
-                            key: const Key('button_logFlight'),
-                            onPressed: () => _logFlight(context, null),
-                            icon: Icon(
-                              CupertinoIcons.add,
-                              color: CupertinoColors.systemRed,
-                              semanticLabel: AppLocalizations.of(context)!
-                                  .button_logFlight,
-                            ),
-                            // TODO not ready yet
-                            //color: CupertinoColors.systemRed,
-                            cupertino: (_, __) => CupertinoIconButtonData(
-                              // workaround for https://github.com/flutter/flutter/issues/32701
-                              padding: EdgeInsets.zero,
-                            ),
-                          )
-                              : const SizedBox.shrink()
+        body: NestedScrollView(
+          headerSliverBuilder: (_, __) => [
+            CupertinoSliverNavigationBar(
+              largeTitle: Text(AppLocalizations.of(context)!.flightLog_title),
+              trailing: ValueListenableBuilder(
+                valueListenable: _logBookController,
+                builder: (context, value, child) => _canShowCreateButton()
+                    ? PlatformIconButton(
+                        key: const Key('button_logFlight'),
+                        onPressed: () => _logFlight(context, null),
+                        icon: Icon(
+                          CupertinoIcons.add,
+                          color: CupertinoColors.systemRed,
+                          semanticLabel: AppLocalizations.of(
+                            context,
+                          )!.button_logFlight,
+                        ),
+                        // TODO not ready yet
+                        //color: CupertinoColors.systemRed,
+                        cupertino: (_, __) => CupertinoIconButtonData(
+                          // workaround for https://github.com/flutter/flutter/issues/32701
+                          padding: EdgeInsets.zero,
+                        ),
                       )
-                    ),
-                  ],
-              body: _buildBody(context))),
+                    : const SizedBox.shrink(),
+              ),
+            ),
+          ],
+          body: _buildBody(context),
+        ),
+      ),
     );
   }
 }

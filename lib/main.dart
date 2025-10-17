@@ -24,7 +24,8 @@ Future<void> main() async {
   Logger.root.onRecord.listen((record) {
     if (kReleaseMode) {
       debugPrint(
-          '${record.time} ${record.level.name} ${record.loggerName} - ${record.message}');
+        '${record.time} ${record.level.name} ${record.loggerName} - ${record.message}',
+      );
       if (record.error != null) {
         debugPrint(record.error.toString());
       }
@@ -66,20 +67,25 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider<AppConfig>.value(value: appConfig),
         ChangeNotifierProvider<DownloadProvider>(
-            create: (context) => DownloadProvider(() => HttpClient())),
+          create: (context) => DownloadProvider(() => HttpClient()),
+        ),
         // account service: the dependency tree root
         ProxyProvider<AppConfig, GoogleServiceAccountService?>(
           update: (_, appConfig, __) {
             _log.finest('build account_service');
             return appConfig.currentAircraft != null
                 ? GoogleServiceAccountService(
-                    json: appConfig.googleServiceAccountJson)
+                    json: appConfig.googleServiceAccountJson,
+                  )
                 : null;
           },
         ),
         // metadata service: depends on account service
-        ProxyProvider2<AppConfig, GoogleServiceAccountService?,
-            MetadataService?>(
+        ProxyProvider2<
+          AppConfig,
+          GoogleServiceAccountService?,
+          MetadataService?
+        >(
           update: (_, appConfig, account, __) {
             _log.finest('build metadata');
             return appConfig.hasFeature('metadata') && account != null
@@ -89,8 +95,11 @@ Future<void> main() async {
         ),
         // other application services: depend on account and metadata services.
         // Metadata service is optional since they can work without it.
-        ProxyProvider2<AppConfig, GoogleServiceAccountService?,
-            BookFlightCalendarService?>(
+        ProxyProvider2<
+          AppConfig,
+          GoogleServiceAccountService?,
+          BookFlightCalendarService?
+        >(
           update: (_, appConfig, account, __) {
             _log.finest('build book_flight');
             return appConfig.hasFeature('book_flight') && account != null
@@ -98,23 +107,37 @@ Future<void> main() async {
                 : null;
           },
         ),
-        ProxyProvider3<AppConfig, GoogleServiceAccountService?,
-            MetadataService?, FlightLogBookService?>(
+        ProxyProvider3<
+          AppConfig,
+          GoogleServiceAccountService?,
+          MetadataService?,
+          FlightLogBookService?
+        >(
           update: (_, appConfig, account, metadataService, __) {
             _log.finest('build flight_log');
             return appConfig.hasFeature('flight_log') && account != null
                 ? FlightLogBookService(
-                    account, metadataService, appConfig.flightlogBackendInfo)
+                    account,
+                    metadataService,
+                    appConfig.flightlogBackendInfo,
+                  )
                 : null;
           },
         ),
-        ProxyProvider3<AppConfig, GoogleServiceAccountService, MetadataService?,
-            ActivitiesService?>(
+        ProxyProvider3<
+          AppConfig,
+          GoogleServiceAccountService,
+          MetadataService?,
+          ActivitiesService?
+        >(
           update: (_, appConfig, account, metadataService, __) {
             _log.finest('build activities');
             return appConfig.hasFeature('activities')
                 ? ActivitiesService(
-                    account, metadataService, appConfig.activitiesBackendInfo)
+                    account,
+                    metadataService,
+                    appConfig.activitiesBackendInfo,
+                  )
                 : null;
           },
         ),

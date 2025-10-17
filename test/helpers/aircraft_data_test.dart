@@ -24,16 +24,17 @@ void main() {
       PathProviderPlatform.instance = MockPathProviderPlatform();
     });
     tearDown(() {
-      Directory((PathProviderPlatform.instance as MockPathProviderPlatform)
-              .baseDir)
-          .deleteSync(recursive: true);
+      Directory(
+        (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir,
+      ).deleteSync(recursive: true);
     });
 
     test('A corrupted zip file should not pass validation', () async {
       final tmpDir = await getTemporaryDirectory();
       tmpDir.createSync(recursive: true);
-      final badZipFile = File(path.join(
-          tmpDir.path, 'aircraft_test_${Random().nextInt(1000)}.zip'));
+      final badZipFile = File(
+        path.join(tmpDir.path, 'aircraft_test_${Random().nextInt(1000)}.zip'),
+      );
       // damaged zip
       badZipFile.writeAsStringSync("PK###BAD ZIP FILE");
       final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
@@ -41,29 +42,35 @@ void main() {
     });
 
     test(
-        'A zip file with an invalid aircraft JSON file should not pass validation',
-        () async {
-      final badZipFile = await _createAircraftFileWithData(
-          filenameWithoutExtension: 'a1234', jsonData: '{3723;.-\\||}');
-      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
-      expect(await reader.validate(), false);
-    });
-
-    test(
-        'A zip file with an aircraft JSON file missing stuff should not pass validation',
-        () async {
-      final badZipFile = await _createAircraftFileWithData(
+      'A zip file with an invalid aircraft JSON file should not pass validation',
+      () async {
+        final badZipFile = await _createAircraftFileWithData(
           filenameWithoutExtension: 'a1234',
-          jsonData: '{"aircraft_id":"a1234","callsign":"A-1234"}');
-      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
-      expect(await reader.validate(), false);
-    });
+          jsonData: '{3723;.-\\||}',
+        );
+        final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
+        expect(await reader.validate(), false);
+      },
+    );
 
     test(
-        'A zip file with a valid aircraft JSON file but missing stuff should not pass validation',
-        () async {
-      final goodZipFile = await _createAircraftFileWithData(
-          filenameWithoutExtension: 'a1234', jsonData: '''
+      'A zip file with an aircraft JSON file missing stuff should not pass validation',
+      () async {
+        final badZipFile = await _createAircraftFileWithData(
+          filenameWithoutExtension: 'a1234',
+          jsonData: '{"aircraft_id":"a1234","callsign":"A-1234"}',
+        );
+        final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
+        expect(await reader.validate(), false);
+      },
+    );
+
+    test(
+      'A zip file with a valid aircraft JSON file but missing stuff should not pass validation',
+      () async {
+        final goodZipFile = await _createAircraftFileWithData(
+          filenameWithoutExtension: 'a1234',
+          jsonData: '''
 {
   "admin": true,
   "aircraft_id": "a1234",
@@ -86,10 +93,12 @@ void main() {
     "longitude": 12.7143166,
     "timezone": "Europe/Berlin"
   }
-}''');
-      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
-      expect(await reader.validate(), false);
-    });
+}''',
+        );
+        final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
+        expect(await reader.validate(), false);
+      },
+    );
   });
 
   group('Testing aircraft data file opening', () {
@@ -97,9 +106,9 @@ void main() {
       PathProviderPlatform.instance = MockPathProviderPlatform();
     });
     tearDown(() {
-      Directory((PathProviderPlatform.instance as MockPathProviderPlatform)
-              .baseDir)
-          .deleteSync(recursive: true);
+      Directory(
+        (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir,
+      ).deleteSync(recursive: true);
     });
 
     // TODO some tests for bad cases here would be nice
@@ -113,63 +122,101 @@ void main() {
       expect(actual.path, directory.path);
       expect(directory.existsSync(), true);
       expect(
-          File(path.join(directory.path, 'aircraft.json')).existsSync(), true);
+        File(path.join(directory.path, 'aircraft.json')).existsSync(),
+        true,
+      );
       expect(
-          File(path.join(directory.path, 'aircraft.jpg')).existsSync(), true);
-      expect(File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-john.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(),
-          true);
+        File(path.join(directory.path, 'aircraft.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-john.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(),
+        true,
+      );
     });
 
     test('Aircraft data should be stored as new aircraft', () async {
       final goodZipFile = await _createExampleValidAircraftData();
       final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
       await reader.open();
-      final storedFile =
-          await addAircraftDataFile(reader, 'http://localhost/a1234.zip');
+      final storedFile = await addAircraftDataFile(
+        reader,
+        'http://localhost/a1234.zip',
+      );
       final baseDir =
           (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir;
-      final actualPath =
-          path.join(baseDir, 'appdata', 'aircrafts', 'a1234.zip');
+      final actualPath = path.join(
+        baseDir,
+        'appdata',
+        'aircrafts',
+        'a1234.zip',
+      );
       expect(storedFile.path, actualPath);
       expect(File(actualPath).existsSync(), true);
     });
 
-    test('Loading existing aircraft should extract data in temp directory',
-        () async {
-      final goodZipFile = await _createExampleValidAircraftData();
-      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
-      await reader.open();
-      await addAircraftDataFile(reader, 'http://localhost/a1234.zip');
+    test(
+      'Loading existing aircraft should extract data in temp directory',
+      () async {
+        final goodZipFile = await _createExampleValidAircraftData();
+        final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
+        await reader.open();
+        await addAircraftDataFile(reader, 'http://localhost/a1234.zip');
 
-      final loadedReader = await loadAircraft('a1234');
-      final baseDir = await getTemporaryDirectory();
-      final directory = Directory(path.join(baseDir.path, 'current_aircraft'));
-      final actual = await loadedReader.open();
-      expect(actual.path, directory.path);
-      expect(directory.existsSync(), true);
-      expect(
-          File(path.join(directory.path, 'aircraft.json')).existsSync(), true);
-      expect(
-          File(path.join(directory.path, 'aircraft.jpg')).existsSync(), true);
-      expect(File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-john.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(),
-          true);
-    });
+        final loadedReader = await loadAircraft('a1234');
+        final baseDir = await getTemporaryDirectory();
+        final directory = Directory(
+          path.join(baseDir.path, 'current_aircraft'),
+        );
+        final actual = await loadedReader.open();
+        expect(actual.path, directory.path);
+        expect(directory.existsSync(), true);
+        expect(
+          File(path.join(directory.path, 'aircraft.json')).existsSync(),
+          true,
+        );
+        expect(
+          File(path.join(directory.path, 'aircraft.jpg')).existsSync(),
+          true,
+        );
+        expect(
+          File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(),
+          true,
+        );
+        expect(
+          File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(),
+          true,
+        );
+        expect(
+          File(path.join(directory.path, 'avatar-john.jpg')).existsSync(),
+          true,
+        );
+        expect(
+          File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(),
+          true,
+        );
+        expect(
+          File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(),
+          true,
+        );
+      },
+    );
   });
 
   group('Testing aircraft data download utilities', () {
@@ -178,7 +225,8 @@ void main() {
     });
     tearDown(() {
       final directory = Directory(
-          (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir);
+        (PathProviderPlatform.instance as MockPathProviderPlatform).baseDir,
+      );
       if (directory.existsSync()) {
         directory.deleteSync(recursive: true);
       }
@@ -188,11 +236,14 @@ void main() {
       final downloadProvider = MockDownloadProvider();
       const url = 'http://localhost/a1234.zip';
       final aircraftFile = await _createExampleValidAircraftData();
-      when(downloadProvider.downloadToFile(
-              url, 'aircraft.zip', null, null, true))
-          .thenAnswer((_) => Future.value(aircraftFile));
-      final aircraftData =
-          await downloadAircraftData(url, null, downloadProvider);
+      when(
+        downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true),
+      ).thenAnswer((_) => Future.value(aircraftFile));
+      final aircraftData = await downloadAircraftData(
+        url,
+        null,
+        downloadProvider,
+      );
 
       final baseDir = await getTemporaryDirectory();
       final directory = Directory(path.join(baseDir.path, 'current_aircraft'));
@@ -200,54 +251,85 @@ void main() {
       expect(actual.path, directory.path);
       expect(directory.existsSync(), true);
       expect(
-          File(path.join(directory.path, 'aircraft.json')).existsSync(), true);
+        File(path.join(directory.path, 'aircraft.json')).existsSync(),
+        true,
+      );
       expect(
-          File(path.join(directory.path, 'aircraft.jpg')).existsSync(), true);
-      expect(File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-john.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(),
-          true);
-      expect(File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(),
-          true);
+        File(path.join(directory.path, 'aircraft.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-anna.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-claudia.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-john.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-mike.jpg')).existsSync(),
+        true,
+      );
+      expect(
+        File(path.join(directory.path, 'avatar-simon.jpg')).existsSync(),
+        true,
+      );
     });
 
-    test('Aircraft data invalid (JSON schema not validated) download',
-        () async {
-      final downloadProvider = MockDownloadProvider();
-      const url = 'http://localhost/a1234.zip';
-      final aircraftFile = await _createExampleWithInvalidJsonAircraftData();
-      when(downloadProvider.downloadToFile(
-              url, 'aircraft.zip', null, null, true))
-          .thenAnswer((_) => Future.value(aircraftFile));
-      expect(downloadAircraftData(url, null, downloadProvider),
-          throwsA(predicate((e) => e is AircraftValidationException)));
-    });
+    test(
+      'Aircraft data invalid (JSON schema not validated) download',
+      () async {
+        final downloadProvider = MockDownloadProvider();
+        const url = 'http://localhost/a1234.zip';
+        final aircraftFile = await _createExampleWithInvalidJsonAircraftData();
+        when(
+          downloadProvider.downloadToFile(
+            url,
+            'aircraft.zip',
+            null,
+            null,
+            true,
+          ),
+        ).thenAnswer((_) => Future.value(aircraftFile));
+        expect(
+          downloadAircraftData(url, null, downloadProvider),
+          throwsA(predicate((e) => e is AircraftValidationException)),
+        );
+      },
+    );
 
     test('Aircraft data invalid (missing files) download', () async {
       final downloadProvider = MockDownloadProvider();
       const url = 'http://localhost/a1234.zip';
       final aircraftFile =
           await _createExampleWithValidJSONAndMissingFilesAircraftData();
-      when(downloadProvider.downloadToFile(
-              url, 'aircraft.zip', null, null, true))
-          .thenAnswer((_) => Future.value(aircraftFile));
-      expect(downloadAircraftData(url, null, downloadProvider),
-          throwsA(predicate((e) => e is AircraftValidationException)));
+      when(
+        downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true),
+      ).thenAnswer((_) => Future.value(aircraftFile));
+      expect(
+        downloadAircraftData(url, null, downloadProvider),
+        throwsA(predicate((e) => e is AircraftValidationException)),
+      );
     });
 
     test('Aircraft data download error', () async {
       final downloadProvider = MockDownloadProvider();
       const url = 'http://localhost/a1234.zip';
-      when(downloadProvider.downloadToFile(
-              url, 'aircraft.zip', null, null, true))
-          .thenAnswer((_) => Future.error(
-              const SocketException('Error connecting', osError: OSError())));
-      expect(downloadAircraftData(url, null, downloadProvider),
-          throwsA(predicate((e) => e is SocketException)));
+      when(
+        downloadProvider.downloadToFile(url, 'aircraft.zip', null, null, true),
+      ).thenAnswer(
+        (_) => Future.error(
+          const SocketException('Error connecting', osError: OSError()),
+        ),
+      );
+      expect(
+        downloadAircraftData(url, null, downloadProvider),
+        throwsA(predicate((e) => e is SocketException)),
+      );
     });
   });
 }
@@ -359,17 +441,23 @@ Future<File> _createAircraftFileWithData({
   encoder.startEncode(zipOutput);
 
   if (jsonData != null) {
-    encoder.add(ArchiveFile.stream(
-        'aircraft.json', InputMemoryStream(jsonData.codeUnits, length: jsonData.length)));
+    encoder.add(
+      ArchiveFile.stream(
+        'aircraft.json',
+        InputMemoryStream(jsonData.codeUnits, length: jsonData.length),
+      ),
+    );
   }
   if (aircraftPicData != null) {
-    encoder.add(ArchiveFile.stream(
-        'aircraft.jpg', InputMemoryStream(aircraftPicData)));
+    encoder.add(
+      ArchiveFile.stream('aircraft.jpg', InputMemoryStream(aircraftPicData)),
+    );
   }
   if (pilotAvatarsPicData != null) {
     pilotAvatarsPicData.forEach((name, picData) {
-      encoder.add(ArchiveFile.stream(
-          'avatar-$name.jpg', InputMemoryStream(picData)));
+      encoder.add(
+        ArchiveFile.stream('avatar-$name.jpg', InputMemoryStream(picData)),
+      );
     });
   }
 

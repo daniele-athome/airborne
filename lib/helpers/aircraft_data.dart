@@ -100,8 +100,11 @@ class AircraftDataReader {
     final bytes = dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
     final Archive archive;
     try {
-      archive =
-          ZipDecoder().decodeBytes(bytes, password: password, verify: true);
+      archive = ZipDecoder().decodeBytes(
+        bytes,
+        password: password,
+        verify: true,
+      );
     } catch (e) {
       _log.warning('Not a valid zip file: $e');
       return false;
@@ -125,8 +128,9 @@ class AircraftDataReader {
 
     _log.finest(metadata);
 
-    final schemaData =
-        await rootBundle.loadString('assets/aircraft.schema.json');
+    final schemaData = await rootBundle.loadString(
+      'assets/aircraft.schema.json',
+    );
     final schema = JsonSchema.create(schemaData);
     final validation = schema.validate(metadata);
     if (validation.isValid) {
@@ -138,8 +142,9 @@ class AircraftDataReader {
       }
 
       // pilot avatars
-      for (final pilot
-          in List<String>.from(metadata['pilot_names'] as Iterable<dynamic>)) {
+      for (final pilot in List<String>.from(
+        metadata['pilot_names'] as Iterable<dynamic>,
+      )) {
         final avatarPic = archive.findFile('avatar-${pilot.toLowerCase()}.jpg');
         if (avatarPic == null || !avatarPic.isFile) {
           _log.warning('pilot avatar for $pilot is missing');
@@ -167,8 +172,9 @@ class AircraftDataReader {
       await directory.create(recursive: true);
 
       // FIXME in-memory operations - fine for small files, but it needs to change
-      final bytes =
-          dataFile != null ? await dataFile!.readAsBytes() : dataBytes!;
+      final bytes = dataFile != null
+          ? await dataFile!.readAsBytes()
+          : dataBytes!;
       final archive = ZipDecoder().decodeBytes(bytes, verify: true);
 
       for (final file in archive.files) {
@@ -181,8 +187,9 @@ class AircraftDataReader {
     }
 
     try {
-      final jsonFile =
-          File(path.join(directory.path, _kAircraftMetadataFilename));
+      final jsonFile = File(
+        path.join(directory.path, _kAircraftMetadataFilename),
+      );
       final jsonData = await jsonFile.readAsString();
       metadata = json.decode(jsonData) as Map<String, dynamic>;
     } catch (e) {
@@ -191,19 +198,21 @@ class AircraftDataReader {
     }
 
     // aircraft picture
-    final aircraftPicFile =
-        File(path.join(directory.path, _kAircraftPicFilename));
+    final aircraftPicFile = File(
+      path.join(directory.path, _kAircraftPicFilename),
+    );
     if (!(await aircraftPicFile.exists())) {
       _log.warning('$_kAircraftPicFilename is missing');
       throw const FormatException('Not a valid aircraft archive.');
     }
 
     // pilot avatars
-    for (final pilot
-        in List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>)) {
+    for (final pilot in List<String>.from(
+      metadata!['pilot_names'] as Iterable<dynamic>,
+    )) {
       if (!(await File(
-              path.join(directory.path, 'avatar-${pilot.toLowerCase()}.jpg'))
-          .exists())) {
+        path.join(directory.path, 'avatar-${pilot.toLowerCase()}.jpg'),
+      ).exists())) {
         _log.warning('pilot avatar for $pilot is missing');
         throw const FormatException('Not a valid aircraft archive.');
       }
@@ -224,24 +233,25 @@ class AircraftDataReader {
   }
 
   AircraftData toAircraftData() => AircraftData(
-        dataPath: metadata!['path'] as Directory,
-        id: metadata!['aircraft_id'] as String,
-        callSign: metadata!['callsign'] as String,
-        backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
-        pilotNames:
-            List<String>.from(metadata!['pilot_names'] as Iterable<dynamic>),
-        noPilotName: metadata!['no_pilot_name'] as String?,
-        locationName: metadata!['location']?['name'] as String,
-        locationLatitude: metadata!['location']?['latitude'] as double,
-        locationLongitude: metadata!['location']?['longitude'] as double,
-        locationTimeZone: metadata!['location']?['timezone'] as String,
-        locationWeatherLive: metadata!['location']?['weather_live'] as String?,
-        locationWeatherForecast:
-            metadata!['location']?['weather_forecast'] as String?,
-        documentsArchive: metadata!['documents_archive'] as String?,
-        url: metadata!['url'] as String?,
-        admin: metadata!['admin'] != null && metadata!['admin'] as bool,
-      );
+    dataPath: metadata!['path'] as Directory,
+    id: metadata!['aircraft_id'] as String,
+    callSign: metadata!['callsign'] as String,
+    backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
+    pilotNames: List<String>.from(
+      metadata!['pilot_names'] as Iterable<dynamic>,
+    ),
+    noPilotName: metadata!['no_pilot_name'] as String?,
+    locationName: metadata!['location']?['name'] as String,
+    locationLatitude: metadata!['location']?['latitude'] as double,
+    locationLongitude: metadata!['location']?['longitude'] as double,
+    locationTimeZone: metadata!['location']?['timezone'] as String,
+    locationWeatherLive: metadata!['location']?['weather_live'] as String?,
+    locationWeatherForecast:
+        metadata!['location']?['weather_forecast'] as String?,
+    documentsArchive: metadata!['documents_archive'] as String?,
+    url: metadata!['url'] as String?,
+    admin: metadata!['admin'] != null && metadata!['admin'] as bool,
+  );
 }
 
 /// Add an aircraft data file to a local data store for long-term storage.
@@ -254,24 +264,34 @@ Future<File> addAircraftDataFile(AircraftDataReader reader, String url) async {
   await directory.create(recursive: true);
 
   // store url in separate file
-  File urlFile = File(path.join(
-      directory.path, '${reader.metadata!['aircraft_id'] as String}.url'));
+  File urlFile = File(
+    path.join(
+      directory.path,
+      '${reader.metadata!['aircraft_id'] as String}.url',
+    ),
+  );
   await urlFile.writeAsString(url);
   reader.urlFile = urlFile;
 
   // decrypt and save again
   final filename = path.join(
-      directory.path, '${reader.metadata!['aircraft_id'] as String}.zip');
+    directory.path,
+    '${reader.metadata!['aircraft_id'] as String}.zip',
+  );
   return decryptDataFile(reader.dataFile!.path, reader.password, filename);
 }
 
 /// Decrypts a zip file and stores it unencrypted to another file.
-Future<File> decryptDataFile(String encryptedFilename, String? password,
-    String decryptedFilename) async {
+Future<File> decryptDataFile(
+  String encryptedFilename,
+  String? password,
+  String decryptedFilename,
+) async {
   final Archive encryptedArchive = ZipDecoder().decodeBytes(
-      await File(encryptedFilename).readAsBytes(),
-      password: password,
-      verify: true);
+    await File(encryptedFilename).readAsBytes(),
+    password: password,
+    verify: true,
+  );
   final Archive decryptedArchive = Archive();
 
   for (final inFile in encryptedArchive.files) {
@@ -283,16 +303,19 @@ Future<File> decryptDataFile(String encryptedFilename, String? password,
     decryptedArchive.add(outFile);
   }
 
-  final decryptedBytes =
-      ZipEncoder().encodeBytes(decryptedArchive, level: DeflateLevel.bestSpeed);
+  final decryptedBytes = ZipEncoder().encodeBytes(
+    decryptedArchive,
+    level: DeflateLevel.bestSpeed,
+  );
   return await File(decryptedFilename).writeAsBytes(decryptedBytes);
 }
 
 /// Loads an aircraft data file into the cache.
 Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   final baseDir = await getApplicationSupportDirectory();
-  final dataFile =
-      File(path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'));
+  final dataFile = File(
+    path.join(baseDir.path, 'aircrafts', '$aircraftId.zip'),
+  );
   final urlFile = File(path.join(baseDir.path, 'aircrafts', '$aircraftId.url'));
   // null password because the cached zip file is unencrypted
   final reader = AircraftDataReader(dataFile: dataFile, urlFile: urlFile);
@@ -320,10 +343,16 @@ class AircraftStoreException implements Exception {
 }
 
 Future<AircraftData> _validateAndStoreAircraft(
-    File file, String url, String? password) async {
+  File file,
+  String url,
+  String? password,
+) async {
   try {
-    final encryptedReader =
-        AircraftDataReader(dataFile: file, urlFile: null, password: password);
+    final encryptedReader = AircraftDataReader(
+      dataFile: file,
+      urlFile: null,
+      password: password,
+    );
     final validation = await encryptedReader.validate();
     _log.finest('VALIDATION: $validation');
 
@@ -336,7 +365,9 @@ Future<AircraftData> _validateAndStoreAircraft(
 
       // open up a new reader for the unencrypted file
       final reader = AircraftDataReader(
-          dataFile: dataFile, urlFile: encryptedReader.urlFile);
+        dataFile: dataFile,
+        urlFile: encryptedReader.urlFile,
+      );
       await reader.open();
       return reader.toAircraftData();
     } else {
@@ -352,7 +383,10 @@ Future<AircraftData> _validateAndStoreAircraft(
 }
 
 Future<AircraftData> downloadAircraftData(
-    String url, String? userpass, DownloadProvider downloadProvider) async {
+  String url,
+  String? userpass,
+  DownloadProvider downloadProvider,
+) async {
   String? username;
   String? password;
   if (userpass != null && userpass.isNotEmpty) {
@@ -365,9 +399,9 @@ Future<AircraftData> downloadAircraftData(
   return downloadProvider
       .downloadToFile(url, 'aircraft.zip', username, password, true)
       .then((tempfile) async {
-    _log.finest(tempfile);
-    final stored = await _validateAndStoreAircraft(tempfile, url, userpass);
-    tempfile.deleteSync();
-    return stored;
-  });
+        _log.finest(tempfile);
+        final stored = await _validateAndStoreAircraft(tempfile, url, userpass);
+        tempfile.deleteSync();
+        return stored;
+      });
 }

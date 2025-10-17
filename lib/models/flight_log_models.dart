@@ -44,5 +44,5 @@ class DeletedFlightLogItem extends FlightLogItem {
 
   // FIXME this _dummy stuff is not nice
   DeletedFlightLogItem(String id)
-      : super(id, _dummy, "", "", "", 0, 0, null, null, null);
+    : super(id, _dummy, "", "", "", 0, 0, null, null, null);
 }

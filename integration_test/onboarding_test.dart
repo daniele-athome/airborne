@@ -32,10 +32,13 @@ void main() {
 
       await tester.pumpAndSettle();
       await tester.enterText(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is PlatformTextFormField &&
-              widget.keyboardType == TextInputType.url),
-          'http://localhost/a1234.zip');
+              widget.keyboardType == TextInputType.url,
+        ),
+        'http://localhost/a1234.zip',
+      );
       await tester.tap(find.byKey(const Key('aircraft_data_button_install')));
       await tester.pumpAndSettle();
 
@@ -66,8 +69,9 @@ void main() {
       await tester.tap(infoNav);
       await tester.pumpAndSettle();
 
-      final updateButton =
-          find.byKey(const Key('about_button_update_aircraft'));
+      final updateButton = find.byKey(
+        const Key('about_button_update_aircraft'),
+      );
       await tester.scrollUntilVisible(updateButton, 300);
       await tester.pumpAndSettle();
       await tester.tap(updateButton);
@@ -107,8 +111,9 @@ void main() {
       await tester.tap(infoNav);
       await tester.pumpAndSettle();
 
-      final disconnectButton =
-          find.byKey(const Key('about_button_disconnect_aircraft'));
+      final disconnectButton = find.byKey(
+        const Key('about_button_disconnect_aircraft'),
+      );
       await tester.scrollUntilVisible(disconnectButton, 300);
       await tester.pumpAndSettle();
       await tester.tap(disconnectButton);
@@ -118,8 +123,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // did we return to the aircraft data screen?
-      expect(tester.any(find.byKey(const Key('aircraft_data_button_install'))),
-          true);
+      expect(
+        tester.any(find.byKey(const Key('aircraft_data_button_install'))),
+        true,
+      );
     });
   });
 }

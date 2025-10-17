@@ -19,8 +19,10 @@ class MetadataService {
   /// Cached key-value store
   Map<String, String>? _store;
 
-  MetadataService(GoogleServiceAccountService accountService,
-      Map<String, String> properties) {
+  MetadataService(
+    GoogleServiceAccountService accountService,
+    Map<String, String> properties,
+  ) {
     _accountService = accountService;
     _spreadsheetId = properties['spreadsheet_id']!;
     _sheetName = properties['sheet_name']!;
@@ -35,7 +37,9 @@ class MetadataService {
     if (_client != null) {
       return _client!;
     } else {
-      _client = GoogleSheetsService(await _accountService.getAuthenticatedClient());
+      _client = GoogleSheetsService(
+        await _accountService.getAuthenticatedClient(),
+      );
       return _client!;
     }
   }
@@ -50,8 +54,11 @@ class MetadataService {
 
   Future<Map<String, String>> reload() async {
     final client = await _ensureService();
-    final value =
-        await client.getRows(_spreadsheetId, _sheetName, _kSheetKeyValueRange);
+    final value = await client.getRows(
+      _spreadsheetId,
+      _sheetName,
+      _kSheetKeyValueRange,
+    );
     if (value.values == null) {
       throw const FormatException('No data found on sheet.');
     }

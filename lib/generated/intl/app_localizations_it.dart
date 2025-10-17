@@ -268,7 +268,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String flightLogModal_text_totalFlightTime_extended(
-      int minutes, String spec) {
+    int minutes,
+    String spec,
+  ) {
     return 'Tempo di volo: $minutes minuti ($spec)';
   }
 

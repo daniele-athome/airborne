@@ -42,24 +42,27 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
                 Consumer2<AppConfig, DownloadProvider>(
                   builder: (context, appConfig, downloadProvider, child) =>
                       PlatformTextButton(
-                    widgetKey: const Key('aircraft_data_button_install'),
-                    onPressed: () =>
-                        _downloadData(context, appConfig, downloadProvider),
-                    cupertino: (_, __) => CupertinoTextButtonData(
-                      // workaround for https://github.com/flutter/flutter/issues/32701
-                      padding: EdgeInsets.zero,
-                    ),
-                    child: Text(AppLocalizations.of(context)!
-                        .addAircraft_button_install),
-                  ),
-                )
+                        widgetKey: const Key('aircraft_data_button_install'),
+                        onPressed: () =>
+                            _downloadData(context, appConfig, downloadProvider),
+                        cupertino: (_, __) => CupertinoTextButtonData(
+                          // workaround for https://github.com/flutter/flutter/issues/32701
+                          padding: EdgeInsets.zero,
+                        ),
+                        child: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.addAircraft_button_install,
+                        ),
+                      ),
+                ),
               ]
             : [],
         material: (context, platform) => MaterialAppBarData(
           toolbarHeight:
               MediaQuery.of(context).orientation == Orientation.portrait
-                  ? kPortraitToolbarHeight
-                  : kLandscapeToolbarHeight,
+              ? kPortraitToolbarHeight
+              : kLandscapeToolbarHeight,
         ),
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
@@ -71,46 +74,60 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
     );
   }
 
-  void _downloadData(BuildContext context, AppConfig appConfig,
-      DownloadProvider downloadProvider) {
+  void _downloadData(
+    BuildContext context,
+    AppConfig appConfig,
+    DownloadProvider downloadProvider,
+  ) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final downloadTask = downloadAircraftData(
-              _aircraftUrl!, _aircraftPassword, downloadProvider)
-          .then<AircraftData?>((AircraftData aircraftData) async {
-        await appConfig.setCurrentAircraft(aircraftData);
-        appConfig.addAircraft(aircraftData);
-        return aircraftData;
-      }).catchError((error, StackTrace? stacktrace) {
-        _log.info('DOWNLOAD ERROR', error, stacktrace);
-        if (!context.mounted) {
-          return null;
-        }
+      final downloadTask =
+          downloadAircraftData(
+                _aircraftUrl!,
+                _aircraftPassword,
+                downloadProvider,
+              )
+              .then<AircraftData?>((AircraftData aircraftData) async {
+                await appConfig.setCurrentAircraft(aircraftData);
+                appConfig.addAircraft(aircraftData);
+                return aircraftData;
+              })
+              .catchError((error, StackTrace? stacktrace) {
+                _log.info('DOWNLOAD ERROR', error, stacktrace);
+                if (!context.mounted) {
+                  return null;
+                }
 
-        // TODO specialize exceptions (e.g. network errors, others...)
-        final String message;
-        if (error is TimeoutException) {
-          message = AppLocalizations.of(context)!.error_generic_network_timeout;
-        } else if (error is AircraftBadFileException) {
-          message = AppLocalizations.of(context)!
-              .addAircraft_error_bad_datafile_format;
-        } else if (error is AircraftValidationException) {
-          message =
-              AppLocalizations.of(context)!.addAircraft_error_invalid_datafile;
-        } else if (error is AircraftStoreException) {
-          message = AppLocalizations.of(context)!.addAircraft_error_storing;
-        } else {
-          message = getExceptionMessage(error);
-        }
+                // TODO specialize exceptions (e.g. network errors, others...)
+                final String message;
+                if (error is TimeoutException) {
+                  message = AppLocalizations.of(
+                    context,
+                  )!.error_generic_network_timeout;
+                } else if (error is AircraftBadFileException) {
+                  message = AppLocalizations.of(
+                    context,
+                  )!.addAircraft_error_bad_datafile_format;
+                } else if (error is AircraftValidationException) {
+                  message = AppLocalizations.of(
+                    context,
+                  )!.addAircraft_error_invalid_datafile;
+                } else if (error is AircraftStoreException) {
+                  message = AppLocalizations.of(
+                    context,
+                  )!.addAircraft_error_storing;
+                } else {
+                  message = getExceptionMessage(error);
+                }
 
-        Future.delayed(Duration.zero, () {
-          if (context.mounted) {
-            return showError(context, message);
-          }
-        });
-        return null;
-      });
+                Future.delayed(Duration.zero, () {
+                  if (context.mounted) {
+                    return showError(context, message);
+                  }
+                });
+                return null;
+              });
 
       showPlatformDialog(
         context: context,
@@ -119,8 +136,11 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             downloadTask,
             message: isCupertino(context)
                 ? null
-                : Text(AppLocalizations.of(context)!
-                    .addAircraft_dialog_downloading),
+                : Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.addAircraft_dialog_downloading,
+                  ),
           );
         },
       ).then((value) async {
@@ -129,7 +149,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           // probably FutureProgressDialog popping the navigator has something to do with it
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             Navigator.of(context, rootNavigator: true).pushReplacementNamed(
-                appConfig.pilotName != null ? '/' : 'pilot-select');
+              appConfig.pilotName != null ? '/' : 'pilot-select',
+            );
           });
         }
       });
@@ -137,119 +158,122 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
   }
 
   // FIXME very bad use of isCupertino here
-  List<Widget> _buildFormSections(BuildContext context, AppConfig appConfig) =>
-      <Widget>[
-        if (!isCupertino(context))
-          Text(AppLocalizations.of(context)!.addAircraft_text1,
-              style: const TextStyle(fontSize: 16)),
-        if (!isCupertino(context))
-          const SizedBox(
-            height: 5,
-          ),
-        PlatformTextFormField(
-          keyboardType: TextInputType.url,
-          autofillHints: [AutofillHints.url],
+  List<Widget> _buildFormSections(
+    BuildContext context,
+    AppConfig appConfig,
+  ) => <Widget>[
+    if (!isCupertino(context))
+      Text(
+        AppLocalizations.of(context)!.addAircraft_text1,
+        style: const TextStyle(fontSize: 16),
+      ),
+    if (!isCupertino(context)) const SizedBox(height: 5),
+    PlatformTextFormField(
+      keyboardType: TextInputType.url,
+      autofillHints: [AutofillHints.url],
+      autocorrect: false,
+      material: (context, platform) => MaterialTextFormFieldData(
+        decoration: InputDecoration(
+          hintText: AppLocalizations.of(context)!.addAircraft_hint_address,
+        ),
+      ),
+      cupertino: (context, platform) => CupertinoTextFormFieldData(
+        prefix: Text(AppLocalizations.of(context)!.addAircraft_label_address),
+        placeholder: AppLocalizations.of(context)!.addAircraft_hint_address,
+        padding: const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
+      ),
+      onSaved: (newValue) => _aircraftUrl = newValue,
+      validator: (String? value) {
+        if (value == null ||
+            value.isEmpty ||
+            !isURL(
+              value,
+              protocols: ['http', 'https'],
+              requireProtocol: true,
+            )) {
+          return AppLocalizations.of(
+            context,
+          )!.addAircraft_error_invalid_address;
+        }
+        return null;
+      },
+    ),
+    ValueListenableBuilder<bool>(
+      valueListenable: _obscurePasswordNotifier,
+      builder: (context, obscureText, child) {
+        return PlatformTextFormField(
+          obscureText: obscureText,
+          autofillHints: [AutofillHints.password],
           autocorrect: false,
+          keyboardType: TextInputType.visiblePassword,
+          onSaved: (newValue) => _aircraftPassword = newValue,
           material: (context, platform) => MaterialTextFormFieldData(
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.addAircraft_hint_address,
+              hintText: AppLocalizations.of(context)!.addAircraft_hint_password,
+              suffixIcon: IconButton(
+                onPressed: () {
+                  _obscurePasswordNotifier.value = !obscureText;
+                },
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+              ),
             ),
           ),
           cupertino: (context, platform) => CupertinoTextFormFieldData(
-            prefix:
-                Text(AppLocalizations.of(context)!.addAircraft_label_address),
-            placeholder: AppLocalizations.of(context)!.addAircraft_hint_address,
+            // no suffix for cupertino: https://github.com/flutter/flutter/issues/103385
+            prefix: Text(
+              AppLocalizations.of(context)!.addAircraft_hint_password,
+            ),
+            placeholder: AppLocalizations.of(
+              context,
+            )!.addAircraft_hint_password,
             padding: const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
           ),
-          onSaved: (newValue) => _aircraftUrl = newValue,
-          validator: (String? value) {
-            if (value == null ||
-                value.isEmpty ||
-                !isURL(value,
-                    protocols: ['http', 'https'], requireProtocol: true)) {
-              return AppLocalizations.of(context)!
-                  .addAircraft_error_invalid_address;
-            }
-            return null;
-          },
+        );
+      },
+    ),
+    if (!isCupertino(context)) const SizedBox(height: 10),
+    if (!isCupertino(context))
+      Consumer<DownloadProvider>(
+        builder: (context, downloadProvider, child) => PlatformElevatedButton(
+          widgetKey: const Key('aircraft_data_button_install'),
+          onPressed: () => _downloadData(context, appConfig, downloadProvider),
+          child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
         ),
-        ValueListenableBuilder<bool>(
-            valueListenable: _obscurePasswordNotifier,
-            builder: (context, obscureText, child) {
-              return PlatformTextFormField(
-                obscureText: obscureText,
-                autofillHints: [AutofillHints.password],
-                autocorrect: false,
-                keyboardType: TextInputType.visiblePassword,
-                onSaved: (newValue) => _aircraftPassword = newValue,
-                material: (context, platform) => MaterialTextFormFieldData(
-                  decoration: InputDecoration(
-                    hintText:
-                        AppLocalizations.of(context)!.addAircraft_hint_password,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        _obscurePasswordNotifier.value = !obscureText;
-                      },
-                      icon: Icon(obscureText
-                          ? Icons.visibility
-                          : Icons.visibility_off),
-                    ),
-                  ),
-                ),
-                cupertino: (context, platform) => CupertinoTextFormFieldData(
-                  // no suffix for cupertino: https://github.com/flutter/flutter/issues/103385
-                  prefix: Text(
-                      AppLocalizations.of(context)!.addAircraft_hint_password),
-                  placeholder:
-                      AppLocalizations.of(context)!.addAircraft_hint_password,
-                  padding:
-                      const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
-                ),
-              );
-            }),
-        if (!isCupertino(context))
-          const SizedBox(
-            height: 10,
-          ),
-        if (!isCupertino(context))
-          Consumer<DownloadProvider>(
-            builder: (context, downloadProvider, child) =>
-                PlatformElevatedButton(
-              widgetKey: const Key('aircraft_data_button_install'),
-              onPressed: () =>
-                  _downloadData(context, appConfig, downloadProvider),
-              child: Text(
-                  AppLocalizations.of(context)!.addAircraft_button_install),
-            ),
-          ),
-      ];
+      ),
+  ];
 
   Widget _buildMaterialForm(BuildContext context, AppConfig appConfig) =>
       ListView(
-          padding: const EdgeInsets.all(20),
-          children: _buildFormSections(context, appConfig));
-
-  Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) =>
-      ListView(
-        children: [
-          CupertinoFormSection.insetGrouped(
-            header: Text(AppLocalizations.of(context)!.addAircraft_text1,
-                // FIXME workaround for https://github.com/flutter/flutter/issues/48438
-                // FIXME background color is not consistent with scaffold background color (of course)
-                style: CupertinoTheme.of(context)
-                    .textTheme
-                    .textStyle
-                    .copyWith(fontSize: 18)),
-            children: _buildFormSections(context, appConfig),
-          ),
-        ],
+        padding: const EdgeInsets.all(20),
+        children: _buildFormSections(context, appConfig),
       );
 
+  Widget _buildCupertinoForm(
+    BuildContext context,
+    AppConfig appConfig,
+  ) => ListView(
+    children: [
+      CupertinoFormSection.insetGrouped(
+        header: Text(
+          AppLocalizations.of(context)!.addAircraft_text1,
+          // FIXME workaround for https://github.com/flutter/flutter/issues/48438
+          // FIXME background color is not consistent with scaffold background color (of course)
+          style: CupertinoTheme.of(
+            context,
+          ).textTheme.textStyle.copyWith(fontSize: 18),
+        ),
+        children: _buildFormSections(context, appConfig),
+      ),
+    ],
+  );
+
   Widget _buildForm(BuildContext context, AppConfig appConfig) => Form(
-      key: _formKey,
-      child: PlatformWidget(
-        cupertino: (context, platform) =>
-            _buildCupertinoForm(context, appConfig),
-        material: (context, platform) => _buildMaterialForm(context, appConfig),
-      ));
+    key: _formKey,
+    child: PlatformWidget(
+      cupertino: (context, platform) => _buildCupertinoForm(context, appConfig),
+      material: (context, platform) => _buildMaterialForm(context, appConfig),
+    ),
+  );
 }

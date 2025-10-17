@@ -54,7 +54,8 @@ class _MyAppState extends State<MyApp> {
       routes: <String, WidgetBuilder>{
         // there is probably a better way to avoid loading the routes...
         '/': (context) => Consumer<AppConfig>(
-            builder: (context, appConfig, child) => MainNavigation(appConfig)),
+          builder: (context, appConfig, child) => MainNavigation(appConfig),
+        ),
         'pilot-select': (context) => const PilotSelectScreen(),
         'aircraft-data': (context) => const SetAircraftDataScreen(),
       },
@@ -85,9 +86,9 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       cupertino: (_, __) => CupertinoAppData(
-          // TEST theme: const CupertinoThemeData(brightness: Brightness.dark),
-          // TODO
-          ),
+        // TEST theme: const CupertinoThemeData(brightness: Brightness.dark),
+        // TODO
+      ),
     );
   }
 }

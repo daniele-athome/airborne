@@ -97,10 +97,7 @@ class _MainNavigationState extends State<MainNavigation> {
           tooltip: '',
         ),
       BottomNavigationBarItem(
-        icon: Icon(
-          PlatformIcons(context).info,
-          key: const Key('nav_info'),
-        ),
+        icon: Icon(PlatformIcons(context).info, key: const Key('nav_info')),
         backgroundColor: getBrightness(context) == Brightness.dark
             ? const Color(0xff40c4ff)
             : Colors.deepPurple,
@@ -116,20 +113,17 @@ class _MainNavigationState extends State<MainNavigation> {
         bodyBuilder: (context, index) => _buildTab(context, index),
         tabController: _tabController,
         items: items,
-        materialTabs: (_, __) => MaterialNavBarData(
-          type: BottomNavigationBarType.fixed,
-        ),
+        materialTabs: (_, __) =>
+            MaterialNavBarData(type: BottomNavigationBarType.fixed),
         material: (_, __) => MaterialTabScaffoldData(
-            // TODO
-            ),
+          // TODO
+        ),
         cupertino: (_, __) => CupertinoTabScaffoldData(
-            // TODO
-            ),
+          // TODO
+        ),
       );
     } else {
-      return PlatformScaffold(
-        body: const AboutScreen(),
-      );
+      return PlatformScaffold(body: const AboutScreen());
     }
   }
 }

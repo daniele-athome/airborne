@@ -17,7 +17,10 @@ final _kRandom = Random();
 
 /// TODO is there a better way to do this?
 Future<bool> waitForWidget(
-    WidgetTester tester, Finder finder, int seconds) async {
+  WidgetTester tester,
+  Finder finder,
+  int seconds,
+) async {
   int retries = 0;
   while (!tester.any(finder) && retries++ < (seconds * 2)) {
     await tester.pumpAndSettle();
@@ -52,35 +55,34 @@ FlightLogItem randomFlightLogItem(int id) {
   final hourStart = randomBetween(1000, 2000);
   final hourEnd = randomBetween(hourStart, 2000);
   return FlightLogItem(
-      id.toString(),
-      RandomDate.withRange(2021, 2023).random(),
-      "Anna",
-      "Fly Berlin",
-      "London Heathrow",
-      hourStart,
-      hourEnd,
-      null,
-      null,
-      "HELLO");
+    id.toString(),
+    RandomDate.withRange(2021, 2023).random(),
+    "Anna",
+    "Fly Berlin",
+    "London Heathrow",
+    hourStart,
+    hourEnd,
+    null,
+    null,
+    "HELLO",
+  );
 }
 
 Interceptor mockGoogleAuthentication() {
-  return nock('https://oauth2.googleapis.com').post(
-    '/token',
-    (List<int> body, ContentType contentType) => true,
-  )
+  return nock(
+      'https://oauth2.googleapis.com',
+    ).post('/token', (List<int> body, ContentType contentType) => true)
     ..persist()
     ..reply(
-        200,
-        json.encode({
-          "access_token": "DUMMYTOKEN",
-          "scope": "https://www.googleapis.com/auth/prediction",
-          "token_type": "Bearer",
-          "expires_in": 3600,
-        }),
-        headers: {
-          'content-type': 'application/json',
-        });
+      200,
+      json.encode({
+        "access_token": "DUMMYTOKEN",
+        "scope": "https://www.googleapis.com/auth/prediction",
+        "token_type": "Bearer",
+        "expires_in": 3600,
+      }),
+      headers: {'content-type': 'application/json'},
+    );
 }
 
 Interceptor mockGoogleCalendarApi() {
@@ -89,13 +91,10 @@ Interceptor mockGoogleCalendarApi() {
     ..query((Map<String, String> params) => true)
     ..persist()
     ..reply(
-        200,
-        json.encode({
-          "items": [],
-        }),
-        headers: {
-          'content-type': 'application/json',
-        });
+      200,
+      json.encode({"items": []}),
+      headers: {'content-type': 'application/json'},
+    );
 }
 
 void unmockAllHttp() {

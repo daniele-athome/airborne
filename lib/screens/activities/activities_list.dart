@@ -95,17 +95,17 @@ class _ActivitiesListState extends State<ActivitiesList> {
 
   Widget firstPageErrorIndicator(BuildContext context) =>
       FirstPageExceptionIndicator(
-        title:
-            AppLocalizations.of(context)!.activities_error_firstPageIndicator,
+        title: AppLocalizations.of(
+          context,
+        )!.activities_error_firstPageIndicator,
         message: getExceptionMessage(_pagingController.error),
         onTryAgain: _refresh,
       );
 
   Widget newPageErrorIndicator(BuildContext context) => NewPageErrorIndicator(
-        message:
-            AppLocalizations.of(context)!.activities_error_newPageIndicator,
-        onTap: _pagingController.retryLastFailedRequest,
-      );
+    message: AppLocalizations.of(context)!.activities_error_newPageIndicator,
+    onTap: _pagingController.retryLastFailedRequest,
+  );
 
   Widget _buildListItem(BuildContext context, ActivityEntry item, int index) {
     return _EntryListItem(entry: item);
@@ -118,9 +118,7 @@ class _ActivitiesListState extends State<ActivitiesList> {
     return PlatformWidget(
       cupertino: (context, platform) => CustomScrollView(
         slivers: <Widget>[
-          CupertinoSliverRefreshControl(
-            onRefresh: () => _refresh(),
-          ),
+          CupertinoSliverRefreshControl(onRefresh: () => _refresh()),
           SliverPadding(
             // 2 points less because something else is adding padding
             padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -179,9 +177,7 @@ class ActivitiesListController extends ValueNotifier<ActivitiesListState> {
   ActivitiesListController() : super(const ActivitiesListState());
 
   set empty(bool? empty) {
-    value = ActivitiesListState(
-      empty: empty,
-    );
+    value = ActivitiesListState(empty: empty);
   }
 
   bool? get empty {
@@ -259,54 +255,52 @@ class _EntryListItem extends StatelessWidget {
           bgColor = Colors.amber;
           iconColor = Colors.white;
           icon = Icons.warning_amber_outlined;
-          text =
-              AppLocalizations.of(context)!.activities_activity_type_important;
+          text = AppLocalizations.of(
+            context,
+          )!.activities_activity_type_important;
           break;
         case ActivityType.critical:
           bgColor = Colors.red;
           iconColor = Colors.white;
           icon = Icons.block_outlined;
-          text =
-              AppLocalizations.of(context)!.activities_activity_type_critical;
+          text = AppLocalizations.of(
+            context,
+          )!.activities_activity_type_critical;
           break;
       }
     }
 
     final dateTextColor =
         ThemeData.estimateBrightnessForColor(bgColor) == Brightness.light
-            ? Colors.black
-            : Colors.white;
+        ? Colors.black
+        : Colors.white;
     final textStyle = isCupertino(context)
-        ? CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-              fontSize: 14,
-              color: dateTextColor,
-            )
-        : Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: dateTextColor,
-            );
+        ? CupertinoTheme.of(
+            context,
+          ).textTheme.textStyle.copyWith(fontSize: 14, color: dateTextColor)
+        : Theme.of(
+            context,
+          ).textTheme.bodyMedium!.copyWith(color: dateTextColor);
 
     return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: bgColor,
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 24,
-              width: 24,
-              child: Icon(
-                icon,
-                size: kIconSize,
-                color: iconColor,
-              ),
-            ),
-            const SizedBox(width: 4.0),
-            Text(text, style: textStyle),
-          ],
-        ));
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: bgColor,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 24,
+            width: 24,
+            child: Icon(icon, size: kIconSize, color: iconColor),
+          ),
+          const SizedBox(width: 4.0),
+          Text(text, style: textStyle),
+        ],
+      ),
+    );
   }
 
   Widget _expireIndicator(BuildContext context, ActivityEntry entry) {
@@ -329,39 +323,35 @@ class _EntryListItem extends StatelessWidget {
 
     final dateTextColor =
         ThemeData.estimateBrightnessForColor(bgColor) == Brightness.light
-            ? Colors.black
-            : Colors.white;
+        ? Colors.black
+        : Colors.white;
     final textStyle = isCupertino(context)
-        ? CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-              fontSize: 14,
-              color: dateTextColor,
-            )
-        : Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: dateTextColor,
-            );
+        ? CupertinoTheme.of(
+            context,
+          ).textTheme.textStyle.copyWith(fontSize: 14, color: dateTextColor)
+        : Theme.of(
+            context,
+          ).textTheme.bodyMedium!.copyWith(color: dateTextColor);
 
     return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: bgColor,
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 24,
-              width: 24,
-              child: Icon(
-                icon,
-                size: kIconSize,
-                color: iconColor,
-              ),
-            ),
-            const SizedBox(width: 4.0),
-            Text(_dateFormatter.format(entry.dueDate!), style: textStyle),
-          ],
-        ));
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: bgColor,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 24,
+            width: 24,
+            child: Icon(icon, size: kIconSize, color: iconColor),
+          ),
+          const SizedBox(width: 4.0),
+          Text(_dateFormatter.format(entry.dueDate!), style: textStyle),
+        ],
+      ),
+    );
   }
 
   @override
@@ -395,7 +385,7 @@ class _EntryListItem extends StatelessWidget {
                         entry.dueDate != null)
                       _expireIndicator(context, entry),
                   ],
-                )
+                ),
               ],
             ),
           ),

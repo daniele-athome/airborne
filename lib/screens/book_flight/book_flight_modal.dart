@@ -36,8 +36,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   final DateTimePickerController _startDateController =
       DateTimePickerController(null);
-  final DateTimePickerController _endDateController =
-      DateTimePickerController(null);
+  final DateTimePickerController _endDateController = DateTimePickerController(
+    null,
+  );
 
   late BookFlightCalendarService _service;
   late AppConfig _appConfig;
@@ -61,16 +62,18 @@ class _BookFlightModalState extends State<BookFlightModal> {
   void _updateEventData() {
     _pilotName = widget.event.pilotName;
     _notes = widget.event.notes;
-    _startDateController.value =
-        widget.event.tzFrom(_appConfig.locationTimeZone);
+    _startDateController.value = widget.event.tzFrom(
+      _appConfig.locationTimeZone,
+    );
     _endDateController.value = widget.event.tzTo(_appConfig.locationTimeZone);
   }
 
   void _onStartDateChanged(DateTime date, DateTime oldDate) {
     if (date != oldDate) {
       setState(() {
-        final Duration dateDifference =
-            _endDateController.value!.difference(oldDate);
+        final Duration dateDifference = _endDateController.value!.difference(
+          oldDate,
+        );
         _endDateController.value = date.add(dateDifference);
       });
     }
@@ -88,122 +91,135 @@ class _BookFlightModalState extends State<BookFlightModal> {
     }
   }
 
-  Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig,
-      SunTimes startSunTimes, SunTimes endSunTimes) {
+  Widget _buildCupertinoForm(
+    BuildContext context,
+    AppConfig appConfig,
+    SunTimes startSunTimes,
+    SunTimes endSunTimes,
+  ) {
     return ListView(
       padding: kDefaultCupertinoFormMargin,
       children: [
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          CupertinoFormButtonRow(
-            onPressed: () => _onTapPilot(context),
-            padding: kDefaultCupertinoFormRowPadding,
-            prefix: Text(
-              AppLocalizations.of(context)!.bookFlightModal_label_pilot,
-              style: const TextStyle(
-                fontSize: 20,
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            CupertinoFormButtonRow(
+              onPressed: () => _onTapPilot(context),
+              padding: kDefaultCupertinoFormRowPadding,
+              prefix: Text(
+                AppLocalizations.of(context)!.bookFlightModal_label_pilot,
+                style: const TextStyle(fontSize: 20),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(_pilotName, style: const TextStyle(fontSize: 20)),
+                  const SizedBox(width: 14),
+                  CircleAvatar(
+                    foregroundImage: appConfig.getPilotAvatar(_pilotName),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  _pilotName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                CircleAvatar(
-                    foregroundImage: appConfig.getPilotAvatar(_pilotName)),
-              ],
+          ],
+        ),
+        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            // start date/time
+            CupertinoDateTimeFormFieldRow(
+              prefix: Text(
+                AppLocalizations.of(context)!.bookFlightModal_label_start,
+              ),
+              helper: _SunTimesListTile(
+                sunrise: startSunTimes.sunrise,
+                sunset: startSunTimes.sunset,
+              ),
+              onChanged: (value, oldValue) =>
+                  _onStartDateChanged(value, oldValue),
+              controller: _startDateController,
             ),
-          ),
-        ]),
+            // end date/time
+            CupertinoDateTimeFormFieldRow(
+              prefix: Text(
+                AppLocalizations.of(context)!.bookFlightModal_label_end,
+              ),
+              helper: _SunTimesListTile(
+                sunrise: endSunTimes.sunrise,
+                sunset: endSunTimes.sunset,
+              ),
+              onChanged: (value, oldValue) =>
+                  _onEndDateChanged(value, oldValue),
+              controller: _endDateController,
+            ),
+          ],
+        ),
         const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          // start date/time
-          CupertinoDateTimeFormFieldRow(
-            prefix:
-                Text(AppLocalizations.of(context)!.bookFlightModal_label_start),
-            helper: _SunTimesListTile(
-                sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
-            onChanged: (value, oldValue) =>
-                _onStartDateChanged(value, oldValue),
-            controller: _startDateController,
-          ),
-          // end date/time
-          CupertinoDateTimeFormFieldRow(
-            prefix:
-                Text(AppLocalizations.of(context)!.bookFlightModal_label_end),
-            helper: _SunTimesListTile(
-                sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
-            onChanged: (value, oldValue) => _onEndDateChanged(value, oldValue),
-            controller: _endDateController,
-          ),
-        ]),
-        const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-        CupertinoFormSection.insetGrouped(children: <Widget>[
-          CupertinoTextFormFieldRow(
-            // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
-            controller: TextEditingController(text: _notes),
-            // TODO cursorColor: widget.model.backgroundColor,
-            onChanged: (String value) {
-              _notes = value;
-            },
-            keyboardType: TextInputType.multiline,
-            textCapitalization: TextCapitalization.sentences,
-            minLines: 3,
-            maxLines: 3,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-            placeholder:
-                AppLocalizations.of(context)!.bookFlightModal_hint_notes,
-          ),
-        ]),
+        CupertinoFormSection.insetGrouped(
+          children: <Widget>[
+            CupertinoTextFormFieldRow(
+              // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
+              controller: TextEditingController(text: _notes),
+              // TODO cursorColor: widget.model.backgroundColor,
+              onChanged: (String value) {
+                _notes = value;
+              },
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 3,
+              maxLines: 3,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+              placeholder: AppLocalizations.of(
+                context,
+              )!.bookFlightModal_hint_notes,
+            ),
+          ],
+        ),
         if (_isEditing)
           const SizedBox(height: kDefaultCupertinoFormSectionMargin),
         if (_isEditing)
-          CupertinoFormSection.insetGrouped(children: <Widget>[
-            Row(
-              children: [
-                Expanded(
-                  child: CupertinoButton(
-                    onPressed: () => _onDelete(context),
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .bookFlightModal_button_delete,
-                      style: const TextStyle(
-                          color: CupertinoColors.destructiveRed),
+          CupertinoFormSection.insetGrouped(
+            children: <Widget>[
+              Row(
+                children: [
+                  Expanded(
+                    child: CupertinoButton(
+                      onPressed: () => _onDelete(context),
+                      child: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.bookFlightModal_button_delete,
+                        style: const TextStyle(
+                          color: CupertinoColors.destructiveRed,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
-          ]),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }
 
-  Widget _buildMaterialForm(BuildContext context, AppConfig appConfig,
-      SunTimes startSunTimes, SunTimes endSunTimes) {
+  Widget _buildMaterialForm(
+    BuildContext context,
+    AppConfig appConfig,
+    SunTimes startSunTimes,
+    SunTimes endSunTimes,
+  ) {
     return ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
         ListTile(
           contentPadding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           leading: CircleAvatar(
-              foregroundImage: appConfig.getPilotAvatar(_pilotName)),
-          title: Text(
-            _pilotName,
-            style: const TextStyle(
-              fontSize: 20,
-            ),
+            foregroundImage: appConfig.getPilotAvatar(_pilotName),
           ),
+          title: Text(_pilotName, style: const TextStyle(fontSize: 20)),
           onTap: () => _onTapPilot(context),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         // start date/time
         DateTimeListTile(
           controller: _startDateController,
@@ -211,7 +227,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
           onTimeSelected: (date, oldDate) => _onStartDateChanged(date, oldDate),
         ),
         _SunTimesListTile(
-            sunrise: startSunTimes.sunrise, sunset: startSunTimes.sunset),
+          sunrise: startSunTimes.sunrise,
+          sunset: startSunTimes.sunset,
+        ),
         // end date/time
         DateTimeListTile(
           controller: _endDateController,
@@ -222,18 +240,15 @@ class _BookFlightModalState extends State<BookFlightModal> {
         Container(
           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
           child: _SunTimesListTile(
-              sunrise: endSunTimes.sunrise, sunset: endSunTimes.sunset),
+            sunrise: endSunTimes.sunrise,
+            sunset: endSunTimes.sunset,
+          ),
         ),
-        const Divider(
-          height: 1.0,
-          thickness: 1,
-        ),
+        const Divider(height: 1.0, thickness: 1),
         ListTile(
           // FIXME TextField inside ListTile caused enter key to act as onPressed
           contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
-          leading: const Icon(
-            Icons.subject,
-          ),
+          leading: const Icon(Icons.subject),
           title: TextField(
             controller: TextEditingController(text: _notes),
             // TODO cursorColor: widget.model.backgroundColor,
@@ -246,8 +261,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText:
-                  AppLocalizations.of(context)!.bookFlightModal_hint_notes,
+              hintText: AppLocalizations.of(
+                context,
+              )!.bookFlightModal_hint_notes,
             ),
           ),
         ),
@@ -258,15 +274,17 @@ class _BookFlightModalState extends State<BookFlightModal> {
   // FIXME use AppConfig state instance
   Widget _getEventEditor(BuildContext context, AppConfig appConfig) {
     final SunTimes startSunTimes = getSunTimes(
-        appConfig.locationLatitude,
-        appConfig.locationLongitude,
-        _startDateController.value!,
-        appConfig.locationTimeZone);
+      appConfig.locationLatitude,
+      appConfig.locationLongitude,
+      _startDateController.value!,
+      appConfig.locationTimeZone,
+    );
     final SunTimes endSunTimes = getSunTimes(
-        appConfig.locationLatitude,
-        appConfig.locationLongitude,
-        _endDateController.value!,
-        appConfig.locationTimeZone);
+      appConfig.locationLatitude,
+      appConfig.locationLongitude,
+      _endDateController.value!,
+      appConfig.locationTimeZone,
+    );
 
     return PlatformWidget(
       cupertino: (context, platform) =>
@@ -296,9 +314,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
             // workaround for https://github.com/flutter/flutter/issues/32701
             padding: EdgeInsets.zero,
           ),
-          child:
-              Text(AppLocalizations.of(context)!.bookFlightModal_button_save),
-        )
+          child: Text(
+            AppLocalizations.of(context)!.bookFlightModal_button_save,
+          ),
+        ),
       ];
     } else {
       leadingAction = null;
@@ -319,8 +338,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
             material: (_, __) => MaterialIconButtonData(
-              tooltip:
-                  AppLocalizations.of(context)!.bookFlightModal_button_delete,
+              tooltip: AppLocalizations.of(
+                context,
+              )!.bookFlightModal_button_delete,
             ),
           ),
         );
@@ -330,18 +350,18 @@ class _BookFlightModalState extends State<BookFlightModal> {
     return PlatformScaffold(
       iosContentPadding: true,
       appBar: PlatformAppBar(
-        title: Text(_isEditing
-            ? AppLocalizations.of(context)!.bookFlightModal_title_edit
-            : AppLocalizations.of(context)!.bookFlightModal_title_create),
+        title: Text(
+          _isEditing
+              ? AppLocalizations.of(context)!.bookFlightModal_title_edit
+              : AppLocalizations.of(context)!.bookFlightModal_title_create,
+        ),
         leading: leadingAction,
         trailingActions: trailingActions,
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
         backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
-      body: Stack(
-        children: <Widget>[_getEventEditor(context, _appConfig)],
-      ),
+      body: Stack(children: <Widget>[_getEventEditor(context, _appConfig)]),
     );
   }
 
@@ -352,47 +372,61 @@ class _BookFlightModalState extends State<BookFlightModal> {
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != widget.event.pilotName) {
           showError(
+            context,
+            AppLocalizations.of(
               context,
-              AppLocalizations.of(context)!
-                  .bookFlightModal_error_notOwnBooking_edit);
+            )!.bookFlightModal_error_notOwnBooking_edit,
+          );
           return;
         }
       } else {
         if (_pilotName != widget.event.pilotName) {
           showConfirm(
-              context: context,
-              text: AppLocalizations.of(context)!
-                  .bookFlightModal_dialog_changePilot_message,
-              title: AppLocalizations.of(context)!
-                  .bookFlightModal_dialog_changePilot_title,
-              okCallback: () => _doSave(context));
+            context: context,
+            text: AppLocalizations.of(
+              context,
+            )!.bookFlightModal_dialog_changePilot_message,
+            title: AppLocalizations.of(
+              context,
+            )!.bookFlightModal_dialog_changePilot_title,
+            okCallback: () => _doSave(context),
+          );
           return;
         }
       }
     } else {
       // booking a new flight: check for past date/time
       final startTime = TZDateTime.from(
-          _startDateController.value!, _appConfig.locationTimeZone);
+        _startDateController.value!,
+        _appConfig.locationTimeZone,
+      );
       final endTime = TZDateTime.from(
-          _endDateController.value!, _appConfig.locationTimeZone);
+        _endDateController.value!,
+        _appConfig.locationTimeZone,
+      );
       final now = TZDateTime.from(DateTime.now(), _appConfig.locationTimeZone);
       if (startTime.isBefore(now) || endTime.isBefore(now)) {
         showConfirm(
-            context: context,
-            text: AppLocalizations.of(context)!
-                .bookFlightModal_dialog_pastDateTime_message,
-            title: AppLocalizations.of(context)!
-                .bookFlightModal_dialog_pastDateTime_title,
-            okCallback: () => _doSave(context));
+          context: context,
+          text: AppLocalizations.of(
+            context,
+          )!.bookFlightModal_dialog_pastDateTime_message,
+          title: AppLocalizations.of(
+            context,
+          )!.bookFlightModal_dialog_pastDateTime_title,
+          okCallback: () => _doSave(context),
+        );
         return;
       }
 
       if (!_appConfig.admin) {
         if (_appConfig.pilotName != _pilotName) {
           showError(
+            context,
+            AppLocalizations.of(
               context,
-              AppLocalizations.of(context)!
-                  .bookFlightModal_error_bookingForOthers);
+            )!.bookFlightModal_error_bookingForOthers,
+          );
           return;
         }
       }
@@ -406,10 +440,14 @@ class _BookFlightModalState extends State<BookFlightModal> {
     final event = FlightBooking(
       widget.event.id,
       _pilotName,
-      TZDateTime.from(_startDateController.value!, _appConfig.locationTimeZone)
-          .toUtc(),
-      TZDateTime.from(_endDateController.value!, _appConfig.locationTimeZone)
-          .toUtc(),
+      TZDateTime.from(
+        _startDateController.value!,
+        _appConfig.locationTimeZone,
+      ).toUtc(),
+      TZDateTime.from(
+        _endDateController.value!,
+        _appConfig.locationTimeZone,
+      ).toUtc(),
       _notes,
     );
 
@@ -419,8 +457,11 @@ class _BookFlightModalState extends State<BookFlightModal> {
         .then((conflict) {
           if (conflict) {
             if (context.mounted) {
-              throw Exception(AppLocalizations.of(context)!
-                  .bookFlightModal_error_timeConflict);
+              throw Exception(
+                AppLocalizations.of(
+                  context,
+                )!.bookFlightModal_error_timeConflict,
+              );
             } else {
               return Future.value(null);
             }
@@ -441,8 +482,9 @@ class _BookFlightModalState extends State<BookFlightModal> {
           final String message;
           // TODO specialize exceptions (e.g. network errors, others...)
           if (error is TimeoutException) {
-            message =
-                AppLocalizations.of(context)!.error_generic_network_timeout;
+            message = AppLocalizations.of(
+              context,
+            )!.error_generic_network_timeout;
           } else {
             message = getExceptionMessage(error);
           }
@@ -459,7 +501,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
         message: isCupertino(context)
             ? null
             : Text(
-                AppLocalizations.of(context)!.bookFlightModal_dialog_working),
+                AppLocalizations.of(context)!.bookFlightModal_dialog_working,
+              ),
       ),
     ).then((value) {
       if (value != null && context.mounted) {
@@ -472,9 +515,11 @@ class _BookFlightModalState extends State<BookFlightModal> {
     if (!_appConfig.admin) {
       if (_appConfig.pilotName != widget.event.pilotName) {
         showError(
+          context,
+          AppLocalizations.of(
             context,
-            AppLocalizations.of(context)!
-                .bookFlightModal_error_notOwnBooking_delete);
+          )!.bookFlightModal_error_notOwnBooking_delete,
+        );
         return;
       }
     }
@@ -495,23 +540,25 @@ class _BookFlightModalState extends State<BookFlightModal> {
         // safe typing it for catchError
         .then((value) => Future<DeletedFlightBooking?>.value(value))
         .catchError((error, StackTrace stacktrace) {
-      _log.warning('DELETE ERROR', error, stacktrace);
-      if (!context.mounted) {
-        return null;
-      }
+          _log.warning('DELETE ERROR', error, stacktrace);
+          if (!context.mounted) {
+            return null;
+          }
 
-      final String message;
-      // TODO specialize exceptions (e.g. network errors, others...)
-      if (error is TimeoutException) {
-        message = AppLocalizations.of(context)!.error_generic_network_timeout;
-      } else {
-        message = getExceptionMessage(error);
-      }
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        showError(context, message);
-      });
-      return null;
-    });
+          final String message;
+          // TODO specialize exceptions (e.g. network errors, others...)
+          if (error is TimeoutException) {
+            message = AppLocalizations.of(
+              context,
+            )!.error_generic_network_timeout;
+          } else {
+            message = getExceptionMessage(error);
+          }
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showError(context, message);
+          });
+          return null;
+        });
 
     showPlatformDialog(
       context: context,
@@ -520,7 +567,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
         message: isCupertino(context)
             ? null
             : Text(
-                AppLocalizations.of(context)!.bookFlightModal_dialog_working),
+                AppLocalizations.of(context)!.bookFlightModal_dialog_working,
+              ),
       ),
     ).then((value) {
       if (value != null && context.mounted) {
@@ -531,11 +579,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
 
   void _onTapPilot(BuildContext context) {
     final dialog = createPilotSelectDialog(
-        context: context,
-        pilotNames: _appConfig.pilotNames,
-        title: AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
-        avatarProvider: (name) => _appConfig.getPilotAvatar(name),
-        selectedPilot: _pilotName);
+      context: context,
+      pilotNames: _appConfig.pilotNames,
+      title: AppLocalizations.of(context)!.bookFlightModal_dialog_selectPilot,
+      avatarProvider: (name) => _appConfig.getPilotAvatar(name),
+      selectedPilot: _pilotName,
+    );
 
     dialog.then((value) {
       if (value != null) {
@@ -581,13 +630,17 @@ class _SunTimesListTile extends StatelessWidget {
           children: [
             Icon(Icons.wb_sunny, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
-            Text(DateFormat(kAviationTimeFormat).format(sunrise),
-                style: textStyle),
+            Text(
+              DateFormat(kAviationTimeFormat).format(sunrise),
+              style: textStyle,
+            ),
             SizedBox(width: MediaQuery.of(context).size.width * 0.2, height: 0),
             Icon(Icons.nightlight_round, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
-            Text(DateFormat(kAviationTimeFormat).format(sunset),
-                style: textStyle),
+            Text(
+              DateFormat(kAviationTimeFormat).format(sunset),
+              style: textStyle,
+            ),
           ],
         ),
       ),

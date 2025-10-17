@@ -47,8 +47,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
         material: (context, platform) => MaterialAppBarData(
           toolbarHeight:
               MediaQuery.of(context).orientation == Orientation.portrait
-                  ? kPortraitToolbarHeight
-                  : kLandscapeToolbarHeight,
+              ? kPortraitToolbarHeight
+              : kLandscapeToolbarHeight,
         ),
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(

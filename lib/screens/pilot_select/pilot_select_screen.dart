@@ -21,8 +21,8 @@ class PilotSelectScreen extends StatelessWidget {
         material: (context, platform) => MaterialAppBarData(
           toolbarHeight:
               MediaQuery.of(context).orientation == Orientation.portrait
-                  ? kPortraitToolbarHeight
-                  : kLandscapeToolbarHeight,
+              ? kPortraitToolbarHeight
+              : kLandscapeToolbarHeight,
         ),
       ),
       cupertino: (context, platform) => CupertinoPageScaffoldData(
@@ -48,8 +48,11 @@ class PilotSelectScreen extends StatelessWidget {
       context: context,
       builder: (dialogContext) => PlatformAlertDialog(
         title: Text(AppLocalizations.of(context)!.pilotSelect_confirm_title),
-        content: Text.rich(formatMarkdown(
-            AppLocalizations.of(context)!.pilotSelect_confirm_message(name))),
+        content: Text.rich(
+          formatMarkdown(
+            AppLocalizations.of(context)!.pilotSelect_confirm_message(name),
+          ),
+        ),
         actions: <Widget>[
           PlatformDialogAction(
             onPressed: () => Navigator.pop(dialogContext),

@@ -38,7 +38,9 @@ Future<void> loadAppFonts() async {
 
   // Load the designated test font.
   // We cannot use anything bundle-related because the font is not declared as an asset
-  final fontData = await File('test_assets/fonts/Roboto-Regular.ttf').readAsBytes();
+  final fontData = await File(
+    'test_assets/fonts/Roboto-Regular.ttf',
+  ).readAsBytes();
   final fontLoader = FontLoader('Roboto');
   fontLoader.addFont(Future.value(ByteData.view(fontData.buffer)));
   await fontLoader.load();

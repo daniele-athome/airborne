@@ -52,42 +52,52 @@ class _AboutScreenState extends State<AboutScreen> {
     ).then((value) {
       if (value != null) {
         final userpass = value[0];
-        final downloadTask = downloadAircraftData(
-                _appConfig.currentAircraft!.url!, userpass, _downloadProvider)
-            .then<AircraftData?>((AircraftData aircraftData) async {
-          await _appConfig.setCurrentAircraft(aircraftData);
-          _appConfig.updateAircraft(aircraftData);
-          return aircraftData;
-        }).catchError((error, StackTrace? stacktrace) {
-          _log.info('DOWNLOAD ERROR', error, stacktrace);
-          if (!context.mounted) {
-            return null;
-          }
+        final downloadTask =
+            downloadAircraftData(
+                  _appConfig.currentAircraft!.url!,
+                  userpass,
+                  _downloadProvider,
+                )
+                .then<AircraftData?>((AircraftData aircraftData) async {
+                  await _appConfig.setCurrentAircraft(aircraftData);
+                  _appConfig.updateAircraft(aircraftData);
+                  return aircraftData;
+                })
+                .catchError((error, StackTrace? stacktrace) {
+                  _log.info('DOWNLOAD ERROR', error, stacktrace);
+                  if (!context.mounted) {
+                    return null;
+                  }
 
-          // TODO specialize exceptions (e.g. network errors, others...)
-          final String message;
-          if (error is TimeoutException) {
-            message =
-                AppLocalizations.of(context)!.error_generic_network_timeout;
-          } else if (error is AircraftBadFileException) {
-            message = AppLocalizations.of(context)!
-                .addAircraft_error_bad_datafile_format;
-          } else if (error is AircraftValidationException) {
-            message = AppLocalizations.of(context)!
-                .addAircraft_error_invalid_datafile;
-          } else if (error is AircraftStoreException) {
-            message = AppLocalizations.of(context)!.addAircraft_error_storing;
-          } else {
-            message = getExceptionMessage(error);
-          }
+                  // TODO specialize exceptions (e.g. network errors, others...)
+                  final String message;
+                  if (error is TimeoutException) {
+                    message = AppLocalizations.of(
+                      context,
+                    )!.error_generic_network_timeout;
+                  } else if (error is AircraftBadFileException) {
+                    message = AppLocalizations.of(
+                      context,
+                    )!.addAircraft_error_bad_datafile_format;
+                  } else if (error is AircraftValidationException) {
+                    message = AppLocalizations.of(
+                      context,
+                    )!.addAircraft_error_invalid_datafile;
+                  } else if (error is AircraftStoreException) {
+                    message = AppLocalizations.of(
+                      context,
+                    )!.addAircraft_error_storing;
+                  } else {
+                    message = getExceptionMessage(error);
+                  }
 
-          Future.delayed(Duration.zero, () {
-            if (context.mounted) {
-              return showError(context, message);
-            }
-          });
-          return null;
-        });
+                  Future.delayed(Duration.zero, () {
+                    if (context.mounted) {
+                      return showError(context, message);
+                    }
+                  });
+                  return null;
+                });
 
         if (context.mounted) {
           showPlatformDialog(
@@ -97,8 +107,11 @@ class _AboutScreenState extends State<AboutScreen> {
                 downloadTask,
                 message: isCupertino(context)
                     ? null
-                    : Text(AppLocalizations.of(context)!
-                        .addAircraft_dialog_downloading),
+                    : Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.addAircraft_dialog_downloading,
+                      ),
               );
             },
           ).then((value) async {
@@ -122,8 +135,10 @@ class _AboutScreenState extends State<AboutScreen> {
         _appConfig.pilotName = null;
         _appConfig.setCurrentAircraft(null).whenComplete(() {
           if (context.mounted) {
-            Navigator.of(context, rootNavigator: true)
-                .popAndPushNamed('aircraft-data');
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).popAndPushNamed('aircraft-data');
           }
         });
       },
@@ -135,26 +150,35 @@ class _AboutScreenState extends State<AboutScreen> {
     return [
       CupertinoFormSection.insetGrouped(
         header: Text(
-            AppLocalizations.of(context)!.about_aircraft_info.toUpperCase()),
+          AppLocalizations.of(context)!.about_aircraft_info.toUpperCase(),
+        ),
         children: [
           CupertinoFormRowContainer(
             child: CupertinoFormRow(
               padding: kDefaultCupertinoFormRowPadding,
-              prefix:
-                  Text(AppLocalizations.of(context)!.about_aircraft_callsign),
-              child: Text(_appConfig.currentAircraft!.callSign,
-                  style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+              prefix: Text(
+                AppLocalizations.of(context)!.about_aircraft_callsign,
+              ),
+              child: Text(
+                _appConfig.currentAircraft!.callSign,
+                style: textStyle.copyWith(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           if (_appConfig.currentAircraft!.documentsArchive != null)
             CupertinoFormButtonRow(
               onPressed: () => openUrl(
-                  context, _appConfig.currentAircraft!.documentsArchive!),
+                context,
+                _appConfig.currentAircraft!.documentsArchive!,
+              ),
               padding: kDefaultCupertinoFormRowPadding,
-              prefix: Text(AppLocalizations.of(context)!
-                  .about_aircraft_documents_archive),
-              child: Icon(CupertinoIcons.chevron_forward,
-                  color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+              prefix: Text(
+                AppLocalizations.of(context)!.about_aircraft_documents_archive,
+              ),
+              child: Icon(
+                CupertinoIcons.chevron_forward,
+                color: CupertinoColors.tertiaryLabel.resolveFrom(context),
+              ),
             ),
           CupertinoFormButtonRow(
             onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
@@ -165,8 +189,10 @@ class _AboutScreenState extends State<AboutScreen> {
               children: [
                 Text(_appConfig.locationName, style: textStyle),
                 const SizedBox(width: 2),
-                Icon(CupertinoIcons.chevron_forward,
-                    color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+                Icon(
+                  CupertinoIcons.chevron_forward,
+                  color: CupertinoColors.tertiaryLabel.resolveFrom(context),
+                ),
               ],
             ),
           ),
@@ -176,10 +202,11 @@ class _AboutScreenState extends State<AboutScreen> {
           _appConfig.currentAircraft!.locationWeatherForecast != null)
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-              kDefaultCupertinoFormRowStartPadding,
-              4.0,
-              kDefaultCupertinoFormRowStartPadding,
-              0.0),
+            kDefaultCupertinoFormRowStartPadding,
+            4.0,
+            kDefaultCupertinoFormRowStartPadding,
+            0.0,
+          ),
           child: Row(
             children: [
               Expanded(
@@ -187,17 +214,20 @@ class _AboutScreenState extends State<AboutScreen> {
                   padding: const EdgeInsets.all(8.0),
                   onPressed:
                       _appConfig.currentAircraft!.locationWeatherLive != null
-                          ? () => openUrl(context,
-                              _appConfig.currentAircraft!.locationWeatherLive!)
-                          : null,
+                      ? () => openUrl(
+                          context,
+                          _appConfig.currentAircraft!.locationWeatherLive!,
+                        )
+                      : null,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(CupertinoIcons.sun_max_fill),
                       const SizedBox(width: 8.0),
                       Text(
-                        AppLocalizations.of(context)!
-                            .about_aircraft_location_weather_live,
+                        AppLocalizations.of(
+                          context,
+                        )!.about_aircraft_location_weather_live,
                       ),
                     ],
                   ),
@@ -207,11 +237,13 @@ class _AboutScreenState extends State<AboutScreen> {
               Expanded(
                 child: CupertinoButton(
                   padding: const EdgeInsets.all(8.0),
-                  onPressed: _appConfig
-                              .currentAircraft!.locationWeatherForecast !=
+                  onPressed:
+                      _appConfig.currentAircraft!.locationWeatherForecast !=
                           null
-                      ? () => openUrl(context,
-                          _appConfig.currentAircraft!.locationWeatherForecast!)
+                      ? () => openUrl(
+                          context,
+                          _appConfig.currentAircraft!.locationWeatherForecast!,
+                        )
                       : null,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -219,8 +251,9 @@ class _AboutScreenState extends State<AboutScreen> {
                       const Icon(CupertinoIcons.cloud_moon_rain_fill),
                       const SizedBox(width: 8.0),
                       Text(
-                        AppLocalizations.of(context)!
-                            .about_aircraft_location_weather_forecast,
+                        AppLocalizations.of(
+                          context,
+                        )!.about_aircraft_location_weather_forecast,
                       ),
                     ],
                   ),
@@ -231,21 +264,23 @@ class _AboutScreenState extends State<AboutScreen> {
         ),
       CupertinoFormSection.insetGrouped(
         header: Text(
-            AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase()),
+          AppLocalizations.of(context)!.about_aircraft_pilots.toUpperCase(),
+        ),
         children: [
-          ..._appConfig.pilotNames.map((e) => CupertinoFormRowContainer(
-                child: Padding(
-                  padding: kDefaultCupertinoFormRowPadding,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                          foregroundImage: _appConfig.getPilotAvatar(e)),
-                      const SizedBox(width: 14),
-                      Expanded(child: Text(e, style: textStyle)),
-                    ],
-                  ),
+          ..._appConfig.pilotNames.map(
+            (e) => CupertinoFormRowContainer(
+              child: Padding(
+                padding: kDefaultCupertinoFormRowPadding,
+                child: Row(
+                  children: [
+                    CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
+                    const SizedBox(width: 14),
+                    Expanded(child: Text(e, style: textStyle)),
+                  ],
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
       CupertinoFormSection.insetGrouped(
@@ -259,10 +294,11 @@ class _AboutScreenState extends State<AboutScreen> {
                 future: PackageInfo.fromPlatform(),
                 initialData: null,
                 builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
-                    snapshot.connectionState == ConnectionState.done
-                        ? '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
-                        : '',
-                    style: textStyle),
+                  snapshot.connectionState == ConnectionState.done
+                      ? '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+                      : '',
+                  style: textStyle,
+                ),
               ),
             ),
           ),
@@ -270,203 +306,225 @@ class _AboutScreenState extends State<AboutScreen> {
             onPressed: () => openUrl(context, Pubspec.homepage),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_app_homepage),
-            child: Icon(CupertinoIcons.chevron_forward,
-                color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            child: Icon(
+              CupertinoIcons.chevron_forward,
+              color: CupertinoColors.tertiaryLabel.resolveFrom(context),
+            ),
           ),
           CupertinoFormButtonRow(
             onPressed: () => openUrl(context, Pubspec.issueTracker),
             padding: kDefaultCupertinoFormRowPadding,
             prefix: Text(AppLocalizations.of(context)!.about_app_issues),
-            child: Icon(CupertinoIcons.chevron_forward,
-                color: CupertinoColors.tertiaryLabel.resolveFrom(context)),
+            child: Icon(
+              CupertinoIcons.chevron_forward,
+              color: CupertinoColors.tertiaryLabel.resolveFrom(context),
+            ),
           ),
         ],
       ),
       const SizedBox(height: kDefaultCupertinoFormSectionMargin),
-      CupertinoFormSection.insetGrouped(children: <Widget>[
-        if (_appConfig.currentAircraft!.url != null)
+      CupertinoFormSection.insetGrouped(
+        children: <Widget>[
+          if (_appConfig.currentAircraft!.url != null)
+            Row(
+              children: [
+                Expanded(
+                  child: CupertinoButton(
+                    key: const Key('about_button_update_aircraft'),
+                    onPressed: () => _onRefresh(context),
+                    child: Text(
+                      AppLocalizations.of(context)!.about_app_update_aircraft,
+                      style: const TextStyle(color: CupertinoColors.activeBlue),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           Row(
             children: [
               Expanded(
                 child: CupertinoButton(
-                  key: const Key('about_button_update_aircraft'),
-                  onPressed: () => _onRefresh(context),
+                  key: const Key('about_button_disconnect_aircraft'),
+                  onPressed: () => _onLogout(context),
                   child: Text(
-                    AppLocalizations.of(context)!.about_app_update_aircraft,
-                    style: const TextStyle(color: CupertinoColors.activeBlue),
+                    AppLocalizations.of(context)!.about_app_disconnect_aircraft,
+                    style: const TextStyle(
+                      color: CupertinoColors.destructiveRed,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-        Row(
-          children: [
-            Expanded(
-              child: CupertinoButton(
-                key: const Key('about_button_disconnect_aircraft'),
-                onPressed: () => _onLogout(context),
-                child: Text(
-                  AppLocalizations.of(context)!.about_app_disconnect_aircraft,
-                  style: const TextStyle(color: CupertinoColors.destructiveRed),
-                ),
-              ),
-            ),
-          ],
-        )
-      ]),
+        ],
+      ),
     ];
   }
 
   List<Widget> _buildMaterialItems(BuildContext context) => [
-        HeaderListTile(AppLocalizations.of(context)!.about_aircraft_info,
-            first: true),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
-          title: Text(
-            _appConfig.currentAircraft!.callSign,
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
-        ),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          subtitle: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
-          title: Text(
-            _appConfig.locationName,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          trailing: IconButton(
-            onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
-            tooltip:
-                AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
-            icon: const Icon(Icons.open_in_new),
-          ),
-        ),
-        if (_appConfig.currentAircraft!.locationWeatherLive != null ||
-            _appConfig.currentAircraft!.locationWeatherForecast != null)
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 6.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: OutlinedButton.icon(
-                      onPressed: () => openUrl(context,
-                          _appConfig.currentAircraft!.locationWeatherLive!),
-                      style: TextButton.styleFrom(
-                          padding: const EdgeInsets.all(12.0)),
-                      icon: const Icon(Icons.sunny),
-                      label: Text(AppLocalizations.of(context)!
-                          .about_aircraft_location_weather_live)),
+    HeaderListTile(
+      AppLocalizations.of(context)!.about_aircraft_info,
+      first: true,
+    ),
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
+      title: Text(
+        _appConfig.currentAircraft!.callSign,
+        style: Theme.of(
+          context,
+        ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+      ),
+    ),
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      subtitle: Text(AppLocalizations.of(context)!.about_aircraft_hangar),
+      title: Text(
+        _appConfig.locationName,
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      trailing: IconButton(
+        onPressed: () => openUrl(context, _appConfig.locationMapsUrl),
+        tooltip: AppLocalizations.of(context)!.about_aircraft_hangar_open_maps,
+        icon: const Icon(Icons.open_in_new),
+      ),
+    ),
+    if (_appConfig.currentAircraft!.locationWeatherLive != null ||
+        _appConfig.currentAircraft!.locationWeatherForecast != null)
+      Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 20.0, 6.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: OutlinedButton.icon(
+                onPressed: () => openUrl(
+                  context,
+                  _appConfig.currentAircraft!.locationWeatherLive!,
                 ),
-                const SizedBox(width: 8.0),
-                Flexible(
-                  child: OutlinedButton.icon(
-                      onPressed: () => openUrl(context,
-                          _appConfig.currentAircraft!.locationWeatherForecast!),
-                      style: TextButton.styleFrom(
-                          padding: const EdgeInsets.all(12.0)),
-                      icon: const Icon(Icons.wb_cloudy),
-                      label: Text(AppLocalizations.of(context)!
-                          .about_aircraft_location_weather_forecast)),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.all(12.0),
                 ),
-              ],
+                icon: const Icon(Icons.sunny),
+                label: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.about_aircraft_location_weather_live,
+                ),
+              ),
             ),
-          ),
-        if (_appConfig.currentAircraft!.documentsArchive != null)
-          ListTile(
-            key: const Key('about_button_documents_archive'),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-            leading: SizedBox(
-              height: double.infinity,
-              child: Icon(Icons.folder, color: Colors.blue.shade600),
+            const SizedBox(width: 8.0),
+            Flexible(
+              child: OutlinedButton.icon(
+                onPressed: () => openUrl(
+                  context,
+                  _appConfig.currentAircraft!.locationWeatherForecast!,
+                ),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.all(12.0),
+                ),
+                icon: const Icon(Icons.wb_cloudy),
+                label: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.about_aircraft_location_weather_forecast,
+                ),
+              ),
             ),
-            title: Text(
-                AppLocalizations.of(context)!.about_aircraft_documents_archive),
-            subtitle: Text(AppLocalizations.of(context)!
-                .about_aircraft_documents_archive_subtitle),
-            onTap: () =>
-                openUrl(context, _appConfig.currentAircraft!.documentsArchive!),
-          ),
-        HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
-        ..._appConfig.pilotNames.map((e) => ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-              leading:
-                  CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
-              title: Text(e),
-            )),
-        HeaderListTile(AppLocalizations.of(context)!.appName),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: const SizedBox(
-            height: double.infinity,
-            child: Icon(Icons.info),
-          ),
-          subtitle: Text(AppLocalizations.of(context)!.about_app_version),
-          title: FutureBuilder(
-            future: PackageInfo.fromPlatform(),
-            initialData: null,
-            builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
-              snapshot.connectionState == ConnectionState.done
-                  ? '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
-                  : '',
-            ),
-          ),
+          ],
         ),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: const SizedBox(
-            height: double.infinity,
-            child: Icon(Icons.all_inclusive),
-          ),
-          title: Text(AppLocalizations.of(context)!.about_app_homepage),
-          subtitle:
-              Text(AppLocalizations.of(context)!.about_app_homepage_subtitle),
-          onTap: () => openUrl(context, Pubspec.homepage),
+      ),
+    if (_appConfig.currentAircraft!.documentsArchive != null)
+      ListTile(
+        key: const Key('about_button_documents_archive'),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        leading: SizedBox(
+          height: double.infinity,
+          child: Icon(Icons.folder, color: Colors.blue.shade600),
         ),
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: const SizedBox(
-            height: double.infinity,
-            child: Icon(Icons.bug_report, color: Colors.red),
-          ),
-          title: Text(AppLocalizations.of(context)!.about_app_issues),
-          subtitle:
-              Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
-          onTap: () => openUrl(context, Pubspec.issueTracker),
+        title: Text(
+          AppLocalizations.of(context)!.about_aircraft_documents_archive,
         ),
-        if (_appConfig.currentAircraft!.url != null)
-          ListTile(
-            key: const Key('about_button_update_aircraft'),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-            leading: SizedBox(
-              height: double.infinity,
-              child: Icon(Icons.update, color: Colors.blue.shade600),
-            ),
-            title:
-                Text(AppLocalizations.of(context)!.about_app_update_aircraft),
-            subtitle: Text(AppLocalizations.of(context)!
-                .about_app_update_aircraft_subtitle),
-            onTap: () => _onRefresh(context),
-          ),
-        ListTile(
-          key: const Key('about_button_disconnect_aircraft'),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-          leading: SizedBox(
-            height: double.infinity,
-            child: Icon(Icons.logout, color: Colors.blue.shade600),
-          ),
-          title:
-              Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft),
-          subtitle: Text(AppLocalizations.of(context)!
-              .about_app_disconnect_aircraft_subtitle),
-          onTap: () => _onLogout(context),
+        subtitle: Text(
+          AppLocalizations.of(
+            context,
+          )!.about_aircraft_documents_archive_subtitle,
         ),
-      ];
+        onTap: () =>
+            openUrl(context, _appConfig.currentAircraft!.documentsArchive!),
+      ),
+    HeaderListTile(AppLocalizations.of(context)!.about_aircraft_pilots),
+    ..._appConfig.pilotNames.map(
+      (e) => ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        leading: CircleAvatar(foregroundImage: _appConfig.getPilotAvatar(e)),
+        title: Text(e),
+      ),
+    ),
+    HeaderListTile(AppLocalizations.of(context)!.appName),
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: const SizedBox(height: double.infinity, child: Icon(Icons.info)),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_version),
+      title: FutureBuilder(
+        future: PackageInfo.fromPlatform(),
+        initialData: null,
+        builder: (context, AsyncSnapshot<PackageInfo?> snapshot) => Text(
+          snapshot.connectionState == ConnectionState.done
+              ? '${AppLocalizations.of(context)!.appName} ${snapshot.data!.version} (${snapshot.data!.buildNumber})'
+              : '',
+        ),
+      ),
+    ),
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: const SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.all_inclusive),
+      ),
+      title: Text(AppLocalizations.of(context)!.about_app_homepage),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_homepage_subtitle),
+      onTap: () => openUrl(context, Pubspec.homepage),
+    ),
+    ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: const SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.bug_report, color: Colors.red),
+      ),
+      title: Text(AppLocalizations.of(context)!.about_app_issues),
+      subtitle: Text(AppLocalizations.of(context)!.about_app_issues_subtitle),
+      onTap: () => openUrl(context, Pubspec.issueTracker),
+    ),
+    if (_appConfig.currentAircraft!.url != null)
+      ListTile(
+        key: const Key('about_button_update_aircraft'),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        leading: SizedBox(
+          height: double.infinity,
+          child: Icon(Icons.update, color: Colors.blue.shade600),
+        ),
+        title: Text(AppLocalizations.of(context)!.about_app_update_aircraft),
+        subtitle: Text(
+          AppLocalizations.of(context)!.about_app_update_aircraft_subtitle,
+        ),
+        onTap: () => _onRefresh(context),
+      ),
+    ListTile(
+      key: const Key('about_button_disconnect_aircraft'),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      leading: SizedBox(
+        height: double.infinity,
+        child: Icon(Icons.logout, color: Colors.blue.shade600),
+      ),
+      title: Text(AppLocalizations.of(context)!.about_app_disconnect_aircraft),
+      subtitle: Text(
+        AppLocalizations.of(context)!.about_app_disconnect_aircraft_subtitle,
+      ),
+      onTap: () => _onLogout(context),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -499,16 +557,20 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   );
                 },
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  return loadingProgress != null
-                      ? Container(
-                          height: 250,
-                          alignment: Alignment.center,
-                          child: const CircularProgressIndicator.adaptive(),
-                        )
-                      : child;
-                },
+                loadingBuilder:
+                    (
+                      BuildContext context,
+                      Widget child,
+                      ImageChunkEvent? loadingProgress,
+                    ) {
+                      return loadingProgress != null
+                          ? Container(
+                              height: 250,
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator.adaptive(),
+                            )
+                          : child;
+                    },
               ),
             ),
             Positioned.fill(
@@ -518,12 +580,14 @@ class _AboutScreenState extends State<AboutScreen> {
                 child: Container(
                   height: 30.0,
                   decoration: BoxDecoration(
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(20.0)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20.0),
+                    ),
                     // TODO is this the right color? I'm getting confused...
                     color: isCupertino(context)
-                        ? CupertinoColors.systemGroupedBackground
-                            .resolveFrom(context)
+                        ? CupertinoColors.systemGroupedBackground.resolveFrom(
+                            context,
+                          )
                         : Theme.of(context).scaffoldBackgroundColor,
                     boxShadow: const [
                       BoxShadow(
@@ -544,24 +608,18 @@ class _AboutScreenState extends State<AboutScreen> {
       ],
     );
     return PlatformWidget(
-        cupertino: (context, platform) => Container(
-              color:
-                  CupertinoColors.systemGroupedBackground.resolveFrom(context),
-              child: list,
-            ),
-        material: (context, platform) => Ink(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: list,
-            ));
+      cupertino: (context, platform) => Container(
+        color: CupertinoColors.systemGroupedBackground.resolveFrom(context),
+        child: list,
+      ),
+      material: (context, platform) =>
+          Ink(color: Theme.of(context).scaffoldBackgroundColor, child: list),
+    );
   }
 }
 
 class HeaderListTile extends StatelessWidget {
-  const HeaderListTile(
-    this.text, {
-    super.key,
-    this.first = false,
-  });
+  const HeaderListTile(this.text, {super.key, this.first = false});
 
   /// The text to be displayed.
   final String text;

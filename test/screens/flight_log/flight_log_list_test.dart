@@ -41,9 +41,10 @@ void main() async {
           // Material is needed by some child widget
           child: Material(
             child: FlightLogList(
-                controller: FlightLogListController(),
-                logBookService: flightLogService,
-                onTapItem: (context, item) => {}),
+              controller: FlightLogListController(),
+              logBookService: flightLogService,
+              onTapItem: (context, item) => {},
+            ),
           ),
         ),
       ),
@@ -54,32 +55,29 @@ void main() async {
     testWidgets('First page', (tester) async {
       await setupGolden(tester);
 
-      final pilots = [
-        'Sara',
-        'Anna',
-        'John',
-        'Peter',
-      ];
+      final pilots = ['Sara', 'Anna', 'John', 'Peter'];
       final service = MockFlightLogBookService();
       // generate the first page of data
       when(service.reset()).thenAnswer((_) => Future.value());
       when(service.hasMoreData()).thenReturn(true);
       when(service.fetchItems()).thenAnswer((_) {
-        return Future.value(List<FlightLogItem>.generate(20, (index) {
-          return FlightLogItem(
-            // TODO 1-based index?
-            (index + 1).toString(),
-            DateTime.parse('2023-10-27T10:00:00Z'),
-            pilots[index % pilots.length],
-            'Fly@localhost',
-            'Fly@localhost',
-            1238 + index,
-            1238 + index + 1,
-            null,
-            null,
-            null,
-          );
-        }, growable: false));
+        return Future.value(
+          List<FlightLogItem>.generate(20, (index) {
+            return FlightLogItem(
+              // TODO 1-based index?
+              (index + 1).toString(),
+              DateTime.parse('2023-10-27T10:00:00Z'),
+              pilots[index % pilots.length],
+              'Fly@localhost',
+              'Fly@localhost',
+              1238 + index,
+              1238 + index + 1,
+              null,
+              null,
+              null,
+            );
+          }, growable: false),
+        );
       });
 
       await tester.pumpWidget(createSkeletonApp(service));
@@ -87,25 +85,27 @@ void main() async {
 
       // verify list item count
       final listFinder = find.byType(PagedListView<int, FlightLogItem>);
-      final listWidget =
-          tester.widget<PagedListView<int, FlightLogItem>>(listFinder);
+      final listWidget = tester.widget<PagedListView<int, FlightLogItem>>(
+        listFinder,
+      );
       expect(listWidget.pagingController.value.itemList!.length, 20);
 
       // check against golden
-      await expectLater(find.byKey(const Key('golden_box')),
-          matchesGoldenFile('goldens/flight_log_list_first_page.png'),
-          skip: !Platform.isLinux);
+      await expectLater(
+        find.byKey(const Key('golden_box')),
+        matchesGoldenFile('goldens/flight_log_list_first_page.png'),
+        skip: !Platform.isLinux,
+      );
     });
   });
 }
 
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
-  when(appConfig.getPilotAvatar(any))
-      .thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
+  when(
+    appConfig.getPilotAvatar(any),
+  ).thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
   when(appConfig.fuelPriceCurrency).thenReturn('€');
   // TODO stub some stuff
-  return ChangeNotifierProvider<AppConfig>.value(
-    value: appConfig,
-  );
+  return ChangeNotifierProvider<AppConfig>.value(value: appConfig);
 }

@@ -137,8 +137,9 @@ class AppConfig extends ChangeNotifier {
 
   ImageProvider getPilotAvatar(String name) {
     return (name == _currentAircraft!.noPilotName
-        ? const AssetImage('assets/images/nopilot_avatar.png')
-        : FileImage(_currentAircraft!.getPilotAvatar(name))) as ImageProvider;
+            ? const AssetImage('assets/images/nopilot_avatar.png')
+            : FileImage(_currentAircraft!.getPilotAvatar(name)))
+        as ImageProvider;
   }
 
   ImageProvider get aircraftPicture {

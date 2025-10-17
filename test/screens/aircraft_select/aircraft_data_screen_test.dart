@@ -16,31 +16,35 @@ import 'aircraft_data_screen_test.mocks.dart';
 @GenerateMocks([AppConfig, HttpClient])
 void main() {
   Widget createSkeletonApp() => MaterialApp(
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        locale: const Locale('en'),
-        home: MultiProvider(
-          providers: [
-            _provideAppConfigForSampleAircraft(),
-            _provideFakeDownloadProvider(),
-          ],
-          child: const SetAircraftDataScreen(),
-        ),
-      );
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    locale: const Locale('en'),
+    home: MultiProvider(
+      providers: [
+        _provideAppConfigForSampleAircraft(),
+        _provideFakeDownloadProvider(),
+      ],
+      child: const SetAircraftDataScreen(),
+    ),
+  );
 
   group('Single aircraft data screen tests', () {
-    testWidgets('An invalid URI in address field should not validate',
-        (tester) async {
+    testWidgets('An invalid URI in address field should not validate', (
+      tester,
+    ) async {
       await tester.pumpWidget(createSkeletonApp());
       await tester.enterText(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is PlatformTextFormField &&
-              widget.keyboardType == TextInputType.url),
-          "NOT_VALID_URI");
+              widget.keyboardType == TextInputType.url,
+        ),
+        "NOT_VALID_URI",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), false);
     });
@@ -48,10 +52,13 @@ void main() {
     testWidgets('A valid URI in address field should validate', (tester) async {
       await tester.pumpWidget(createSkeletonApp());
       await tester.enterText(
-          find.byWidgetPredicate((widget) =>
+        find.byWidgetPredicate(
+          (widget) =>
               widget is PlatformTextFormField &&
-              widget.keyboardType == TextInputType.url),
-          'http://localhost/a1234.zip');
+              widget.keyboardType == TextInputType.url,
+        ),
+        'http://localhost/a1234.zip',
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
@@ -61,13 +68,12 @@ void main() {
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
   // TODO stub some stuff
-  return ChangeNotifierProvider<AppConfig>.value(
-    value: appConfig,
-  );
+  return ChangeNotifierProvider<AppConfig>.value(value: appConfig);
 }
 
 ChangeNotifierProvider<DownloadProvider> _provideFakeDownloadProvider() {
   final client = MockHttpClient();
   return ChangeNotifierProvider<DownloadProvider>(
-      create: (context) => DownloadProvider(() => client));
+    create: (context) => DownloadProvider(() => client),
+  );
 }

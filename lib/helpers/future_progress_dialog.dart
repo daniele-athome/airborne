@@ -9,8 +9,9 @@ import 'cupertinoplus.dart';
 
 Decoration _defaultDecoration(BuildContext context) => isCupertino(context)
     ? BoxDecoration(
-        color: kCupertinoDialogScaffoldBackgroundColor(context)
-            .resolveFrom(context),
+        color: kCupertinoDialogScaffoldBackgroundColor(
+          context,
+        ).resolveFrom(context),
         shape: BoxShape.rectangle,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       )
@@ -54,23 +55,22 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
   @override
   void initState() {
     super.initState();
-    widget.future.then((val) {
-      if (mounted) {
-        Navigator.of(context).pop(val);
-      }
-    }).catchError((e) {
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-    });
+    widget.future
+        .then((val) {
+          if (mounted) {
+            Navigator.of(context).pop(val);
+          }
+        })
+        .catchError((e) {
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: _buildDialog(context),
-    );
+    return PopScope(canPop: false, child: _buildDialog(context));
   }
 
   Widget _buildDialog(BuildContext context) {
@@ -85,10 +85,8 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
             alignment: Alignment.center,
             padding: const EdgeInsets.all(20),
             decoration: widget.decoration ?? _defaultDecoration(context),
-            child: widget.progress ??
-                const CupertinoActivityIndicator(
-                  radius: 24,
-                ),
+            child:
+                widget.progress ?? const CupertinoActivityIndicator(radius: 24),
           ),
         );
       } else {
@@ -102,10 +100,7 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                widget.progress ??
-                    const CupertinoActivityIndicator(
-                      radius: 24,
-                    ),
+                widget.progress ?? const CupertinoActivityIndicator(radius: 24),
                 const SizedBox(height: 10),
                 _buildText(context),
               ],
@@ -137,23 +132,19 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: widget.decoration ?? _defaultDecoration(context),
           child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                widget.progress ?? const CircularProgressIndicator(),
-                const SizedBox(width: 20),
-                _buildText(context)
-              ]),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              widget.progress ?? const CircularProgressIndicator(),
+              const SizedBox(width: 20),
+              _buildText(context),
+            ],
+          ),
         );
       }
 
       return PlatformAlertDialog(
-        material: (context, platform) => MaterialAlertDialogData(
-          elevation: 0,
-        ),
-        content: Opacity(
-          opacity: widget.opacity,
-          child: content,
-        ),
+        material: (context, platform) => MaterialAlertDialogData(elevation: 0),
+        content: Opacity(opacity: widget.opacity, child: content),
       );
     }
   }
@@ -162,9 +153,6 @@ class _FutureProgressDialogState extends State<FutureProgressDialog> {
     if (widget.message == null) {
       return const SizedBox.shrink();
     }
-    return Expanded(
-      flex: 1,
-      child: widget.message!,
-    );
+    return Expanded(flex: 1, child: widget.message!);
   }
 }

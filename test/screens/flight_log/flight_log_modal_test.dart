@@ -22,22 +22,24 @@ void main() async {
   final lang = await AppLocalizations.delegate.load(locale);
 
   Widget createSkeletonApp(FlightLogItem model) => MultiProvider(
-        providers: [
-          _provideAppConfigForSampleAircraft(),
-          _provideFlightLogBookService(),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          locale: locale,
-          home: RepaintBoundary(
-              key: const Key('golden_box'), child: FlightLogModal(model)),
-        ),
-      );
+    providers: [
+      _provideAppConfigForSampleAircraft(),
+      _provideFlightLogBookService(),
+    ],
+    child: MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      locale: locale,
+      home: RepaintBoundary(
+        key: const Key('golden_box'),
+        child: FlightLogModal(model),
+      ),
+    ),
+  );
 
   group('Flight log editor appearance', () {
     testWidgets('Launch appearance', (tester) async {
@@ -58,9 +60,11 @@ void main() async {
       await tester.pumpWidget(createSkeletonApp(item));
       await tester.pumpAndSettle();
 
-      await expectLater(find.byKey(const Key('golden_box')),
-          matchesGoldenFile('goldens/flight_log_modal_launch.png'),
-          skip: !Platform.isLinux);
+      await expectLater(
+        find.byKey(const Key('golden_box')),
+        matchesGoldenFile('goldens/flight_log_modal_launch.png'),
+        skip: !Platform.isLinux,
+      );
     });
   });
 
@@ -81,33 +85,45 @@ void main() async {
       await tester.pumpWidget(createSkeletonApp(item));
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "42");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "42",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "ABC");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "ABC",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), false);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "43.2");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "43.2",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "43.28293");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "43.28293",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "43.28");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "43.28",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       // FIXME this should fail on the locale of the test
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "43,2");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "43,2",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
@@ -128,44 +144,59 @@ void main() async {
       await tester.pumpWidget(createSkeletonApp(item));
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "42");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "42",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "ABC");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "ABC",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), false);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "43.2");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "43.2",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "43.28");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "43.28",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "43.28");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "43.28",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "43.2802");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "43.2802",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       // FIXME this should fail on the locale of the test
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "43,2");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "43,2",
+      );
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
 
-    testWidgets('Fuel amount mandatory when fuel cost is greater than zero',
-        (tester) async {
+    testWidgets('Fuel amount mandatory when fuel cost is greater than zero', (
+      tester,
+    ) async {
       FlightLogItem item = FlightLogItem(
         null,
         DateTime.now(),
@@ -181,17 +212,22 @@ void main() async {
       await tester.pumpWidget(createSkeletonApp(item));
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuelPrice")), "102.38");
+        find.byKey(const Key("input_flightLogModal_fuelPrice")),
+        "102.38",
+      );
       await tester.pump();
       await tester.tap(find.byKey(const Key('button_flightLogModal_save')));
       await tester.pump();
       expect(find.byType(PlatformAlertDialog), findsOneWidget);
-      expect(find.text(lang.flightLogModal_error_invalid_fuel_empty),
-          findsOneWidget);
+      expect(
+        find.text(lang.flightLogModal_error_invalid_fuel_empty),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('Fuel cost mandatory when fuel amount is greater than zero',
-        (tester) async {
+    testWidgets('Fuel cost mandatory when fuel amount is greater than zero', (
+      tester,
+    ) async {
       FlightLogItem item = FlightLogItem(
         null,
         DateTime.now(),
@@ -207,34 +243,32 @@ void main() async {
       await tester.pumpWidget(createSkeletonApp(item));
 
       await tester.enterText(
-          find.byKey(const Key("input_flightLogModal_fuel")), "102.38");
+        find.byKey(const Key("input_flightLogModal_fuel")),
+        "102.38",
+      );
       await tester.pump();
       await tester.tap(find.byKey(const Key('button_flightLogModal_save')));
       await tester.pump();
       expect(find.byType(PlatformAlertDialog), findsOneWidget);
-      expect(find.text(lang.flightLogModal_error_invalid_fuelCost_empty),
-          findsOneWidget);
+      expect(
+        find.text(lang.flightLogModal_error_invalid_fuelCost_empty),
+        findsOneWidget,
+      );
     });
   });
 }
 
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
-  when(appConfig.getPilotAvatar(any))
-      .thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
+  when(
+    appConfig.getPilotAvatar(any),
+  ).thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
   when(appConfig.fuelPriceCurrency).thenReturn('€');
   when(appConfig.pilotName).thenReturn('Sara');
-  when(appConfig.pilotNames).thenReturn([
-    'Sara',
-    'Anna',
-    'John',
-    'Peter',
-  ]);
+  when(appConfig.pilotNames).thenReturn(['Sara', 'Anna', 'John', 'Peter']);
 
   // TODO stub some stuff
-  return ChangeNotifierProvider<AppConfig>.value(
-    value: appConfig,
-  );
+  return ChangeNotifierProvider<AppConfig>.value(value: appConfig);
 }
 
 Provider<FlightLogBookService> _provideFlightLogBookService() {

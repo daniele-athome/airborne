@@ -34,15 +34,15 @@ abstract class GoogleSheetsStoreService<T> {
   /// State: flight log hash (from last fetch)
   String? _dataHash;
 
-  GoogleSheetsStoreService(
-      {required GoogleServiceAccountService accountService,
-      required MetadataService? metadataService,
-      required String spreadsheetId,
-      required String sheetName})
-      : _accountService = accountService,
-        _metadataService = metadataService,
-        _spreadsheetId = spreadsheetId,
-        _sheetName = sheetName;
+  GoogleSheetsStoreService({
+    required GoogleServiceAccountService accountService,
+    required MetadataService? metadataService,
+    required String spreadsheetId,
+    required String sheetName,
+  }) : _accountService = accountService,
+       _metadataService = metadataService,
+       _spreadsheetId = spreadsheetId,
+       _sheetName = sheetName;
 
   @visibleForTesting
   set client(GoogleSheetsService client) {
@@ -87,8 +87,11 @@ abstract class GoogleSheetsStoreService<T> {
       _log.finest('lastId is $_lastId, hash is $_dataHash');
     } else {
       // legacy method: first cell of the first row of the sheet
-      final value =
-          await client.getRows(_spreadsheetId, _sheetName, _kSheetCountRange);
+      final value = await client.getRows(
+        _spreadsheetId,
+        _sheetName,
+        _kSheetCountRange,
+      );
 
       if (value.values == null) {
         throw const FormatException('No data found on sheet.');
@@ -105,20 +108,27 @@ abstract class GoogleSheetsStoreService<T> {
     _lastId = max(_lastId - _kItemsPerPage, 0);
     final firstId = _lastId + 1;
     _log.fine(
-        'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})');
+      'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})',
+    );
 
     final value = await client.getRows(
-        _spreadsheetId, _sheetName, _sheetDataRange(firstId, lastId));
+      _spreadsheetId,
+      _sheetName,
+      _sheetDataRange(firstId, lastId),
+    );
 
     if (value.values == null) {
       throw const FormatException('No data found on sheet.');
     }
 
     _log.finest(value.values);
-    return value.values!.mapIndexed<T>((index, rowData) => buildItem(
+    return value.values!.mapIndexed<T>(
+      (index, rowData) => buildItem(
         // item ID is a 1-based ordinal
         (firstId + index).toString(),
-        rowData));
+        rowData,
+      ),
+    );
   }
 
   bool hasMoreData() => _lastId > 0;
@@ -130,7 +140,11 @@ abstract class GoogleSheetsStoreService<T> {
 
     final client = await _ensureService();
     final response = await client.appendRows(
-        _spreadsheetId, _sheetName, _sheetAppendRange(), [buildRowData(item)]);
+      _spreadsheetId,
+      _sheetName,
+      _sheetAppendRange(),
+      [buildRowData(item)],
+    );
     if (response.updates != null && response.updates!.updatedRange != null) {
       await _waitForDataChange();
       // TODO return a copy of item with filled id (parse response)
@@ -147,8 +161,12 @@ abstract class GoogleSheetsStoreService<T> {
 
     final client = await _ensureService();
     final rowNum = int.parse(id);
-    final response = await client.updateRows(_spreadsheetId, _sheetName,
-        _sheetDataRange(rowNum, rowNum), [buildRowData(item)]);
+    final response = await client.updateRows(
+      _spreadsheetId,
+      _sheetName,
+      _sheetDataRange(rowNum, rowNum),
+      [buildRowData(item)],
+    );
     if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {
       await _waitForDataChange();
       // TODO return a copy of item (parse response data if available?)
@@ -166,7 +184,11 @@ abstract class GoogleSheetsStoreService<T> {
     final client = await _ensureService();
     final rowNumber = _itemIdToRowNumber(int.parse(id));
     final response = await client.deleteRows(
-        _spreadsheetId, _sheetName, rowNumber, rowNumber);
+      _spreadsheetId,
+      _sheetName,
+      rowNumber,
+      rowNumber,
+    );
     if (response.replies != null && response.replies!.length == 1) {
       await _waitForDataChange();
       return id;
@@ -195,8 +217,9 @@ abstract class GoogleSheetsStoreService<T> {
     if (_client != null) {
       return _client!;
     } else {
-      _client =
-          GoogleSheetsService(await _accountService.getAuthenticatedClient());
+      _client = GoogleSheetsService(
+        await _accountService.getAuthenticatedClient(),
+      );
       return _client!;
     }
   }

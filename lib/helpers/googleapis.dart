@@ -26,9 +26,11 @@ class GoogleServiceAccountService {
       // FIXME doesn't work on web platform
       final HttpClient httpClient = HttpClient();
       httpClient.findProxy = HttpClient.findProxyFromEnvironment;
-      return clientViaServiceAccount(_serviceAccount, scopes,
-              baseClient: http_io.IOClient(httpClient))
-          .then((AuthClient client) {
+      return clientViaServiceAccount(
+        _serviceAccount,
+        scopes,
+        baseClient: http_io.IOClient(httpClient),
+      ).then((AuthClient client) {
         _client = client;
         return client;
       });
@@ -50,7 +52,10 @@ class GoogleCalendarService {
   }
 
   Future<Events> listEvents(
-      String calendarId, DateTime timeMin, DateTime timeMax) {
+    String calendarId,
+    DateTime timeMin,
+    DateTime timeMax,
+  ) {
     return _api.events
         .list(
           calendarId,
@@ -98,47 +103,50 @@ class GoogleSheetsService {
   ///
   /// The [range] is in Excel A1 notation (e.g. "A1:B2").
   Future<ValueRange> getRows(
-      String spreadsheetId, String sheetName, String range) {
+    String spreadsheetId,
+    String sheetName,
+    String range,
+  ) {
     final sheetRange = this.sheetRange(sheetName, range);
     return _api.spreadsheets.values
-        .get(
-          spreadsheetId,
-          sheetRange,
-          valueRenderOption: 'UNFORMATTED_VALUE',
-        )
+        .get(spreadsheetId, sheetRange, valueRenderOption: 'UNFORMATTED_VALUE')
         .timeout(_defaultTimeout);
   }
 
   /// Appends rows to a sheet.
   ///
   /// The [range] is in Excel A1 notation (e.g. "A1:B2").
-  Future<AppendValuesResponse> appendRows(String spreadsheetId,
-      String sheetName, String range, List<List<Object?>> values) {
+  Future<AppendValuesResponse> appendRows(
+    String spreadsheetId,
+    String sheetName,
+    String range,
+    List<List<Object?>> values,
+  ) {
     final encodedRange = sheetRange(sheetName, range);
     return _api.spreadsheets.values.append(
-        ValueRange(
-          range: encodedRange,
-          values: values,
-        ),
-        spreadsheetId,
-        encodedRange,
-        valueInputOption: 'USER_ENTERED');
+      ValueRange(range: encodedRange, values: values),
+      spreadsheetId,
+      encodedRange,
+      valueInputOption: 'USER_ENTERED',
+    );
   }
 
   /// Updates rows in a sheet.
   ///
   /// The [range] is in Excel A1 notation (e.g. "A1:B2").
-  Future<UpdateValuesResponse> updateRows(String spreadsheetId,
-      String sheetName, String range, List<List<Object?>> values) {
+  Future<UpdateValuesResponse> updateRows(
+    String spreadsheetId,
+    String sheetName,
+    String range,
+    List<List<Object?>> values,
+  ) {
     final encodedRange = sheetRange(sheetName, range);
     return _api.spreadsheets.values.update(
-        ValueRange(
-          range: encodedRange,
-          values: values,
-        ),
-        spreadsheetId,
-        encodedRange,
-        valueInputOption: 'USER_ENTERED');
+      ValueRange(range: encodedRange, values: values),
+      spreadsheetId,
+      encodedRange,
+      valueInputOption: 'USER_ENTERED',
+    );
   }
 
   /// Deletes rows from a sheet.
@@ -146,27 +154,34 @@ class GoogleSheetsService {
   /// [startRow] and [endRow] are 1-based indexes of the first and last row of
   /// the range to delete.
   Future<BatchUpdateSpreadsheetResponse> deleteRows(
-      String spreadsheetId, String sheetName, int startRow, int endRow) {
+    String spreadsheetId,
+    String sheetName,
+    int startRow,
+    int endRow,
+  ) {
     return _getSheetId(spreadsheetId, sheetName).then((spreadsheet) {
       final Sheet sheetInfo;
       try {
-        sheetInfo = spreadsheet.sheets!
-            .firstWhere((element) => element.properties!.title == sheetName);
+        sheetInfo = spreadsheet.sheets!.firstWhere(
+          (element) => element.properties!.title == sheetName,
+        );
       } on StateError catch (_) {
         throw Exception('Sheet not found: $sheetName');
       }
-      final request = BatchUpdateSpreadsheetRequest(requests: [
-        Request(
-          deleteDimension: DeleteDimensionRequest(
-            range: DimensionRange(
-              sheetId: sheetInfo.properties!.sheetId,
-              dimension: 'ROWS',
-              startIndex: startRow - 1,
-              endIndex: endRow,
+      final request = BatchUpdateSpreadsheetRequest(
+        requests: [
+          Request(
+            deleteDimension: DeleteDimensionRequest(
+              range: DimensionRange(
+                sheetId: sheetInfo.properties!.sheetId,
+                dimension: 'ROWS',
+                startIndex: startRow - 1,
+                endIndex: endRow,
+              ),
             ),
           ),
-        ),
-      ]);
+        ],
+      );
       return _api.spreadsheets.batchUpdate(request, spreadsheetId);
     });
   }

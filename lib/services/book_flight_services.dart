@@ -12,7 +12,9 @@ class BookFlightCalendarService {
   GoogleCalendarService? _client;
 
   BookFlightCalendarService(
-      GoogleServiceAccountService accountService, Object calendarId) {
+    GoogleServiceAccountService accountService,
+    Object calendarId,
+  ) {
     _accountService = accountService;
     _calendarId = calendarId as String;
   }
@@ -35,29 +37,37 @@ class BookFlightCalendarService {
 
   Future<Iterable<FlightBooking>> search(DateTime timeMin, DateTime timeMax) {
     return _ensureService().then(
-      (client) => client.listEvents(_calendarId, timeMin, timeMax).then(
-          (events) => events.items!
-                  .where((gcalendar.Event e) =>
-                      e.summary != null && e.start != null && e.end != null)
-                  .map((gcalendar.Event e) {
-                // e.timezone is always null but times are UTC!!!
-                return FlightBooking(
-                  e.id,
-                  e.summary!,
-                  getTzDateTime(e.start!, events.timeZone!),
-                  getTzDateTime(e.end!, events.timeZone!),
-                  e.description,
-                );
-              })),
+      (client) => client
+          .listEvents(_calendarId, timeMin, timeMax)
+          .then(
+            (events) => events.items!
+                .where(
+                  (gcalendar.Event e) =>
+                      e.summary != null && e.start != null && e.end != null,
+                )
+                .map((gcalendar.Event e) {
+                  // e.timezone is always null but times are UTC!!!
+                  return FlightBooking(
+                    e.id,
+                    e.summary!,
+                    getTzDateTime(e.start!, events.timeZone!),
+                    getTzDateTime(e.end!, events.timeZone!),
+                    e.description,
+                  );
+                }),
+          ),
     );
   }
 
   Future<bool> bookingConflicts(FlightBooking event) {
     return _ensureService().then(
-      (client) => client.listEvents(_calendarId, event.from, event.to).then(
-          (events) => events.items!
-              .where((gcalendar.Event e) => e.id != event.id)
-              .isNotEmpty),
+      (client) => client
+          .listEvents(_calendarId, event.from, event.to)
+          .then(
+            (events) => events.items!
+                .where((gcalendar.Event e) => e.id != event.id)
+                .isNotEmpty,
+          ),
     );
   }
 
@@ -73,13 +83,16 @@ class BookFlightCalendarService {
       gevent.end!.dateTime = event.to;
       return _client!
           .insertEvent(_calendarId, gevent)
-          .then((newEvent) => FlightBooking(
+          .then(
+            (newEvent) => FlightBooking(
               newEvent.id,
               newEvent.summary!,
               // TODO check if new event has timezone in it and avoid using data from the source event
               TZDateTime.from(newEvent.start!.dateTime!, event.from.location),
               TZDateTime.from(newEvent.end!.dateTime!, event.to.location),
-              newEvent.description));
+              newEvent.description,
+            ),
+          );
     });
   }
 
@@ -95,13 +108,16 @@ class BookFlightCalendarService {
       gevent.end!.dateTime = event.to;
       return _client!
           .updateEvent(_calendarId, event.id!, gevent)
-          .then((newEvent) => FlightBooking(
+          .then(
+            (newEvent) => FlightBooking(
               newEvent.id,
               newEvent.summary!,
               // TODO check if new event has timezone in it and avoid using data from the source event
               TZDateTime.from(newEvent.start!.dateTime!, event.from.location),
               TZDateTime.from(newEvent.end!.dateTime!, event.to.location),
-              newEvent.description));
+              newEvent.description,
+            ),
+          );
     });
   }
 
@@ -115,8 +131,12 @@ class BookFlightCalendarService {
 }
 
 TZDateTime getTzDateTime(
-    gcalendar.EventDateTime dateTime, String defaultTimeZone) {
+  gcalendar.EventDateTime dateTime,
+  String defaultTimeZone,
+) {
   final timeZone = dateTime.timeZone ?? defaultTimeZone;
   return TZDateTime.from(
-      dateTime.dateTime!, timeZone == 'UTC' ? UTC : getLocation(timeZone));
+    dateTime.dateTime!,
+    timeZone == 'UTC' ? UTC : getLocation(timeZone),
+  );
 }

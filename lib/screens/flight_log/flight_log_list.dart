@@ -61,8 +61,10 @@ class _FlightLogListState extends State<FlightLogList> {
       final items = widget.logBookService.hasMoreData()
           ? await widget.logBookService.fetchItems()
           : <FlightLogItem>[];
-      final page =
-          items.toList(growable: false).reversed.toList(growable: false);
+      final page = items
+          .toList(growable: false)
+          .reversed
+          .toList(growable: false);
 
       if (_firstTime) {
         if (page.isNotEmpty) {
@@ -108,9 +110,9 @@ class _FlightLogListState extends State<FlightLogList> {
       );
 
   Widget newPageErrorIndicator(BuildContext context) => NewPageErrorIndicator(
-        message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
-        onTap: _pagingController.retryLastFailedRequest,
-      );
+    message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
+    onTap: _pagingController.retryLastFailedRequest,
+  );
 
   /// FIXME using PagedSliverList within a CustomScrollView for Material leads to errors
   @override
@@ -136,9 +138,7 @@ class _FlightLogListState extends State<FlightLogList> {
       ),
       cupertino: (context, platform) => CustomScrollView(
         slivers: <Widget>[
-          CupertinoSliverRefreshControl(
-            onRefresh: () => _refresh(),
-          ),
+          CupertinoSliverRefreshControl(onRefresh: () => _refresh()),
           PagedSliverList.separated(
             pagingController: _pagingController,
             separatorBuilder: (context, index) => FlightLogListDivider(),
@@ -178,11 +178,7 @@ class FlightLogListItem extends StatelessWidget {
   final FlightLogItem item;
   final Function(BuildContext context, FlightLogItem item) onTapItem;
 
-  FlightLogListItem({
-    super.key,
-    required this.item,
-    required this.onTapItem,
-  });
+  FlightLogListItem({super.key, required this.item, required this.onTapItem});
 
   @override
   Widget build(BuildContext context) {
@@ -196,28 +192,25 @@ class FlightLogListItem extends StatelessWidget {
     );
     final subtitleStyle = platformThemeData(
       context,
-      material: (ThemeData data) => data.textTheme.titleMedium!
-          .copyWith(color: data.textTheme.bodySmall!.color),
+      material: (ThemeData data) => data.textTheme.titleMedium!.copyWith(
+        color: data.textTheme.bodySmall!.color,
+      ),
       cupertino: (CupertinoThemeData data) => data.textTheme.textStyle,
     );
     final pilotStyle = platformThemeData(
       context,
       // TODO do we need this? -- fontWeight: FontWeight.w300,
-      material: (ThemeData data) => data.textTheme.bodyMedium!.copyWith(
-        fontSize: 17,
-      ),
-      cupertino: (CupertinoThemeData data) => data.textTheme.textStyle.copyWith(
-        fontSize: 17,
-      ),
+      material: (ThemeData data) =>
+          data.textTheme.bodyMedium!.copyWith(fontSize: 17),
+      cupertino: (CupertinoThemeData data) =>
+          data.textTheme.textStyle.copyWith(fontSize: 17),
     );
     final timeStyle = platformThemeData(
       context,
-      material: (ThemeData data) => data.textTheme.bodyMedium!.copyWith(
-        fontSize: 20,
-      ),
-      cupertino: (CupertinoThemeData data) => data.textTheme.textStyle.copyWith(
-        fontSize: 20,
-      ),
+      material: (ThemeData data) =>
+          data.textTheme.bodyMedium!.copyWith(fontSize: 20),
+      cupertino: (CupertinoThemeData data) =>
+          data.textTheme.textStyle.copyWith(fontSize: 20),
     );
 
     final listItem = Padding(
@@ -227,39 +220,48 @@ class FlightLogListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-              flex: 8,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Text(_dateFormatter.format(item.date),
-                        style: dateStyle),
+            flex: 8,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    _dateFormatter.format(item.date),
+                    style: dateStyle,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      children: [
-                        Icon(PlatformIcons(context).locationSolid,
-                            color: Colors.red, size: 18),
-                        const SizedBox(width: 4),
-                        Text(_buildLocationName(item), style: subtitleStyle),
-                      ],
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        PlatformIcons(context).locationSolid,
+                        color: Colors.red,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(_buildLocationName(item), style: subtitleStyle),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      children: [
-                        Icon(PlatformIcons(context).clockSolid,
-                            color: Colors.blue, size: 18),
-                        const SizedBox(width: 4),
-                        Text(_buildHours(item), style: subtitleStyle),
-                      ],
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Icon(
+                        PlatformIcons(context).clockSolid,
+                        color: Colors.blue,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(_buildHours(item), style: subtitleStyle),
+                    ],
                   ),
-                ],
-              )),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             flex: 4,
             child: Column(
@@ -283,8 +285,11 @@ class FlightLogListItem extends StatelessWidget {
                       if (item.fuel != null && item.fuel! > 0)
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(Icons.local_gas_station,
-                              color: Colors.green, size: 24),
+                          child: Icon(
+                            Icons.local_gas_station,
+                            color: Colors.green,
+                            size: 24,
+                          ),
                         ),
                       Text(_buildTime(item), style: timeStyle),
                     ],
@@ -298,10 +303,8 @@ class FlightLogListItem extends StatelessWidget {
     );
 
     return PlatformWidgetBuilder(
-      material: (_, child, __) => InkWell(
-        onTap: () => onTapItem(context, item),
-        child: child,
-      ),
+      material: (_, child, __) =>
+          InkWell(onTap: () => onTapItem(context, item), child: child),
       cupertino: (_, child, __) => CupertinoInkWell(
         onPressed: () => onTapItem(context, item),
         child: child!,
@@ -312,8 +315,8 @@ class FlightLogListItem extends StatelessWidget {
 
   String _buildLocationName(FlightLogItem item) =>
       (item.origin != item.destination)
-          ? '${item.origin} – ${item.destination}'
-          : item.origin;
+      ? '${item.origin} – ${item.destination}'
+      : item.origin;
 
   String _buildHours(FlightLogItem item) =>
       '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
@@ -328,10 +331,7 @@ class FlightLogListController extends ValueNotifier<FlightLogListState> {
   FlightLogListController() : super(const FlightLogListState());
 
   set lastEndHourMeter(num? number) {
-    value = FlightLogListState(
-      lastEndHourMeter: number,
-      empty: value.empty,
-    );
+    value = FlightLogListState(lastEndHourMeter: number, empty: value.empty);
   }
 
   num? get lastEndHourMeter {

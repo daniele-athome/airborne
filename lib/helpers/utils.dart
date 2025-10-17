@@ -38,8 +38,8 @@ Brightness getBrightness(BuildContext context) => isCupertino(context)
 
 Color getModalBarrierColor(BuildContext context) => isCupertino(context)
     ?
-    // from cupertino/dialog.dart:_kDialogColor
-    const CupertinoDynamicColor.withBrightness(
+      // from cupertino/dialog.dart:_kDialogColor
+      const CupertinoDynamicColor.withBrightness(
         color: Color(0xCCF2F2F2),
         darkColor: Color(0xBF1E1E1E),
       ).resolveFrom(context)
@@ -60,16 +60,22 @@ String getExceptionMessage(dynamic error) {
 }
 
 String getRelativeDateString(
-    BuildContext context, DateFormat formatter, DateTime value) {
+  BuildContext context,
+  DateFormat formatter,
+  DateTime value,
+) {
   if (value.isToday) {
-    return AppLocalizations.of(context)!
-        .relativeDate_today(formatter.format(value));
+    return AppLocalizations.of(
+      context,
+    )!.relativeDate_today(formatter.format(value));
   } else if (value.isYesterday) {
-    return AppLocalizations.of(context)!
-        .relativeDate_yesterday(formatter.format(value));
+    return AppLocalizations.of(
+      context,
+    )!.relativeDate_yesterday(formatter.format(value));
   } else if (value.isTomorrow) {
-    return AppLocalizations.of(context)!
-        .relativeDate_tomorrow(formatter.format(value));
+    return AppLocalizations.of(
+      context,
+    )!.relativeDate_tomorrow(formatter.format(value));
   } else {
     return formatter.format(value);
   }
@@ -78,13 +84,17 @@ String getRelativeDateString(
 String formatFlightTimeDuration(BuildContext context, Duration duration) {
   if (duration.inMinutes >= 60) {
     // format in minutes + hour/minutes
-    return AppLocalizations.of(context)!
-        .flightLogModal_text_totalFlightTime_extended(
-            duration.inMinutes, duration.toFlightTimeSpec());
+    return AppLocalizations.of(
+      context,
+    )!.flightLogModal_text_totalFlightTime_extended(
+      duration.inMinutes,
+      duration.toFlightTimeSpec(),
+    );
   } else {
     // format in minutes only
-    return AppLocalizations.of(context)!
-        .flightLogModal_text_totalFlightTime_simple(duration.inMinutes);
+    return AppLocalizations.of(
+      context,
+    )!.flightLogModal_text_totalFlightTime_simple(duration.inMinutes);
   }
 }
 
@@ -150,20 +160,26 @@ class SunTimes {
 }
 
 SunTimes getSunTimes(
-    double latitude, double longitude, DateTime dateTime, Location tzLocation) {
+  double latitude,
+  double longitude,
+  DateTime dateTime,
+  Location tzLocation,
+) {
   final instant = Instant(
-      year: dateTime.year,
-      month: dateTime.month,
-      day: dateTime.day,
-      timeZoneOffset:
-          tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset /
-              1000 /
-              60 /
-              60);
+    year: dateTime.year,
+    month: dateTime.month,
+    day: dateTime.day,
+    timeZoneOffset:
+        tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset /
+        1000 /
+        60 /
+        60,
+  );
   final times = SolarCalculator(instant, latitude, longitude);
   return SunTimes(
-      TZDateTime.from(times.sunriseTime.toUtcDateTime(), tzLocation),
-      TZDateTime.from(times.sunsetTime.toUtcDateTime(), tzLocation));
+    TZDateTime.from(times.sunriseTime.toUtcDateTime(), tzLocation),
+    TZDateTime.from(times.sunsetTime.toUtcDateTime(), tzLocation),
+  );
 }
 
 void showToast(FToast fToast, String text, Duration duration) {
@@ -179,10 +195,11 @@ void showToast(FToast fToast, String text, Duration duration) {
     ),
     toastDuration: duration,
     positionedToastBuilder: (context, child, gravity) => Positioned(
-        bottom: 50.0 * MediaQuery.of(context).devicePixelRatio + 50.0,
-        left: 24.0,
-        right: 24.0,
-        child: child),
+      bottom: 50.0 * MediaQuery.of(context).devicePixelRatio + 50.0,
+      left: 24.0,
+      right: 24.0,
+      child: child,
+    ),
   );
 }
 
@@ -205,8 +222,10 @@ Future<void> showError(BuildContext context, String text) {
 }
 
 Future<bool> openUrl(BuildContext context, String url) async {
-  return launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)
-      .catchError((_) {
+  return launchUrl(
+    Uri.parse(url),
+    mode: LaunchMode.externalApplication,
+  ).catchError((_) {
     if (context.mounted) {
       // TODO i18n
       showError(context, 'Cannot open a browser.');
@@ -215,12 +234,13 @@ Future<bool> openUrl(BuildContext context, String url) async {
   });
 }
 
-Future<T?> showConfirm<T>(
-    {required BuildContext context,
-    required String text,
-    required String title,
-    required void Function() okCallback,
-    bool destructiveOk = false}) {
+Future<T?> showConfirm<T>({
+  required BuildContext context,
+  required String text,
+  required String title,
+  required void Function() okCallback,
+  bool destructiveOk = false,
+}) {
   return showPlatformDialog<T>(
     context: context,
     builder: (dialogContext) => PlatformAlertDialog(
@@ -260,9 +280,12 @@ InlineSpan formatMarkdown(String text) {
       spans.add(TextSpan(text: text.substring(0, boldMatch.start)));
     }
     // add the bold text span
-    spans.add(TextSpan(
+    spans.add(
+      TextSpan(
         text: text.substring(boldMatch.start + 2, boldMatch.end - 2),
-        style: TextStyle(fontWeight: FontWeight.bold)));
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
     // add the rest of the text (if any)
     if (text.length > boldMatch.end) {
       spans.add(TextSpan(text: text.substring(boldMatch.end, text.length)));
@@ -281,15 +304,23 @@ class DownloadProvider extends ChangeNotifier {
   /// FIXME doesn't work on web platform (we should use http package)
   final HttpClient Function() clientBuilder;
 
-  Future<File> downloadToFile(String url, String filename, String? username,
-      String? password, bool temp) async {
+  Future<File> downloadToFile(
+    String url,
+    String filename,
+    String? username,
+    String? password,
+    bool temp,
+  ) async {
     final uri = Uri.parse(url);
     HttpClient client = clientBuilder();
     client.connectionTimeout = kNetworkRequestTimeout;
     client.findProxy = HttpClient.findProxyFromEnvironment;
     if (username != null && password != null) {
       client.addCredentials(
-          uri, "", HttpClientBasicCredentials(username, password));
+        uri,
+        "",
+        HttpClientBasicCredentials(username, password),
+      );
     }
     try {
       final request = await client.getUrl(uri);
@@ -302,7 +333,8 @@ class DownloadProvider extends ChangeNotifier {
         return response.pipe(file.openWrite()).then((value) => file);
       } else {
         return Future.error(
-            Exception('Download error (${response.statusCode})'));
+          Exception('Download error (${response.statusCode})'),
+        );
       }
     } on SocketException catch (e) {
       // do not expose SocketException
@@ -345,10 +377,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                   ? CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle
                   : Theme.of(context).textTheme.titleLarge,
             ),
-            if (message != null)
-              const SizedBox(
-                height: 16,
-              ),
+            if (message != null) const SizedBox(height: 16),
             if (message != null)
               Text(
                 message,
@@ -357,10 +386,7 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                     ? CupertinoTheme.of(context).textTheme.textStyle
                     : Theme.of(context).textTheme.bodyMedium,
               ),
-            if (onTryAgain != null)
-              const SizedBox(
-                height: 48,
-              ),
+            if (onTryAgain != null) const SizedBox(height: 48),
             if (onTryAgain != null)
               SizedBox(
                 height: 50,
@@ -370,7 +396,8 @@ class FirstPageExceptionIndicator extends StatelessWidget {
                         key: const Key('button_error_retry'),
                         onPressed: onTryAgain,
                         child: Text(
-                            AppLocalizations.of(context)!.button_error_retry),
+                          AppLocalizations.of(context)!.button_error_retry,
+                        ),
                       )
                     : ElevatedButton.icon(
                         key: const Key('button_error_retry'),
@@ -390,30 +417,20 @@ class FirstPageExceptionIndicator extends StatelessWidget {
 
 /// Forked from [infinite\_scroll\_pagination].
 class FooterTile extends StatelessWidget {
-  const FooterTile({
-    required this.child,
-    super.key,
-  });
+  const FooterTile({required this.child, super.key});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(
-          top: 16,
-          bottom: 16,
-        ),
-        child: Center(child: child),
-      );
+    padding: const EdgeInsets.only(top: 16, bottom: 16),
+    child: Center(child: child),
+  );
 }
 
 /// Forked from [infinite\_scroll\_pagination].
 class NewPageErrorIndicator extends StatelessWidget {
-  const NewPageErrorIndicator({
-    super.key,
-    required this.message,
-    this.onTap,
-  });
+  const NewPageErrorIndicator({super.key, required this.message, this.onTap});
 
   final String message;
   final VoidCallback? onTap;
@@ -430,27 +447,18 @@ class NewPageErrorIndicator extends StatelessWidget {
                 ? CupertinoTheme.of(context).textTheme.navActionTextStyle
                 : Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(
-            height: 4,
-          ),
-          const Icon(
-            Icons.refresh,
-            size: 16,
-          ),
+          const SizedBox(height: 4),
+          const Icon(Icons.refresh, size: 16),
         ],
       ),
     );
   }
 
-  Widget _buildCupertinoWidget(BuildContext context) => CupertinoInkWell(
-        onPressed: onTap,
-        child: _buildChildWidget(context),
-      );
+  Widget _buildCupertinoWidget(BuildContext context) =>
+      CupertinoInkWell(onPressed: onTap, child: _buildChildWidget(context));
 
-  Widget _buildMaterialWidget(BuildContext context) => InkWell(
-        onTap: onTap,
-        child: _buildChildWidget(context),
-      );
+  Widget _buildMaterialWidget(BuildContext context) =>
+      InkWell(onTap: onTap, child: _buildChildWidget(context));
 
   @override
   Widget build(BuildContext context) => isCupertino(context)

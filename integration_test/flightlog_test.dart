@@ -39,9 +39,13 @@ void main() async {
       await tester.pumpAndSettle();
 
       expect(
-          await waitForWidget(
-              tester, find.byKey(const Key('nav_flight_log')), 10),
-          true);
+        await waitForWidget(
+          tester,
+          find.byKey(const Key('nav_flight_log')),
+          10,
+        ),
+        true,
+      );
       await tester.tap(find.byKey(const Key("nav_flight_log")));
       await tester.pumpAndSettle();
 
@@ -69,9 +73,13 @@ void main() async {
       await tester.pumpAndSettle();
 
       expect(
-          await waitForWidget(
-              tester, find.byKey(const Key('nav_flight_log')), 10),
-          true);
+        await waitForWidget(
+          tester,
+          find.byKey(const Key('nav_flight_log')),
+          10,
+        ),
+        true,
+      );
       await tester.tap(find.byKey(const Key("nav_flight_log")));
       await tester.pumpAndSettle();
 
@@ -79,12 +87,16 @@ void main() async {
       expect(httpRowsMock.isDone, true);
       expect(httpCountMock.isDone, true);
       expect(
-          tester
-              .widgetList(find.descendant(
-                  of: find.byKey(const Key('list_flight_log')),
-                  matching: find.byType(FlightLogListItem)))
-              .length,
-          mockItems.length);
+        tester
+            .widgetList(
+              find.descendant(
+                of: find.byKey(const Key('list_flight_log')),
+                matching: find.byType(FlightLogListItem),
+              ),
+            )
+            .length,
+        mockItems.length,
+      );
 
       httpRowsMock.cancel();
       httpCountMock.cancel();
@@ -96,17 +108,17 @@ void main() async {
 
 // TODO copied (actually modified) from FlightLogBookService, consider abstracting
 List<Object?> _formatRowData(FlightLogItem item) => [
-      dateToGsheets(DateTime.now()),
-      dateToGsheets(item.date).toInt(),
-      item.pilotName,
-      item.startHour,
-      item.endHour,
-      item.origin,
-      item.destination,
-      item.fuel ?? '',
-      item.fuel != null ? item.fuelPrice : '',
-      item.notes ?? '',
-    ];
+  dateToGsheets(DateTime.now()),
+  dateToGsheets(item.date).toInt(),
+  item.pilotName,
+  item.startHour,
+  item.endHour,
+  item.origin,
+  item.destination,
+  item.fuel ?? '',
+  item.fuel != null ? item.fuelPrice : '',
+  item.notes ?? '',
+];
 
 /// Google Sheets API for the rows.
 Interceptor mockGoogleSheetsRowsApi({List<FlightLogItem>? items}) {
@@ -115,15 +127,14 @@ Interceptor mockGoogleSheetsRowsApi({List<FlightLogItem>? items}) {
     ..query((Map<String, String> params) => true)
     ..persist()
     ..reply(
-        200,
-        json.encode({
-          "values": items != null
-              ? items.map((e) => _formatRowData(e)).toList(growable: false)
-              : [],
-        }),
-        headers: {
-          'content-type': 'application/json',
-        });
+      200,
+      json.encode({
+        "values": items != null
+            ? items.map((e) => _formatRowData(e)).toList(growable: false)
+            : [],
+      }),
+      headers: {'content-type': 'application/json'},
+    );
 }
 
 Interceptor mockGoogleSheetsCountApi(int count) {
@@ -132,13 +143,12 @@ Interceptor mockGoogleSheetsCountApi(int count) {
     ..query((Map<String, String> params) => true)
     ..persist()
     ..reply(
-        200,
-        json.encode({
-          "values": [
-            [count.toString()]
-          ],
-        }),
-        headers: {
-          'content-type': 'application/json',
-        });
+      200,
+      json.encode({
+        "values": [
+          [count.toString()],
+        ],
+      }),
+      headers: {'content-type': 'application/json'},
+    );
 }

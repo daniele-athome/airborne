@@ -28,8 +28,8 @@ const _kEventBackgroundDarkColor = Colors.blue;
 
 Color _resolveEventBackgroundColor(BuildContext context) =>
     getBrightness(context) == Brightness.dark
-        ? _kEventBackgroundDarkColor
-        : _kEventBackgroundColor;
+    ? _kEventBackgroundDarkColor
+    : _kEventBackgroundColor;
 
 const _kEventDefaultDuration = Duration(hours: 1);
 
@@ -78,8 +78,10 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   @override
   void didChangeDependencies() {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
-    _calendarService =
-        Provider.of<BookFlightCalendarService>(context, listen: false);
+    _calendarService = Provider.of<BookFlightCalendarService>(
+      context,
+      listen: false,
+    );
     _rebuildData();
     super.didChangeDependencies();
   }
@@ -163,42 +165,29 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       appBar: PlatformAppBar(
         title: Text(_appBarTitle ?? AppLocalizations.of(context)!.appName),
         leading: leadingAction,
-        trailingActions: [
-          trailingAction,
-        ],
+        trailingActions: [trailingAction],
         material: (context, platform) => MaterialAppBarData(
           toolbarHeight:
               MediaQuery.of(context).orientation == Orientation.portrait
-                  ? kPortraitToolbarHeight
-                  : kLandscapeToolbarHeight,
+              ? kPortraitToolbarHeight
+              : kLandscapeToolbarHeight,
         ),
       ),
-      material: (_, __) => MaterialScaffoldData(
-        floatingActionButton: fab,
-      ),
+      material: (_, __) => MaterialScaffoldData(floatingActionButton: fab),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 12,
-          ),
+          const SizedBox(height: 12),
           _buildViewSelector(context),
-          const SizedBox(
-            height: 12,
-          ),
-          Expanded(
-            child: _buildCalendar(context, _appConfig),
-          ),
+          const SizedBox(height: 12),
+          Expanded(child: _buildCalendar(context, _appConfig)),
         ],
       ),
     );
 
     return isCupertino(context)
         ? scaffold
-        : ScaffoldMessenger(
-            key: _snackbarKey,
-            child: scaffold,
-          );
+        : ScaffoldMessenger(key: _snackbarKey, child: scaffold);
   }
 
   @override
@@ -288,8 +277,9 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       showPlatformDialog(
         context: context,
         builder: (dialogContext) => PlatformAlertDialog(
-          title:
-              Text(title ?? AppLocalizations.of(context)!.dialog_title_error),
+          title: Text(
+            title ?? AppLocalizations.of(context)!.dialog_title_error,
+          ),
           content: Text(text),
           actions: <Widget>[
             PlatformDialogAction(
@@ -330,8 +320,9 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   void _hideError() {
     if (!isCupertino(context)) {
       // workaround for possible (?) SnackBar bug (DON'T use clearSnackBars)
-      _snackbarKey.currentState!
-          .removeCurrentSnackBar(reason: SnackBarClosedReason.action);
+      _snackbarKey.currentState!.removeCurrentSnackBar(
+        reason: SnackBarClosedReason.action,
+      );
     }
   }
 
@@ -345,8 +336,11 @@ class BookFlightScreenState extends State<BookFlightScreen> {
 
   /// Only in month view: go to day view on selected date.
   /// Only in schedule view: go to month view for selected month.
-  void _onLongPressCalendaer(BuildContext context, AppConfig appConfig,
-      CalendarLongPressDetails calendarLongPressDetails) {
+  void _onLongPressCalendaer(
+    BuildContext context,
+    AppConfig appConfig,
+    CalendarLongPressDetails calendarLongPressDetails,
+  ) {
     if (calendarLongPressDetails.targetElement ==
             CalendarElement.calendarCell &&
         _calendarController.view == CalendarView.month) {
@@ -366,8 +360,11 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     }
   }
 
-  void _onTapCalendar(BuildContext context, AppConfig appConfig,
-      CalendarTapDetails calendarTapDetails) {
+  void _onTapCalendar(
+    BuildContext context,
+    AppConfig appConfig,
+    CalendarTapDetails calendarTapDetails,
+  ) {
     if (calendarTapDetails.targetElement == CalendarElement.header ||
         calendarTapDetails.targetElement == CalendarElement.resourceHeader) {
       return;
@@ -387,8 +384,10 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         null,
         appConfig.pilotName!,
         TZDateTime.from(calendarTapDetails.date!, appConfig.locationTimeZone),
-        TZDateTime.from(calendarTapDetails.date!.add(const Duration(hours: 1)),
-            appConfig.locationTimeZone),
+        TZDateTime.from(
+          calendarTapDetails.date!.add(const Duration(hours: 1)),
+          appConfig.locationTimeZone,
+        ),
         null,
       );
       _bookFlight(context, appConfig, newAppointment);
@@ -396,54 +395,49 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   void _bookFlight(
-      BuildContext context, AppConfig appConfig, FlightBooking? event) {
+    BuildContext context,
+    AppConfig appConfig,
+    FlightBooking? event,
+  ) {
     final FlightBooking model;
     if (event == null) {
       // start date is tomorrow 12:00
       DateTime now = DateTime.now();
-      final date =
-          TZDateTime(appConfig.locationTimeZone, now.year, now.month, now.day)
-              .add(const Duration(days: 1, hours: 12));
+      final date = TZDateTime(
+        appConfig.locationTimeZone,
+        now.year,
+        now.month,
+        now.day,
+      ).add(const Duration(days: 1, hours: 12));
       final dateFrom = date;
       final dateTo = date.add(_kEventDefaultDuration);
 
-      model = FlightBooking(
-        null,
-        appConfig.pilotName!,
-        dateFrom,
-        dateTo,
-        null,
-      );
+      model = FlightBooking(null, appConfig.pilotName!, dateFrom, dateTo, null);
     } else {
       model = event;
     }
 
-    Widget pageRouteBuilder(BuildContext context) => Provider.value(
-          value: _calendarService,
-          child: BookFlightModal(model),
-        );
+    Widget pageRouteBuilder(BuildContext context) =>
+        Provider.value(value: _calendarService, child: BookFlightModal(model));
 
     final route = isCupertino(context)
-        ? CupertinoPageRoute(
-            builder: pageRouteBuilder,
-            fullscreenDialog: true,
-          )
-        : MaterialPageRoute(
-            builder: pageRouteBuilder,
-            fullscreenDialog: true,
-          );
+        ? CupertinoPageRoute(builder: pageRouteBuilder, fullscreenDialog: true)
+        : MaterialPageRoute(builder: pageRouteBuilder, fullscreenDialog: true);
     Navigator.of(context, rootNavigator: true).push(route).then((result) {
       if (result != null && context.mounted) {
         final String message;
         if (event == null) {
-          message =
-              AppLocalizations.of(context)!.bookFlight_message_flight_added;
+          message = AppLocalizations.of(
+            context,
+          )!.bookFlight_message_flight_added;
         } else if (result is DeletedFlightBooking) {
-          message =
-              AppLocalizations.of(context)!.bookFlight_message_flight_canceled;
+          message = AppLocalizations.of(
+            context,
+          )!.bookFlight_message_flight_canceled;
         } else {
-          message =
-              AppLocalizations.of(context)!.bookFlight_message_flight_updated;
+          message = AppLocalizations.of(
+            context,
+          )!.bookFlight_message_flight_updated;
         }
         showToast(_fToast, message, const Duration(seconds: 2));
         _refresh(result, event == null);
@@ -456,14 +450,26 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         ? const TextStyle(fontWeight: FontWeight.bold)
         : null;
     return {
-      0: Text(AppLocalizations.of(context)!.bookFlight_view_schedule,
-          key: const Key("button_bookFlight_view_schedule"), style: textStyle),
-      1: Text(AppLocalizations.of(context)!.bookFlight_view_month,
-          key: const Key("button_bookFlight_view_month"), style: textStyle),
-      2: Text(AppLocalizations.of(context)!.bookFlight_view_week,
-          key: const Key("button_bookFlight_view_week"), style: textStyle),
-      3: Text(AppLocalizations.of(context)!.bookFlight_view_day,
-          key: const Key("button_bookFlight_view_day"), style: textStyle),
+      0: Text(
+        AppLocalizations.of(context)!.bookFlight_view_schedule,
+        key: const Key("button_bookFlight_view_schedule"),
+        style: textStyle,
+      ),
+      1: Text(
+        AppLocalizations.of(context)!.bookFlight_view_month,
+        key: const Key("button_bookFlight_view_month"),
+        style: textStyle,
+      ),
+      2: Text(
+        AppLocalizations.of(context)!.bookFlight_view_week,
+        key: const Key("button_bookFlight_view_week"),
+        style: textStyle,
+      ),
+      3: Text(
+        AppLocalizations.of(context)!.bookFlight_view_day,
+        key: const Key("button_bookFlight_view_day"),
+        style: textStyle,
+      ),
     };
   }
 
@@ -489,23 +495,27 @@ class BookFlightScreenState extends State<BookFlightScreen> {
               onSegmentTapped: _changeView,
             ),
           ),
-        )
+        ),
       ],
     );
   }
 
   Widget _scheduleViewBuilder(
-      BuildContext buildContext, ScheduleViewMonthHeaderDetails details) {
+    BuildContext buildContext,
+    ScheduleViewMonthHeaderDetails details,
+  ) {
     final dateStr = DateFormat.yMMMM().format(details.date);
     final text = dateStr[0].toUpperCase() + dateStr.substring(1);
     return Stack(
       children: <Widget>[
         Image(
-            image: ExactAssetImage(
-                'assets/images/month_${details.date.month}.png'),
-            fit: BoxFit.cover,
-            width: details.bounds.width,
-            height: details.bounds.height),
+          image: ExactAssetImage(
+            'assets/images/month_${details.date.month}.png',
+          ),
+          fit: BoxFit.cover,
+          width: details.bounds.width,
+          height: details.bounds.height,
+        ),
         Positioned(
           left: 55,
           right: 0,
@@ -513,30 +523,34 @@ class BookFlightScreenState extends State<BookFlightScreen> {
           bottom: 0,
           child: Text(
             text,
-            style: const TextStyle(fontSize: 20, color: Colors.white, shadows: [
-              Shadow(
-                color: Colors.black,
-                offset: Offset(0, 0.1),
-                blurRadius: 1.0,
-              ),
-              Shadow(
-                color: Colors.black,
-                offset: Offset(0.1, 0),
-                blurRadius: 1.0,
-              ),
-              Shadow(
-                color: Colors.black,
-                offset: Offset(0, -0.1),
-                blurRadius: 1.0,
-              ),
-              Shadow(
-                color: Colors.black,
-                offset: Offset(-0.1, 0),
-                blurRadius: 1.0,
-              ),
-            ]),
+            style: const TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(0, 0.1),
+                  blurRadius: 1.0,
+                ),
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(0.1, 0),
+                  blurRadius: 1.0,
+                ),
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(0, -0.1),
+                  blurRadius: 1.0,
+                ),
+                Shadow(
+                  color: Colors.black,
+                  offset: Offset(-0.1, 0),
+                  blurRadius: 1.0,
+                ),
+              ],
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -544,21 +558,31 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   // TODO test sizes on different resolutions and screen densities
   // TODO handle multiday events (especially in month view)
   Widget _appointmentBuilder(
-      BuildContext context, CalendarAppointmentDetails details) {
+    BuildContext context,
+    CalendarAppointmentDetails details,
+  ) {
     final event = details.appointments.first as FlightBooking;
 
     // event spanning multiple days
-    final eventStartDate =
-        DateTime(event.from.year, event.from.month, event.from.day);
+    final eventStartDate = DateTime(
+      event.from.year,
+      event.from.month,
+      event.from.day,
+    );
     final eventEndDate = DateTime(event.to.year, event.to.month, event.to.day);
-    final currentDate =
-        DateTime(details.date.year, details.date.month, details.date.day);
-    final multiDayEvent = eventEndDate.isAfter(currentDate) ||
+    final currentDate = DateTime(
+      details.date.year,
+      details.date.month,
+      details.date.day,
+    );
+    final multiDayEvent =
+        eventEndDate.isAfter(currentDate) ||
         eventStartDate.isBefore(currentDate);
     int thisDay = 0;
     int spanDays = 0;
     if (multiDayEvent) {
-      final DateTime today = (_calendarController.view == CalendarView.day ||
+      final DateTime today =
+          (_calendarController.view == CalendarView.day ||
               _calendarController.view == CalendarView.week)
           ? _visibleDates.last
           : currentDate;
@@ -592,7 +616,8 @@ class BookFlightScreenState extends State<BookFlightScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                  foregroundImage: _appConfig.getPilotAvatar(event.pilotName)),
+                foregroundImage: _appConfig.getPilotAvatar(event.pilotName),
+              ),
               const SizedBox(width: 6),
               // the Flexible is to make the ellipsis work
               Expanded(
@@ -601,10 +626,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(eventText),
-                    Text(
-                      timeText,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(timeText, overflow: TextOverflow.ellipsis),
                   ],
                 ),
               ),
@@ -612,7 +634,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                 const Align(
                   alignment: Alignment.centerRight,
                   child: Text('»', style: TextStyle(fontSize: 26)),
-                )
+                ),
             ],
           ),
         ),
@@ -621,25 +643,26 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       if (multiDayEvent) {
         // this should span in the hour view, but I don't think it's supported by SfCalendar
         return DefaultTextStyle(
-            style: const TextStyle(fontSize: 12),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: _resolveEventBackgroundColor(context),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                children: [
-                  Expanded(child: Text(eventText)),
-                  if (thisDay < spanDays)
-                    const Text(
-                      '»',
-                      // FIXME not sure using height is the right way to do this
-                      style: TextStyle(fontSize: 18, height: 0.9),
-                    )
-                ],
-              ),
-            ));
+          style: const TextStyle(fontSize: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: _resolveEventBackgroundColor(context),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Row(
+              children: [
+                Expanded(child: Text(eventText)),
+                if (thisDay < spanDays)
+                  const Text(
+                    '»',
+                    // FIXME not sure using height is the right way to do this
+                    style: TextStyle(fontSize: 18, height: 0.9),
+                  ),
+              ],
+            ),
+          ),
+        );
       }
 
       return DefaultTextStyle(
@@ -674,8 +697,9 @@ class BookFlightScreenState extends State<BookFlightScreen> {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Text(
-                        '${DateFormat(kAviationTimeFormat).format(event.tzFrom(_appConfig.locationTimeZone))} - ${DateFormat(kAviationTimeFormat).format(event.tzTo(_appConfig.locationTimeZone))}',
-                        style: const TextStyle(fontSize: 14)),
+                      '${DateFormat(kAviationTimeFormat).format(event.tzFrom(_appConfig.locationTimeZone))} - ${DateFormat(kAviationTimeFormat).format(event.tzTo(_appConfig.locationTimeZone))}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
                   ),
                 ),
             ],
@@ -686,8 +710,9 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   Widget _buildCalendar(BuildContext context, AppConfig appConfig) {
-    final firstDayOfWeekIndex =
-        MaterialLocalizations.of(context).firstDayOfWeekIndex;
+    final firstDayOfWeekIndex = MaterialLocalizations.of(
+      context,
+    ).firstDayOfWeekIndex;
     return Theme(
       data: getBrightness(context) == Brightness.dark
           ? ThemeData.dark()
@@ -720,39 +745,39 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         dataSource: _dataSource,
         loadMoreWidgetBuilder:
             (BuildContext context, LoadMoreCallback loadMoreEvents) {
-          return FutureBuilder<void>(
-            future: loadMoreEvents(),
-            builder: (context, snapShot) {
-              if (snapShot.connectionState == ConnectionState.waiting) {
-                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                  _hideError();
-                });
-              }
-              return Container(
-                height: double.infinity,
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                alignment: _calendarController.view ==
-                        // ugly trick to get alignment decided by SfCalendar. Don't do this at home!!
-                        CalendarView.schedule
-                    ? context
-                        .findAncestorWidgetOfExactType<Container>()!
-                        .alignment
-                    : Alignment.center,
-                color: getModalBarrierColor(context),
-                child: PlatformWidget(
-                  cupertino: (context, platform) =>
-                      const CupertinoActivityIndicator(
-                    radius: 20,
-                  ),
-                  material: (context, platform) =>
-                      const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation(Colors.blue)),
-                ),
+              return FutureBuilder<void>(
+                future: loadMoreEvents(),
+                builder: (context, snapShot) {
+                  if (snapShot.connectionState == ConnectionState.waiting) {
+                    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                      _hideError();
+                    });
+                  }
+                  return Container(
+                    height: double.infinity,
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    alignment:
+                        _calendarController.view ==
+                            // ugly trick to get alignment decided by SfCalendar. Don't do this at home!!
+                            CalendarView.schedule
+                        ? context
+                              .findAncestorWidgetOfExactType<Container>()!
+                              .alignment
+                        : Alignment.center,
+                    color: getModalBarrierColor(context),
+                    child: PlatformWidget(
+                      cupertino: (context, platform) =>
+                          const CupertinoActivityIndicator(radius: 20),
+                      material: (context, platform) =>
+                          const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.blue),
+                          ),
+                    ),
+                  );
+                },
               );
             },
-          );
-        },
         onTap: (calendarTapDetails) =>
             _onTapCalendar(context, appConfig, calendarTapDetails),
         onLongPress: (calendarLongPressDetails) =>

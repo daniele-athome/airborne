@@ -26,23 +26,28 @@ class PilotSelectList extends StatelessWidget {
         children: [
           CupertinoFormSection.insetGrouped(
             children: pilotNames
-                .map((e) => CupertinoFormButtonRow(
-                      key: Key('pilot_select_list:$e'),
-                      onPressed: () {
-                        onSelection(e);
-                      },
-                      child: Row(
-                        children: [
-                          CircleAvatar(foregroundImage: avatarProvider(e)),
-                          const SizedBox(width: 14),
-                          Expanded(
-                              child: Text(e,
-                                  style: CupertinoTheme.of(context)
-                                      .textTheme
-                                      .textStyle)),
-                        ],
-                      ),
-                    ))
+                .map(
+                  (e) => CupertinoFormButtonRow(
+                    key: Key('pilot_select_list:$e'),
+                    onPressed: () {
+                      onSelection(e);
+                    },
+                    child: Row(
+                      children: [
+                        CircleAvatar(foregroundImage: avatarProvider(e)),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            e,
+                            style: CupertinoTheme.of(
+                              context,
+                            ).textTheme.textStyle,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
                 .toList(growable: false),
           ),
         ],
@@ -50,49 +55,52 @@ class PilotSelectList extends StatelessWidget {
       material: (context, platform) => ListView(
         shrinkWrap: true,
         children: pilotNames
-            .map((e) => ListTile(
-                  key: Key('pilot_select_list:$e'),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  leading: CircleAvatar(foregroundImage: avatarProvider(e)),
-                  title: Text(e),
-                  onTap: () {
-                    onSelection(e);
-                  },
-                ))
+            .map(
+              (e) => ListTile(
+                key: Key('pilot_select_list:$e'),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                leading: CircleAvatar(foregroundImage: avatarProvider(e)),
+                title: Text(e),
+                onTap: () {
+                  onSelection(e);
+                },
+              ),
+            )
             .toList(growable: false),
       ),
     );
   }
 }
 
-Future<String?> createPilotSelectDialog(
-    {required BuildContext context,
-    required List<String> pilotNames,
-    required String title,
-    required ImageProvider Function(String name) avatarProvider,
-    String? selectedPilot}) {
+Future<String?> createPilotSelectDialog({
+  required BuildContext context,
+  required List<String> pilotNames,
+  required String title,
+  required ImageProvider Function(String name) avatarProvider,
+  String? selectedPilot,
+}) {
   final Future<String?> dialog;
   if (isCupertino(context)) {
     Widget pageRouteBuilder(BuildContext context) => PlatformScaffold(
-          iosContentPadding: true,
-          appBar: PlatformAppBar(
-            title: Text(title),
-          ),
-          cupertino: (context, platform) => CupertinoPageScaffoldData(
-            backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
-          ),
-          body: PilotSelectList(
-              pilotNames: pilotNames,
-              selectedName: selectedPilot,
-              avatarProvider: avatarProvider,
-              onSelection: (selected) {
-                Navigator.of(context).pop(selected);
-              }),
-        );
+      iosContentPadding: true,
+      appBar: PlatformAppBar(title: Text(title)),
+      cupertino: (context, platform) => CupertinoPageScaffoldData(
+        backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
+      ),
+      body: PilotSelectList(
+        pilotNames: pilotNames,
+        selectedName: selectedPilot,
+        avatarProvider: avatarProvider,
+        onSelection: (selected) {
+          Navigator.of(context).pop(selected);
+        },
+      ),
+    );
 
-    dialog = Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
-      builder: pageRouteBuilder,
-    ));
+    dialog = Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(CupertinoPageRoute(builder: pageRouteBuilder));
   } else {
     dialog = showPlatformDialog(
       context: context,
@@ -101,12 +109,13 @@ Future<String?> createPilotSelectDialog(
         content: SizedBox(
           width: double.minPositive,
           child: PilotSelectList(
-              pilotNames: pilotNames,
-              selectedName: selectedPilot,
-              avatarProvider: avatarProvider,
-              onSelection: (selected) {
-                Navigator.of(dialogContext).pop(selected);
-              }),
+            pilotNames: pilotNames,
+            selectedName: selectedPilot,
+            avatarProvider: avatarProvider,
+            onSelection: (selected) {
+              Navigator.of(dialogContext).pop(selected);
+            },
+          ),
         ),
         material: (context, platform) => MaterialAlertDialogData(
           contentPadding: const EdgeInsets.symmetric(vertical: 20),

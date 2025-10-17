@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Check code formatting
+        run: dart format --set-exit-if-changed .
+
       - name: Building generated source code
         run: dart run build_runner build
 

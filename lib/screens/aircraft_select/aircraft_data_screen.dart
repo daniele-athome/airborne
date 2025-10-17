@@ -45,7 +45,7 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
                         widgetKey: const Key('aircraft_data_button_install'),
                         onPressed: () =>
                             _downloadData(context, appConfig, downloadProvider),
-                        cupertino: (_, __) => CupertinoTextButtonData(
+                        cupertino: (_, _) => CupertinoTextButtonData(
                           // workaround for https://github.com/flutter/flutter/issues/32701
                           padding: EdgeInsets.zero,
                         ),

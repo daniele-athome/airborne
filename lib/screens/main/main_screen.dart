@@ -113,12 +113,12 @@ class _MainNavigationState extends State<MainNavigation> {
         bodyBuilder: (context, index) => _buildTab(context, index),
         tabController: _tabController,
         items: items,
-        materialTabs: (_, __) =>
+        materialTabs: (_, _) =>
             MaterialNavBarData(type: BottomNavigationBarType.fixed),
-        material: (_, __) => MaterialTabScaffoldData(
+        material: (_, _) => MaterialTabScaffoldData(
           // TODO
         ),
-        cupertino: (_, __) => CupertinoTabScaffoldData(
+        cupertino: (_, _) => CupertinoTabScaffoldData(
           // TODO
         ),
       );

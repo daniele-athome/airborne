@@ -234,7 +234,7 @@ class MainNavigationApp extends StatelessWidget {
           'pilot-select': (context) => const PilotSelectScreen(),
         },
         debugShowCheckedModeBanner: false,
-        material: (_, __) => MaterialAppData(
+        material: (_, _) => MaterialAppData(
           // TEST
           //themeMode: ThemeMode.dark,
           theme: ThemeData(
@@ -262,7 +262,7 @@ class MainNavigationApp extends StatelessWidget {
             useMaterial3: true,
           ),
         ),
-        cupertino: (_, __) => CupertinoAppData(
+        cupertino: (_, _) => CupertinoAppData(
           // TEST
           //theme: const CupertinoThemeData(brightness: Brightness.dark),
           // TODO

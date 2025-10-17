@@ -123,7 +123,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
           CupertinoIcons.calendar_today,
           semanticLabel: AppLocalizations.of(context)!.button_goToday,
         ),
-        cupertino: (_, __) => CupertinoIconButtonData(
+        cupertino: (_, _) => CupertinoIconButtonData(
           // workaround for https://github.com/flutter/flutter/issues/32701
           padding: EdgeInsets.zero,
         ),
@@ -138,7 +138,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         ),
         // TODO not ready yet
         //color: CupertinoColors.systemRed,
-        cupertino: (_, __) => CupertinoIconButtonData(
+        cupertino: (_, _) => CupertinoIconButtonData(
           // workaround for https://github.com/flutter/flutter/issues/32701
           padding: EdgeInsets.zero,
         ),
@@ -147,7 +147,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       trailingAction = PlatformIconButton(
         onPressed: () => setState(() => _goToday()),
         icon: const Icon(Icons.calendar_today_sharp),
-        material: (_, __) => MaterialIconButtonData(
+        material: (_, _) => MaterialIconButtonData(
           tooltip: AppLocalizations.of(context)!.button_goToday,
         ),
       );
@@ -173,7 +173,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
               : kLandscapeToolbarHeight,
         ),
       ),
-      material: (_, __) => MaterialScaffoldData(floatingActionButton: fab),
+      material: (_, _) => MaterialScaffoldData(floatingActionButton: fab),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

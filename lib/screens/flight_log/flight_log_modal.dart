@@ -513,7 +513,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
         PlatformTextButton(
           key: const Key('button_flightLogModal_save'),
           onPressed: () => _onSave(context),
-          cupertino: (_, __) => CupertinoTextButtonData(
+          cupertino: (_, _) => CupertinoTextButtonData(
             // workaround for https://github.com/flutter/flutter/issues/32701
             padding: EdgeInsets.zero,
           ),
@@ -527,7 +527,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           key: const Key('button_flightLogModal_save'),
           onPressed: () => _onSave(context),
           icon: const Icon(Icons.check_sharp),
-          material: (_, __) => MaterialIconButtonData(
+          material: (_, _) => MaterialIconButtonData(
             tooltip: AppLocalizations.of(context)!.flightLogModal_button_save,
           ),
         ),
@@ -538,7 +538,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
           PlatformIconButton(
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
-            material: (_, __) => MaterialIconButtonData(
+            material: (_, _) => MaterialIconButtonData(
               tooltip: AppLocalizations.of(
                 context,
               )!.flightLogModal_button_delete,

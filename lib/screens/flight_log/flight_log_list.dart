@@ -303,9 +303,9 @@ class FlightLogListItem extends StatelessWidget {
     );
 
     return PlatformWidgetBuilder(
-      material: (_, child, __) =>
+      material: (_, child, _) =>
           InkWell(onTap: () => onTapItem(context, item), child: child),
-      cupertino: (_, child, __) => CupertinoInkWell(
+      cupertino: (_, child, _) => CupertinoInkWell(
         onPressed: () => onTapItem(context, item),
         child: child!,
       ),

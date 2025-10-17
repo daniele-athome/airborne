@@ -71,7 +71,7 @@ Future<void> main() async {
         ),
         // account service: the dependency tree root
         ProxyProvider<AppConfig, GoogleServiceAccountService?>(
-          update: (_, appConfig, __) {
+          update: (_, appConfig, _) {
             _log.finest('build account_service');
             return appConfig.currentAircraft != null
                 ? GoogleServiceAccountService(
@@ -86,7 +86,7 @@ Future<void> main() async {
           GoogleServiceAccountService?,
           MetadataService?
         >(
-          update: (_, appConfig, account, __) {
+          update: (_, appConfig, account, _) {
             _log.finest('build metadata');
             return appConfig.hasFeature('metadata') && account != null
                 ? MetadataService(account, appConfig.metadataBackendInfo)
@@ -100,7 +100,7 @@ Future<void> main() async {
           GoogleServiceAccountService?,
           BookFlightCalendarService?
         >(
-          update: (_, appConfig, account, __) {
+          update: (_, appConfig, account, _) {
             _log.finest('build book_flight');
             return appConfig.hasFeature('book_flight') && account != null
                 ? BookFlightCalendarService(account, appConfig.googleCalendarId)
@@ -113,7 +113,7 @@ Future<void> main() async {
           MetadataService?,
           FlightLogBookService?
         >(
-          update: (_, appConfig, account, metadataService, __) {
+          update: (_, appConfig, account, metadataService, _) {
             _log.finest('build flight_log');
             return appConfig.hasFeature('flight_log') && account != null
                 ? FlightLogBookService(
@@ -130,7 +130,7 @@ Future<void> main() async {
           MetadataService?,
           ActivitiesService?
         >(
-          update: (_, appConfig, account, metadataService, __) {
+          update: (_, appConfig, account, metadataService, _) {
             _log.finest('build activities');
             return appConfig.hasFeature('activities')
                 ? ActivitiesService(

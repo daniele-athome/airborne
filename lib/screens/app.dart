@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         'aircraft-data': (context) => const SetAircraftDataScreen(),
       },
       debugShowCheckedModeBanner: false,
-      material: (_, __) => MaterialAppData(
+      material: (_, _) => MaterialAppData(
         // TEST themeMode: ThemeMode.dark,
         theme: ThemeData.light(useMaterial3: true).copyWith(
           brightness: Brightness.light,
@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      cupertino: (_, __) => CupertinoAppData(
+      cupertino: (_, _) => CupertinoAppData(
         // TEST theme: const CupertinoThemeData(brightness: Brightness.dark),
         // TODO
       ),

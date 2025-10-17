@@ -257,7 +257,7 @@ Future<T?> showConfirm<T>({
             okCallback();
           },
           // TODO destructiveOk for material
-          cupertino: (_, __) =>
+          cupertino: (_, _) =>
               CupertinoDialogActionData(isDestructiveAction: destructiveOk),
           child: Text(AppLocalizations.of(context)!.dialog_button_ok),
         ),

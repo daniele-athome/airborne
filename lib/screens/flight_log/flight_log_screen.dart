@@ -153,7 +153,7 @@ class _FlightLogScreenState extends State<FlightLogScreen>
                     : kLandscapeToolbarHeight,
               ),
             ),
-      material: (_, __) => MaterialScaffoldData(
+      material: (_, _) => MaterialScaffoldData(
         floatingActionButton: ValueListenableBuilder(
           valueListenable: _logBookController,
           builder: (context, value, child) => _canShowCreateButton()
@@ -168,9 +168,9 @@ class _FlightLogScreenState extends State<FlightLogScreen>
         ),
         body: _buildBody(context),
       ),
-      cupertino: (BuildContext context, __) => CupertinoPageScaffoldData(
+      cupertino: (BuildContext context, _) => CupertinoPageScaffoldData(
         body: NestedScrollView(
-          headerSliverBuilder: (_, __) => [
+          headerSliverBuilder: (_, _) => [
             CupertinoSliverNavigationBar(
               largeTitle: Text(AppLocalizations.of(context)!.flightLog_title),
               trailing: ValueListenableBuilder(
@@ -188,7 +188,7 @@ class _FlightLogScreenState extends State<FlightLogScreen>
                         ),
                         // TODO not ready yet
                         //color: CupertinoColors.systemRed,
-                        cupertino: (_, __) => CupertinoIconButtonData(
+                        cupertino: (_, _) => CupertinoIconButtonData(
                           // workaround for https://github.com/flutter/flutter/issues/32701
                           padding: EdgeInsets.zero,
                         ),

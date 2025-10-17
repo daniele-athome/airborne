@@ -45,7 +45,7 @@ class _HourListTileState extends State<HourListTile> {
               Navigator.pop(dialogContext, _controller.number);
             },
             icon: const Icon(Icons.check),
-            material: (_, __) => MaterialIconButtonData(
+            material: (_, _) => MaterialIconButtonData(
               // FIXME maybe another tooltip?
               tooltip: AppLocalizations.of(context)!.dialog_button_done,
             ),
@@ -131,7 +131,7 @@ class _CupertinoHourFormRowState extends State<CupertinoHourFormRow> {
             onPressed: () {
               Navigator.pop(dialogContext, _controller.number);
             },
-            cupertino: (_, __) => CupertinoTextButtonData(
+            cupertino: (_, _) => CupertinoTextButtonData(
               // workaround for https://github.com/flutter/flutter/issues/32701
               padding: EdgeInsets.zero,
             ),

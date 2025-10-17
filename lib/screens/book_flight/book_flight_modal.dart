@@ -310,7 +310,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         PlatformTextButton(
           widgetKey: const Key('button_bookFlightModal_save'),
           onPressed: () => _onSave(context),
-          cupertino: (_, __) => CupertinoTextButtonData(
+          cupertino: (_, _) => CupertinoTextButtonData(
             // workaround for https://github.com/flutter/flutter/issues/32701
             padding: EdgeInsets.zero,
           ),
@@ -326,7 +326,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           widgetKey: const Key('button_bookFlightModal_save'),
           onPressed: () => _onSave(context),
           icon: const Icon(Icons.check_sharp),
-          material: (_, __) => MaterialIconButtonData(
+          material: (_, _) => MaterialIconButtonData(
             tooltip: AppLocalizations.of(context)!.bookFlightModal_button_save,
           ),
         ),
@@ -337,7 +337,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           PlatformIconButton(
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
-            material: (_, __) => MaterialIconButtonData(
+            material: (_, _) => MaterialIconButtonData(
               tooltip: AppLocalizations.of(
                 context,
               )!.bookFlightModal_button_delete,

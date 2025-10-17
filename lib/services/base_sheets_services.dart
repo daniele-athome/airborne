@@ -67,7 +67,7 @@ abstract class GoogleSheetsStoreService<T> {
 
     if (_metadataService != null) {
       // reload metadata
-      final store = await _metadataService!.reload();
+      final store = await _metadataService.reload();
 
       // last row number (i.e. store size)
       final lastIdValue = store[_getMetadataCountKey()];
@@ -203,7 +203,7 @@ abstract class GoogleSheetsStoreService<T> {
     if (_metadataService != null) {
       var currentVersion = _dataHash;
       do {
-        final store = await _metadataService!.reload();
+        final store = await _metadataService.reload();
         currentVersion = store[_getMetadataHashKey()];
 
         if (currentVersion == _dataHash) {
@@ -227,7 +227,7 @@ abstract class GoogleSheetsStoreService<T> {
   /// Completes correctly if hash has not changed, throws exception otherwise.
   Future<void> _ensureUnchangedHash() async {
     if (_metadataService != null) {
-      final store = await _metadataService!.reload();
+      final store = await _metadataService.reload();
       final newHash = store[_getMetadataHashKey()];
       _log.finest('Old hash: $_dataHash, new hash: $newHash');
       if (newHash == null) {

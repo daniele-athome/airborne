@@ -128,6 +128,8 @@ class AppConfig extends ChangeNotifier {
   }
 
   List<String> get pilotNamesWithNoPilot {
+    // this getter must be called where it makes sense to have a no-pilot name
+    assert(_currentAircraft!.noPilotName != null);
     return [_currentAircraft!.noPilotName!, ..._currentAircraft!.pilotNames];
   }
 

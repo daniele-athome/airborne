@@ -323,12 +323,12 @@ Future<AircraftDataReader> loadAircraft(String aircraftId) async {
   return reader;
 }
 
-Future<Directory> deleteAircraftCache() async {
+Future<FileSystemEntity> deleteAircraftCache() async {
   final cacheDir = await getTemporaryDirectory();
   final tmpDirectory = Directory(path.join(cacheDir.path, 'current_aircraft'));
   final exists = await tmpDirectory.exists();
   return exists
-      ? tmpDirectory.delete(recursive: true) as Future<Directory>
+      ? tmpDirectory.delete(recursive: true)
       : Future.value(tmpDirectory);
 }
 

@@ -194,6 +194,12 @@ class AppConfig extends ChangeNotifier {
     // TODO
   }
 
+  Future<void> logout() async {
+    await setCurrentAircraft(null);
+    pilotName = null;
+    notifyListeners();
+  }
+
   String? get pilotName {
     return prefs.getString('pilotName');
   }

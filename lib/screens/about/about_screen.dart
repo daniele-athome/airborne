@@ -32,7 +32,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   void didChangeDependencies() {
-    _appConfig = Provider.of<AppConfig>(context);
+    _appConfig = Provider.of<AppConfig>(context, listen: false);
     _downloadProvider = Provider.of<DownloadProvider>(context, listen: false);
     super.didChangeDependencies();
   }
@@ -130,17 +130,18 @@ class _AboutScreenState extends State<AboutScreen> {
       title: AppLocalizations.of(context)!.about_disconnect_confirm_title,
       text: AppLocalizations.of(context)!.about_disconnect_confirm_message,
       destructiveOk: true,
-      okCallback: () {
-        // FIXME AboutScreen is rebuilt after this but will find null objects
-        _appConfig.pilotName = null;
-        _appConfig.setCurrentAircraft(null).whenComplete(() {
-          if (context.mounted) {
-            Navigator.of(
-              context,
-              rootNavigator: true,
-            ).popAndPushNamed('aircraft-data');
-          }
-        });
+      okCallback: () async {
+        await _appConfig.logout();
+
+        if (!context.mounted) {
+          return;
+        }
+
+        // clear navigation stack and go to the aircraft data screen
+        Navigator.of(
+          context,
+          rootNavigator: true,
+        ).pushNamedAndRemoveUntil('aircraft-data', (route) => false);
       },
     );
   }
@@ -528,7 +529,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // workaround for race-condition after a logout
+    // we depend on AppConfig: draw nothing after a logout
     if (_appConfig.currentAircraft == null) {
       return const SizedBox();
     }

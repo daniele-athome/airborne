@@ -225,87 +225,14 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
            return ChangeNotifierProvider<ExpansibleController>(
              create: (context) => ExpansibleController(),
              builder: (context, child) => Consumer<ExpansibleController>(
-               builder: (context, expansibleController, child) => CupertinoFormRowContainer(
-                 child: Expansible(
-                   controller: expansibleController,
-                   bodyBuilder: (context, animation) => CupertinoCalendar(
-                     minimumDateTime: _kDatePickerMinimumDate,
-                     maximumDateTime: _kDatePickerMaximumDate,
-                   ),
-                   headerBuilder: (context, animation) => CupertinoFormRow(
+               builder: (context, expansibleController, child) =>
+                   CupertinoDateTimeFormRowContainer(
                      prefix: prefix,
-                     padding: const EdgeInsetsDirectional.symmetric(
-                       horizontal: kDefaultCupertinoFormRowStartPadding,
-                     ),
                      helper: helper,
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.end,
-                       children: [
-                         if (showDate)
-                           Padding(
-                             padding: kDefaultCupertinoDateTimeFormRowPadding,
-                             child: CupertinoPickerButton<DateTime?>(
-                               // TODO
-                               title: 'TODO',
-                               mainColor: CupertinoColors.systemRed,
-                               showPickerFunction: (renderBox) async {
-                                 // TODO
-                                 expansibleController.expand();
-                                 await Future.delayed(Duration(seconds: 5));
-                                 expansibleController.collapse();
-                                 return null;
-                               },
-                               onPressed: () {
-                                 // TODO
-                               },
-                             ),
-                             /*child: CupertinoCalendarPickerButton(
-                               initialDateTime: field.value,
-                               minimumDateTime: _kDatePickerMinimumDate,
-                               maximumDateTime: _kDatePickerMaximumDate,
-                               onDateSelected: (value) {
-                                 final oldValue = field.value!;
-                                 final newValue = DateTime(
-                                   value.year,
-                                   value.month,
-                                   value.day,
-                                   field.value!.hour,
-                                   field.value!.minute,
-                                 );
-                                 field.didChange(newValue);
-                                 if (onChanged != null) {
-                                   onChanged(newValue, oldValue);
-                                 }
-                               },
-                             ),*/
-                           ),
-                         if (showTime)
-                           Padding(
-                             padding: kDefaultCupertinoDateTimeFormRowPadding,
-                             child: CupertinoTimePickerButton(
-                               initialTime: TimeOfDay.fromDateTime(field.value!),
-                               use24hFormat: true,
-                               onTimeChanged: (value) {
-                                 final oldValue = field.value!;
-                                 final newValue = DateTime(
-                                   field.value!.year,
-                                   field.value!.month,
-                                   field.value!.day,
-                                   value.hour,
-                                   value.minute,
-                                 );
-                                 field.didChange(newValue);
-                                 if (onChanged != null) {
-                                   onChanged(newValue, oldValue);
-                                 }
-                               },
-                             ),
-                           ),
-                       ],
-                     ),
+                     showDate: showDate,
+                     showTime: showTime,
+                     field: field,
                    ),
-                 ),
-               ),
              ),
            );
          },
@@ -401,4 +328,133 @@ class _CupertinoDateTimeFormFieldRowState extends FormFieldState<DateTime> {
       didChange(_effectiveController!.value);
     }
   }
+}
+
+class CupertinoDateTimeFormRowContainer extends StatefulWidget {
+  const CupertinoDateTimeFormRowContainer({super.key,
+    required this.field,
+    this.prefix,
+    this.controller,
+    this.helper,
+    this.showDate = true,
+    this.showTime = true,
+  });
+
+  final Widget? prefix;
+
+  final DateTimePickerController? controller;
+
+  final Widget? helper;
+
+  final bool showDate;
+
+  final bool showTime;
+
+  final FormFieldState<DateTime> field;
+
+  @override
+  State<CupertinoDateTimeFormRowContainer> createState() =>
+      _CupertinoDateTimeFormRowContainerState();
+}
+
+class _CupertinoDateTimeFormRowContainerState
+    extends State<CupertinoDateTimeFormRowContainer> {
+
+  late final ExpansibleController _expansibleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _expansibleController = ExpansibleController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoFormRowContainer(
+      child: Expansible(
+        controller: _expansibleController,
+        bodyBuilder: (context, animation) => CupertinoCalendar(
+          minimumDateTime: _kDatePickerMinimumDate,
+          maximumDateTime: _kDatePickerMaximumDate,
+        ),
+        headerBuilder: (context, animation) => CupertinoFormRow(
+          prefix: widget.prefix,
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: kDefaultCupertinoFormRowStartPadding,
+          ),
+          helper: widget.helper,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (widget.showDate)
+                Padding(
+                  padding:
+                  kDefaultCupertinoDateTimeFormRowPadding,
+                  child: CupertinoPickerButton<DateTime?>(
+                    // TODO
+                    title: 'TODO',
+                    mainColor: CupertinoColors.systemRed,
+                    showPickerFunction: (renderBox) async {
+                      // TODO
+                      _expansibleController.expand();
+                      await Future.delayed(Duration(seconds: 5));
+                      _expansibleController.collapse();
+                      return null;
+                    },
+                    onPressed: () {
+                      // TODO
+                    },
+                  ),
+                  /*child: CupertinoCalendarPickerButton(
+                               initialDateTime: field.value,
+                               minimumDateTime: _kDatePickerMinimumDate,
+                               maximumDateTime: _kDatePickerMaximumDate,
+                               onDateSelected: (value) {
+                                 final oldValue = field.value!;
+                                 final newValue = DateTime(
+                                   value.year,
+                                   value.month,
+                                   value.day,
+                                   field.value!.hour,
+                                   field.value!.minute,
+                                 );
+                                 field.didChange(newValue);
+                                 if (onChanged != null) {
+                                   onChanged(newValue, oldValue);
+                                 }
+                               },
+                             ),*/
+                ),
+              if (widget.showTime)
+                Padding(
+                  padding:
+                  kDefaultCupertinoDateTimeFormRowPadding,
+                  child: CupertinoTimePickerButton(
+                    initialTime: TimeOfDay.fromDateTime(
+                      widget.field.value!,
+                    ),
+                    use24hFormat: true,
+                    onTimeChanged: (value) {
+                      final oldValue = widget.field.value!;
+                      final newValue = DateTime(
+                        widget.field.value!.year,
+                        widget.field.value!.month,
+                        widget.field.value!.day,
+                        value.hour,
+                        value.minute,
+                      );
+                      widget.field.didChange(newValue);
+                      /* TODO if (onChanged != null) {
+                        onChanged(newValue, oldValue);
+                      }*/
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 }

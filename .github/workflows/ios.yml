@@ -16,12 +16,12 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: '3.35.6'
+  flutter_version: '3.35.7'
 
 jobs:
   # Since Fastlane also builds, there is no way to split jobs without sacrificing build time
   test-build-deploy:
-    # can't use macos-latest with Flutter 3.35.6: https://github.com/flutter/flutter/issues/176824
+    # can't use macos-latest with Flutter 3.35.7: https://github.com/flutter/flutter/issues/176824
     runs-on: macos-15-intel
     steps:
       - name: Switch to latest XCode

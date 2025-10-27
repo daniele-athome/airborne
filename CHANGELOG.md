@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.0](https://github.com/daniele-athome/airborne/compare/v1.7.0...v1.8.0) (2025-10-27)
+
+
+### Features
+
+* bold pilot name text in confirmation dialog ([8fd99c2](https://github.com/daniele-athome/airborne/commit/8fd99c2277fafe59ea4ba784fc4f164353f0a6b1))
+* visible password toggle in onboarding screen ([5d2adfe](https://github.com/daniele-athome/airborne/commit/5d2adfe4b31ead28d5106fe5965453caa0dd47ec)), closes [#104](https://github.com/daniele-athome/airborne/issues/104)
+
 ## [1.7.0](https://github.com/daniele-athome/airborne/compare/v1.6.0...v1.7.0) (2025-10-15)
 
 

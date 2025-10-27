@@ -1,2 +1,1 @@
-* preview total flight time in editor
-* bug fixes
+* minor improvements and bug fixes

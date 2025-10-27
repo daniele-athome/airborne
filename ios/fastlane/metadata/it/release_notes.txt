@@ -1,2 +1,1 @@
-* anteprima del tempo di volo
-* correzione di bug
+* miglioramenti minori e correzione di bug

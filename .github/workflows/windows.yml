@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-bundle-debug
-          path: build/windows/runner/debug/
+          path: build/windows/x64/runner/debug/
 
       - name: Build Windows application (release)
         run: flutter build windows --release
@@ -71,4 +71,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-bundle-release
-          path: build/windows/runner/release/
+          path: build/windows/x64/runner/release/

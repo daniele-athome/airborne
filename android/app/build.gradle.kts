@@ -5,6 +5,24 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+fun arbLocales(): List<String> {
+    val arbDir = File(projectDir, "../../lib/l10n")
+    if (!arbDir.exists()) {
+        println("No l10n directory found at ${arbDir.absolutePath}")
+        return emptyList()
+    }
+
+    val list = arbDir
+        .listFiles { file -> file.name.matches(Regex("app_(.*)\\.arb")) }
+        ?.mapNotNull { file ->
+            val match = Regex("app_(.*)\\.arb").find(file.name)
+            match?.groupValues?.get(1)?.replace("_", "-")
+        }
+        ?: emptyList()
+    println(list)
+    return list
+}
+
 android {
     namespace = "it.casaricci.airborne"
     compileSdk = flutter.compileSdkVersion
@@ -32,7 +50,8 @@ android {
     }
 
     androidResources {
-        localeFilters += listOf("en", "it")
+        // TODO generate locales_config.xml automatically
+        localeFilters += arbLocales()
     }
 
     signingConfigs {

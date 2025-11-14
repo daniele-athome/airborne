@@ -39,7 +39,7 @@ dependencies:
   fluttertoast: 8.2.13
   googleapis: 15.0.0
   googleapis_auth: 2.0.0
-  http: 1.5.0
+  http: 1.6.0
   # not ready yet: https://github.com/daniele-athome/airborne/issues/78
   infinite_scroll_pagination: 4.1.0
   intl: 0.20.2
@@ -52,9 +52,9 @@ dependencies:
   provider: 6.1.5+1
   shared_preferences: 2.5.3
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 31.2.4
-  syncfusion_localizations: 31.2.4
-  syncfusion_flutter_core: 31.2.4
+  syncfusion_flutter_calendar: 31.2.10
+  syncfusion_localizations: 31.2.10
+  syncfusion_flutter_core: 31.2.10
   timeline_tile: 2.0.0
   timezone: 0.10.1
   url_launcher: 6.3.2

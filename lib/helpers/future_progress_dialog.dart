@@ -23,7 +23,6 @@ Decoration _defaultDecoration(BuildContext context) => isCupertino(context)
 
 class FutureProgressDialog extends StatefulWidget {
   /// Dialog will be closed when [future] task is finished.
-  @required
   final Future future;
 
   /// [BoxDecoration] of [FutureProgressDialog].

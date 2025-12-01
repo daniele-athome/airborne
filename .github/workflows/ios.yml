@@ -30,12 +30,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Calculating hash of Flutter patches for the cache key
+        id: patches-hash
+        run: |
+          find ./.github/workflows/patches -type f -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print "FLUTTER_PATCHES_HASH=" $1}' >> $GITHUB_OUTPUT
+
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v2
+        id: flutter-action
         with:
           flutter-version: ${{ env.flutter_version }}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ steps.patches-hash.outputs.FLUTTER_PATCHES_HASH }}"
 
       - name: Patch Flutter
+        if: steps.flutter-action.outputs.CACHE-HIT != 'true'
         run: |
           git apply "${{ github.workspace }}/.github/workflows/patches/0001-Workaround-for-wrong-list-divider-margin-119895.patch"
         working-directory: ${{ env.FLUTTER_ROOT }}

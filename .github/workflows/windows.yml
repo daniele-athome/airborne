@@ -45,7 +45,7 @@ jobs:
         run: dart run build_runner build
 
       - name: Analyze code
-        run: flutter analyze .
+        run: flutter analyze --no-pub .
 
       - name: Run tests
         run: flutter test --no-pub -r github
@@ -54,7 +54,7 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - name: Build Windows application (debug)
-        run: flutter build windows --debug
+        run: flutter build windows --no-pub --debug
 
       - name: Archive debug build
         if: github.ref_type == 'tag'
@@ -64,7 +64,7 @@ jobs:
           path: build/windows/x64/runner/debug/
 
       - name: Build Windows application (release)
-        run: flutter build windows --release
+        run: flutter build windows --no-pub --release
 
       - name: Archive release build
         if: github.ref_type == 'tag'

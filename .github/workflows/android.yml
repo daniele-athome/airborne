@@ -51,14 +51,14 @@ jobs:
         run: dart run build_runner build
 
       - name: Analyze code
-        run: flutter analyze .
+        run: flutter analyze --no-pub .
 
       - name: Run tests
         run: flutter test --no-pub -r github
 
       - name: Build Android application (debug)
         if: github.ref_type != 'tag'
-        run: flutter build appbundle --debug
+        run: flutter build appbundle --no-pub --debug
 
       - name: Prepare for release build
         if: github.ref_type == 'tag'
@@ -75,7 +75,7 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: flutter build appbundle --release
+        run: flutter build appbundle --no-pub --release
 
       - name: Upload release artifact for deploy
         if: github.ref_type == 'tag'

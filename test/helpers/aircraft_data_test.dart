@@ -2,19 +2,16 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:airborne/helpers/aircraft_data.dart';
-import 'package:airborne/helpers/utils.dart';
 import 'package:archive/archive_io.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'aircraft_data_test.mocks.dart';
+import '../generate_mocks.mocks.dart';
 
-@GenerateMocks([DownloadProvider])
 void main() {
   // for reading assets (the JSON schema)
   TestWidgetsFlutterBinding.ensureInitialized();

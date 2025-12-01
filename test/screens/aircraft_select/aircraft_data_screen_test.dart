@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/utils.dart';
@@ -8,12 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
 
-import 'aircraft_data_screen_test.mocks.dart';
+import '../../generate_mocks.mocks.dart';
 
-@GenerateMocks([AppConfig, HttpClient])
 void main() {
   Widget createSkeletonApp() => MaterialApp(
     localizationsDelegates: const [

@@ -9,14 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
 import '../../golden_config.dart';
-import 'flight_log_modal_test.mocks.dart';
+import '../../generate_mocks.mocks.dart';
 
-@GenerateMocks([AppConfig, FlightLogBookService])
 void main() async {
   const locale = Locale('en');
   // used for asserting on text labels (e.g. specific error messages)

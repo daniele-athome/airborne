@@ -13,5 +13,4 @@ targets:
           output: lib/pubspec.yaml.g.dart
       mockito|mockBuilder:
         generate_for:
-          - test/**.dart
-          - test_driver/**.dart
+          - test/generate_mocks.dart

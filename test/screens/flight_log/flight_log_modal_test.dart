@@ -9,14 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import '../../generate_mocks.mocks.dart';
 import '../../golden_config.dart';
-import 'flight_log_modal_test.mocks.dart';
 
-@GenerateMocks([AppConfig, FlightLogBookService])
 void main() async {
   const locale = Locale('en');
   final lang = await AppLocalizations.delegate.load(locale);

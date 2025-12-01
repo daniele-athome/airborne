@@ -1,20 +1,13 @@
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/services/flight_log_services.dart';
-import 'package:airborne/services/metadata_services.dart';
-import 'package:googleapis/sheets/v4.dart' as gapi_sheets;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:googleapis/sheets/v4.dart' as gapi_sheets;
 import 'package:intl/intl.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'flight_log_services_test.mocks.dart';
+import '../generate_mocks.mocks.dart';
 
-@GenerateMocks([
-  GoogleSheetsService,
-  GoogleServiceAccountService,
-  MetadataService,
-])
 void main() {
   late MockGoogleSheetsService mockSheetsService;
   late MockMetadataService mockMetadataService;

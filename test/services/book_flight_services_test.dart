@@ -1,18 +1,15 @@
 import 'dart:math';
 
-import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/models/book_flight_models.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:googleapis/calendar/v3.dart' as gapi_calendar;
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart';
 
-import 'book_flight_services_test.mocks.dart';
+import '../generate_mocks.mocks.dart';
 
-@GenerateMocks([GoogleCalendarService, GoogleServiceAccountService])
 void main() {
   late MockGoogleCalendarService mockCalendarService;
   late BookFlightCalendarService testService;

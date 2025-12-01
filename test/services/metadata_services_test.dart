@@ -1,13 +1,10 @@
-import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/services/metadata_services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:googleapis/sheets/v4.dart' as gapi_sheets;
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'metadata_services_test.mocks.dart';
+import '../generate_mocks.mocks.dart';
 
-@GenerateMocks([GoogleSheetsService, GoogleServiceAccountService])
 void main() {
   late MockGoogleSheetsService mockSheetsService;
   late MockGoogleServiceAccountService mockAccountService;

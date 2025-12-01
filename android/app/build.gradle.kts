@@ -19,7 +19,6 @@ fun arbLocales(): List<String> {
             match?.groupValues?.get(1)?.replace("_", "-")
         }
         ?: emptyList()
-    println(list)
     return list
 }
 

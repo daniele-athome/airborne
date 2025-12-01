@@ -27,6 +27,7 @@ jobs:
 
       - name: Calculating hash of Flutter patches for the cache key
         id: patches-hash
+        shell: bash
         run: |
           find ./.github/workflows/patches -type f -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print "FLUTTER_PATCHES_HASH=" $1}' >> $GITHUB_OUTPUT
 

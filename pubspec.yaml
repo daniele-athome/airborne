@@ -24,7 +24,7 @@ environment:
   sdk: ">=3.10.0 <4.0.0"
 
 dependencies:
-  adaptive_dialog: 2.5.0
+  adaptive_dialog: 2.6.0
   archive: 4.0.7
   auto_size_text: 3.0.0
   collection: 1.19.1
@@ -50,11 +50,11 @@ dependencies:
   path: 1.9.1
   path_provider: 2.1.5
   provider: 6.1.5+1
-  shared_preferences: 2.5.3
+  shared_preferences: 2.5.4
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 31.2.16
-  syncfusion_localizations: 31.2.16
-  syncfusion_flutter_core: 31.2.16
+  syncfusion_flutter_calendar: 32.1.19
+  syncfusion_localizations: 32.1.19
+  syncfusion_flutter_core: 32.1.19
   timeline_tile: 2.0.0
   timezone: 0.10.1
   url_launcher: 6.3.2

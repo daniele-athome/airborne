@@ -90,7 +90,7 @@ function onChange(event){
   }
   else if (sheetName.startsWith('Activities') || sheetName.startsWith('Attività')) {
     var range = sheet.getRange("A:I");
-    range.sort([{ column : 3, ascending: false }, { column : 2 }]);    
+    range.sort([{ column : 3, ascending: false }, { column : 2, ascending: false }]);    
 
     // calculate checksum of data
     var metadataSheet = SpreadsheetApp.getActive().getSheetByName("Metadata");

@@ -35,7 +35,7 @@ void main() async {
         ],
         locale: locale,
         home: FlightLogScreen(),
-        navigatorObservers: [if (navigatorObserver != null) navigatorObserver],
+        navigatorObservers: [?navigatorObserver],
       ),
     );
   }

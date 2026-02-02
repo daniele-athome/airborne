@@ -170,8 +170,7 @@ SunTimes getSunTimes(
     month: dateTime.month,
     day: dateTime.day,
     timeZoneOffset:
-        tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset /
-        1000 /
+        tzLocation.timeZone(dateTime.millisecondsSinceEpoch).offset.inSeconds /
         60 /
         60,
   );

@@ -42,6 +42,7 @@ void main() async {
               controller: FlightLogListController(),
               logBookService: flightLogService,
               onTapItem: (context, item) => {},
+              hourmeterMultiplier: 60,
             ),
           ),
         ),

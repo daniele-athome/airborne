@@ -129,6 +129,7 @@ class _FlightLogScreenState extends State<FlightLogScreen>
       controller: _logBookController,
       logBookService: _logBookService,
       onTapItem: (context, item) => _onTapItem(context, item),
+      hourmeterMultiplier: _appConfig.hourmeterMultiplier,
     );
   }
 

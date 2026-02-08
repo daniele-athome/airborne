@@ -138,7 +138,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
   Duration get _totalFlightTime {
     final num totalHours =
         _endHourController.number - _startHourController.number;
-    return Duration(minutes: (totalHours * 60).round());
+    return Duration(
+      minutes: (totalHours * _appConfig.hourmeterMultiplier).round(),
+    );
   }
 
   Widget _buildCupertinoForm(BuildContext context) {

@@ -115,6 +115,7 @@ ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   when(appConfig.fuelPriceCurrency).thenReturn('€');
   when(appConfig.pilotName).thenReturn('Sara');
   when(appConfig.locationName).thenReturn('Fly@localhost');
+  when(appConfig.hourmeterMultiplier).thenReturn(60);
   // TODO stub some stuff
   return ChangeNotifierProvider<AppConfig>.value(value: appConfig);
 }

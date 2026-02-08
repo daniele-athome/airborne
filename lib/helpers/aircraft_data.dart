@@ -17,6 +17,9 @@ final Logger _log = Logger((AircraftData).toString());
 const _kAircraftMetadataFilename = 'aircraft.json';
 const _kAircraftPicFilename = 'aircraft.jpg';
 
+/// Most hourmeters decimals are in cents of hour, so we need to multiply by 60
+const _kDefaultHourmeterMultiplier = 60;
+
 class AircraftData {
   /// File system path of the uncompressed archive.
   final Directory? dataPath;
@@ -24,6 +27,7 @@ class AircraftData {
   final String id;
   final String callSign;
   final Map<String, dynamic> backendInfo;
+  final int hourmeterMultiplier;
   final List<String> pilotNames;
   final String? noPilotName;
   final String locationName;
@@ -43,6 +47,7 @@ class AircraftData {
     required this.id,
     required this.callSign,
     required this.backendInfo,
+    required this.hourmeterMultiplier,
     required this.pilotNames,
     required this.noPilotName,
     required this.locationName,
@@ -237,6 +242,9 @@ class AircraftDataReader {
     id: metadata!['aircraft_id'] as String,
     callSign: metadata!['callsign'] as String,
     backendInfo: metadata!['backend_info'] as Map<String, dynamic>,
+    hourmeterMultiplier:
+        metadata!['hourmeter_multiplier'] as int? ??
+        _kDefaultHourmeterMultiplier,
     pilotNames: List<String>.from(
       metadata!['pilot_names'] as Iterable<dynamic>,
     ),

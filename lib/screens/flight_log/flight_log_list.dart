@@ -20,11 +20,13 @@ class FlightLogList extends StatefulWidget {
     required this.controller,
     required this.logBookService,
     required this.onTapItem,
+    required this.hourmeterMultiplier,
   });
 
   final FlightLogListController controller;
   final FlightLogBookService logBookService;
   final Function(BuildContext context, FlightLogItem item) onTapItem;
+  final int hourmeterMultiplier;
 
   @override
   State<FlightLogList> createState() => _FlightLogListState();
@@ -94,7 +96,11 @@ class _FlightLogListState extends State<FlightLogList> {
   }
 
   Widget _buildListItem(BuildContext context, FlightLogItem item, int index) =>
-      FlightLogListItem(item: item, onTapItem: widget.onTapItem);
+      FlightLogListItem(
+        item: item,
+        onTapItem: widget.onTapItem,
+        hourmeterMultiplier: widget.hourmeterMultiplier,
+      );
 
   Widget noItemsFoundIndicator(BuildContext context) =>
       FirstPageExceptionIndicator(
@@ -177,8 +183,14 @@ class FlightLogListItem extends StatelessWidget {
 
   final FlightLogItem item;
   final Function(BuildContext context, FlightLogItem item) onTapItem;
+  final int hourmeterMultiplier;
 
-  FlightLogListItem({super.key, required this.item, required this.onTapItem});
+  FlightLogListItem({
+    super.key,
+    required this.item,
+    required this.onTapItem,
+    required this.hourmeterMultiplier,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +334,7 @@ class FlightLogListItem extends StatelessWidget {
       '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
 
   String _buildTime(FlightLogItem item) =>
-      '${((item.endHour - item.startHour) * 60).round().toString()}′';
+      '${((item.endHour - item.startHour) * hourmeterMultiplier).round().toString()}′';
 }
 
 // FIXME the way this controller is used triggers an extra useless refresh and it also doesn't play well with infinite_scroll_pagination v5.

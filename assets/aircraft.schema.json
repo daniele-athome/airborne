@@ -35,6 +35,16 @@
       "description": "Backend service information and credentials.",
       "type": "object"
     },
+    "hourmeter_multiplier": {
+      "description": "Hour meter decimal multiplier (mostly 60 or 100)",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "examples": [
+        60,
+        100
+      ]
+    },
     "no_pilot_name": {
       "description": "The name of the fake pilot used to indicate maintenance flights.",
       "type": "string"

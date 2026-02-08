@@ -123,6 +123,10 @@ class AppConfig extends ChangeNotifier {
     return '€';
   }
 
+  int get hourmeterMultiplier {
+    return _currentAircraft!.hourmeterMultiplier;
+  }
+
   List<String> get pilotNames {
     return _currentAircraft!.pilotNames;
   }

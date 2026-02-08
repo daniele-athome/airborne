@@ -37,7 +37,7 @@ dependencies:
   flutter_platform_widgets: 9.0.0
   # latest version of upstream project unstable
   fluttertoast: 8.2.13
-  googleapis: 15.0.0
+  googleapis: 16.0.0
   googleapis_auth: 2.0.0
   http: 1.6.0
   # not ready yet: https://github.com/daniele-athome/airborne/issues/78
@@ -52,9 +52,9 @@ dependencies:
   provider: 6.1.5+1
   shared_preferences: 2.5.4
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 32.1.25
-  syncfusion_localizations: 32.1.25
-  syncfusion_flutter_core: 32.1.25
+  syncfusion_flutter_calendar: 32.2.3
+  syncfusion_localizations: 32.2.3
+  syncfusion_flutter_core: 32.2.3
   timeline_tile: 2.0.0
   timezone: 0.11.0
   url_launcher: 6.3.2

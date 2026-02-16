@@ -831,9 +831,11 @@ packages:
   screenshots:
     dependency: "direct dev"
     description:
-      path: "../../screenshots"
-      relative: true
-    source: path
+      path: "."
+      ref: "9b22b11566463e5b730fe9049da7e400e659a870"
+      resolved-ref: "9b22b11566463e5b730fe9049da7e400e659a870"
+      url: "https://github.com/daniele-athome/screenshots.git"
+    source: git
     version: "3.1.2"
   shared_preferences:
     dependency: "direct main"
@@ -1100,8 +1102,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "950396e2795f77640276dd2ed73b83316f825191"
-      resolved-ref: "950396e2795f77640276dd2ed73b83316f825191"
+      ref: ng
+      resolved-ref: aa3df3f1ca932ccd95d35c7b37dd5622d5e67f06
       url: "https://github.com/daniele-athome/tool_base.git"
     source: git
     version: "2.0.0"
@@ -1109,8 +1111,8 @@ packages:
     dependency: transitive
     description:
       path: "."
-      ref: "1135d7a0949f605c4e2f1a4ab4d678999cfd1a86"
-      resolved-ref: "1135d7a0949f605c4e2f1a4ab4d678999cfd1a86"
+      ref: ng
+      resolved-ref: "3d5b10615b7502398a1fb908867c3f2c95438b5f"
       url: "https://github.com/daniele-athome/tool_mobile.git"
     source: git
     version: "3.0.0"

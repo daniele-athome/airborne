@@ -10,8 +10,6 @@ class DateListTile extends StatelessWidget {
   final bool showIcon;
   final TextStyle? textStyle;
 
-  static final DateFormat _dateFormatter = DateFormat.yMEd();
-
   const DateListTile({
     super.key,
     required this.controller,
@@ -28,7 +26,7 @@ class DateListTile extends StatelessWidget {
       leading: showIcon ? const Icon(Icons.access_time) : const Text(''),
       title: Text(
         controller.value != null
-            ? _dateFormatter.format(controller.value!)
+            ? DateFormat.yMEd(context.localeString).format(controller.value!)
             : '',
         textAlign: TextAlign.left,
         style: textStyle,
@@ -72,8 +70,6 @@ class DateTimeListTile extends StatelessWidget {
   final Function(DateTime selected, DateTime oldValue)? onTimeSelected;
   final bool showIcon;
 
-  static final DateFormat _dateFormatter = DateFormat.yMEd();
-
   const DateTimeListTile({
     super.key,
     required this.controller,
@@ -95,7 +91,7 @@ class DateTimeListTile extends StatelessWidget {
               controller.value != null
                   ? getRelativeDateString(
                       context,
-                      _dateFormatter,
+                      DateFormat.yMEd(context.localeString),
                       controller.value!,
                     )
                   : '',

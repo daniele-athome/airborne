@@ -179,7 +179,6 @@ class _FlightLogListState extends State<FlightLogList> {
 
 class FlightLogListItem extends StatelessWidget {
   final _hoursFormatter = NumberFormat.decimalPattern();
-  final _dateFormatter = DateFormat.yMEd();
 
   final FlightLogItem item;
   final Function(BuildContext context, FlightLogItem item) onTapItem;
@@ -239,7 +238,7 @@ class FlightLogListItem extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(
-                    _dateFormatter.format(item.date),
+                    DateFormat.yMEd(context.localeString).format(item.date),
                     style: dateStyle,
                   ),
                 ),

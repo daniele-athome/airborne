@@ -139,6 +139,22 @@ extension NumberFormatTryParse on NumberFormat {
   }
 }
 
+extension BuildContextExtension on BuildContext {
+  Locale get locale {
+    return Localizations.localeOf(this);
+  }
+
+  String get localeString {
+    String localeString = locale.languageCode;
+
+    final String? countryCode = locale.countryCode;
+    if (countryCode != null) {
+      localeString += '_$countryCode';
+    }
+    return localeString;
+  }
+}
+
 double roundDouble(num value, int places) {
   num mod = math.pow(10.0, places);
   return ((value * mod).round().toDouble() / mod);

@@ -197,8 +197,6 @@ class ActivitiesListState {
 }
 
 class _EntryListItem extends StatelessWidget {
-  static final DateFormat _dateFormatter = DateFormat.yMd();
-
   const _EntryListItem({
     // ignore: unused_element_parameter
     super.key,
@@ -226,7 +224,8 @@ class _EntryListItem extends StatelessWidget {
       icon = Icons.check;
       if (entry.lastStatusUpdate != null) {
         // TODO i18n
-        text = "Fatto il ${_dateFormatter.format(entry.lastStatusUpdate!)}";
+        text =
+            "Fatto il ${DateFormat.yMd(context.localeString).format(entry.lastStatusUpdate!)}";
       } else {
         // TODO i18n
         text = "Fatto";
@@ -348,7 +347,10 @@ class _EntryListItem extends StatelessWidget {
             child: Icon(icon, size: kIconSize, color: iconColor),
           ),
           const SizedBox(width: 4.0),
-          Text(_dateFormatter.format(entry.dueDate!), style: textStyle),
+          Text(
+            DateFormat.yMd(context.localeString).format(entry.dueDate!),
+            style: textStyle,
+          ),
         ],
       ),
     );

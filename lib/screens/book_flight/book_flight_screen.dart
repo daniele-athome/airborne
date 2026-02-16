@@ -211,14 +211,18 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         final mainDate = _visibleDates[_visibleDates.length ~/ 2];
         final year = mainDate.year;
         final month = mainDate.month;
-        _appBarTitle = DateFormat.yMMMM().format(DateTime(year, month));
+        _appBarTitle = DateFormat.yMMMM(
+          context.localeString,
+        ).format(DateTime(year, month));
         break;
       case CalendarView.week:
         _appBarTitle =
-            '${DateFormat.yMMMd().format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b))} - ${DateFormat.yMMMd().format(_visibleDates.reduce((a, b) => a.isBefore(b) ? b : a))}';
+            '${DateFormat.yMMMd(context.localeString).format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b))} - ${DateFormat.yMMMd(context.localeString).format(_visibleDates.reduce((a, b) => a.isBefore(b) ? b : a))}';
         break;
       case CalendarView.day:
-        _appBarTitle = DateFormat.yMMMMd().format(_visibleDates[0]);
+        _appBarTitle = DateFormat.yMMMMd(
+          context.localeString,
+        ).format(_visibleDates[0]);
         break;
       default:
         throw UnsupportedError('Unsupported calendar view');
@@ -504,7 +508,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     BuildContext buildContext,
     ScheduleViewMonthHeaderDetails details,
   ) {
-    final dateStr = DateFormat.yMMMM().format(details.date);
+    final dateStr = DateFormat.yMMMM(context.localeString).format(details.date);
     final text = dateStr[0].toUpperCase() + dateStr.substring(1);
     return Stack(
       children: <Widget>[

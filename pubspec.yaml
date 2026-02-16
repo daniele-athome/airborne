@@ -52,9 +52,9 @@ dependencies:
   provider: 6.1.5+1
   shared_preferences: 2.5.4
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 32.2.3
-  syncfusion_localizations: 32.2.3
-  syncfusion_flutter_core: 32.2.3
+  syncfusion_flutter_calendar: 32.2.4
+  syncfusion_localizations: 32.2.4
+  syncfusion_flutter_core: 32.2.4
   timeline_tile: 2.0.0
   timezone: 0.11.0
   url_launcher: 6.3.2
@@ -79,7 +79,7 @@ dev_dependencies:
   screenshots:
     git:
       url: https://github.com/daniele-athome/screenshots.git
-      ref: 25f91f1352492f334a6af4cef869917ed23855cd
+      ref: 9b22b11566463e5b730fe9049da7e400e659a870
   test: any
 
 # For information on the generic Dart part of this file, see the

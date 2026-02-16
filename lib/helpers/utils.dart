@@ -155,6 +155,23 @@ extension BuildContextExtension on BuildContext {
   }
 }
 
+extension StringExtension on String {
+  /// From basics package
+  ///
+  /// https://github.com/google/dart-basics/blob/master/lib/string_basics.dart
+  String capitalize() {
+    if (isEmpty) return '';
+
+    // trim this string first
+    final trimmed = trimLeft();
+
+    // convert the first character to upper case
+    final firstCharacter = trimmed[0].toUpperCase();
+
+    return trimmed.replaceRange(0, 1, firstCharacter);
+  }
+}
+
 double roundDouble(num value, int places) {
   num mod = math.pow(10.0, places);
   return ((value * mod).round().toDouble() / mod);

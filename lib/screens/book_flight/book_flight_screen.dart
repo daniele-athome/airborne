@@ -213,7 +213,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         final month = mainDate.month;
         _appBarTitle = DateFormat.yMMMM(
           context.localeString,
-        ).format(DateTime(year, month));
+        ).format(DateTime(year, month)).capitalize();
         break;
       case CalendarView.week:
         _appBarTitle =

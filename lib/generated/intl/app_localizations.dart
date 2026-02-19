@@ -746,6 +746,12 @@ abstract class AppLocalizations {
   /// **'Please type in the address to the aircraft data and its password.'**
   String get addAircraft_text1;
 
+  /// Provides some help text to the user for the aircraft setup screen, explaining what they need to do. Supports (limited) Markdown.
+  ///
+  /// In en, this message translates to:
+  /// **'**What is this?**\nTo use this app you need a special file containing information about your aircraft. You may ask for this file to the administrator of your aircraft.'**
+  String get addAircraft_text2;
+
   /// No description provided for @addAircraft_label_address.
   ///
   /// In en, this message translates to:

@@ -387,6 +387,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Please type in the address to the aircraft data and its password.';
 
   @override
+  String get addAircraft_text2 =>
+      '**What is this?**\nTo use this app you need a special file containing information about your aircraft. You may ask for this file to the administrator of your aircraft.';
+
+  @override
   String get addAircraft_label_address => 'Address';
 
   @override

@@ -242,6 +242,21 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           child: Text(AppLocalizations.of(context)!.addAircraft_button_install),
         ),
       ),
+    if (!isCupertino(context)) const SizedBox(height: 16),
+    if (!isCupertino(context))
+      Row(
+        spacing: 6,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline),
+          Expanded(
+            child: Text.rich(
+              formatMarkdown(AppLocalizations.of(context)!.addAircraft_text2),
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
   ];
 
   Widget _buildMaterialForm(BuildContext context, AppConfig appConfig) =>
@@ -263,6 +278,23 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           style: CupertinoTheme.of(
             context,
           ).textTheme.textStyle.copyWith(fontSize: 18),
+        ),
+        footer: Row(
+          spacing: 6,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(CupertinoIcons.info_circle),
+            Expanded(
+              child: Text.rich(
+                formatMarkdown(AppLocalizations.of(context)!.addAircraft_text2),
+                // FIXME workaround for https://github.com/flutter/flutter/issues/48438
+                // FIXME background color is not consistent with scaffold background color (of course)
+                style: CupertinoTheme.of(
+                  context,
+                ).textTheme.textStyle.copyWith(fontSize: 16),
+              ),
+            ),
+          ],
         ),
         children: _buildFormSections(context, appConfig),
       ),

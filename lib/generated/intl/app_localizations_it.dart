@@ -388,6 +388,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Inserisci l\'indirizzo della configurazione dell\'aereo e la sua password.';
 
   @override
+  String get addAircraft_text2 =>
+      '**Cosa devo fare qui?**\nPer usare questa app hai bisogno di uno speciale file con i dati dell\'aereo. Puoi chiedere i dati da inserire qui all\'amministratore designato dell\'aereo.';
+
+  @override
   String get addAircraft_label_address => 'Indirizzo';
 
   @override

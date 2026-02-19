@@ -118,6 +118,7 @@
 
   "addAircraft_title": "Configura aereo",
   "addAircraft_text1": "Inserisci l'indirizzo della configurazione dell'aereo e la sua password.",
+  "addAircraft_text2": "**Cosa devo fare qui?**\nPer usare questa app hai bisogno di uno speciale file con i dati dell'aereo. Puoi chiedere i dati da inserire qui all'amministratore designato dell'aereo.",
   "addAircraft_label_address": "Indirizzo",
   "addAircraft_hint_address": "Indirizzo aereo",
   "addAircraft_hint_password": "Password",

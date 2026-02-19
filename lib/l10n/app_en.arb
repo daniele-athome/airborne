@@ -187,6 +187,10 @@
 
   "addAircraft_title": "Setup aircraft",
   "addAircraft_text1": "Please type in the address to the aircraft data and its password.",
+  "addAircraft_text2": "**What is this?**\nTo use this app you need a special file containing information about your aircraft. You may ask for this file to the administrator of your aircraft.",
+  "@addAircraft_text2": {
+    "description": "Provides some help text to the user for the aircraft setup screen, explaining what they need to do. Supports (limited) Markdown."
+  },
   "addAircraft_label_address": "Address",
   "addAircraft_hint_address": "Aircraft data address",
   "addAircraft_hint_password": "Password",

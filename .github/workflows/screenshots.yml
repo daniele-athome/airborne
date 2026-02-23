@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: '3.41.1'
+  flutter_version: '3.41.2'
 
 jobs:
   android:

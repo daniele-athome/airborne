@@ -68,7 +68,6 @@ class _MainNavigationState extends State<MainNavigation> {
               ? Colors.tealAccent
               : Colors.deepOrange,
           label: AppLocalizations.of(context)!.mainNav_bookFlight,
-          tooltip: '',
         ),
       if (widget.appConfig.hasFeature('flight_log'))
         BottomNavigationBarItem(
@@ -82,7 +81,6 @@ class _MainNavigationState extends State<MainNavigation> {
               ? const Color(0xffffff00)
               : Colors.green.shade500,
           label: AppLocalizations.of(context)!.mainNav_logBook,
-          tooltip: '',
         ),
       if (widget.appConfig.hasFeature('activities'))
         BottomNavigationBarItem(
@@ -94,7 +92,6 @@ class _MainNavigationState extends State<MainNavigation> {
               ? Colors.white
               : Colors.amber.shade700,
           label: AppLocalizations.of(context)!.mainNav_activities,
-          tooltip: '',
         ),
       BottomNavigationBarItem(
         icon: Icon(PlatformIcons(context).info, key: const Key('nav_info')),
@@ -102,7 +99,6 @@ class _MainNavigationState extends State<MainNavigation> {
             ? const Color(0xff40c4ff)
             : Colors.deepPurple,
         label: AppLocalizations.of(context)!.mainNav_about,
-        tooltip: '',
       ),
     ];
 

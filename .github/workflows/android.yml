@@ -84,7 +84,11 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: flutter build appbundle --no-pub --release
+        # the first "flutter build apk" command would not be needed, however:
+        # https://github.com/flutter/flutter/issues/169336#issuecomment-2981193835
+        run: |
+          flutter build apk --config-only --release
+          flutter build appbundle --no-pub --release
 
       - name: Upload release artifact for deploy
         if: github.ref_type == 'tag'

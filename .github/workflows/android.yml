@@ -66,11 +66,11 @@ jobs:
         run: flutter test --no-pub -r github
 
       - name: Build Android application (debug)
-        if: github.ref_type != 'tag'
+        if: github.ref_type != 'tag' && github.ref_name != 'release'
         run: flutter build appbundle --no-pub --debug
 
       - name: Prepare for release build
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' || github.ref_name == 'release'
         env:
           ENCRYPTED_FILE_KEY: ${{ secrets.ENCRYPTED_FILE_KEY }}
           ENCRYPTED_FILE_IV: ${{ secrets.ENCRYPTED_FILE_IV }}
@@ -79,7 +79,7 @@ jobs:
           openssl aes-256-cbc -K $ENCRYPTED_FILE_KEY -iv $ENCRYPTED_FILE_IV -in fastlane/androidkey.jks.enc -out fastlane/androidkey.jks -d
 
       - name: Build Android application (release)
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' || github.ref_name == 'release'
         env:
           RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -91,7 +91,7 @@ jobs:
           flutter build appbundle --no-pub --release
 
       - name: Upload release artifact for deploy
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' || github.ref_name == 'release'
         uses: actions/upload-artifact@v4
         with:
           name: android-bundle-release
@@ -99,7 +99,7 @@ jobs:
 
   deploy:
     needs: test-build
-    if: github.ref_type == 'tag'
+    if: github.ref_type == 'tag' || github.ref_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

@@ -35,7 +35,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_platform_widgets: 10.0.1
-  # latest version of upstream project unstable
+  # latest version of upstream project is unstable
   fluttertoast: 8.2.13
   googleapis: 16.0.0
   googleapis_auth: 2.0.0
@@ -52,9 +52,9 @@ dependencies:
   provider: 6.1.5+1
   shared_preferences: 2.5.4
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 32.2.5
-  syncfusion_localizations: 32.2.5
-  syncfusion_flutter_core: 32.2.5
+  syncfusion_flutter_calendar: 32.2.7
+  syncfusion_localizations: 32.2.7
+  syncfusion_flutter_core: 32.2.7
   timeline_tile: 2.0.0
   timezone: 0.11.0
   url_launcher: 6.3.2

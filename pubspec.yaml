@@ -35,8 +35,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_platform_widgets: 10.0.1
-  # latest version of upstream project is unstable
-  fluttertoast: 8.2.13
+  fluttertoast: 9.0.0
   googleapis: 16.0.0
   googleapis_auth: 2.0.0
   http: 1.6.0

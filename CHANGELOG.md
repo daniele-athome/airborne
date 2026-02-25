@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.9.0](https://github.com/daniele-athome/airborne/compare/v1.8.0...v1.9.0) (2026-02-25)
+
+
+### Features
+
+* **flight-log:** support for sexagesimal hourmeters ([cd78626](https://github.com/daniele-athome/airborne/commit/cd786269b6122664998457e7c53533db23bd1520)), closes [#113](https://github.com/daniele-athome/airborne/issues/113)
+* **onboarding:** add some help text ([0749c14](https://github.com/daniele-athome/airborne/commit/0749c1440a340dca9cae3e11caf681b6e2511371)), closes [#112](https://github.com/daniele-athome/airborne/issues/112)
+* support for per-app language preference on Android ([de71737](https://github.com/daniele-athome/airborne/commit/de717372d070c6fe4ad68f6af261941e1a6d7a8b)), closes [#108](https://github.com/daniele-athome/airborne/issues/108)
+
+
+### Bug Fixes
+
+* capitalize month name in app bar title ([49659a6](https://github.com/daniele-athome/airborne/commit/49659a62fd0891386c93b2720cc05fc9391ae657))
+* set locale for date formatters ([3b9f3aa](https://github.com/daniele-athome/airborne/commit/3b9f3aa2100cde97ca7b5db37ce77fda645d4078))
+* show proper tooltip for navigation bar buttons ([9262112](https://github.com/daniele-athome/airborne/commit/9262112c0cb7ec6eeaba4aa269874649de5162f0))
+
 ## [1.8.0](https://github.com/daniele-athome/airborne/compare/v1.7.0...v1.8.0) (2025-10-27)
 
 

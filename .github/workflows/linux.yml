@@ -71,7 +71,7 @@ jobs:
         run: flutter build linux --no-pub --debug
 
       - name: Archive debug build
-        if: github.ref_type == 'tag'
+        if: github.ref_name == 'release'
         uses: actions/upload-artifact@v4
         with:
           name: linux-bundle-debug
@@ -81,7 +81,7 @@ jobs:
         run: flutter build linux --no-pub --release
 
       - name: Archive release build
-        if: github.ref_type == 'tag'
+        if: github.ref_name == 'release'
         uses: actions/upload-artifact@v4
         with:
           name: linux-bundle-release

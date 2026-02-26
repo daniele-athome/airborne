@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airborne aircraft data tool</title>
+  <script type="module" crossorigin src="./assets/index-CmXSJQPk.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-LE9BZgCi.css">
+</head>
+
+<body>
+
+<div class="container my-4">
+    <div class="p-4 bg-body-tertiary rounded-3">
+
+        <h1 class="text-body-emphasis text-center">
+            <img alt="Airborne logo" class="logo" src="./assets/logo-ManNyAQe.svg">
+            Airborne aircraft data tool
+            <img alt="Airborne logo" class="logo" src="./assets/logo-ManNyAQe.svg">
+        </h1>
+        <p class="text-muted text-center">
+            Use this tool to create an aircraft data file for <a target="_blank"
+                                                                 href="https://github.com/daniele-athome/airborne">Airborne</a>.<br>
+            <strong>Please read the documentation first: <a target="_blank"
+                                                            href="https://github.com/daniele-athome/airborne/blob/master/docs/backend.md">backend
+                guide</a></strong>.
+        </p>
+
+        <form id="mainForm" novalidate>
+        <div class="accordion" id="mainAccordion">
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionInfo" aria-expanded="true" aria-controls="accordionInfo">
+                        📋 Aircraft information
+                    </button>
+                </h2>
+                <div id="accordionInfo" class="accordion-collapse collapse show" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3 justify-content-center">
+                            <div class="col-lg-9 col-xl-6 col-md-12 col-sm-12 upload-section text-center">
+                                <div class="drop-zone" id="aircraftPhotoDropZone">
+                                    <img class="aircraft-photo visually-hidden" alt="Aircraft photo" id="aircraftPhoto" src="">
+                                    <div id="aircraftPhotoDropZoneHelp">
+                                        <div class="drop-zone-text">📷 Drop aircraft photo here</div>
+                                        <div class="drop-zone-subtext">or click to browse</div>
+                                    </div>
+                                </div>
+                                <input type="file" accept="image/jpeg" id="aircraftPhotoFile" required>
+                                <div class="invalid-feedback">
+                                    Please provide an aircraft photo.
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <label class="form-label" for="callsign">Call sign</label>
+                                <input class="form-control" type="text" id="callsign" placeholder="A-1234" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarName">Hangar name</label>
+                                <input class="form-control" type="text" id="hangarName" placeholder="Fly Berlin"
+                                       required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarTz">Hangar time zone</label>
+                                <input class="form-control" type="text" id="hangarTz" placeholder="Europe/Berlin"
+                                       required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarLat">Hangar latitude</label>
+                                <input class="form-control" type="number" step="any" id="hangarLat"
+                                       placeholder="52.8844253" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="hangarLon">Hangar longitude</label>
+                                <input class="form-control" type="number" step="any" id="hangarLon"
+                                       placeholder="12.7143166" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="documentsArchiveUrl">Documents archive link</label>
+                                <input class="form-control" type="url" id="documentsArchiveUrl"
+                                       placeholder="https://drive.google.com/drive/folders/...">
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="weatherLiveUrl">Live weather link</label>
+                                <input class="form-control" type="url" id="weatherLiveUrl" placeholder="https://...">
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="weatherForecastUrl">Weather forecast link</label>
+                                <input class="form-control" type="url" id="weatherForecastUrl"
+                                       placeholder="https://...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionPilots" aria-expanded="true" aria-controls="accordionPilots">
+                        🧑‍✈️ Pilots
+                    </button>
+                </h2>
+                <div id="accordionPilots" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+
+                        <div class="row mb-3 pilot-entry" id="pilotEntryNone">
+                            <div class="col-sm-12">
+                                <div class="d-flex align-items-center">
+                                    <img class="pilot-avatar" id="pilotAvatarNone" alt="No name pilot avatar"
+                                         src="./assets/noname_avatar-B4OUtwsk.png">
+                                    <label class="form-label visually-hidden" for="pilotNameNone">Pilot no name</label>
+                                    <input type="text" class="form-control" id="pilotNameNone"
+                                           placeholder="Insert maintenance pilot name"
+                                           aria-label="Insert maintenance name" value="(maintenance)" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pilots-list" id="pilotsList"></div>
+
+                        <div class="accordion-actions">
+                            <button class="btn btn-primary" id="addPilotBtn">
+                                💺 Add pilot
+                            </button>
+                            <button class="btn btn-secondary" id="clearPilotsBtn">
+                                🗑️ Delete all pilots
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionStorage" aria-expanded="true" aria-controls="accordionStorage">
+                        💾 Cloud storage information
+                    </button>
+                </h2>
+                <div id="accordionStorage" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+
+                        <div class="row g-3">
+                            <div class="col-sm-12">
+                                <label class="form-label" for="googleApiServiceAccount">Google API service account
+                                    <span class="text-muted">(<a target="_blank"
+                                                                 href="https://cloud.google.com/iam/docs/service-accounts-create#iam-service-accounts-create-console">Guide</a>)</span>
+                                </label>
+                                <textarea id="googleApiServiceAccount" class="form-control" rows="10"
+                                          placeholder="Paste contents of service account JSON file here"
+                                          required></textarea>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="googleApiKey">Google API key
+                                    <span class="text-muted">(<a target="_blank"
+                                                                 href="https://cloud.google.com/docs/authentication/api-keys#console_2">Guide</a>)</span>
+                                </label>
+                                <input class="form-control" type="text" id="googleApiKey" required>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label d-flex" for="googleCalendarId">Google Calendar ID
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable all flight booking functionality.">?
+                                    </button>
+                                </label>
+                                <input class="form-control" type="text" id="googleCalendarId"
+                                       placeholder="...@group.calendar.google.com">
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label d-flex" for="googleSpreadsheetId">Google Spreadsheet ID
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable the flight log and the activity log features.">
+                                        ?
+                                    </button>
+                                </label>
+                                <input class="form-control" type="text" id="googleSpreadsheetId">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label d-flex" for="flightlogSheetName">Flight log sheet name
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable flight log functionality.">?
+                                    </button>
+                                </label>
+                                <input class="form-control" type="text" id="flightlogSheetName">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label d-flex" for="activitiesSheetName">Activities sheet name
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="Skipping this field will disable activity log functionality.">?
+                                    </button>
+                                </label>
+                                <input class="form-control" type="text" id="activitiesSheetName">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label d-flex" for="metadataSheetName">Metadata sheet name
+                                    <button class="btn btn-circle btn-secondary ms-1" data-bs-toggle="tooltip"
+                                            title="This is required if at least one of the other sheet names are set.">?
+                                    </button>
+                                </label>
+                                <input class="form-control" type="text" id="metadataSheetName">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#accordionFinalize" aria-expanded="true" aria-controls="accordionFinalize">
+                        🪄 Validate &amp; generate configuration
+                    </button>
+                </h2>
+                <div id="accordionFinalize" class="accordion-collapse collapse" data-bs-parent="#mainAccordion">
+                    <div class="accordion-body">
+
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 text-center">
+                                <div class="form-validity text-danger fs-5 visually-hidden" id="mainFormInvalid">
+                                    ❌ Please check all validation errors above and fix them.
+                                </div>
+                                <div class="form-validity text-success fs-5 visually-hidden" id="mainFormValid">
+                                    ✅ Configuration is valid.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 accordion-actions" id="generateActions">
+                            <div class="col-sm-12">
+                                <button class="btn btn-primary" id="generateStandardBtn">
+                                    📦 Generate
+                                </button>
+                                <button class="btn btn-danger" id="generateAdminBtn">
+                                    🗃️ Generate (admin)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 visually-hidden" id="progressIndicator">
+                            <div class="col-sm-12 text-center">
+                                <div class="text-primary-emphasis fs-5">
+                                    🔄 Generating...
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        </form>
+
+    </div>
+</div>
+
+<template id="pilotNameForm">
+    <div class="row mb-3 pilot-entry" id="pilotEntryX">
+        <div class="col-sm-12">
+            <div class="d-flex align-items-center">
+                <input type="file" accept="image/jpeg" id="pilotAvatarFileX">
+                <img class="pilot-avatar" id="pilotAvatarX" alt="Pilot X avatar" src="data:image/png;base64,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">
+                <label class="form-label visually-hidden" for="pilotNameX">Pilot __X__ name</label>
+                <input type="text" class="form-control pilot-name" id="pilotNameX" placeholder="Insert pilot name"
+                       aria-label="Insert pilot name" required>
+                <button class="btn btn-circle btn-danger" title="Remove pilot" id="removePilotX" type="button">&times;
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+</body>
+</html>

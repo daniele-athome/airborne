@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /utils/aircraft-tool
+    # only security updates
+    #open-pull-requests-limit: 0
+    schedule:
+      interval: daily
+    labels:
+      - ":hammer: maintenance"
+
+  - package-ecosystem: pub
+    # only security updates
+    #open-pull-requests-limit: 0
+    schedule:
+      interval: daily
+    labels:
+      - ":hammer: maintenance"
+    # TODO versioning strategy (version numbers in pubspec.yaml are fixed)

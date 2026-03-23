@@ -21,10 +21,10 @@ packages:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      sha256: "46e235feb99475d36a55fb6a424fe4e4aea1235c41089b847c4a20087582f029"
+      sha256: "035755d6f8b309ea4b7ede215fea57025be4a6d89bcb272b1d38654ea2db8ec6"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.1"
   analyzer:
     dependency: transitive
     description:
@@ -93,10 +93,10 @@ packages:
     dependency: transitive
     description:
       name: build
-      sha256: "275bf6bb2a00a9852c28d4e0b410da1d833a734d57d39d44f94bfc895a484ec3"
+      sha256: aadd943f4f8cc946882c954c187e6115a84c98c81ad1d9c6cbf0895a8c85da9c
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.5"
   build_config:
     dependency: transitive
     description:
@@ -117,10 +117,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: fae5c4fc1a73b7dee94b6c54e86101e5030a8e42112e61203f464495011a20a1
+      sha256: "521daf8d189deb79ba474e43a696b41c49fb3987818dbacf3308f1e03673a75e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.12.1"
+    version: "2.13.1"
   built_collection:
     dependency: transitive
     description:
@@ -411,10 +411,10 @@ packages:
     dependency: transitive
     description:
       name: hooks
-      sha256: "7a08a0d684cb3b8fb604b78455d5d352f502b68079f7b80b831c62220ab0a4f6"
+      sha256: e79ed1e8e1929bc6ecb6ec85f0cb519c887aa5b423705ded0d0f2d9226def388
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   http:
     dependency: "direct main"
     description:
@@ -608,10 +608,10 @@ packages:
     dependency: transitive
     description:
       name: native_toolchain_c
-      sha256: "89e83885ba09da5fdf2cdacc8002a712ca238c28b7f717910b34bcd27b0d03ac"
+      sha256: "6ba77bb18063eebe9de401f5e6437e95e1438af0a87a3a39084fbd37c90df572"
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.4"
+    version: "0.17.6"
   nested:
     dependency: transitive
     description:
@@ -950,10 +950,10 @@ packages:
     dependency: transitive
     description:
       name: source_gen
-      sha256: "1d562a3c1f713904ebbed50d2760217fd8a51ca170ac4b05b0db490699dbac17"
+      sha256: "732792cfd197d2161a65bb029606a46e0a18ff30ef9e141a7a82172b05ea8ecd"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.0"
+    version: "4.2.2"
   source_map_stack_trace:
     dependency: transitive
     description:
@@ -1022,34 +1022,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: bb17407d4c11a1362d66de0b571267aa83d8f408756aa07b8690c982eedc801d
+      sha256: ce4d4bcba0b61ef65e515115a094e3292afc52ee23c121deea19329ff293a40b
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.8"
+    version: "33.1.44"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "080c4a57f12cb03869c863f6b33fb170ce9653ac741281f11ff8e067dc96fe99"
+      sha256: "45b87b7c198bf7742a151306edac05b4d2754236a7042baeee28c96663616172"
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.8"
+    version: "33.1.44"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: "730cec4eba46ead75fb2f20ea060d9949aeaf0962faf9dda5f8fe0d64eca3d10"
+      sha256: ba0019d20f84f3a2647eaa001ef095ed92ecf8d8d354fd893c4502f3cc03c4ae
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.8"
+    version: "33.1.44"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: b762a6a285a4cdb507f39644442412d6c05192a34194038dbcca8ee5ad1a2515
+      sha256: "53f53fa71c2e6749565bbdfbd83115a9e7dc7cefd86addf46a3f7d88447fd54c"
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.8"
+    version: "33.1.44"
   term_glyph:
     dependency: transitive
     description:

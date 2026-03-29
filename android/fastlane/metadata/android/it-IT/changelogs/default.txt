@@ -1,3 +1,2 @@
-* supporto per orametri sessagesimali
-* fix formattazione date
-* altre correzione di bug
+* fix calcolo tempo di volo
+* escludi eventi giornalieri dal calendario

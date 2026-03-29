@@ -1,3 +1,3 @@
-* support for sexagesimal hourmeters
-* fix date formatting
-* other bug fixes
+* fix flight time calculation
+* exclude all-day events from calendar
+

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1](https://github.com/daniele-athome/airborne/compare/v1.9.0...v1.9.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* **book-flight:** exclude all-day events ([85e13a4](https://github.com/daniele-athome/airborne/commit/85e13a44e5a7083ef0d132a55a6d14c897890b2f))
+* **flight-log:** fix flight time calculation ([427d099](https://github.com/daniele-athome/airborne/commit/427d09970b05f32cfd1ef5f7ddf3788381c3fc3a))
+
 ## [1.9.0](https://github.com/daniele-athome/airborne/compare/v1.8.0...v1.9.0) (2026-02-25)
 
 

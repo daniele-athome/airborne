@@ -98,6 +98,15 @@ String formatFlightTimeDuration(BuildContext context, Duration duration) {
   }
 }
 
+extension FlightTimeHelpers on num {
+  int toMinutes(int hourmeterMultiplier) {
+    int hours = truncate();
+    double decimals = toDouble() - hours;
+    int minutes = (decimals * hourmeterMultiplier).round();
+    return (hours * 60 + minutes).truncate();
+  }
+}
+
 extension DurationHelpers on Duration {
   String toFlightTimeSpec() {
     final totalMinutes = inMinutes;

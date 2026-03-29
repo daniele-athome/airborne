@@ -332,8 +332,11 @@ class FlightLogListItem extends StatelessWidget {
   String _buildHours(FlightLogItem item) =>
       '${_hoursFormatter.format(item.startHour)} – ${_hoursFormatter.format(item.endHour)}';
 
-  String _buildTime(FlightLogItem item) =>
-      '${((item.endHour - item.startHour) * hourmeterMultiplier).round().toString()}′';
+  String _buildTime(FlightLogItem item) {
+    int startMinutes = item.startHour.toMinutes(hourmeterMultiplier);
+    int endMinutes = item.endHour.toMinutes(hourmeterMultiplier);
+    return '${(endMinutes - startMinutes).round().toString()}′';
+  }
 }
 
 // FIXME the way this controller is used triggers an extra useless refresh and it also doesn't play well with infinite_scroll_pagination v5.

@@ -43,7 +43,10 @@ class BookFlightCalendarService {
             (events) => events.items!
                 .where(
                   (gcalendar.Event e) =>
-                      e.summary != null && e.start != null && e.end != null,
+                      e.summary != null &&
+                      e.start != null &&
+                      e.end != null &&
+                      e.start!.dateTime != null,
                 )
                 .map((gcalendar.Event e) {
                   // e.timezone is always null but times are UTC!!!

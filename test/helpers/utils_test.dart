@@ -32,7 +32,7 @@ void main() {
     expect(Duration(minutes: 65).toFlightTimeSpec(), "1h 05m");
     expect(Duration(minutes: 123).toFlightTimeSpec(), "2h 03m");
   });
-  
+
   test('num.toMinutes', () {
     expect(1.76.toMinutes(100), 136);
     expect(1.toMinutes(100), 60);

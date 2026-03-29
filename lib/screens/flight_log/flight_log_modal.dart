@@ -137,7 +137,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
   /// Hour meters show hours in the integer part and hundredth of hours in the decimal part.
   Duration get _totalFlightTime {
     return Duration(
-      minutes: _endHourController.number.toMinutes(_appConfig.hourmeterMultiplier) -
+      minutes:
+          _endHourController.number.toMinutes(_appConfig.hourmeterMultiplier) -
           _startHourController.number.toMinutes(_appConfig.hourmeterMultiplier),
     );
   }

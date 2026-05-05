@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/airborne/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/airborne/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Airborne backend setup | Airborne</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Airborne backend setup" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Aircraft Management" />
+<meta property="og:description" content="Aircraft Management" />
+<link rel="canonical" href="/airborne/backend.html" />
+<meta property="og:url" content="/airborne/backend.html" />
+<meta property="og:site_name" content="Airborne" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Airborne backend setup" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Aircraft Management","headline":"Airborne backend setup","url":"/airborne/backend.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/airborne/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="/airborne/">
+          <h1>Airborne</h1>
+        </a>
+        <h2>Aircraft Management</h2>
+        
+        
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1 id="backend-setup">Backend setup</h1>
+
+<p>All backend data is stored on the Google cloud.</p>
+
+<h1 id="data-overview">Data overview</h1>
+
+<h2 id="bookings">Bookings</h2>
+
+<p>Flight bookings are stored in a <strong>Google Calendar</strong>, having the pilot name as event title and the notes as event description.<br />
+Events are created by the app with UTC time zone: the app will use the aircraft time zone to correct them.</p>
+
+<h2 id="log-book">Log book</h2>
+
+<p>The log book uses a <strong>Google Sheet</strong> to store flights. The structure is very simple, see the Google Sheets template
+linked below.</p>
+
+<p>The log book is automatically sorted by start hour and end hour. There also some basic checks implemented using
+conditional formatting.</p>
+
+<h1 id="setup-a-new-aircraft">Setup a new aircraft</h1>
+
+<p>Here is what you need to do to setup a new aircraft.</p>
+
+<h1 id="google-cloud-setup-checklist">Google Cloud setup checklist</h1>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Create a Google account for management or use the account of one of the pilots to setup all of the following</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Sign up to Google Cloud Platform (free tier)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Enable APIs: Google Calendar, Google Sheets</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GCP: create API key with no application restriction and assign it APIs: Google Calendar, Google Sheets</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GCP: create service account and create (and download) a JSON key</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Create a new Google Calendar and assign write permissions to the service account and to all the pilots</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Create a new Google Sheet (see below) and assign write permissions to the service account and to all the pilots</li>
+</ul>
+
+<h2 id="google-sheet-setup">Google Sheet setup</h2>
+
+<p>You can start by copying the following template:</p>
+
+<p>https://docs.google.com/spreadsheets/d/1ZpfdoaEA5rJmFmulG8tzBqBGPJdy5sk4j6B_8P776Qo/copy</p>
+
+<p>The template includes all necessary sheets and scripts. However, the script needs a trigger to activate:</p>
+
+<ul>
+  <li>open Apps Script from inside the Google Sheets document</li>
+  <li>go to Triggers &gt; Add Trigger</li>
+  <li>select “onChange” as the function to run</li>
+  <li>select “On change” as the event type</li>
+  <li>save and authorize the trigger via your Google Account</li>
+</ul>
+
+<h3 id="custom-sheet-code">Custom sheet code</h3>
+
+<blockquote>
+  <p>The actual script is already included in the template, there is no need to copy it.
+It was copied here as reference only.</p>
+</blockquote>
+
+<p>This code, when installed on the “On Change” event for the sheet, will:</p>
+
+<ul>
+  <li>automatically sort the flight log rows by start and end hour</li>
+  <li>automatically sort the activities log rows by priority and date</li>
+  <li>update the hash of the sheets (more of a version number, actually)</li>
+</ul>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/** @OnlyCurrentDoc */</span>
+
+<span class="c1">// attached to installed trigger for onChange event</span>
+<span class="kd">function</span> <span class="nf">onChange</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">sheet</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">source</span><span class="p">.</span><span class="nf">getActiveSheet</span><span class="p">();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">activeSheet=</span><span class="dl">"</span> <span class="o">+</span> <span class="nx">sheet</span><span class="p">.</span><span class="nf">getName</span><span class="p">());</span>
+  <span class="kd">var</span> <span class="nx">sheetName</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">.</span><span class="nf">getName</span><span class="p">();</span>
+  <span class="k">if </span><span class="p">(</span><span class="nx">sheetName</span><span class="p">.</span><span class="nf">startsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">Flight log</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="nx">sheetName</span><span class="p">.</span><span class="nf">startsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">Registro voli</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">sheet</span><span class="p">.</span><span class="nf">getRange</span><span class="p">(</span><span class="dl">'</span><span class="s1">L1</span><span class="dl">'</span><span class="p">).</span><span class="nf">getValue</span><span class="p">()</span> <span class="o">!=</span> <span class="dl">'</span><span class="s1">LOCKED</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">range</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">.</span><span class="nf">getRange</span><span class="p">(</span><span class="dl">"</span><span class="s2">A:J</span><span class="dl">"</span><span class="p">);</span>
+      <span class="nx">range</span><span class="p">.</span><span class="nf">sort</span><span class="p">([{</span> <span class="na">column</span> <span class="p">:</span> <span class="mi">4</span> <span class="p">},</span> <span class="p">{</span> <span class="na">column</span> <span class="p">:</span> <span class="mi">5</span> <span class="p">}]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// calculate checksum of data</span>
+    <span class="kd">var</span> <span class="nx">metadataSheet</span> <span class="o">=</span> <span class="nx">SpreadsheetApp</span><span class="p">.</span><span class="nf">getActive</span><span class="p">().</span><span class="nf">getSheetByName</span><span class="p">(</span><span class="dl">"</span><span class="s2">Metadata</span><span class="dl">"</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">finder</span> <span class="o">=</span> <span class="nx">metadataSheet</span><span class="p">.</span><span class="nf">createTextFinder</span><span class="p">(</span><span class="dl">"</span><span class="s2">flight_log.hash</span><span class="dl">"</span><span class="p">).</span><span class="nf">matchEntireCell</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+    <span class="cm">/** @type {SpreadsheetApp.Range} */</span>
+    <span class="kd">var</span> <span class="nx">hashKeyCell</span> <span class="o">=</span> <span class="nx">finder</span><span class="p">.</span><span class="nf">findNext</span><span class="p">();</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">hashKeyCell</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">hashValueCell</span> <span class="o">=</span> <span class="nx">metadataSheet</span><span class="p">.</span><span class="nf">getRange</span><span class="p">(</span><span class="nx">hashKeyCell</span><span class="p">.</span><span class="nf">getRow</span><span class="p">(),</span> <span class="nx">hashKeyCell</span><span class="p">.</span><span class="nf">getColumn</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+       <span class="kd">const</span> <span class="nx">currentVersion</span> <span class="o">=</span> <span class="nx">hashValueCell</span><span class="p">.</span><span class="nf">getValue</span><span class="p">()</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+       <span class="nx">hashValueCell</span><span class="p">.</span><span class="nf">setValue</span><span class="p">(</span><span class="nx">currentVersion</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if </span><span class="p">(</span><span class="nx">sheetName</span><span class="p">.</span><span class="nf">startsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">Activities</span><span class="dl">'</span><span class="p">)</span> <span class="o">||</span> <span class="nx">sheetName</span><span class="p">.</span><span class="nf">startsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">Attività</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">range</span> <span class="o">=</span> <span class="nx">sheet</span><span class="p">.</span><span class="nf">getRange</span><span class="p">(</span><span class="dl">"</span><span class="s2">A:I</span><span class="dl">"</span><span class="p">);</span>
+    <span class="nx">range</span><span class="p">.</span><span class="nf">sort</span><span class="p">([{</span> <span class="na">column</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="na">ascending</span><span class="p">:</span> <span class="kc">false</span> <span class="p">},</span> <span class="p">{</span> <span class="na">column</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="na">ascending</span><span class="p">:</span> <span class="kc">false</span> <span class="p">}]);</span>    
+
+    <span class="c1">// calculate checksum of data</span>
+    <span class="kd">var</span> <span class="nx">metadataSheet</span> <span class="o">=</span> <span class="nx">SpreadsheetApp</span><span class="p">.</span><span class="nf">getActive</span><span class="p">().</span><span class="nf">getSheetByName</span><span class="p">(</span><span class="dl">"</span><span class="s2">Metadata</span><span class="dl">"</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">finder</span> <span class="o">=</span> <span class="nx">metadataSheet</span><span class="p">.</span><span class="nf">createTextFinder</span><span class="p">(</span><span class="dl">"</span><span class="s2">activities.hash</span><span class="dl">"</span><span class="p">).</span><span class="nf">matchEntireCell</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+    <span class="cm">/** @type {SpreadsheetApp.Range} */</span>
+    <span class="kd">var</span> <span class="nx">hashKeyCell</span> <span class="o">=</span> <span class="nx">finder</span><span class="p">.</span><span class="nf">findNext</span><span class="p">();</span>
+    <span class="k">if </span><span class="p">(</span><span class="nx">hashKeyCell</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">hashValueCell</span> <span class="o">=</span> <span class="nx">metadataSheet</span><span class="p">.</span><span class="nf">getRange</span><span class="p">(</span><span class="nx">hashKeyCell</span><span class="p">.</span><span class="nf">getRow</span><span class="p">(),</span> <span class="nx">hashKeyCell</span><span class="p">.</span><span class="nf">getColumn</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+       <span class="kd">const</span> <span class="nx">currentVersion</span> <span class="o">=</span> <span class="nx">hashValueCell</span><span class="p">.</span><span class="nf">getValue</span><span class="p">()</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+       <span class="nx">hashValueCell</span><span class="p">.</span><span class="nf">setValue</span><span class="p">(</span><span class="nx">currentVersion</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="aircraft-definition-file">Aircraft definition file</h2>
+
+<p>The definition file contains all information about your aircraft, as well as the credentials to access the calendar and
+the spreadsheet.</p>
+
+<blockquote>
+  <p>Comments are only for documentation purposes and are not supported by the app! Please <strong>remove them</strong> before creating
+the zip file!</p>
+</blockquote>
+
+<div class="language-json5 highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="c">// Gives administrative access to the user. Administrators can edit everything, even entries created by other people.</span><span class="w">
+  </span><span class="nl">"admin"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Internal ID of the aircraft. It's recommended to use the call sign in lowercase, without the hyphen.</span><span class="w">
+  </span><span class="nl">"aircraft_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a1234"</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Aircraft call sign.</span><span class="w">
+  </span><span class="nl">"callsign"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A-1234"</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Google Docs information.</span><span class="w">
+  </span><span class="nl">"backend_info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="c">// JSON-escaped string of the service account JSON file.</span><span class="w">
+    </span><span class="nl">"google_api_service_account"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{...}"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// API key for accessing Google services.</span><span class="w">
+    </span><span class="nl">"google_api_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// ID of the Google Calendar used for booking flights.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the app for booking flights.</span><span class="w">
+    </span><span class="nl">"google_calendar_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"...@group.calendar.google.com"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Spreadsheet ID of the Google Sheets document for the flight log.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the flight log.</span><span class="w">
+    </span><span class="nl">"flightlog_spreadsheet_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Actual sheet name - within the spreadsheet - for the flight log</span><span class="w">
+    </span><span class="c">// Remove the line if not using the flight log.</span><span class="w">
+    </span><span class="nl">"flightlog_sheet_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Flight log"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Spreadsheet ID of the Google Sheets document for the journal.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the journal.</span><span class="w">
+    </span><span class="nl">"activities_spreadsheet_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Actual sheet name - within the spreadsheet - for the journal.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the journal.</span><span class="w">
+    </span><span class="nl">"activities_sheet_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Activities"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Spreadsheet ID of the Google Sheets document for the metadata table.</span><span class="w">
+    </span><span class="nl">"metadata_spreadsheet_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Actual sheet name - within the spreadsheet - for the metadata table.</span><span class="w">
+    </span><span class="nl">"metadata_sheet_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Metadata"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="c">// Name of the (fake) pilot when registering a maintenance flight or engine start.</span><span class="w">
+  </span><span class="nl">"no_pilot_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"(maintenance)"</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Name of the pilots.</span><span class="w">
+  </span><span class="nl">"pilot_names"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"Mike"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"John"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Claudia"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Anna"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Simon"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="c">// URL to the documents archive of the aircraft.</span><span class="w">
+  </span><span class="nl">"documents_archive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://..."</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Hangar location information.</span><span class="w">
+  </span><span class="nl">"location"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fly Berlin"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">52.8844253</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">12.7143166</span><span class="p">,</span><span class="w">
+    </span><span class="c">// This timezone will be used when booking flights in the calendar.</span><span class="w">
+    </span><span class="nl">"timezone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Europe/Berlin"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Live weather information. Remove the line if none available.</span><span class="w">
+    </span><span class="nl">"weather_live"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.earthtv.com/en/webcam/berlin-brandenburger-tor"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Weather forecast information. Remove the line if none available.</span><span class="w">
+    </span><span class="nl">"weather_forecast"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.bbc.com/weather/2950159"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="aircraft-data-file">Aircraft data file</h2>
+
+<p>There is a <a href="https://daniele-athome.github.io/airborne/aircraft-tool/">nice web tool to build an aircraft data file</a> (BETA);
+if the tool doesn’t work you can proceed with the manual process.</p>
+
+<p>Create a zip file with the following:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">aircraft.json</code></li>
+  <li><code class="language-plaintext highlighter-rouge">avatar-&lt;name&gt;.jpg</code> files with picture of all pilots (names must match the ones in aircraft definition file, <strong>but all lowercase</strong>)</li>
+  <li><code class="language-plaintext highlighter-rouge">aircraft.jpg</code> with a picture of your aircraft</li>
+</ul>
+
+<p>You can then serve the zip file from anywhere you like, as long as it has a publicly accessible HTTPS URL, either
+without authentication or with HTTP Basic authentication (no other authentication method is supported by the app).</p>
+
+<blockquote>
+  <p>When using HTTP Basic authentication, you will need to type “username:password” in the password field during aircraft
+configuration in the app.</p>
+</blockquote>
+
+        </section>
+
+        <aside id="sidebar">
+          
+
+          
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  </body>
+</html>

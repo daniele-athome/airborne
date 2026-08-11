@@ -109,10 +109,10 @@ packages:
     dependency: transitive
     description:
       name: build_daemon
-      sha256: "57c62a6d85c39d2a8c984e3b73b29bf2775a865e690309405aeade647fb2184c"
+      sha256: "79e05eaf15a48d7230b053a4363b8eaac0cc234bbd0134c3229455481f55cbc6"
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.4"
+    version: "4.1.5"
   build_runner:
     dependency: "direct dev"
     description:
@@ -245,10 +245,10 @@ packages:
     dependency: transitive
     description:
       name: dynamic_color
-      sha256: "43a5a6679649a7731ab860334a5812f2067c2d9ce6452cf069c5e0c25336c17c"
+      sha256: "4aeb76de323e8eb660bab5557d826ad7ebbf1434a598f0c6aa8a11a9696a6757"
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.1"
+    version: "1.9.0"
   equatable:
     dependency: transitive
     description:
@@ -1062,34 +1062,34 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_calendar
-      sha256: "8966658959d2568f1b2801944b8ddc645efc0288aecf4ac0a447c825c7e91913"
+      sha256: a69bdf50e95b322aecd5c24dae3475e46400cef9a45472dda90e669a935c8e6e
       url: "https://pub.dev"
     source: hosted
-    version: "34.2.2"
+    version: "34.2.3"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "5960bed0c8ccca492b1f1c3dee829e6f1066bdf1880d08e96d32656d0fc6cd63"
+      sha256: e7f8efe88922e19b83cd5f008f552442b304f40ff84e5037425e9042e1f1a1bd
       url: "https://pub.dev"
     source: hosted
-    version: "34.2.2"
+    version: "34.2.3"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
       name: syncfusion_flutter_datepicker
-      sha256: c18a80c4d9b26ef97d074abd8d538a8d7b62200911560459267c49db70dc0421
+      sha256: "2aa4fdcb85759fbc72638159eebca3fde0c1b9829a84b434860ba66329c53a91"
       url: "https://pub.dev"
     source: hosted
-    version: "34.2.2"
+    version: "34.2.3"
   syncfusion_localizations:
     dependency: "direct main"
     description:
       name: syncfusion_localizations
-      sha256: "633b018c1cf31178afe9563bc7919c1f7d8b0d6fbea0e86d0b4a3d7f9b2f2518"
+      sha256: "4a6d927dd729a26178b41afd8456a1a3573cdc09968b33c8ddba6d0810801da3"
       url: "https://pub.dev"
     source: hosted
-    version: "34.2.2"
+    version: "34.2.3"
   term_glyph:
     dependency: transitive
     description:
@@ -1312,10 +1312,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: ba6f4bba816c8d7e3c1580e170f3786d216951cc6b94babc3b814c08d2cb2738
+      sha256: a0b93865d5644f11cf6a8c3f6db909f1ec168958b5805f6cc684adea957cd63d
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.4.0"
   xdg_directories:
     dependency: transitive
     description:

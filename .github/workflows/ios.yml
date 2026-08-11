@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  flutter_version: '3.44.8'
+  flutter_version: '3.44.9'
 
 jobs:
   # Since Fastlane also builds, there is no way to split jobs without sacrificing build time
@@ -62,7 +62,8 @@ jobs:
         run: flutter analyze --no-pub .
 
       - name: Run tests
-        run: flutter test --no-pub -r github
+        run: flutter test --no-pub -r github test
+        # TODO run also integration tests
 
       - name: Build iOS application
         run: flutter build ios --no-pub --release --no-codesign

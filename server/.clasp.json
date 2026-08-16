@@ -10,6 +10,7 @@
     "src/40_store.js",
     "src/50_lock.js",
     "src/60_actions.js",
+    "src/70_trigger.js",
     "src/90_main.js"
   ]
 }

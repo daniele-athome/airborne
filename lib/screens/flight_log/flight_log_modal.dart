@@ -721,6 +721,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
       fuelAmount,
       fuelPrice,
       _notesController.text,
+      // carried over from the loaded entry: it is the precondition telling the
+      // backend which version of the row this edit was based on
+      fingerprint: widget.item.fingerprint,
     );
     final Future task =
         (_isEditing
@@ -794,7 +797,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   void _doDelete(BuildContext context) {
     final Future task = _service
-        .deleteItem(widget.item.id!)
+        .deleteItem(widget.item)
         .timeout(kNetworkRequestTimeout)
         .catchError((error, StackTrace stacktrace) {
           _log.warning('DELETE ERROR', error, stacktrace);

@@ -4,30 +4,33 @@
  * Every read and write of the data sheets and of the metadata key-value sheet
  * goes through here. Callers are expected to already hold the script lock for
  * anything that mutates.
+ *
+ * This is a container-bound script: everything it touches lives in the
+ * spreadsheet it is attached to, reached through `getActive()`. There is no
+ * `openById` anywhere, and the manifest asks only for
+ * `spreadsheets.currentonly`, so the deployment cannot reach any other
+ * spreadsheet of the owner even though it runs with the owner's identity.
  */
 
 /** Data range of the metadata key-value store, matching the app's own range. */
 var METADATA_FIRST_ROW = 2;
 
-/** Opens the sheet backing a store, throwing when the deployment is misconfigured. */
-function openStoreSheet(storeConfig) {
-  var spreadsheetId = getProperty(storeConfig.spreadsheetIdProperty, true);
-  var sheetName = getProperty(storeConfig.sheetNameProperty, true);
-  var sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
+/** Returns a sheet of the container spreadsheet, or throws if it is missing. */
+function openSheetByName(sheetName, what) {
+  var sheet = SpreadsheetApp.getActive().getSheetByName(sheetName);
   if (!sheet) {
-    throw new Error('Sheet not found: ' + sheetName);
+    throw new Error(what + ' sheet not found in this spreadsheet: ' + sheetName);
   }
   return sheet;
 }
 
+/** Opens the sheet backing a store, throwing when the deployment is misconfigured. */
+function openStoreSheet(storeConfig) {
+  return openSheetByName(getProperty(storeConfig.sheetNameProperty, true), storeConfig.metadataPrefix);
+}
+
 function openMetadataSheet() {
-  var spreadsheetId = getProperty('METADATA_SPREADSHEET_ID', true);
-  var sheetName = getProperty('METADATA_SHEET_NAME', true);
-  var sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
-  if (!sheet) {
-    throw new Error('Metadata sheet not found: ' + sheetName);
-  }
-  return sheet;
+  return openSheetByName(getProperty('METADATA_SHEET_NAME', true), 'Metadata');
 }
 
 /** Reads the whole metadata key-value store as a plain object. */

@@ -39,22 +39,25 @@ class AppConfig extends ChangeNotifier {
       case 'book_flight':
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
-        return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] !=
-                null &&
-            _currentAircraft!.backendInfo['flightlog_sheet_name'] != null &&
+        return _hasScriptBackend &&
+            _currentAircraft!.backendInfo['flightlog_enabled'] == true &&
             _currentAircraft!.noPilotName != null;
       case 'activities':
-        return _currentAircraft!.backendInfo['activities_spreadsheet_id'] !=
-                null &&
-            _currentAircraft!.backendInfo['activities_sheet_name'] != null;
-      case 'metadata':
-        return _currentAircraft!.backendInfo['metadata_spreadsheet_id'] !=
-                null &&
-            _currentAircraft!.backendInfo['metadata_sheet_name'] != null;
+        return _hasScriptBackend &&
+            _currentAircraft!.backendInfo['activities_enabled'] == true;
       default:
         throw Exception('Unknown feature: $feature');
     }
   }
+
+  /// Whether this aircraft is served by the backend script.
+  ///
+  /// Both sheet-backed stores go through it, so without a URL and a token there
+  /// is no way to reach them: the app no longer has credentials of its own for
+  /// the spreadsheet.
+  bool get _hasScriptBackend =>
+      _currentAircraft!.backendInfo['script_url'] != null &&
+      _currentAircraft!.backendInfo['script_token'] != null;
 
   bool get admin {
     return _currentAircraft!.admin;
@@ -73,28 +76,17 @@ class AppConfig extends ChangeNotifier {
     return _currentAircraft!.backendInfo['google_calendar_id']! as String;
   }
 
-  Map<String, String> get flightlogBackendInfo {
-    return {
-      'spreadsheet_id':
-          _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
-      'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
-    };
+  /// URL of the backend script deployment.
+  String get scriptUrl {
+    return _currentAircraft!.backendInfo['script_url']! as String;
   }
 
-  Map<String, String> get activitiesBackendInfo {
-    return {
-      'spreadsheet_id':
-          _currentAircraft!.backendInfo['activities_spreadsheet_id'],
-      'sheet_name': _currentAircraft!.backendInfo['activities_sheet_name'],
-    };
-  }
-
-  Map<String, String> get metadataBackendInfo {
-    return {
-      'spreadsheet_id':
-          _currentAircraft!.backendInfo['metadata_spreadsheet_id'],
-      'sheet_name': _currentAircraft!.backendInfo['metadata_sheet_name'],
-    };
+  /// Token identifying this pilot to the backend script.
+  ///
+  /// Each pilot gets their own archive carrying their own token; the backend
+  /// derives the pilot name from it rather than trusting the request.
+  String get scriptToken {
+    return _currentAircraft!.backendInfo['script_token']! as String;
   }
 
   String get locationName {

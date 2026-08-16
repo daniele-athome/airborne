@@ -20,6 +20,29 @@ was lost with no error. Everything here follows from closing that window:
   carries a token.
 - **Server-derived identity** — the pilot name comes from the token, not from
   the request body.
+- **Stable ids** — the sheet is re-sorted on every change, so row numbers are
+  not identities.
+
+## Container-bound, by design
+
+This script is **bound to the spreadsheet it serves**, and its manifest asks
+only for `spreadsheets.currentonly`. There is no `openById` anywhere: every
+sheet is reached through `SpreadsheetApp.getActive()`.
+
+That matters because the web app runs as its owner. Without the narrow scope, a
+deployment would hold write access to every spreadsheet in that account's Drive;
+with it, a bug or a leaked URL cannot reach past this one document. It is the
+same confinement the template's original trigger already declared with
+`@OnlyCurrentDoc`.
+
+The consequence is one deployment per aircraft, since each aircraft is a copy of
+the template with its own bound script. That also means the script lock is
+per-aircraft, which is the right granularity: two aircraft never serialize
+against each other.
+
+Booking stays on Google Calendar, handled directly by the app: there is no
+`calendar.currentonly` equivalent, so pulling it in here would have widened the
+scope back to the whole account.
 
 ## Layout
 
@@ -32,6 +55,7 @@ was lost with no error. Everything here follows from closing that window:
 | `src/40_store.js` | sheet and metadata access |
 | `src/50_lock.js` | script lock and idempotency |
 | `src/60_actions.js` | bootstrap, list, insert, update, delete |
+| `src/70_trigger.js` | `onChange`: sorting and version bump, under the same lock |
 | `src/90_main.js` | `doGet` / `doPost` |
 
 Apps Script has a flat global namespace and no module system: the numeric
@@ -39,27 +63,34 @@ prefixes are the load order, declared in `.clasp.json` under `filePushOrder`.
 
 ## Setup
 
-1. Create the Apps Script project and put its id in `.clasp.json`.
+Full end-to-end instructions, including the spreadsheet template, are in
+`docs/backend.md`. In short:
+
+1. Open the aircraft spreadsheet → Extensions → Apps Script, and put the script
+   id of that bound project in `.clasp.json`.
 2. Set the script properties (Project Settings → Script Properties):
 
    | Property | Required | Meaning |
    |---|---|---|
-   | `TOKEN_SALT` | yes | salt for token hashes — never commit it |
-   | `METADATA_SPREADSHEET_ID` | yes | spreadsheet holding the key-value sheet |
-   | `METADATA_SHEET_NAME` | yes | name of that sheet |
-   | `FLIGHT_LOG_SPREADSHEET_ID` | for flight_log | |
-   | `FLIGHT_LOG_SHEET_NAME` | for flight_log | |
-   | `ACTIVITIES_SPREADSHEET_ID` | for activities | |
-   | `ACTIVITIES_SHEET_NAME` | for activities | |
+   | `TOKEN_SALT` | yes | salt for token hashes — never commit it, one per aircraft |
+   | `METADATA_SHEET_NAME` | yes | name of the key-value sheet, e.g. `Metadata` |
+   | `FLIGHT_LOG_SHEET_NAME` | for flight_log | e.g. `Flight log` or `Registro voli` |
+   | `ACTIVITIES_SHEET_NAME` | for activities | e.g. `Activities` or `Attività` |
    | `NO_PILOT_NAME` | no | maintenance pilot, writable by any token |
+
+   Sheet names are matched as a prefix by the trigger, mirroring what the
+   template's original script did with its localized names.
 
 3. Add one `token.<pilot_name>` row per pilot to the metadata sheet, with the
    **hash** of the token as its value (`SHA-256` of `TOKEN_SALT + token`, lower
    case hex). Optionally add `role.<pilot_name>` = `admin`.
-4. Deploy as a Web App. The manifest already pins
-   `executeAs: USER_DEPLOYING` and `access: ANYONE_ANONYMOUS`, so the settings
-   are versioned here rather than clicked in a panel.
-5. Verify with a `GET` on the `/exec` URL: it answers with the build id and the
+4. Deploy as a Web App. The manifest already pins `executeAs: USER_DEPLOYING`
+   and `access: ANYONE_ANONYMOUS`, so the settings are versioned here rather
+   than clicked in a panel.
+5. Install the `onChange` trigger: Triggers → Add Trigger → function `onChange`,
+   event source "From spreadsheet", event type "On change". It has to be an
+   installable trigger, because it writes.
+6. Verify with a `GET` on the `/exec` URL: it answers with the build id and the
    supported protocol range, without a token.
 
 ## Deploying
@@ -71,6 +102,10 @@ AIRBORNE_DEPLOYMENT_ID=<id> ./deploy.sh "description"
 Redeploying the same deployment id is what keeps the `/exec` URL stable — plain
 `clasp deploy` creates a new URL that no installed app knows about. Rollback is
 the same command pointing at an earlier version.
+
+With more than one aircraft, each spreadsheet has its own script id and
+deployment id: run the script once per aircraft, switching `scriptId` in
+`.clasp.json`.
 
 ## Tests
 
@@ -128,19 +163,38 @@ same id.
 | `update` | yes | yes | yes | preserves columns not in the payload |
 | `delete` | yes | yes | yes | |
 
+## Identity of a row
+
+Ids are read from column **K**, assigned on insert from a `<store>.next_id`
+counter in the metadata sheet, and never reused.
+
+Row numbers cannot serve as ids here, and not merely because deleting a row
+shifts the ones below it: the `onChange` trigger **re-sorts the whole sheet on
+every change** — the flight log by hourmeter, the activities by priority and
+date. A single backdated entry moves everything under it, so a positional id
+would point at a different flight seconds after it was handed out.
+
+One consequence deserves attention when touching the sort. `Range.sort()`
+rearranges the values inside its range and leaves everything outside in place,
+so an id column excluded from the sorted range would stay behind while its data
+moved — silently attaching every id to the wrong row. `sortStore` therefore
+derives the range from `headerRows` and `columnCount` instead of naming it, and
+the same property is what rules out row-attached `DeveloperMetadata` as an
+alternative: it is bound to the row dimension, which a value sort does not move.
+
 ## Operational notes
 
 - The lock only covers executions of this script. Direct Sheets API writes and
   edits typed into the browser bypass it, which is why the app has to stop
   writing directly for the guarantee to hold.
-- The version counter is bumped here. Any existing trigger that recomputes the
-  hash on edit should be kept only as a reconciliation path for manual edits, or
-  it will race with this code.
+- The `onChange` trigger lives in this project precisely so that it shares the
+  lock: it skips its work when a write already holds it, since that write sorts
+  and bumps the version on its way out.
 - `count` is derived from the sheet, not trusted from the metadata counter: a
   row added by hand never touches the counter. The counter is still written for
   the app's current `reset()`.
-- All stores serialize against each other, since Apps Script offers no named
-  locks. At this write volume that is irrelevant.
-- `idStrategy` is `row` today, matching the app's "id = row number" convention.
-  Switching a store to `column` (with `idColumnIndex`) makes ids survive
-  deletions; it needs a backfill of the id column and a matching client change.
+- Both stores serialize against each other within one aircraft, since Apps
+  Script offers no named locks. At this write volume that is irrelevant.
+- `L1` set to `LOCKED` suspends sorting, the template's original escape hatch.
+  It is what makes the id backfill safe to run — see the migration section of
+  `docs/backend.md`.

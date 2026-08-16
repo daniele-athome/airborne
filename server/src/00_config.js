@@ -1,9 +1,12 @@
 /**
  * Airborne backend — configuration.
  *
- * Nothing secret lives in this file: spreadsheet ids, sheet names and the token
- * salt are read from the script properties (Project Settings > Script
- * Properties in the Apps Script editor). See README.md for the full list.
+ * Nothing secret lives in this file: sheet names and the token salt are read
+ * from the script properties (Project Settings > Script Properties in the Apps
+ * Script editor). See README.md for the full list.
+ *
+ * There are no spreadsheet ids: this script is bound to the spreadsheet it
+ * serves and can only reach that one.
  */
 
 /** Protocol contract version spoken by this build. */
@@ -54,18 +57,24 @@ var FINGERPRINT_LENGTH = 12;
  *
  * Columns not listed are preserved verbatim on update: the sheet may carry
  * extra columns this build knows nothing about.
+ *
+ * `sortBy` mirrors the order the onChange trigger applies. The range it sorts
+ * is derived from `headerRows` and `columnCount`, so it always covers the id
+ * column: `Range.sort()` rearranges values inside its range and leaves anything
+ * outside in place, which would silently detach ids from their rows.
  */
 var STORES = {
   flight_log: {
     metadataPrefix: 'flight_log',
-    spreadsheetIdProperty: 'FLIGHT_LOG_SPREADSHEET_ID',
     sheetNameProperty: 'FLIGHT_LOG_SHEET_NAME',
     headerRows: 1,
-    columnCount: 10,
-    // 'row'    : item id is the 1-based ordinal of the data row (legacy)
-    // 'column' : item id is read from `idColumnIndex` (stable across deletions)
-    idStrategy: 'row',
-    idColumnIndex: null,
+    columnCount: 11,
+    // 'row'    : item id is the 1-based ordinal of the data row (legacy, unsafe
+    //            here because the trigger re-sorts the sheet on every change)
+    // 'column' : item id is read from `idColumnIndex` and travels with the row
+    idStrategy: 'column',
+    idColumnIndex: 10,
+    sortBy: [{ column: 4 }, { column: 5 }],
     fields: [
       { name: 'createdAt', index: 0, type: 'date', managed: 'createdAt', immutable: true },
       { name: 'date', index: 1, type: 'date', required: true },
@@ -77,17 +86,18 @@ var STORES = {
       { name: 'fuel', index: 7, type: 'number', nullable: true },
       { name: 'fuelPrice', index: 8, type: 'number', nullable: true },
       { name: 'notes', index: 9, type: 'string', nullable: true }
+      // index 10 (K) holds the stable id, written by the server on insert.
     ]
   },
 
   activities: {
     metadataPrefix: 'activities',
-    spreadsheetIdProperty: 'ACTIVITIES_SPREADSHEET_ID',
     sheetNameProperty: 'ACTIVITIES_SHEET_NAME',
     headerRows: 1,
-    columnCount: 10,
-    idStrategy: 'row',
-    idColumnIndex: null,
+    columnCount: 11,
+    idStrategy: 'column',
+    idColumnIndex: 10,
+    sortBy: [{ column: 3, ascending: false }, { column: 2, ascending: false }],
     fields: [
       { name: 'createdAt', index: 0, type: 'date', managed: 'createdAt', immutable: true },
       { name: 'creationDate', index: 1, type: 'date', managed: 'createdAt', immutable: true },
@@ -100,6 +110,7 @@ var STORES = {
       { name: 'description', index: 8, type: 'string', nullable: true }
       // index 9 is reserved for the alert flag, which the app does not model
       // yet: it is left untouched by insert and preserved on update.
+      // index 10 (K) holds the stable id, written by the server on insert.
     ]
   }
 };

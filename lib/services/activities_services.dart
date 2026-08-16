@@ -1,52 +1,56 @@
-import '../helpers/googleapis.dart';
+import 'package:intl/intl.dart';
+
 import '../models/activities_models.dart';
 import 'base_sheets_services.dart';
-import 'metadata_services.dart';
+
+/// Due date formatter
+final _kDateFormatter = DateFormat('yyyy-MM-dd');
 
 /// A primitive way to abstract the real activities service.
-class ActivitiesService extends GoogleSheetsStoreService<ActivityEntry> {
-  ActivitiesService(
-    GoogleServiceAccountService accountService,
-    MetadataService? metadataService,
-    Map<String, String> properties,
-  ) : super(
-        accountService: accountService,
-        metadataService: metadataService,
-        spreadsheetId: properties['spreadsheet_id']!,
-        sheetName: properties['sheet_name']!,
-      );
+class ActivitiesService extends RemoteStoreService<ActivityEntry> {
+  ActivitiesService(super.client);
 
   @override
-  String getMetadataPrefixKey() => 'activities';
+  String get storeName => 'activities';
 
   @override
-  ActivityEntry buildItem(String rowId, List<Object?> rowData) => ActivityEntry(
-    id: rowId,
-    creationDate: dateFromGsheets((rowData[1] as int).toDouble()),
-    type: ActivityType.fromCode(rowData[2] as int),
-    status: rowData[3] is String && (rowData[3] as String).isNotEmpty
-        ? ActivityStatus.fromLabel(rowData[3] as String)
+  ActivityEntry buildItem(Map<String, dynamic> data) => ActivityEntry(
+    id: data['id'] as String?,
+    fingerprint: data['fingerprint'] as String?,
+    creationDate: DateTime.parse(data['creationDate'] as String),
+    type: ActivityType.fromCode(data['type'] as int),
+    status: data['status'] != null
+        ? ActivityStatus.fromLabel(data['status'] as String)
         : null,
-    lastStatusUpdate: rowData[4] is int
-        ? dateFromGsheets((rowData[4] as int).toDouble())
+    lastStatusUpdate: data['lastStatusUpdate'] != null
+        ? DateTime.parse(data['lastStatusUpdate'] as String)
         : null,
-    dueDate: rowData[5] is int
-        ? dateFromGsheets((rowData[5] as int).toDouble())
+    dueDate: data['dueDate'] != null
+        ? DateTime.parse(data['dueDate'] as String)
         : null,
-    author: rowData[6] as String,
-    summary: rowData[7] as String,
-    description:
-        rowData.length > 8 &&
-            rowData[8] is String &&
-            (rowData[8] as String).isNotEmpty
-        ? rowData[8] as String
-        : null,
+    author: data['author'] as String,
+    summary: data['summary'] as String,
+    description: data['description'] as String?,
     // TODO alert: ... (not really clear how to remember what we already alerted)
   );
 
+  /// The creation date and the status timestamp are filled by the backend: the
+  /// latter is stamped only when the status actually changes.
   @override
-  int getColumnCount() => 10;
+  Map<String, dynamic> buildPayload(ActivityEntry item) => {
+    'type': item.type.code,
+    'status': item.status?.label,
+    'dueDate': item.dueDate != null
+        ? _kDateFormatter.format(item.dueDate!)
+        : null,
+    'author': item.author,
+    'summary': item.summary,
+    'description': item.description,
+  };
 
   @override
-  List<Object?> buildRowData(ActivityEntry item) => throw UnimplementedError();
+  String? fingerprintOf(ActivityEntry item) => item.fingerprint;
+
+  @override
+  String? idOf(ActivityEntry item) => item.id;
 }

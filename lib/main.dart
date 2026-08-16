@@ -15,7 +15,7 @@ import 'screens/app.dart';
 import 'services/activities_services.dart';
 import 'services/book_flight_services.dart';
 import 'services/flight_log_services.dart';
-import 'services/metadata_services.dart';
+import 'services/script_client.dart';
 
 final Logger _log = Logger("main");
 
@@ -69,32 +69,31 @@ Future<void> main() async {
         ChangeNotifierProvider<DownloadProvider>(
           create: (context) => DownloadProvider(() => HttpClient()),
         ),
-        // account service: the dependency tree root
+        // account service: only bookings still use Google APIs directly
         ProxyProvider<AppConfig, GoogleServiceAccountService?>(
           update: (_, appConfig, _) {
             _log.finest('build account_service');
-            return appConfig.currentAircraft != null
+            return appConfig.hasFeature('book_flight')
                 ? GoogleServiceAccountService(
                     json: appConfig.googleServiceAccountJson,
                   )
                 : null;
           },
         ),
-        // metadata service: depends on account service
-        ProxyProvider2<
-          AppConfig,
-          GoogleServiceAccountService?,
-          MetadataService?
-        >(
-          update: (_, appConfig, account, _) {
-            _log.finest('build metadata');
-            return appConfig.hasFeature('metadata') && account != null
-                ? MetadataService(account, appConfig.metadataBackendInfo)
+        // backend script client: the root of the sheet-backed services
+        ProxyProvider<AppConfig, ScriptClient?>(
+          update: (_, appConfig, _) {
+            _log.finest('build script_client');
+            return appConfig.currentAircraft != null &&
+                    (appConfig.hasFeature('flight_log') ||
+                        appConfig.hasFeature('activities'))
+                ? ScriptClient(
+                    url: appConfig.scriptUrl,
+                    token: appConfig.scriptToken,
+                  )
                 : null;
           },
         ),
-        // other application services: depend on account and metadata services.
-        // Metadata service is optional since they can work without it.
         ProxyProvider2<
           AppConfig,
           GoogleServiceAccountService?,
@@ -107,37 +106,19 @@ Future<void> main() async {
                 : null;
           },
         ),
-        ProxyProvider3<
-          AppConfig,
-          GoogleServiceAccountService?,
-          MetadataService?,
-          FlightLogBookService?
-        >(
-          update: (_, appConfig, account, metadataService, _) {
+        ProxyProvider2<AppConfig, ScriptClient?, FlightLogBookService?>(
+          update: (_, appConfig, scriptClient, _) {
             _log.finest('build flight_log');
-            return appConfig.hasFeature('flight_log') && account != null
-                ? FlightLogBookService(
-                    account,
-                    metadataService,
-                    appConfig.flightlogBackendInfo,
-                  )
+            return appConfig.hasFeature('flight_log') && scriptClient != null
+                ? FlightLogBookService(scriptClient)
                 : null;
           },
         ),
-        ProxyProvider3<
-          AppConfig,
-          GoogleServiceAccountService,
-          MetadataService?,
-          ActivitiesService?
-        >(
-          update: (_, appConfig, account, metadataService, _) {
+        ProxyProvider2<AppConfig, ScriptClient?, ActivitiesService?>(
+          update: (_, appConfig, scriptClient, _) {
             _log.finest('build activities');
-            return appConfig.hasFeature('activities')
-                ? ActivitiesService(
-                    account,
-                    metadataService,
-                    appConfig.activitiesBackendInfo,
-                  )
+            return appConfig.hasFeature('activities') && scriptClient != null
+                ? ActivitiesService(scriptClient)
                 : null;
           },
         ),

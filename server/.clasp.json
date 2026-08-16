@@ -1,0 +1,15 @@
+{
+  "scriptId": "REPLACE_WITH_YOUR_SCRIPT_ID",
+  "rootDir": "src",
+  "filePushOrder": [
+    "src/00_config.js",
+    "src/01_build.js",
+    "src/10_protocol.js",
+    "src/20_auth.js",
+    "src/30_canonical.js",
+    "src/40_store.js",
+    "src/50_lock.js",
+    "src/60_actions.js",
+    "src/90_main.js"
+  ]
+}

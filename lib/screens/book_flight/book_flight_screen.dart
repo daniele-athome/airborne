@@ -513,9 +513,7 @@ class BookFlightScreenState extends State<BookFlightScreen> {
     return Stack(
       children: <Widget>[
         Image(
-          image: ExactAssetImage(
-            'assets/images/month_${details.date.month}.png',
-          ),
+          image: AssetImage('assets/images/month_${details.date.month}.png'),
           fit: BoxFit.cover,
           width: details.bounds.width,
           height: details.bounds.height,

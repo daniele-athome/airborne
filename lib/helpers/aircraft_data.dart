@@ -379,11 +379,13 @@ Future<AircraftData> _validateAndStoreAircraft(
       await reader.open();
       return reader.toAircraftData();
     } else {
-      return Future.error(AircraftValidationException());
+      throw AircraftValidationException();
     }
   } on FormatException catch (_) {
     _log.warning('Error reading aircraft data file, wrong password?');
     return Future.error(AircraftBadFileException());
+  } on AircraftValidationException catch (e) {
+    return Future.error(e);
   } catch (e, stacktrace) {
     _log.warning('Error storing aircraft data file', e, stacktrace);
     return Future.error(AircraftStoreException(e), stacktrace);

@@ -371,11 +371,9 @@ class DownloadProvider extends ChangeNotifier {
             ? getTemporaryDirectory()
             : getApplicationSupportDirectory());
         final file = File(path.join(directory.path, filename));
-        return response.pipe(file.openWrite()).then((value) => file);
+        return await response.pipe(file.openWrite()).then((value) => file);
       } else {
-        return Future.error(
-          Exception('Download error (${response.statusCode})'),
-        );
+        throw Exception('Download error (${response.statusCode})');
       }
     } on SocketException catch (e) {
       // do not expose SocketException

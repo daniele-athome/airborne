@@ -12,6 +12,7 @@ const ERROR = {
     BAD_REQUEST: 'BAD_REQUEST',
     UNAUTHORIZED: 'UNAUTHORIZED',
     FORBIDDEN: 'FORBIDDEN',
+    BUSY: 'BUSY',
     PROTOCOL_INCOMPATIBLE: 'PROTOCOL_INCOMPATIBLE',
     INTERNAL: 'INTERNAL'
 };
@@ -111,6 +112,7 @@ function parseEnvelope(body) {
         expect: body.expect && typeof body.expect === 'object' ? body.expect : null,
         payload: body.payload && typeof body.payload === 'object' ? body.payload : {},
         client: typeof body.client === 'string' ? body.client : null,
+        // TODO do we need force?
         force: body.force === true
     };
 

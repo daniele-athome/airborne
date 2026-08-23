@@ -43,12 +43,22 @@ function handleRequest(body) {
         return errorResponse(ERROR.UNAUTHORIZED, 'Unknown or revoked token');
     }
 
-    // TODO dispatch request
-    return okResponse(
-        {
-            pilotName: identity.pilotName,
-            role: identity.role,
-            buildId: BUILD_ID
-        }
-    );
+    if (!isMutating(envelope.action)) {
+        return dispatch(envelope, identity);
+    }
+
+    return withLock(function () {
+        return withIdempotency(envelope.requestId, function () {
+            return dispatch(envelope, identity);
+        });
+    });
+}
+
+function dispatch(envelope, identity) {
+    switch (envelope.action) {
+        case 'flight-log/insert':
+            return actionFlightLogInsert(envelope.payload, identity);
+        default:
+            return errorResponse(ERROR.BAD_REQUEST, 'Unhandled action: ' + envelope.action);
+    }
 }

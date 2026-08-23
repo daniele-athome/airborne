@@ -21,6 +21,12 @@ const PROTOCOL_V_MAX = 1;
 /** Overridden by the generated 01_build.js at deploy time. */
 let BUILD_ID = 'dev';
 
+/** How long an idempotency record is kept, in seconds (6h is the cache maximum). */
+const IDEMPOTENCY_TTL_SECONDS = 180;
+
+/** How long to wait for the script lock before giving up. */
+const LOCK_TIMEOUT_MS = 20000;
+
 /**
  * Reads a script property.
  *

@@ -63,7 +63,24 @@ jobs:
 
       - name: Run tests
         run: flutter test --no-pub -r github test
-        # TODO run also integration tests
+
+      - name: Launch iOS simulator
+        # does not work yet
+        if: false
+        id: launch-ios
+        uses: futureware-tech/simulator-action@v5
+        with:
+          model: "iPhone 16 Pro Max"
+          wait_for_boot: true
+          shutdown_after_job: true
+
+      - name: Run integration tests
+        # does not work yet
+        if: false
+        run: |
+          flutter doctor
+          flutter devices
+          ./.github/workflows/integration-tests.sh ${{ steps.launch-ios.outputs.udid }}
 
       - name: Build iOS application
         run: flutter build ios --no-pub --release --no-codesign

@@ -64,7 +64,22 @@ jobs:
 
       - name: Run tests
         run: flutter test --no-pub -r github test
-        # TODO run also integration tests
+
+      - name: Run integration tests
+        # does not work yet
+        if: false
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: '35'
+          arch: x86_64
+          profile: 'pixel_5'
+          avd-name: 'Pixel_5'
+          emulator-options: '-no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics'
+          script: |
+            flutter config --android-sdk /usr/local/lib/android/sdk
+            flutter doctor
+            flutter devices
+            ./.github/workflows/integration-tests.sh emulator-5554
 
       - name: Build Android application (debug)
         if: github.ref_name != 'release'

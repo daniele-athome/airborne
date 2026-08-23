@@ -59,7 +59,10 @@ jobs:
 
       - name: Run tests
         run: flutter test --no-pub -r github test
-        # TODO run also integration tests
+
+      - name: Run integration tests
+        shell: bash
+        run: ./.github/workflows/integration-tests.sh windows
 
       - name: Configure Flutter for Windows
         run: flutter config --enable-windows-desktop

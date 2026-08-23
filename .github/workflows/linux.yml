@@ -44,6 +44,14 @@ jobs:
           git apply "${{ github.workspace }}/.github/workflows/patches/0001-Workaround-for-wrong-list-divider-margin-119895.patch"
         working-directory: ${{ env.FLUTTER_ROOT }}
 
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang lld cmake ninja-build pkg-config libgtk-3-dev
+
+      - name: Configure Flutter for Linux
+        run: flutter config --enable-linux-desktop
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -58,15 +66,9 @@ jobs:
 
       - name: Run tests
         run: flutter test --no-pub -r github test
-        # TODO run also integration tests
 
-      - name: Install system libraries
-        run: |
-          sudo apt-get update
-          sudo apt-get install clang lld cmake ninja-build pkg-config libgtk-3-dev
-
-      - name: Configure Flutter for Linux
-        run: flutter config --enable-linux-desktop
+      - name: Run integration tests
+        run: xvfb-run ./.github/workflows/integration-tests.sh linux
 
       - name: Build Linux application (debug)
         run: flutter build linux --no-pub --debug

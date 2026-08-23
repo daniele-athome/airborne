@@ -10,7 +10,7 @@ const flight_log_schema = [
     {name: 'fuel', index: 7, type: 'number', nullable: true},
     {name: 'fuelPrice', index: 8, type: 'number', nullable: true},
     {name: 'notes', index: 9, type: 'string', nullable: true},
-    // index 10 (K) must be empty (calculated by array formula)
+    {name: 'flightTime', index: 10, type: 'string', managed: 'empty'},
     {name: 'stableId', index: 11, type: 'string', managed: 'stableId', immutable: true}
 ];
 
@@ -106,8 +106,7 @@ function buildRowValues(schema, payload, identity, existing) {
             values[field.index] = existing ? existing[field.index] : now;
             continue;
         }
-
-        if (field.managed === 'stableId') {
+        else if (field.managed === 'stableId') {
             // TODO test this
             if (existing) {
                 stableId = existing[field.index];
@@ -116,6 +115,11 @@ function buildRowValues(schema, payload, identity, existing) {
             }
 
             values[field.index] = stableId;
+            continue;
+        }
+        else if (field.managed === 'empty') {
+            values[field.index] = null;
+            continue;
         }
 
         // TODO unused as of now

@@ -22,7 +22,7 @@ void main() async {
       await clearAppData();
       nock.init();
       mockGoogleAuthentication();
-      setUpDummyAircraft();
+      await setUpDummyAircraft();
     });
 
     tearDownAll(() async {
@@ -31,10 +31,10 @@ void main() async {
     });
 
     testWidgets('flight log: empty log book', (WidgetTester tester) async {
-      app.main();
-
       final httpCountMock = mockGoogleSheetsCountApi(0);
       final httpRowsMock = mockGoogleSheetsRowsApi();
+
+      app.main();
 
       await tester.pumpAndSettle();
 
@@ -51,7 +51,8 @@ void main() async {
 
       expect(tester.any(find.byKey(const Key('list_flight_log'))), true);
       expect(tester.any(find.byKey(const Key('button_error_retry'))), true);
-      expect(httpRowsMock.isDone, true);
+      // no rows to check, so only the count query should have been done
+      expect(httpRowsMock.isDone, false);
       expect(httpCountMock.isDone, true);
 
       httpRowsMock.cancel();
@@ -59,8 +60,6 @@ void main() async {
     });
 
     testWidgets('flight log: view log book', (WidgetTester tester) async {
-      app.main();
-
       final mockItems = [
         randomFlightLogItem(1),
         randomFlightLogItem(2),
@@ -70,6 +69,7 @@ void main() async {
       final httpCountMock = mockGoogleSheetsCountApi(mockItems.length);
       final httpRowsMock = mockGoogleSheetsRowsApi(items: mockItems);
 
+      app.main();
       await tester.pumpAndSettle();
 
       expect(

@@ -24,7 +24,7 @@ void main() {
       nock.init();
       mockGoogleAuthentication();
       mockGoogleCalendarApi();
-      setUpDummyAircraft();
+      await setUpDummyAircraft();
     });
 
     tearDownAll(() async {

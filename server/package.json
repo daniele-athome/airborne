@@ -4,8 +4,12 @@
   "private": true,
   "description": "Apps Script backend for Airborne: atomic writes to the Google Sheets stores",
   "scripts": {
-    "test": "node --test test/",
+    "clasp": "clasp",
+    "test": "node --test 'test/*.test.js'",
     "push": "clasp push",
     "deploy": "./deploy.sh"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.4.0"
   }
 }

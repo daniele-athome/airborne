@@ -18,6 +18,10 @@ const flight_log_config = {
     stableIdColumn: 12,
 }
 
+// for the stable ID generator
+const ID_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+const ID_ALPHABET = ID_LETTERS + '0123456789';
+
 /**
  * Parses a date field.
  *
@@ -89,6 +93,15 @@ function coerceField(field, raw) {
     return {error: 'Unsupported field type for ' + field.name};
 }
 
+function generateStableId() {
+    const len = 10;
+    let out = ID_LETTERS.charAt(Math.floor(Math.random() * ID_LETTERS.length));
+    for (let i = 1; i < len; i++) {
+        out += ID_ALPHABET.charAt(Math.floor(Math.random() * ID_ALPHABET.length));
+    }
+    return out;
+}
+
 function buildRowValues(schema, payload, identity, existing) {
     const values = [];
     for (let i = 0; i < schema.length; i++) {
@@ -118,7 +131,7 @@ function buildRowValues(schema, payload, identity, existing) {
             if (existing) {
                 stableId = existing[field.index];
             } else if (!stableId) {
-                stableId = Utilities.getUuid();
+                stableId = generateStableId();
             }
 
             values[field.index] = stableId;

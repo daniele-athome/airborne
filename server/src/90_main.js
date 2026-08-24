@@ -27,6 +27,7 @@ function doPost(e) {
     } catch (err) {
         // Never let a stack trace escape as an HTML error page: the client expects JSON on every path.
         console.error('Unhandled error: ' + (err && err.stack ? err.stack : err));
+        // TODO properly include stacktrace in the response
         return output(errorResponse(ERROR.INTERNAL, err && err.message ? err.message : String(err)));
     }
 }
@@ -58,6 +59,8 @@ function dispatch(envelope, identity) {
     switch (envelope.action) {
         case 'flight-log/insert':
             return actionFlightLogInsert(envelope.payload, identity);
+        case 'flight-log/update':
+            return actionFlightLogUpdate(envelope.payload, identity);
         default:
             return errorResponse(ERROR.BAD_REQUEST, 'Unhandled action: ' + envelope.action);
     }

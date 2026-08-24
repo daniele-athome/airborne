@@ -1,18 +1,22 @@
 /** Schema for the flight log sheet. */
-const flight_log_schema = [
-    {name: 'createdAt', index: 0, type: 'date', managed: 'createdAt', immutable: true},
-    {name: 'date', index: 1, type: 'date', required: true},
-    {name: 'pilotName', index: 2, type: 'string', required: true/*, identity: true*/},
-    {name: 'startHour', index: 3, type: 'number', required: true},
-    {name: 'endHour', index: 4, type: 'number', required: true},
-    {name: 'origin', index: 5, type: 'string', required: true},
-    {name: 'destination', index: 6, type: 'string', required: true},
-    {name: 'fuel', index: 7, type: 'number', nullable: true},
-    {name: 'fuelPrice', index: 8, type: 'number', nullable: true},
-    {name: 'notes', index: 9, type: 'string', nullable: true},
-    {name: 'flightTime', index: 10, type: 'string', managed: 'empty'},
-    {name: 'stableId', index: 11, type: 'string', managed: 'stableId', immutable: true}
-];
+const flight_log_config = {
+    schema: [
+        {name: 'createdAt', index: 0, type: 'date', managed: 'createdAt', immutable: true},
+        {name: 'date', index: 1, type: 'date', required: true},
+        {name: 'pilotName', index: 2, type: 'string', required: true/*, identity: true*/},
+        {name: 'startHour', index: 3, type: 'number', required: true},
+        {name: 'endHour', index: 4, type: 'number', required: true},
+        {name: 'origin', index: 5, type: 'string', required: true},
+        {name: 'destination', index: 6, type: 'string', required: true},
+        {name: 'fuel', index: 7, type: 'number', nullable: true},
+        {name: 'fuelPrice', index: 8, type: 'number', nullable: true},
+        {name: 'notes', index: 9, type: 'string', nullable: true},
+        {name: 'flightTime', index: 10, type: 'string', managed: 'empty'},
+        {name: 'stableId', index: 11, type: 'string', managed: 'stableId', immutable: true}
+    ],
+    headerRows: 1,
+    stableIdColumn: 12,
+}
 
 /**
  * Parses a date field.
@@ -97,6 +101,10 @@ function buildRowValues(schema, payload, identity, existing) {
     for (let f = 0; f < schema.length; f++) {
         const field = schema[f];
 
+        if (field.managed === 'stableId' && existing) {
+            stableId = existing[field.index];
+        }
+
         if (field.immutable && existing) {
             // cannot change immutable fields on update
             continue;
@@ -176,12 +184,52 @@ function actionFlightLogInsert(payload, identity) {
         throw new Error('Flight log sheet not found in this spreadsheet: ' + sheetName);
     }
 
-    const built = buildRowValues(flight_log_schema, payload, identity, null);
+    const built = buildRowValues(flight_log_config.schema, payload, identity, null);
     if (built.error) {
         return errorResponse(ERROR.BAD_REQUEST, built.error);
     }
 
     sheet.appendRow(built.values);
+
+    // apply proper sort
+    sortFlightLog(sheet);
+
+    // update hash in metadata
+    updateFlightLogMetadata();
+
+    return okResponse({'id': built.rowId});
+}
+
+function actionFlightLogUpdate(payload, identity) {
+    if (typeof payload.id !== 'string' || payload.id === '') {
+        return errorResponse(ERROR.BAD_REQUEST, 'Missing "id"');
+    }
+
+    // TODO check pilot name in payload against identity
+    //  (for now everything is authorized on insert)
+
+    const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
+    const sheet = openSheetByName(sheetName);
+    if (!sheet) {
+        throw new Error('Flight log sheet not found in this spreadsheet: ' + sheetName);
+    }
+
+    const rowIndex = findRow(flight_log_config, sheet, payload.id);
+    if (rowIndex < 0) {
+        return errorResponse(
+            ERROR.NOT_FOUND,
+            'Entry ' + payload.id + ' not found',
+            null
+        );
+    }
+
+    const existing = readRow(flight_log_config, sheet, rowIndex);
+    const built = buildRowValues(flight_log_config.schema, payload, identity, existing);
+    if (built.error) {
+        return errorResponse(ERROR.BAD_REQUEST, built.error);
+    }
+
+    writeRow(flight_log_config, sheet, rowIndex, built.values);
 
     // apply proper sort
     sortFlightLog(sheet);

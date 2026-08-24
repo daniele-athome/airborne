@@ -12,17 +12,22 @@ const ERROR = {
     BAD_REQUEST: 'BAD_REQUEST',
     UNAUTHORIZED: 'UNAUTHORIZED',
     FORBIDDEN: 'FORBIDDEN',
+    NOT_FOUND: 'NOT_FOUND',
     BUSY: 'BUSY',
     PROTOCOL_INCOMPATIBLE: 'PROTOCOL_INCOMPATIBLE',
     INTERNAL: 'INTERNAL'
 };
 
-// TODO add other actions
-const KNOWN_ACTIONS = ['flight-log/insert'];
+const KNOWN_ACTIONS = [
+    'flight-log/insert',
+    'flight-log/update',
+];
 
 /** Actions that change data, and therefore need the lock and an idempotency key. */
-// TODO add other actions
-const MUTATING_ACTIONS = ['flight-log/insert'];
+const MUTATING_ACTIONS = [
+    'flight-log/insert',
+    'flight-log/update',
+];
 
 function isMutating(action) {
     return MUTATING_ACTIONS.indexOf(action) >= 0;

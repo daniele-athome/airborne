@@ -113,8 +113,7 @@ function buildRowValues(schema, payload, identity, existing) {
         if (field.managed === 'createdAt') {
             values[field.index] = existing ? existing[field.index] : now;
             continue;
-        }
-        else if (field.managed === 'stableId') {
+        } else if (field.managed === 'stableId') {
             // TODO test this
             if (existing) {
                 stableId = existing[field.index];
@@ -124,8 +123,7 @@ function buildRowValues(schema, payload, identity, existing) {
 
             values[field.index] = stableId;
             continue;
-        }
-        else if (field.managed === 'empty') {
+        } else if (field.managed === 'empty') {
             values[field.index] = null;
             continue;
         }

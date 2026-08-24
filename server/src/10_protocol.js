@@ -77,13 +77,13 @@ function output(response) {
  */
 function parseEnvelope(body) {
     if (!body || typeof body !== 'object') {
-        return { error: errorResponse(ERROR.BAD_REQUEST, 'Request body must be a JSON object') };
+        return {error: errorResponse(ERROR.BAD_REQUEST, 'Request body must be a JSON object')};
     }
 
     // The version is checked first: without agreement on the contract there is no
     // point in interpreting anything else.
     if (typeof body.v !== 'number' || Math.floor(body.v) !== body.v) {
-        return { error: errorResponse(ERROR.BAD_REQUEST, 'Missing or non-integer "v"') };
+        return {error: errorResponse(ERROR.BAD_REQUEST, 'Missing or non-integer "v"')};
     }
     if (body.v < PROTOCOL_V_MIN) {
         return {
@@ -103,10 +103,10 @@ function parseEnvelope(body) {
     }
 
     if (typeof body.token !== 'string' || body.token === '') {
-        return { error: errorResponse(ERROR.UNAUTHORIZED, 'Missing token') };
+        return {error: errorResponse(ERROR.UNAUTHORIZED, 'Missing token')};
     }
     if (typeof body.action !== 'string' || KNOWN_ACTIONS.indexOf(body.action) < 0) {
-        return { error: errorResponse(ERROR.BAD_REQUEST, 'Unknown action: ' + body.action) };
+        return {error: errorResponse(ERROR.BAD_REQUEST, 'Unknown action: ' + body.action)};
     }
 
     const envelope = {
@@ -124,8 +124,8 @@ function parseEnvelope(body) {
     if (isMutating(envelope.action) && !envelope.requestId) {
         // Without it a lost response cannot be retried safely, so it is mandatory
         // rather than merely recommended.
-        return { error: errorResponse(ERROR.BAD_REQUEST, 'Missing "requestId" on a mutating action') };
+        return {error: errorResponse(ERROR.BAD_REQUEST, 'Missing "requestId" on a mutating action')};
     }
 
-    return { envelope: envelope };
+    return {envelope: envelope};
 }

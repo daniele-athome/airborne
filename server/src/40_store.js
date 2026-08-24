@@ -1,4 +1,3 @@
-
 /**
  * Returns a sheet of the container spreadsheet, or throws if it is missing.
  * @returns {GoogleAppsScript.Spreadsheet.Sheet}

@@ -27,8 +27,11 @@ function doPost(e) {
     } catch (err) {
         // Never let a stack trace escape as an HTML error page: the client expects JSON on every path.
         console.error('Unhandled error: ' + (err && err.stack ? err.stack : err));
-        // TODO properly include stacktrace in the response
-        return output(errorResponse(ERROR.INTERNAL, err && err.message ? err.message : String(err)));
+        return output(errorResponse(
+            ERROR.INTERNAL,
+            err && err.message ? err.message : String(err),
+            err && err.stack ? err.stack : null
+        ));
     }
 }
 

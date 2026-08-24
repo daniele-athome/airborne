@@ -42,7 +42,8 @@ function handleRequest(body) {
     }
     const envelope = parsed.envelope;
 
-    const identity = authenticate(envelope.token);
+    const metadata = readMetadata();
+    const identity = authenticate(envelope.token, metadata);
     if (!identity) {
         return errorResponse(ERROR.UNAUTHORIZED, 'Unknown or revoked token');
     }

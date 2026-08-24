@@ -1,3 +1,9 @@
+/** Metadata key prefix for tokens. */
+const TOKEN_KEY_PREFIX = 'token.';
+
+/** Metadata key prefix for pilot roles. */
+const ROLE_KEY_PREFIX = 'role.';
+
 const ROLE_ADMIN = 'admin';
 const ROLE_PILOT = 'pilot';
 
@@ -5,15 +11,21 @@ const ROLE_PILOT = 'pilot';
  * Resolves a token to its pilot.
  * Returns `{ pilotName, role }`, or null when the token matches nothing.
  */
-function authenticate(token) {
-    const adminToken = getProperty("TOKEN_ADMIN", true);
-    if (token === adminToken) {
-        return {pilotName: 'admin', role: 'admin'};
-    }
+function authenticate(token, metadata) {
+    const keys = Object.keys(metadata);
 
-    const pilotToken = getProperty("TOKEN_PILOT", true);
-    if (token === pilotToken) {
-        return {pilotName: 'pilot', role: 'pilot'};
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (key.indexOf(TOKEN_KEY_PREFIX) !== 0) {
+            continue;
+        }
+        const value = metadata[key];
+        if (!value || value.toLowerCase() !== token) {
+            continue;
+        }
+        const pilotName = key.substring(TOKEN_KEY_PREFIX.length);
+        const role = metadata[ROLE_KEY_PREFIX + pilotName] || ROLE_PILOT;
+        return { pilotName: pilotName, role: role.toLowerCase() };
     }
 
     return null;

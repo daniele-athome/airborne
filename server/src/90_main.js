@@ -65,6 +65,8 @@ function dispatch(envelope, identity) {
             return actionFlightLogInsert(envelope.payload, identity);
         case 'flight-log/update':
             return actionFlightLogUpdate(envelope.payload, identity);
+        case 'flight-log/delete':
+            return actionFlightLogDelete(envelope.payload, identity);
         default:
             return errorResponse(ERROR.BAD_REQUEST, 'Unhandled action: ' + envelope.action);
     }

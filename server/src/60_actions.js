@@ -283,3 +283,7 @@ function actionFlightLogUpdate(payload, identity) {
 
     return okResponse({'id': built.rowId});
 }
+
+function actionFlightLogDelete(payload, identity) {
+    // TODO
+}

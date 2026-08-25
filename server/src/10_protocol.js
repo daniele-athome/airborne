@@ -21,12 +21,14 @@ const ERROR = {
 const KNOWN_ACTIONS = [
     'flight-log/insert',
     'flight-log/update',
+    'flight-log/delete',
 ];
 
 /** Actions that change data, and therefore need the lock and an idempotency key. */
 const MUTATING_ACTIONS = [
     'flight-log/insert',
     'flight-log/update',
+    'flight-log/delete',
 ];
 
 function isMutating(action) {

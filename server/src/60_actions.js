@@ -141,8 +141,8 @@ function buildRowValues(schema, payload, identity, existing) {
             continue;
         }
 
-        // TODO unused as of now
-        /*if (field.identity) {
+        // at this point, identity claim has been confirmed, so we just trust it
+        if (field.identity) {
             const claimed = payload[field.name];
             if (claimed) {
                 values[field.index] = String(claimed);
@@ -150,7 +150,7 @@ function buildRowValues(schema, payload, identity, existing) {
                 values[field.index] = identity.pilotName;
             }
             continue;
-        }*/
+        }
 
         if (!existing || Object.prototype.hasOwnProperty.call(payload, field.name)) {
             const coerced = coerceField(field, payload[field.name]);
@@ -172,6 +172,35 @@ function sortFlightLog(sheet) {
     }
 }
 
+/**
+ * Checks that identity fields the caller tried to set are allowed.
+ *
+ * Non-admin tokens may only write their own name, and only the configured
+ * maintenance pilot is accepted as an exception.
+ */
+function checkIdentityClaim(sheetConfig, payload, identity) {
+    const noPilotName = getProperty('NO_PILOT_NAME', false);
+
+    for (let i = 0; i < sheetConfig.schema.length; i++) {
+        const field = sheetConfig.schema[i];
+        if (!field.identity) {
+            continue;
+        }
+        const claimed = payload[field.name];
+        if (!claimed || claimed === identity.pilotName) {
+            continue;
+        }
+        if (isAdmin(identity)) {
+            continue;
+        }
+        if (noPilotName && claimed === noPilotName) {
+            continue;
+        }
+        return 'Not allowed to write ' + field.name + ' as "' + claimed + '"';
+    }
+    return null;
+}
+
 function updateFlightLogMetadata() {
     // calculate checksum of data
     const metadataSheet = openMetadataSheet();
@@ -186,8 +215,10 @@ function updateFlightLogMetadata() {
 }
 
 function actionFlightLogInsert(payload, identity) {
-    // TODO check pilot name in payload against identity
-    //  (for now everything is authorized on insert)
+    const claimError = checkIdentityClaim(flight_log_config, payload, identity);
+    if (claimError) {
+        return errorResponse(ERROR.FORBIDDEN, claimError);
+    }
 
     const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
     const sheet = openSheetByName(sheetName);
@@ -216,8 +247,10 @@ function actionFlightLogUpdate(payload, identity) {
         return errorResponse(ERROR.BAD_REQUEST, 'Missing "id"');
     }
 
-    // TODO check pilot name in payload against identity
-    //  (for now everything is authorized on insert)
+    const claimError = checkIdentityClaim(flight_log_config, payload, identity);
+    if (claimError) {
+        return errorResponse(ERROR.FORBIDDEN, claimError);
+    }
 
     const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
     const sheet = openSheetByName(sheetName);

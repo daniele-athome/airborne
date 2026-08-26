@@ -3,7 +3,7 @@ const flight_log_config = {
     schema: [
         {name: 'createdAt', index: 0, type: 'date', managed: 'createdAt', immutable: true},
         {name: 'date', index: 1, type: 'date', required: true},
-        {name: 'pilotName', index: 2, type: 'string', required: true/*, identity: true*/},
+        {name: 'pilotName', index: 2, type: 'string', required: true, identity: true},
         {name: 'startHour', index: 3, type: 'number', required: true},
         {name: 'endHour', index: 4, type: 'number', required: true},
         {name: 'origin', index: 5, type: 'string', required: true},
@@ -149,7 +149,7 @@ function buildRowValues(schema, payload, identity, existing) {
             } else if (!existing) {
                 values[field.index] = identity.pilotName;
             }
-            continue;
+            // go ahead with type coercion
         }
 
         if (!existing || Object.prototype.hasOwnProperty.call(payload, field.name)) {
@@ -167,6 +167,7 @@ function buildRowValues(schema, payload, identity, existing) {
 function sortFlightLog(sheet) {
     // TODO change this lock mechanism
     if (sheet.getRange('L1').getValue() !== 'LOCKED') {
+        // TODO the range should exclude the header row(s)
         const range = sheet.getRange("A:L");
         range.sort([{column: 4}, {column: 5}]);
     }
@@ -187,7 +188,7 @@ function checkIdentityClaim(sheetConfig, payload, identity) {
             continue;
         }
         const claimed = payload[field.name];
-        if (!claimed || claimed === identity.pilotName) {
+        if (claimed === identity.pilotName) {
             continue;
         }
         if (isAdmin(identity)) {
@@ -289,11 +290,6 @@ function actionFlightLogDelete(payload, identity) {
         return errorResponse(ERROR.BAD_REQUEST, 'Missing "id"');
     }
 
-    const claimError = checkIdentityClaim(flight_log_config, payload, identity);
-    if (claimError) {
-        return errorResponse(ERROR.FORBIDDEN, claimError);
-    }
-
     const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
     const sheet = openSheetByName(sheetName);
     if (!sheet) {
@@ -303,6 +299,28 @@ function actionFlightLogDelete(payload, identity) {
     const rowIndex = findRow(flight_log_config, sheet, payload.id);
     if (rowIndex < 0) {
         return entryNotFoundErrorResponse(payload.id);
+    }
+
+    const existing = readRow(flight_log_config, sheet, rowIndex);
+    if (!existing) {
+        return entryNotFoundErrorResponse(payload.id);
+    }
+
+    // TODO technically we need to rebuild the item
+    // build a specially-crafted payload for the identity claim check
+    const payload_existing = {
+        id: payload.id,
+    };
+    for (let i = 0; i < flight_log_config.schema.length; i++) {
+        const field = flight_log_config.schema[i];
+        if (field.identity) {
+            payload_existing[field.name] = existing[field.index];
+        }
+    }
+
+    const claimError = checkIdentityClaim(flight_log_config, payload_existing, identity);
+    if (claimError) {
+        return errorResponse(ERROR.FORBIDDEN, claimError);
     }
 
     deleteRow(sheet, rowIndex);

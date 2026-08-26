@@ -17,14 +17,19 @@ function openMetadataSheet() {
     return openSheetByName(getProperty('METADATA_SHEET_NAME', true));
 }
 
+function openFlightLogSheet() {
+    return openSheetByName(getProperty('FLIGHT_LOG_SHEET_NAME', true));
+}
+
 function findRow(sheetConfig, sheet, stableId) {
     const lastRow = sheet.getLastRow();
-    // TODO verify this condition
+    // Also covers the empty sheet, where getLastRow() is 0
     if (lastRow <= sheetConfig.headerRows) {
         return -1;
     }
 
-    const range = sheet.getRange(sheetConfig.headerRows + 1, sheetConfig.stableIdColumn, lastRow, 1)
+    const rows = lastRow - sheetConfig.headerRows;
+    const range = sheet.getRange(sheetConfig.headerRows + 1, sheetConfig.stableIdColumn, rows, 1)
         .createTextFinder(stableId)
         .matchEntireCell(true)
         .matchCase(true)

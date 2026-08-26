@@ -16,7 +16,12 @@ const flight_log_config = {
     ],
     headerRows: 1,
     stableIdColumn: 12,
+    /** Sort keys, by field name, applied after every change. */
+    sort: ['startHour', 'endHour'],
 }
+
+/** Metadata key holding the version counter of the flight log. */
+const FLIGHT_LOG_VERSION_KEY = 'flight_log.hash';
 
 // for the stable ID generator
 const ID_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
@@ -102,7 +107,7 @@ function generateStableId() {
     return out;
 }
 
-function buildRowValues(schema, payload, identity, existing) {
+function buildRowValues(schema, payload, existing, identityValues) {
     const values = [];
     for (let i = 0; i < schema.length; i++) {
         values.push(existing ? existing[i] : '');
@@ -141,15 +146,11 @@ function buildRowValues(schema, payload, identity, existing) {
             continue;
         }
 
-        // at this point, identity claim has been confirmed, so we just trust it
+        // At this point, any identity claims have been validated: just write down the
+        // value resolved by the identity check.
         if (field.identity) {
-            const claimed = payload[field.name];
-            if (claimed) {
-                values[field.index] = String(claimed);
-            } else if (!existing) {
-                values[field.index] = identity.pilotName;
-            }
-            // go ahead with type coercion
+            values[field.index] = identityValues[field.name];
+            continue;
         }
 
         if (!existing || Object.prototype.hasOwnProperty.call(payload, field.name)) {
@@ -164,70 +165,236 @@ function buildRowValues(schema, payload, identity, existing) {
     return {values: values, rowId: stableId};
 }
 
-function sortFlightLog(sheet) {
-    // TODO change this lock mechanism
-    if (sheet.getRange('L1').getValue() !== 'LOCKED') {
-        // TODO the range should exclude the header row(s)
-        const range = sheet.getRange("A:L");
-        range.sort([{column: 4}, {column: 5}]);
+/** Maps the configured sort field names to 1-based column numbers. */
+function sortSpecFor(sheetConfig) {
+    const spec = [];
+    for (let i = 0; i < sheetConfig.sort.length; i++) {
+        const name = sheetConfig.sort[i];
+        for (let f = 0; f < sheetConfig.schema.length; f++) {
+            if (sheetConfig.schema[f].name === name) {
+                spec.push({column: sheetConfig.schema[f].index + 1});
+                break;
+            }
+        }
     }
+    return spec;
+}
+
+function sortFlightLog(sheet) {
+    const firstRow = flight_log_config.headerRows + 1;
+    const lastRow = sheet.getLastRow();
+    if (lastRow < firstRow) {
+        return;
+    }
+
+    // TODO what would happen to the ARRAYFORMULA formula in the first row of column K?
+    const width = Math.max(flight_log_config.schema.length, sheet.getLastColumn());
+    sheet.getRange(firstRow, 1, lastRow - firstRow + 1, width)
+        .sort(sortSpecFor(flight_log_config));
+}
+
+/*
+ * Identity rules.
+ *
+ * An admin does anything. A pilot files, edits and removes entries under their
+ * own name; may file and edit entries under the maintenance name; and may hand
+ * one of their own entries over to the maintenance name. That hand-over is
+ * one-way: an entry already filed under the maintenance name is editable by
+ * anybody and reassignable by nobody - and it is not a license to delete.
+ */
+
+/** The maintenance pilot name, or null when the deployment defines none. */
+function getNoPilotName() {
+    const value = getProperty('NO_PILOT_NAME', false);
+    const name = value === null || value === undefined ? '' : String(value).trim();
+    return name === '' ? null : name;
+}
+
+/** Normalizes a name coming from a cell or from a request. */
+function normalizeName(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+    return String(value).trim();
+}
+
+/** Safe comparison of two names. */
+function sameName(a, b) {
+    return normalizeName(a).toLowerCase() === normalizeName(b).toLowerCase();
+}
+
+/** The schema fields that carry the identity of a row. */
+function identityFields(sheetConfig) {
+    const fields = [];
+    for (let i = 0; i < sheetConfig.schema.length; i++) {
+        if (sheetConfig.schema[i].identity) {
+            fields.push(sheetConfig.schema[i]);
+        }
+    }
+    return fields;
+}
+
+/** The name a row is currently filed under, empty when there is none. */
+function identityOwner(field, existing) {
+    return existing ? normalizeName(existing[field.index]) : '';
 }
 
 /**
- * Checks that identity fields the caller tried to set are allowed.
+ * Reads the name a request asks for.
  *
- * Non-admin tokens may only write their own name, and only the configured
- * maintenance pilot is accepted as an exception.
+ * An absent, null, or empty claim is reported as the empty string, meaning "no
+ * claim": callers resolve that to the default for their operation. Identity
+ * fields skip `coerceField`, so the type check lives here instead.
  */
-function checkIdentityClaim(sheetConfig, payload, identity) {
-    const noPilotName = getProperty('NO_PILOT_NAME', false);
+function claimedName(field, payload) {
+    if (!Object.prototype.hasOwnProperty.call(payload, field.name)) {
+        return {claimed: ''};
+    }
+    const raw = payload[field.name];
+    if (raw === null || raw === undefined) {
+        return {claimed: ''};
+    }
+    if (typeof raw !== 'string') {
+        return {error: 'Field ' + field.name + ' must be a string'};
+    }
+    return {claimed: raw.trim()};
+}
 
-    for (let i = 0; i < sheetConfig.schema.length; i++) {
-        const field = sheetConfig.schema[i];
-        if (!field.identity) {
+/**
+ * Decides the identity values an insert may write.
+ *
+ * Returns `{values: {<field>: <name>}}`, or `{error, code}`.
+ */
+function resolveIdentityForInsert(sheetConfig, payload, identity) {
+    const noPilotName = getNoPilotName();
+    const fields = identityFields(sheetConfig);
+    const values = {};
+
+    for (let i = 0; i < fields.length; i++) {
+        const field = fields[i];
+        const claim = claimedName(field, payload);
+        if (claim.error) {
+            return {error: claim.error, code: ERROR.BAD_REQUEST};
+        }
+        const claimed = claim.claimed;
+
+        // Pilot name defaults to authenticated user
+        if (claimed === '' || sameName(claimed, identity.pilotName)) {
+            values[field.name] = identity.pilotName;
             continue;
         }
-        const claimed = payload[field.name];
-        if (claimed === identity.pilotName) {
+        if (noPilotName && sameName(claimed, noPilotName)) {
+            values[field.name] = noPilotName;
             continue;
         }
         if (isAdmin(identity)) {
+            values[field.name] = claimed;
             continue;
         }
-        if (noPilotName && claimed === noPilotName) {
+        return {
+            error: 'Not allowed to add entry as "' + claimed + '"',
+            code: ERROR.FORBIDDEN
+        };
+    }
+
+    return {values: values};
+}
+
+function resolveIdentityForUpdate(sheetConfig, payload, identity, existing) {
+    const noPilotName = getNoPilotName();
+    const fields = identityFields(sheetConfig);
+    const values = {};
+
+    for (let i = 0; i < fields.length; i++) {
+        const field = fields[i];
+        const claim = claimedName(field, payload);
+        if (claim.error) {
+            return {error: claim.error, code: ERROR.BAD_REQUEST};
+        }
+
+        const owner = identityOwner(field, existing);
+        // No claim leaves the entry where it is
+        const claimed = claim.claimed === '' ? owner : claim.claimed;
+
+        if (isAdmin(identity)) {
+            values[field.name] = claimed;
             continue;
         }
-        return 'Not allowed to write ' + field.name + ' as "' + claimed + '"';
+
+        const ownedBySelf = sameName(owner, identity.pilotName);
+        const ownedByNoPilot = !!noPilotName && sameName(owner, noPilotName);
+
+        if (!ownedBySelf && !ownedByNoPilot) {
+            return {
+                error: 'Not allowed to modify an entry filed under another name',
+                code: ERROR.FORBIDDEN
+            };
+        }
+        if (ownedBySelf && sameName(claimed, identity.pilotName)) {
+            values[field.name] = identity.pilotName;
+            continue;
+        }
+        if (noPilotName && sameName(claimed, noPilotName)) {
+            values[field.name] = noPilotName;
+            continue;
+        }
+        if (ownedByNoPilot) {
+            return {
+                error: 'Not allowed to take over an entry filed under "' + noPilotName + '"',
+                code: ERROR.FORBIDDEN
+            };
+        }
+        return {
+            error: 'Not allowed to refile an entry as "' + claimed + '"',
+            code: ERROR.FORBIDDEN
+        };
+    }
+
+    return {values: values};
+}
+
+function checkIdentityForDelete(sheetConfig, identity, existing) {
+    if (isAdmin(identity)) {
+        return null;
+    }
+
+    const fields = identityFields(sheetConfig);
+    for (let i = 0; i < fields.length; i++) {
+        if (!sameName(identityOwner(fields[i], existing), identity.pilotName)) {
+            return 'Not allowed to delete an entry filed under another name';
+        }
     }
     return null;
 }
 
+/** Bumps the version counter the app watches to know the data moved. */
 function updateFlightLogMetadata() {
-    // calculate checksum of data
     const metadataSheet = openMetadataSheet();
-    const finder = metadataSheet.createTextFinder("flight_log.hash").matchEntireCell(true);
-    /** @type {SpreadsheetApp.Range} */
-    const hashKeyCell = finder.findNext();
-    if (hashKeyCell) {
-        const hashValueCell = metadataSheet.getRange(hashKeyCell.getRow(), hashKeyCell.getColumn() + 1);
-        const currentVersion = hashValueCell.getValue() || 0;
-        hashValueCell.setValue(currentVersion + 1);
+    /** @type {GoogleAppsScript.Spreadsheet.Range} */
+    const hashKeyCell = metadataSheet.getRange('A:A')
+        .createTextFinder(FLIGHT_LOG_VERSION_KEY)
+        .matchEntireCell(true)
+        .findNext();
+
+    if (!hashKeyCell) {
+        metadataSheet.appendRow([FLIGHT_LOG_VERSION_KEY, 1]);
+        return;
     }
+
+    const hashValueCell = metadataSheet.getRange(hashKeyCell.getRow(), hashKeyCell.getColumn() + 1);
+    const current = Number(hashValueCell.getValue());
+    hashValueCell.setValue(isNaN(current) ? 1 : current + 1);
 }
 
 function actionFlightLogInsert(payload, identity) {
-    const claimError = checkIdentityClaim(flight_log_config, payload, identity);
-    if (claimError) {
-        return errorResponse(ERROR.FORBIDDEN, claimError);
+    const claim = resolveIdentityForInsert(flight_log_config, payload, identity);
+    if (claim.error) {
+        return errorResponse(claim.code, claim.error);
     }
 
-    const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
-    const sheet = openSheetByName(sheetName);
-    if (!sheet) {
-        throw new Error('Flight log sheet not found in this spreadsheet: ' + sheetName);
-    }
+    const sheet = openFlightLogSheet();
 
-    const built = buildRowValues(flight_log_config.schema, payload, identity, null);
+    const built = buildRowValues(flight_log_config.schema, payload, null, claim.values);
     if (built.error) {
         return errorResponse(ERROR.BAD_REQUEST, built.error);
     }
@@ -248,16 +415,7 @@ function actionFlightLogUpdate(payload, identity) {
         return errorResponse(ERROR.BAD_REQUEST, 'Missing "id"');
     }
 
-    const claimError = checkIdentityClaim(flight_log_config, payload, identity);
-    if (claimError) {
-        return errorResponse(ERROR.FORBIDDEN, claimError);
-    }
-
-    const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
-    const sheet = openSheetByName(sheetName);
-    if (!sheet) {
-        throw new Error('Flight log sheet not found in this spreadsheet: ' + sheetName);
-    }
+    const sheet = openFlightLogSheet();
 
     const rowIndex = findRow(flight_log_config, sheet, payload.id);
     if (rowIndex < 0) {
@@ -269,7 +427,12 @@ function actionFlightLogUpdate(payload, identity) {
         return entryNotFoundErrorResponse(payload.id);
     }
 
-    const built = buildRowValues(flight_log_config.schema, payload, identity, existing);
+    const claim = resolveIdentityForUpdate(flight_log_config, payload, identity, existing);
+    if (claim.error) {
+        return errorResponse(claim.code, claim.error);
+    }
+
+    const built = buildRowValues(flight_log_config.schema, payload, existing, claim.values);
     if (built.error) {
         return errorResponse(ERROR.BAD_REQUEST, built.error);
     }
@@ -290,11 +453,7 @@ function actionFlightLogDelete(payload, identity) {
         return errorResponse(ERROR.BAD_REQUEST, 'Missing "id"');
     }
 
-    const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
-    const sheet = openSheetByName(sheetName);
-    if (!sheet) {
-        throw new Error('Flight log sheet not found in this spreadsheet: ' + sheetName);
-    }
+    const sheet = openFlightLogSheet();
 
     const rowIndex = findRow(flight_log_config, sheet, payload.id);
     if (rowIndex < 0) {
@@ -306,19 +465,7 @@ function actionFlightLogDelete(payload, identity) {
         return entryNotFoundErrorResponse(payload.id);
     }
 
-    // TODO technically we need to rebuild the item
-    // build a specially-crafted payload for the identity claim check
-    const payload_existing = {
-        id: payload.id,
-    };
-    for (let i = 0; i < flight_log_config.schema.length; i++) {
-        const field = flight_log_config.schema[i];
-        if (field.identity) {
-            payload_existing[field.name] = existing[field.index];
-        }
-    }
-
-    const claimError = checkIdentityClaim(flight_log_config, payload_existing, identity);
+    const claimError = checkIdentityForDelete(flight_log_config, identity, existing);
     if (claimError) {
         return errorResponse(ERROR.FORBIDDEN, claimError);
     }

@@ -20,10 +20,14 @@ function authenticate(token, metadata) {
             continue;
         }
         const value = metadata[key];
-        if (!value || value.toLowerCase() !== token) {
+        if (!value || String(value).trim() !== String(token).trim()) {
             continue;
         }
-        const pilotName = key.substring(TOKEN_KEY_PREFIX.length);
+        const pilotName = key.substring(TOKEN_KEY_PREFIX.length).trim();
+        if (pilotName === '') {
+            // configuration error
+            continue;
+        }
         const role = metadata[ROLE_KEY_PREFIX + pilotName] || ROLE_PILOT;
         return { pilotName: pilotName, role: role.toLowerCase() };
     }

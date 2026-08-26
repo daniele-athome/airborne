@@ -66,6 +66,13 @@ function errorResponse(code, message, details) {
     };
 }
 
+function entryNotFoundErrorResponse(entryId) {
+    return errorResponse(
+        ERROR.NOT_FOUND,
+        'Entry ' + entryId + ' not found',
+    )
+}
+
 function output(response) {
     return ContentService
         .createTextOutput(JSON.stringify(response))

@@ -260,14 +260,14 @@ function actionFlightLogUpdate(payload, identity) {
 
     const rowIndex = findRow(flight_log_config, sheet, payload.id);
     if (rowIndex < 0) {
-        return errorResponse(
-            ERROR.NOT_FOUND,
-            'Entry ' + payload.id + ' not found',
-            null
-        );
+        return entryNotFoundErrorResponse(payload.id);
     }
 
     const existing = readRow(flight_log_config, sheet, rowIndex);
+    if (!existing) {
+        return entryNotFoundErrorResponse(payload.id);
+    }
+
     const built = buildRowValues(flight_log_config.schema, payload, identity, existing);
     if (built.error) {
         return errorResponse(ERROR.BAD_REQUEST, built.error);
@@ -285,5 +285,33 @@ function actionFlightLogUpdate(payload, identity) {
 }
 
 function actionFlightLogDelete(payload, identity) {
-    // TODO
+    if (typeof payload.id !== 'string' || payload.id === '') {
+        return errorResponse(ERROR.BAD_REQUEST, 'Missing "id"');
+    }
+
+    const claimError = checkIdentityClaim(flight_log_config, payload, identity);
+    if (claimError) {
+        return errorResponse(ERROR.FORBIDDEN, claimError);
+    }
+
+    const sheetName = getProperty('FLIGHT_LOG_SHEET_NAME');
+    const sheet = openSheetByName(sheetName);
+    if (!sheet) {
+        throw new Error('Flight log sheet not found in this spreadsheet: ' + sheetName);
+    }
+
+    const rowIndex = findRow(flight_log_config, sheet, payload.id);
+    if (rowIndex < 0) {
+        return entryNotFoundErrorResponse(payload.id);
+    }
+
+    deleteRow(sheet, rowIndex);
+
+    // apply proper sort
+    sortFlightLog(sheet);
+
+    // update hash in metadata
+    updateFlightLogMetadata();
+
+    return okResponse({'id': payload.id});
 }

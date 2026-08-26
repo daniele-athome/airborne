@@ -44,6 +44,10 @@ function writeRow(sheetConfig, sheet, rowIndex, values) {
         .setValues([values])
 }
 
+function deleteRow(sheet, rowIndex) {
+    sheet.deleteRow(rowIndex);
+}
+
 /** Reads the whole metadata key-value store as a plain object. */
 function readMetadata() {
     const sheet = openMetadataSheet();

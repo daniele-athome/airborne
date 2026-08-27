@@ -127,3 +127,13 @@ function updateVersionMetadata(metadataKey) {
 function commitChanges() {
     SpreadsheetApp.flush();
 }
+
+/* Test-only: see test/load.js. Apps Script has no `module`, so this never runs there. */
+if (typeof module === 'object') {
+    module.exports = {
+        METADATA_FIRST_ROW,
+        openSheetByName, openMetadataSheet, openFlightLogSheet,
+        findRow, readRow, writeRow, appendRow, deleteRow, readMetadata,
+        sortSpecFor, sortSheet, updateVersionMetadata, commitChanges
+    };
+}

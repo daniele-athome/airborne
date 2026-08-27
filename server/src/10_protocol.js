@@ -138,3 +138,11 @@ function parseEnvelope(body) {
 
     return {envelope: envelope};
 }
+
+/* Test-only: see test/load.js. Apps Script has no `module`, so this never runs there. */
+if (typeof module === 'object') {
+    module.exports = {
+        ERROR, KNOWN_ACTIONS, MUTATING_ACTIONS,
+        isMutating, okResponse, errorResponse, entryNotFoundErrorResponse, output, parseEnvelope
+    };
+}

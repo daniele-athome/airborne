@@ -38,3 +38,11 @@ function authenticate(token, metadata) {
 function isAdmin(identity) {
     return identity.role === ROLE_ADMIN;
 }
+
+/* Test-only: see test/load.js. Apps Script has no `module`, so this never runs there. */
+if (typeof module === 'object') {
+    module.exports = {
+        TOKEN_KEY_PREFIX, ROLE_KEY_PREFIX, ROLE_ADMIN, ROLE_PILOT,
+        authenticate, isAdmin
+    };
+}

@@ -58,3 +58,8 @@ function withIdempotency(requestId, fn) {
     }
     return result;
 }
+
+/* Test-only: see test/load.js. Apps Script has no `module`, so this never runs there. */
+if (typeof module === 'object') {
+    module.exports = {withLock, withIdempotency};
+}

@@ -439,3 +439,15 @@ function actionFlightLogDelete(payload, identity) {
 
     return okResponse({'id': payload.id});
 }
+
+/* Test-only: see test/load.js. Apps Script has no `module`, so this never runs there. */
+if (typeof module === 'object') {
+    module.exports = {
+        flight_log_config, FLIGHT_LOG_VERSION_KEY, ID_LETTERS, ID_ALPHABET,
+        coerceDate, coerceField, generateStableId, buildRowValues,
+        getNoPilotName, normalizeName, sameName, identityFields, identityOwner, claimedName,
+        resolveIdentityForInsert, resolveIdentityForUpdate, checkIdentityForDelete,
+        updateFlightLogMetadata,
+        actionFlightLogInsert, actionFlightLogUpdate, actionFlightLogDelete
+    };
+}

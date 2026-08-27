@@ -40,3 +40,15 @@ function getProperty(key, required) {
     }
     return value;
 }
+
+/*
+ * Test-only: see test/load.js. Apps Script has no `module`, so this never runs
+ * there. BUILD_ID is exported by value, so 01_build.js does not override the
+ * copy this file reads — that divergence stays confined to doGet.
+ */
+if (typeof module === 'object') {
+    module.exports = {
+        PROTOCOL_V, PROTOCOL_V_MIN, PROTOCOL_V_MAX, BUILD_ID,
+        IDEMPOTENCY_TTL_SECONDS, LOCK_TIMEOUT_MS, getProperty
+    };
+}

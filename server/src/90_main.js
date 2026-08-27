@@ -71,3 +71,8 @@ function dispatch(envelope, identity) {
             return errorResponse(ERROR.BAD_REQUEST, 'Unhandled action: ' + envelope.action);
     }
 }
+
+/* Test-only: see test/load.js. Apps Script has no `module`, so this never runs there. */
+if (typeof module === 'object') {
+    module.exports = {doGet, doPost, handleRequest, dispatch};
+}

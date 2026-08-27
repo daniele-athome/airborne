@@ -5,7 +5,7 @@
   "description": "Apps Script backend for Airborne: atomic writes to the Google Sheets stores",
   "scripts": {
     "clasp": "clasp",
-    "test": "node --test 'test/*.test.js'",
+    "test": "node --test test/",
     "push": "clasp push",
     "deploy": "./deploy.sh"
   },

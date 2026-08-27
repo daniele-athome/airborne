@@ -1,40 +1,40 @@
 'use strict';
 
-/** Full-stack tests for 90_main.js: doGet/doPost/handleRequest/dispatch. */
+/**
+ * Full-stack tests for 90_main.js: doGet/doPost/handleRequest/dispatch.
+ *
+ * The store (40_store.js) is fully mocked here: this file's job is protocol
+ * routing (envelope parsing, auth, lock, idempotency, error mapping), not
+ * spreadsheet semantics — those are covered by store.test.js and
+ * actions-flightlog.test.js. No FakeSheet involved.
+ */
 
 const test = require('node:test');
 const assert = require('node:assert');
 const {loadContext} = require('./helpers');
+const {mockStore} = require('./mock-store');
 const {
-    FakeSheet,
-    fakeSpreadsheetApp,
     fakeProperties,
     fakeContentService,
     fakeLockService,
     fakeCacheService
 } = require('./fake-apps-script');
 
-const HEADER = ['createdAt', 'date', 'pilotName', 'startHour', 'endHour', 'origin', 'destination', 'fuel', 'fuelPrice', 'notes', 'flightTime', 'stableId'];
-
-function makeCtx({properties, lockOpts} = {}) {
-    const flightLogSheet = new FakeSheet('Registro voli', [HEADER]);
-    const metadataSheet = new FakeSheet('Metadata', [['key', 'value'], ['token.mario', 'secret-token']]);
-    const {SpreadsheetApp, state: spreadsheetState} = fakeSpreadsheetApp({
-        'Registro voli': flightLogSheet,
-        Metadata: metadataSheet
-    });
+function makeCtx({storeImpls, properties, lockOpts} = {}) {
+    const store = mockStore(Object.assign({readMetadata: () => ({'token.mario': 'secret-token'})}, storeImpls));
     const {LockService, state: lockState} = fakeLockService(lockOpts);
     const {CacheService} = fakeCacheService();
 
     const ctx = loadContext(
-        ['00_config.js', '10_protocol.js', '20_auth.js', '40_store.js', '50_lock.js', '60_actions.js', '90_main.js'],
+        ['00_config.js', '10_protocol.js', '20_auth.js', '50_lock.js', '60_actions.js', '90_main.js'],
         Object.assign(
-            {SpreadsheetApp, LockService, CacheService},
+            {LockService, CacheService},
+            store,
             fakeContentService(),
-            fakeProperties(Object.assign({METADATA_SHEET_NAME: 'Metadata', FLIGHT_LOG_SHEET_NAME: 'Registro voli'}, properties))
+            fakeProperties(properties)
         )
     );
-    return {ctx, flightLogSheet, metadataSheet, spreadsheetState, lockState};
+    return {ctx, store, lockState};
 }
 
 function e(bodyObj) {
@@ -83,33 +83,36 @@ test('doPost rejects a body that is not valid JSON', () => {
     assert.strictEqual(parsed.error.code, ctx.ERROR.BAD_REQUEST);
 });
 
-test('doPost rejects an unknown token as UNAUTHORIZED', () => {
-    const {ctx} = makeCtx();
+test('doPost rejects an unknown token as UNAUTHORIZED, without touching the store', () => {
+    const {ctx, store} = makeCtx();
     const parsed = JSON.parse(ctx.doPost(e(validBody({token: 'wrong'}))).getContent());
     assert.strictEqual(parsed.error.code, ctx.ERROR.UNAUTHORIZED);
+    assert.strictEqual(store.openFlightLogSheet.mock.calls.length, 0);
 });
 
 // --- doPost: the happy path, end to end ---------------------------------------
 
-test('doPost runs a mutating action end to end and mutates the sheet', () => {
-    const {ctx, flightLogSheet} = makeCtx();
+test('doPost runs a mutating action end to end, driving the store through the expected calls', () => {
+    const {ctx, store} = makeCtx();
     const parsed = JSON.parse(ctx.doPost(e(validBody())).getContent());
 
     assert.strictEqual(parsed.ok, true);
     assert.match(parsed.data.id, /^[a-z][a-z0-9]{9}$/);
-    assert.strictEqual(flightLogSheet.data.length, 2);
+    assert.strictEqual(store.appendRow.mock.calls.length, 1);
+    assert.strictEqual(store.sortSheet.mock.calls.length, 1);
+    assert.deepEqual(store.updateVersionMetadata.mock.calls[0].arguments, [ctx.FLIGHT_LOG_VERSION_KEY]);
 });
 
-test('doPost returns BUSY without mutating the sheet when the lock is held elsewhere', () => {
-    const {ctx, flightLogSheet} = makeCtx({lockOpts: {failToLock: true}});
+test('doPost returns BUSY without touching the store when the lock is held elsewhere', () => {
+    const {ctx, store} = makeCtx({lockOpts: {failToLock: true}});
     const parsed = JSON.parse(ctx.doPost(e(validBody())).getContent());
 
     assert.strictEqual(parsed.error.code, ctx.ERROR.BUSY);
-    assert.strictEqual(flightLogSheet.data.length, 1);
+    assert.strictEqual(store.appendRow.mock.calls.length, 0);
 });
 
 test('doPost replays the cached response for a repeated requestId instead of inserting twice', () => {
-    const {ctx, flightLogSheet} = makeCtx();
+    const {ctx, store} = makeCtx();
     const body = validBody();
 
     const first = JSON.parse(ctx.doPost(e(body)).getContent());
@@ -118,18 +121,23 @@ test('doPost replays the cached response for a repeated requestId instead of ins
     assert.strictEqual('replayed' in first, false);
     assert.strictEqual(second.replayed, true);
     assert.strictEqual(second.data.id, first.data.id);
-    assert.strictEqual(flightLogSheet.data.length, 2, 'the second call must not append a second row');
+    assert.strictEqual(store.appendRow.mock.calls.length, 1, 'the second call must not insert a second time');
 });
 
 // --- doPost: unexpected failures --------------------------------------------
 
 test('doPost turns an unexpected exception into an INTERNAL response and still releases the lock', () => {
-    // No FLIGHT_LOG_SHEET_NAME configured: openFlightLogSheet throws deep inside the locked section.
-    const {ctx, lockState} = makeCtx({properties: {FLIGHT_LOG_SHEET_NAME: null}});
+    const {ctx, lockState} = makeCtx({
+        storeImpls: {
+            openFlightLogSheet: () => {
+                throw new Error('boom');
+            }
+        }
+    });
     const parsed = JSON.parse(ctx.doPost(e(validBody())).getContent());
 
     assert.strictEqual(parsed.error.code, ctx.ERROR.INTERNAL);
-    assert.match(parsed.error.message, /FLIGHT_LOG_SHEET_NAME/);
+    assert.match(parsed.error.message, /boom/);
     assert.strictEqual(lockState.releaseLockCalls, 1);
 });
 

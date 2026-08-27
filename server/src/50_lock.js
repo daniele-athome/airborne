@@ -16,7 +16,7 @@ function withLock(fn) {
         return fn();
     } finally {
         // Pending writes must reach the spreadsheet before the next holder of the lock reads it.
-        SpreadsheetApp.flush();
+        commitChanges();
         lock.releaseLock();
     }
 }

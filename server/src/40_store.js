@@ -122,3 +122,8 @@ function updateVersionMetadata(metadataKey) {
     const current = Number(hashValueCell.getValue());
     hashValueCell.setValue(isNaN(current) ? 1 : current + 1);
 }
+
+/** Commits any pending writes. */
+function commitChanges() {
+    SpreadsheetApp.flush();
+}

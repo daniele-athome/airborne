@@ -24,4 +24,31 @@ globalThis.PropertiesService = {
     }
 };
 
+/**
+ * Enough of ContentService for `output`.
+ *
+ * The real TextOutput answers `getContent` and `getMimeType`, and its
+ * `setMimeType` returns the object so calls can be chained; this one does the
+ * same, so a test reads the result the way Apps Script would.
+ */
+globalThis.ContentService = {
+    MimeType: {JSON: 'application/json'},
+    createTextOutput: function (text) {
+        return {
+            content: text,
+            mimeType: null,
+            setMimeType: function (type) {
+                this.mimeType = type;
+                return this;
+            },
+            getContent: function () {
+                return this.content;
+            },
+            getMimeType: function () {
+                return this.mimeType;
+            }
+        };
+    }
+};
+
 module.exports = {setScriptProperties: setScriptProperties};

@@ -165,34 +165,6 @@ function buildRowValues(schema, payload, existing, identityValues) {
     return {values: values, rowId: stableId};
 }
 
-/** Maps the configured sort field names to 1-based column numbers. */
-function sortSpecFor(sheetConfig) {
-    const spec = [];
-    for (let i = 0; i < sheetConfig.sort.length; i++) {
-        const name = sheetConfig.sort[i];
-        for (let f = 0; f < sheetConfig.schema.length; f++) {
-            if (sheetConfig.schema[f].name === name) {
-                spec.push({column: sheetConfig.schema[f].index + 1});
-                break;
-            }
-        }
-    }
-    return spec;
-}
-
-function sortFlightLog(sheet) {
-    const firstRow = flight_log_config.headerRows + 1;
-    const lastRow = sheet.getLastRow();
-    if (lastRow < firstRow) {
-        return;
-    }
-
-    // TODO what would happen to the ARRAYFORMULA formula in the first row of column K?
-    const width = Math.max(flight_log_config.schema.length, sheet.getLastColumn());
-    sheet.getRange(firstRow, 1, lastRow - firstRow + 1, width)
-        .sort(sortSpecFor(flight_log_config));
-}
-
 /*
  * Identity rules.
  *
@@ -369,21 +341,7 @@ function checkIdentityForDelete(sheetConfig, identity, existing) {
 
 /** Bumps the version counter the app watches to know the data moved. */
 function updateFlightLogMetadata() {
-    const metadataSheet = openMetadataSheet();
-    /** @type {GoogleAppsScript.Spreadsheet.Range} */
-    const hashKeyCell = metadataSheet.getRange('A:A')
-        .createTextFinder(FLIGHT_LOG_VERSION_KEY)
-        .matchEntireCell(true)
-        .findNext();
-
-    if (!hashKeyCell) {
-        metadataSheet.appendRow([FLIGHT_LOG_VERSION_KEY, 1]);
-        return;
-    }
-
-    const hashValueCell = metadataSheet.getRange(hashKeyCell.getRow(), hashKeyCell.getColumn() + 1);
-    const current = Number(hashValueCell.getValue());
-    hashValueCell.setValue(isNaN(current) ? 1 : current + 1);
+    updateVersionMetadata(FLIGHT_LOG_VERSION_KEY);
 }
 
 function actionFlightLogInsert(payload, identity) {
@@ -399,10 +357,10 @@ function actionFlightLogInsert(payload, identity) {
         return errorResponse(ERROR.BAD_REQUEST, built.error);
     }
 
-    sheet.appendRow(built.values);
+    appendRow(sheet, built.values);
 
     // apply proper sort
-    sortFlightLog(sheet);
+    sortSheet(flight_log_config, sheet);
 
     // update hash in metadata
     updateFlightLogMetadata();
@@ -440,7 +398,7 @@ function actionFlightLogUpdate(payload, identity) {
     writeRow(flight_log_config, sheet, rowIndex, built.values);
 
     // apply proper sort
-    sortFlightLog(sheet);
+    sortSheet(flight_log_config, sheet);
 
     // update hash in metadata
     updateFlightLogMetadata();
@@ -473,7 +431,8 @@ function actionFlightLogDelete(payload, identity) {
     deleteRow(sheet, rowIndex);
 
     // apply proper sort
-    sortFlightLog(sheet);
+    // technically we wouldn't need a sort after a delete, but it might fix bad situations
+    sortSheet(flight_log_config, sheet);
 
     // update hash in metadata
     updateFlightLogMetadata();

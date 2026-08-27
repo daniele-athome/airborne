@@ -49,6 +49,10 @@ function writeRow(sheetConfig, sheet, rowIndex, values) {
         .setValues([values])
 }
 
+function appendRow(sheet, values) {
+  sheet.appendRow(values);
+}
+
 function deleteRow(sheet, rowIndex) {
     sheet.deleteRow(rowIndex);
 }
@@ -69,4 +73,52 @@ function readMetadata() {
         }
     }
     return store;
+}
+
+
+/** Maps the configured sort field names to 1-based column numbers. */
+function sortSpecFor(sheetConfig) {
+    const spec = [];
+    for (let i = 0; i < sheetConfig.sort.length; i++) {
+        const name = sheetConfig.sort[i];
+        for (let f = 0; f < sheetConfig.schema.length; f++) {
+            if (sheetConfig.schema[f].name === name) {
+                spec.push({column: sheetConfig.schema[f].index + 1});
+                break;
+            }
+        }
+    }
+    return spec;
+}
+
+function sortSheet(sheetConfig, sheet) {
+    const firstRow = sheetConfig.headerRows + 1;
+    const lastRow = sheet.getLastRow();
+    if (lastRow < firstRow) {
+        return;
+    }
+
+    // TODO what would happen to the ARRAYFORMULA formula in the first row of column K?
+    const width = Math.max(sheetConfig.schema.length, sheet.getLastColumn());
+    sheet.getRange(firstRow, 1, lastRow - firstRow + 1, width)
+        .sort(sortSpecFor(sheetConfig));
+}
+
+/** Bumps the version counter the app watches to know the data moved. */
+function updateVersionMetadata(metadataKey) {
+    const metadataSheet = openMetadataSheet();
+    /** @type {GoogleAppsScript.Spreadsheet.Range} */
+    const hashKeyCell = metadataSheet.getRange('A:A')
+        .createTextFinder(metadataKey)
+        .matchEntireCell(true)
+        .findNext();
+
+    if (!hashKeyCell) {
+        appendRow(metadataSheet, [metadataKey, 1]);
+        return;
+    }
+
+    const hashValueCell = metadataSheet.getRange(hashKeyCell.getRow(), hashKeyCell.getColumn() + 1);
+    const current = Number(hashValueCell.getValue());
+    hashValueCell.setValue(isNaN(current) ? 1 : current + 1);
 }

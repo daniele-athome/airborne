@@ -30,13 +30,13 @@ cat > src/01_build.js <<EOF
 BUILD_ID = '${BUILD_ID}';
 EOF
 
-#echo "==> Running tests"
-#node --test 'test/*.test.js'
+echo "==> Running tests"
+node --test 'test/*.test.js'
 
 echo "==> Pushing sources"
-npm run clasp -- push --force
+npx clasp push --force
 
 echo "==> Updating deployment ${DEPLOYMENT_ID}"
-npm run clasp -- deploy -i "${DEPLOYMENT_ID}" -d "${DESCRIPTION}"
+npx clasp deploy -i "${DEPLOYMENT_ID}" -d "${DESCRIPTION}"
 
 echo "==> Live build is ${BUILD_ID}"

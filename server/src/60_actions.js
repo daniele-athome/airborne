@@ -182,19 +182,6 @@ function getNoPilotName() {
     return name === '' ? null : name;
 }
 
-/** Normalizes a name coming from a cell or from a request. */
-function normalizeName(value) {
-    if (value === null || value === undefined) {
-        return '';
-    }
-    return String(value).trim();
-}
-
-/** Safe comparison of two names. */
-function sameName(a, b) {
-    return normalizeName(a).toLowerCase() === normalizeName(b).toLowerCase();
-}
-
 /** The schema fields that carry the identity of a row. */
 function identityFields(sheetConfig) {
     const fields = [];
@@ -445,7 +432,7 @@ if (typeof module === 'object') {
     module.exports = {
         flight_log_config, FLIGHT_LOG_VERSION_KEY, ID_LETTERS, ID_ALPHABET,
         coerceDate, coerceField, generateStableId, buildRowValues,
-        getNoPilotName, normalizeName, sameName, identityFields, identityOwner, claimedName,
+        getNoPilotName, identityFields, identityOwner, claimedName,
         resolveIdentityForInsert, resolveIdentityForUpdate, checkIdentityForDelete,
         updateFlightLogMetadata,
         actionFlightLogInsert, actionFlightLogUpdate, actionFlightLogDelete

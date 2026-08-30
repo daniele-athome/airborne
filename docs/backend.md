@@ -25,20 +25,20 @@ conditional formatting.
 
 ## How the app talks to the sheets
 
-The app does **not** write to the spreadsheet directly. Every insert, edit and deletion goes through a small
+The app does **not** write to the spreadsheet directly. Every insert, edit, and deletion goes through a small
 Apps Script web app bound to the spreadsheet itself, whose source lives in `server/` in this repository.
-
-The reason is atomicity. Reading the current state and then writing it back are two separate requests, and between
-them another pilot can write: both clients see the same state, both write, and the first change is lost without any
-error. Inside the script the check and the write happen in one execution guarded by a lock, so that cannot happen.
 
 Two things follow from this that are visible in the sheet:
 
-* a **stable id column** (column K), because the sheet is re-sorted on every change and row numbers therefore do not
-  identify a flight for longer than a few seconds;
+* a **stable id column** (column `L` of the Flight log), because the sheet is re-sorted on every change and row numbers
+  therefore do not identify a flight for longer than a few seconds;
 * the **pilot tokens** in the Metadata sheet, which is how the script knows who is calling.
 
-Bookings are unaffected: they stay on Google Calendar, written directly by the app.
+The script mediates the **flight log only**. Bookings are unaffected: they stay on Google Calendar, written directly by
+the app.
+
+The request and response format is described in `server/openapi.yaml`, which is the reference for anything talking to
+the deployment.
 
 # Setup a new aircraft
 
@@ -66,25 +66,36 @@ lives in `server/` in this repository and is deployed into the spreadsheet, as d
 
 ### Sheet structure
 
-| Sheet | Columns | Notes |
-|---|---|---|
-| Flight log | `A:J` data, `K` id | sorted by start and end hour |
-| Activities | `A:I` data, `K` id | sorted by priority and date |
-| Metadata | `A:B` key/value | versions, counters, pilot tokens |
+| Sheet      | Columns                             | Notes                            |
+|------------|-------------------------------------|----------------------------------|
+| Flight log | `A:J` data, `K` flight time, `L` id | sorted by start and end hour     |
+| Activities | (work in progress)                  | (work in progress)               |
+| Metadata   | `A:B` key/value                     | versions, counters, pilot tokens |
 
-Column **K** holds a stable id, assigned by the script and never reused. Do not remove it, do not reorder it, and do
-not fill it by hand: it is what identifies a flight for the app. `L1` is a manual switch — setting it to `LOCKED`
-suspends the automatic sorting, which is needed during migrations.
+The Flight log columns are fixed and positional: `A` creation timestamp, `B` date, `C` pilot name, `D` start hour,
+`E` end hour, `F` origin, `G` destination, `H` fuel, `I` fuel price, `J` notes. The script writes the whole row on
+every change and addresses the columns by position, so **do not reorder or insert columns**.
+
+Column **K** is computed, not stored: the flight time comes from a formula in `K1` that spills down the column.
+The script clears that cell on the rows it writes and never reads it back.
+
+Column **L** holds a stable id, assigned by the script and never reused. Do not remove it, do not reorder it, and do
+not fill it by hand: it is what identifies a flight for the app. The ids are ten lowercase characters starting with a
+letter, e.g. `ab12cd34ef` — the leading letter is what stops the spreadsheet from reading an id back as a number,
+which would make the row unfindable.
 
 The Metadata sheet holds these keys:
 
-| Key | Meaning |
-|---|---|
-| `flight_log.hash`, `activities.hash` | version number, changes at every modification |
-| `flight_log.count`, `activities.count` | number of rows |
-| `flight_log.next_id`, `activities.next_id` | next id to assign |
-| `token.<pilot name>` | **hash** of that pilot's token, never the token itself |
-| `role.<pilot name>` | `admin` to allow editing other pilots' entries (optional) |
+| Key                                    | Meaning                                                |
+|----------------------------------------|--------------------------------------------------------|
+| `flight_log.hash`, `activities.hash`   | version number, changes at every modification          |
+| `flight_log.count`, `activities.count` | number of rows                                         |
+| `token.<pilot name>`                   | that pilot's token, stored as the app sends it         |
+| `role.<pilot name>`                    | `pilot`, or `admin` to also edit other pilots' entries |
+
+Of these the script writes only `flight_log.hash`, which it bumps after every change it makes; it assigns flight ids
+itself, so there is no `next_id` counter to keep any more. The `count` keys are `COUNTA` formulas that the spreadsheet
+keeps up to date on its own.
 
 ## Backend script setup
 
@@ -98,23 +109,23 @@ spreadsheet you own. Every aircraft therefore has its own copy and its own deplo
    ```shell
    cd server
    # put the script id in .clasp.json
-   clasp login
-   clasp push
+   npx clasp login
+   npx clasp push
    ```
+
+   From then on use `./deploy.sh`, which pushes and redeploys in one step: see `server/README.md`.
 
 3. In Project Settings → Script Properties, add:
 
-   | Property | Value |
-   |---|---|
-   | `TOKEN_SALT` | a long random string, **different for every aircraft** |
-   | `METADATA_SHEET_NAME` | `Metadata` |
-   | `FLIGHT_LOG_SHEET_NAME` | `Flight log` (or `Registro voli`) |
-   | `ACTIVITIES_SHEET_NAME` | `Activities` (or `Attività`) |
-   | `NO_PILOT_NAME` | the maintenance pilot name, if you use one |
+   | Property                | Required | Value                                      |
+   |-------------------------|----------|--------------------------------------------|
+   | `METADATA_SHEET_NAME`   | yes      | `Metadata`                                 |
+   | `FLIGHT_LOG_SHEET_NAME` | yes      | `Flight log` (or `Registro voli`)          |
+   | `NO_PILOT_NAME`         | no       | the maintenance pilot name, if you use one |
 
-4. Add the trigger: Triggers → Add Trigger → function `onChange`, source "From spreadsheet", type "On change",
-   then authorize it with your Google account. It sorts the sheets and updates the version number for changes typed
-   directly into the spreadsheet; changes coming from the app are already handled inside the write itself.
+4. There is no trigger to add. This script has no `onChange` function: every sort and every version bump happens
+   inside the write it belongs to, so a change typed directly into the spreadsheet triggers neither — the next change
+   made through the app puts both right.
 5. Deploy → New deployment → Web app. Access and identity are already set in the manifest
    (execute as the owner, reachable by anyone with the URL). Keep the deployment id: redeploying **the same one** is
    what keeps the URL stable for apps already installed.
@@ -124,33 +135,24 @@ spreadsheet you own. Every aircraft therefore has its own copy and its own deplo
    curl -L "https://script.google.com/macros/s/<deployment id>/exec"
    ```
 
-   A JSON response means the deployment is reachable. An HTML page means the access setting is wrong and callers are
-   being sent to a login page.
+   A JSON response means the deployment is reachable; it reports the build the deployment was made from and the
+   protocol versions it speaks. An HTML page means the access setting is wrong and callers are being sent to a login
+   page.
 
 ### Pilot tokens
 
-Each pilot gets their own token, which goes in their copy of the aircraft archive. The spreadsheet only ever stores
-its hash, so reading the Metadata sheet does not let anyone impersonate a pilot:
+Each pilot gets their own token, which goes in their copy of the aircraft archive as `script_token`. The script
+compares what the app sends against the Metadata sheet exactly as stored, so the two have to be the same string:
 
-* generate a long random token per pilot;
-* compute `SHA-256` of `TOKEN_SALT` concatenated with the token, lowercase hex;
-* add a `token.<pilot name>` row in the Metadata sheet with that hash as the value.
+* generate a long random value per pilot — 64 hexadecimal characters is a good shape, and it must be unguessable;
+* add a `token.<pilot name>` row in the Metadata sheet with that value;
+* add the matching `role.<pilot name>` row, without which the token is refused;
+* put the same value in that pilot's archive.
 
-To revoke a pilot, delete their row: it takes effect on their next request. The aircraft data tool does all of this
-for you.
+The value in the sheet **is** the credential, not a verifier for it: whoever can read the Metadata sheet can act as
+any pilot. Give read access to the spreadsheet only to people you would hand every pilot's token to.
 
-## Migrating an existing aircraft
-
-An aircraft set up before the backend script existed needs the id column filled in. The order matters, because the
-automatic sorting would otherwise scramble ids while you are adding them.
-
-1. Set `L1` to `LOCKED` on both the Flight log and Activities sheets, to suspend sorting.
-2. Delete the old `onChange` trigger and its script from the spreadsheet.
-3. Deploy the new script as described above.
-4. Add a header in `K1` and number the existing rows in column K, from 1 downwards, in whatever order they are in.
-5. In the Metadata sheet, set `flight_log.next_id` and `activities.next_id` to one more than the highest id you used.
-6. Clear `L1` on both sheets.
-7. Update the aircraft archives with the web app URL and the pilot tokens, and distribute them.
+To revoke a pilot, delete their row: it takes effect on their next request.
 
 ## Aircraft definition file
 
@@ -186,9 +188,14 @@ the spreadsheet.
     // Enables the flight log. The sheet itself is resolved by the backend script.
     // Remove the line if not using the flight log.
     "flightlog_enabled": true,
-    // Enables the journal.
+    "activities_spreadsheet_id": "...",
+    // Actual sheet name - within the spreadsheet - for the journal.
     // Remove the line if not using the journal.
-    "activities_enabled": true
+    "activities_sheet_name": "Activities",
+    // Spreadsheet ID of the Google Sheets document for the metadata table.
+    "metadata_spreadsheet_id": "...",
+    // Actual sheet name - within the spreadsheet - for the metadata table.
+    "metadata_sheet_name": "Metadata"
   },
   // Name of the (fake) pilot when registering a maintenance flight or engine start.
   "no_pilot_name": "(maintenance)",
@@ -232,7 +239,7 @@ Create a zip file with the following:
 > Everything else in the archive is identical.
 
 You can then serve the zip file from anywhere you like, as long as it has a publicly accessible HTTPS URL, either
-without authentication or with HTTP Basic authentication (no other authentication method is supported by the app).
+without authentication or with HTTP Basic authentication (the app supports no other authentication method).
 
 > When using HTTP Basic authentication, you will need to type "username:password" in the password field during aircraft
 > configuration in the app.

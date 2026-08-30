@@ -92,7 +92,7 @@ class AppConfig extends ChangeNotifier {
   Map<String, String> get flightlogBackendInfo {
     return {
       'spreadsheet_id':
-      _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
+          _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
     };
   }
@@ -100,7 +100,7 @@ class AppConfig extends ChangeNotifier {
   Map<String, String> get activitiesBackendInfo {
     return {
       'spreadsheet_id':
-      _currentAircraft!.backendInfo['activities_spreadsheet_id'],
+          _currentAircraft!.backendInfo['activities_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['activities_sheet_name'],
     };
   }
@@ -108,7 +108,7 @@ class AppConfig extends ChangeNotifier {
   Map<String, String> get metadataBackendInfo {
     return {
       'spreadsheet_id':
-      _currentAircraft!.backendInfo['metadata_spreadsheet_id'],
+          _currentAircraft!.backendInfo['metadata_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['metadata_sheet_name'],
     };
   }

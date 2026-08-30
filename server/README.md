@@ -27,7 +27,7 @@ Full end-to-end instructions, including the spreadsheet template, are in
 4. Deploy as a Web App. The manifest already pins `executeAs: USER_DEPLOYING`
    and `access: ANYONE_ANONYMOUS`, so the settings are versioned here rather
    than clicked in a panel.
-6. Verify with a `GET` on the `/exec` URL: it answers with the build id and the
+5Verify with a `GET` on the `/exec` URL: it answers with the build id and the
    supported protocol range, without a token.
 
 ## Deploying
@@ -50,11 +50,6 @@ deployment id: run the script once per aircraft, switching `scriptId` in
 node --test 'test/*.test.js'
 ```
 
-No dependencies: the pure modules are evaluated in a `vm` sandbox with stubs for
-the handful of Apps Script services they touch. Anything that reaches
-`SpreadsheetApp` is deliberately out of scope here and is exercised against a
-real spreadsheet.
-
 ## Protocol
 
-TODO OpenAPI file
+API specifications for the backend are documented in `openapi.yaml`.

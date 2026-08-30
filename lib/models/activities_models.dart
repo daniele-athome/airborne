@@ -48,7 +48,6 @@ enum ActivityStatus {
 class ActivityEntry {
   ActivityEntry({
     this.id,
-    this.fingerprint,
     required this.type,
     required this.creationDate,
     this.status,
@@ -60,11 +59,8 @@ class ActivityEntry {
     this.alert,
   });
 
-  /// Entry ID. Assigned by the backend and stable for the life of the entry.
+  /// Entry ID. Used by the backend.
   String? id;
-
-  /// Precondition token for editing, as received from the backend. Opaque.
-  String? fingerprint;
 
   /// Entry type.
   ActivityType type;

@@ -9,19 +9,12 @@ class FlightLogItem {
     this.endHour,
     this.fuel,
     this.fuelPrice,
-    this.notes, {
-    this.fingerprint,
-  });
+    this.notes,
+  );
 
-  /// Flight ID, assigned by the backend and stable for the life of the entry.
+  /// Flight ID: 1-based, sheet row number - 1 (because of the sheet header)
+  /// e.g. row A2:J2 -> id=1
   String? id;
-
-  /// Precondition token for editing, as received from the backend.
-  ///
-  /// Opaque: it is stored and echoed back, never parsed or compared, and it
-  /// deliberately takes no part in equality — the same entry with fresher
-  /// content is still the same entry as far as list diffing is concerned.
-  String? fingerprint;
   DateTime date;
   String pilotName;
   String origin;

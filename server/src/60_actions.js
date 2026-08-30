@@ -11,11 +11,11 @@ const flight_log_config = {
         {name: 'fuel', index: 7, type: 'number', nullable: true},
         {name: 'fuelPrice', index: 8, type: 'number', nullable: true},
         {name: 'notes', index: 9, type: 'string', nullable: true},
-        {name: 'flightTime', index: 10, type: 'string', managed: 'empty'},
-        {name: 'stableId', index: 11, type: 'string', managed: 'stableId', immutable: true}
+        {name: 'stableId', index: 10, type: 'string', managed: 'stableId', immutable: true}
     ],
     headerRows: 1,
-    stableIdColumn: 12,
+    /** 1-based column of the stableId field. Must agree with its index. */
+    stableIdColumn: 11,
     /** Sort keys, by field name, applied after every change. */
     sort: ['startHour', 'endHour'],
 }

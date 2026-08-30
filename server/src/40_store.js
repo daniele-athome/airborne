@@ -98,9 +98,8 @@ function sortSheet(sheetConfig, sheet) {
         return;
     }
 
-    // TODO what would happen to the ARRAYFORMULA formula in the first row of column K?
-    const width = Math.max(sheetConfig.schema.length, sheet.getLastColumn());
-    sheet.getRange(firstRow, 1, lastRow - firstRow + 1, width)
+    // We'll sort only the data we manage
+    sheet.getRange(firstRow, 1, lastRow - firstRow + 1, sheetConfig.schema.length)
         .sort(sortSpecFor(sheetConfig));
 }
 

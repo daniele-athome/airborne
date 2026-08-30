@@ -51,7 +51,6 @@ function storedRow(overrides) {
         20,
         1.9,
         'all fine',
-        '1:30',
         'ab12cd34ef'
     ];
     for (const name of Object.keys(overrides || {})) {
@@ -108,10 +107,6 @@ describe('insert', () => {
         assert.equal(values[AT.pilotName], 'Bob');
     });
 
-    it('leaves the computed column empty', () => {
-        assert.equal(built(inserted(flight()))[AT.flightTime], null);
-    });
-
     it('empties an optional field nobody filled in', () => {
         const values = built(inserted(flight()));
         assert.equal(values[AT.fuel], '');
@@ -147,7 +142,7 @@ describe('update', () => {
         const existing = storedRow();
         const values = built(updated({origin: 'LIRA'}, existing));
         for (const field of SCHEMA) {
-            if (['origin', 'flightTime'].indexOf(field.name) >= 0) {
+            if (field.name === 'origin') {
                 continue;
             }
             assert.deepEqual(values[field.index], existing[field.index], 'lost ' + field.name);
@@ -184,15 +179,6 @@ describe('update', () => {
         // payload naming any column: the decision arrives through identityValues.
         const values = built(updated({}, storedRow(), {pilotName: 'NO PILOT'}));
         assert.equal(values[AT.pilotName], 'NO PILOT');
-    });
-
-    it('clears the computed column on every update', () => {
-        // Documented, not endorsed. `managed: 'empty'` does not distinguish
-        // insert from update, so a formula living in that column is erased by the
-        // first edit of the row — including an edit that changes nothing else.
-        const existing = storedRow();
-        assert.equal(existing[AT.flightTime], '1:30');
-        assert.equal(built(updated({}, existing))[AT.flightTime], null);
     });
 
     it('returns a row of the right width', () => {

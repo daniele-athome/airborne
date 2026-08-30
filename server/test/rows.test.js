@@ -161,6 +161,29 @@ describe('sortSpecFor', () => {
     });
 });
 
+describe('the flight log column configuration', () => {
+    it('points stableIdColumn at the stableId field', () => {
+        // `findRow` searches that one column by number, while everything else
+        // addresses the field by index. The two are written down separately and
+        // nothing but this keeps them aimed at the same column: aim it one to
+        // the left and every update silently files itself against the notes.
+        const field = flight_log_config.schema.filter(function (f) {
+            return f.name === 'stableId';
+        })[0];
+        assert.ok(field, 'no stableId field in the schema');
+        assert.equal(flight_log_config.stableIdColumn, field.index + 1);
+    });
+
+    it('ends at the identifier', () => {
+        // What keeps the computed flight time safe is that it sits immediately
+        // past the end of the schema: the script reads, rewrites and sorts
+        // exactly `schema.length` columns and never reaches it. A field appended
+        // here would be written straight onto the array formula.
+        const schema = flight_log_config.schema;
+        assert.equal(schema[schema.length - 1].name, 'stableId');
+    });
+});
+
 describe('the flight log sort configuration', () => {
     it('names only fields that exist', () => {
         // What actually protects the live sheet: `sortSpecFor` would swallow a

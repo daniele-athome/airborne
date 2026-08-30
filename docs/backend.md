@@ -30,7 +30,7 @@ Apps Script web app bound to the spreadsheet itself, whose source lives in `serv
 
 Two things follow from this that are visible in the sheet:
 
-* a **stable id column** (column `L` of the Flight log), because the sheet is re-sorted on every change and row numbers
+* a **stable id column** (column `K` of the Flight log), because the sheet is re-sorted on every change and row numbers
   therefore do not identify a flight for longer than a few seconds;
 * the **pilot tokens** in the Metadata sheet, which is how the script knows who is calling.
 
@@ -68,18 +68,15 @@ lives in `server/` in this repository and is deployed into the spreadsheet, as d
 
 | Sheet      | Columns                             | Notes                            |
 |------------|-------------------------------------|----------------------------------|
-| Flight log | `A:J` data, `K` flight time, `L` id | sorted by start and end hour     |
+| Flight log | `A:J` data, `K` id, `L` flight time | sorted by start and end hour     |
 | Activities | (work in progress)                  | (work in progress)               |
 | Metadata   | `A:B` key/value                     | versions, counters, pilot tokens |
 
 The Flight log columns are fixed and positional: `A` creation timestamp, `B` date, `C` pilot name, `D` start hour,
-`E` end hour, `F` origin, `G` destination, `H` fuel, `I` fuel price, `J` notes. The script writes the whole row on
-every change and addresses the columns by position, so **do not reorder or insert columns**.
+`E` end hour, `F` origin, `G` destination, `H` fuel, `I` fuel price, `J` notes, `K` stable id. The script rewrites the
+whole row on every change and addresses the columns by position, so **do not reorder or insert columns**.
 
-Column **K** is computed, not stored: the flight time comes from a formula in `K1` that spills down the column.
-The script clears that cell on the rows it writes and never reads it back.
-
-Column **L** holds a stable id, assigned by the script and never reused. Do not remove it, do not reorder it, and do
+Column **K** holds a stable id, assigned by the script and never reused. Do not remove it, do not reorder it, and do
 not fill it by hand: it is what identifies a flight for the app. The ids are ten lowercase characters starting with a
 letter, e.g. `ab12cd34ef` — the leading letter is what stops the spreadsheet from reading an id back as a number,
 which would make the row unfindable.

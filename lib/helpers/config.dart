@@ -43,18 +43,19 @@ class AppConfig extends ChangeNotifier {
             _currentAircraft!.backendInfo['flightlog_enabled'] == true &&
             _currentAircraft!.noPilotName != null;
       case 'activities':
-        return _hasScriptBackend &&
-            _currentAircraft!.backendInfo['activities_enabled'] == true;
+        return _currentAircraft!.backendInfo['activities_spreadsheet_id'] !=
+                null &&
+            _currentAircraft!.backendInfo['activities_sheet_name'] != null;
+      case 'metadata':
+        return _currentAircraft!.backendInfo['metadata_spreadsheet_id'] !=
+                null &&
+            _currentAircraft!.backendInfo['metadata_sheet_name'] != null;
       default:
         throw Exception('Unknown feature: $feature');
     }
   }
 
   /// Whether this aircraft is served by the backend script.
-  ///
-  /// Both sheet-backed stores go through it, so without a URL and a token there
-  /// is no way to reach them: the app no longer has credentials of its own for
-  /// the spreadsheet.
   bool get _hasScriptBackend =>
       _currentAircraft!.backendInfo['script_url'] != null &&
       _currentAircraft!.backendInfo['script_token'] != null;
@@ -82,9 +83,6 @@ class AppConfig extends ChangeNotifier {
   }
 
   /// Token identifying this pilot to the backend script.
-  ///
-  /// Each pilot gets their own archive carrying their own token; the backend
-  /// derives the pilot name from it rather than trusting the request.
   String get scriptToken {
     return _currentAircraft!.backendInfo['script_token']! as String;
   }

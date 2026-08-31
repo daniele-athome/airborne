@@ -1,4 +1,5 @@
 import 'package:airborne/helpers/googleapis.dart';
+import 'package:airborne/helpers/script_client.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/services/flight_log_services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,16 +12,24 @@ import '../generate_mocks.mocks.dart';
 void main() {
   late MockGoogleSheetsService mockSheetsService;
   late MockMetadataService mockMetadataService;
+  late MockScriptClient mockScriptClient;
   late FlightLogBookService testService;
   final datetimeFormatter = DateFormat('yyyy-MM-dd HH:mm:SS');
 
   setUp(() {
+    mockScriptClient = MockScriptClient();
     mockSheetsService = MockGoogleSheetsService();
     mockMetadataService = MockMetadataService();
     testService = FlightLogBookService(
       MockGoogleServiceAccountService(),
       mockMetadataService,
-      {'spreadsheet_id': 'TEST', 'sheet_name': 'SHEET'},
+      {
+        'spreadsheet_id': 'TEST',
+        'sheet_name': 'SHEET',
+        'script_url': 'URL',
+        'script_token': 'TOKEN',
+      },
+      mockScriptClient,
     );
     testService.client = mockSheetsService;
   });
@@ -38,6 +47,10 @@ void main() {
         2000,
         'Fly Departure',
         'Fly Arrival',
+        null,
+        null,
+        null,
+        '1',
       ],
       [
         datetimeFormatter.format(timestamp),
@@ -47,6 +60,10 @@ void main() {
         3000,
         'Fly Start',
         'Fly End',
+        null,
+        null,
+        null,
+        '2',
       ],
     ];
     final fakeRows = gapi_sheets.ValueRange(
@@ -55,7 +72,7 @@ void main() {
       values: rows,
     );
     when(
-      mockSheetsService.getRows('TEST', 'SHEET', 'A2:J3'),
+      mockSheetsService.getRows('TEST', 'SHEET', 'A2:K3'),
     ).thenAnswer((_) => Future.value(fakeRows));
     when(
       mockMetadataService.reload(),
@@ -100,17 +117,13 @@ void main() {
 
   test('create item', () async {
     final timestamp = DateTime.now();
-    final fakeAppended = gapi_sheets.AppendValuesResponse(
-      spreadsheetId: 'TEST!SHEET',
-      tableRange: 'A2:J2',
-      updates: gapi_sheets.UpdateValuesResponse(
-        updatedRange: 'A2:J2',
-        updatedRows: 1,
-      ),
-      // TODO other values one day...?
-    );
+    final fakeAppended = ScriptResult(id: 'NEW_ID', replayed: false);
     when(
-      mockSheetsService.appendRows('TEST', 'SHEET', 'A2:J2', any),
+      mockScriptClient.invoke(
+        action: argThat(equals('flight-log/insert'), named: 'action'),
+        requestId: anyNamed('requestId'),
+        payload: anyNamed('payload'),
+      ),
     ).thenAnswer((_) => Future.value(fakeAppended));
 
     // flight log only uses reload, no get call
@@ -131,7 +144,7 @@ void main() {
       timestamp.day,
     );
     final fakeItem = FlightLogItem(
-      null,
+      'NEW_ID',
       dateOnly,
       'Anna',
       'Fly Departure',
@@ -149,13 +162,13 @@ void main() {
 
   test('update item', () async {
     final timestamp = DateTime.now();
-    final fakeAppended = gapi_sheets.UpdateValuesResponse(
-      spreadsheetId: 'TEST!SHEET',
-      updatedRange: 'A2:J2',
-      // TODO other values one day...?
-    );
+    final fakeAppended = ScriptResult(id: 'OLD_ID', replayed: false);
     when(
-      mockSheetsService.updateRows('TEST', 'SHEET', 'A2:J2', any),
+      mockScriptClient.invoke(
+        action: argThat(equals('flight-log/update'), named: 'action'),
+        requestId: anyNamed('requestId'),
+        payload: anyNamed('payload'),
+      ),
     ).thenAnswer((_) => Future.value(fakeAppended));
 
     // flight log only uses reload, no get call
@@ -176,7 +189,7 @@ void main() {
       timestamp.day,
     );
     final fakeItem = FlightLogItem(
-      '1',
+      'OLD_ID',
       dateOnly,
       'Anna',
       'Fly Departure',
@@ -194,18 +207,13 @@ void main() {
 
   test('delete item', () async {
     final timestamp = DateTime.now();
-    final fakeAppended = gapi_sheets.BatchUpdateSpreadsheetResponse(
-      spreadsheetId: 'TEST!SHEET',
-      replies: [
-        gapi_sheets.Response(
-          // TODO what here?
-          deleteDimensionGroup: gapi_sheets.DeleteDimensionGroupResponse(),
-        ),
-      ],
-      // TODO other values one day...?
-    );
+    final fakeAppended = ScriptResult(id: 'REMOVED_ID', replayed: false);
     when(
-      mockSheetsService.deleteRows('TEST', 'SHEET', 2, 2),
+      mockScriptClient.invoke(
+        action: argThat(equals('flight-log/delete'), named: 'action'),
+        requestId: anyNamed('requestId'),
+        payload: anyNamed('payload'),
+      ),
     ).thenAnswer((_) => Future.value(fakeAppended));
 
     // flight log only uses reload, no get call
@@ -226,7 +234,7 @@ void main() {
       timestamp.day,
     );
     final fakeItem = FlightLogItem(
-      '1',
+      'REMOVED_ID',
       dateOnly,
       'Anna',
       'Fly Departure',
@@ -237,6 +245,6 @@ void main() {
       null,
       null,
     );
-    expect(await testService.deleteItem(fakeItem.id!), '1');
+    expect(await testService.deleteItem(fakeItem.id!), 'REMOVED_ID');
   });
 }

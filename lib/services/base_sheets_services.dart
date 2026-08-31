@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 import '../helpers/googleapis.dart';
+import '../helpers/script_client.dart';
 import 'metadata_services.dart';
-import 'script_client.dart';
 
 /// Items per page to fetch.
 const _kItemsPerPage = 20;
@@ -178,13 +178,12 @@ abstract class GoogleSheetsStoreService<T> {
 abstract class GoogleAppsScriptStoreService<T>
     extends GoogleSheetsStoreService<T> {
   GoogleAppsScriptStoreService({
-    required String scriptUrl,
-    required String scriptToken,
+    required ScriptClient scriptClient,
     required super.accountService,
     required super.metadataService,
     required super.spreadsheetId,
     required super.sheetName,
-  }) : _scriptClient = ScriptClient(url: scriptUrl, token: scriptToken);
+  }) : _scriptClient = scriptClient;
 
   final ScriptClient _scriptClient;
 
@@ -220,6 +219,7 @@ abstract class GoogleAppsScriptStoreService<T>
     return result.id;
   }
 
+  /// Subclasses should override this to build a new item, copied from the given one, using the given id.
   T newItem(T item, String newId);
 
   /// Subclasses should override this to convert a model into a map for the backend.

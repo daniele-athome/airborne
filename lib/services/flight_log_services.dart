@@ -1,6 +1,8 @@
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../helpers/googleapis.dart';
+import '../helpers/script_client.dart';
 import '../models/flight_log_models.dart';
 import 'base_sheets_services.dart';
 import 'metadata_services.dart';
@@ -14,14 +16,29 @@ class FlightLogBookService extends GoogleAppsScriptStoreService<FlightLogItem> {
     GoogleServiceAccountService accountService,
     MetadataService? metadataService,
     Map<String, String> properties,
+    ScriptClient scriptClient,
   ) : super(
         accountService: accountService,
         metadataService: metadataService,
         spreadsheetId: properties['spreadsheet_id']!,
         sheetName: properties['sheet_name']!,
-        scriptUrl: properties['script_url']!,
-        scriptToken: properties['script_token']!,
+        scriptClient: scriptClient,
       );
+
+  factory FlightLogBookService.fromProperties(
+    GoogleServiceAccountService accountService,
+    MetadataService? metadataService,
+    Map<String, String> properties,
+  ) => FlightLogBookService(
+    accountService,
+    metadataService,
+    properties,
+    ScriptClient(
+      url: properties['script_url']!,
+      token: properties['script_token']!,
+      httpClient: http.Client(),
+    ),
+  );
 
   @override
   String getMetadataPrefixKey() => 'flight_log';

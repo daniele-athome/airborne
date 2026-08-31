@@ -87,10 +87,10 @@ class ScriptClient {
   ScriptClient({
     required String url,
     required String token,
-    http.Client? httpClient,
+    required http.Client httpClient,
   }) : _url = Uri.parse(url),
        _token = token,
-       _httpClient = httpClient ?? http.Client();
+       _httpClient = httpClient;
 
   /// Must stay above the script's own lock timeout of 20s, or the client would
   /// give up while the server is still legitimately waiting its turn to write.

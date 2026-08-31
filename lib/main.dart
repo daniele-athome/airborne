@@ -116,7 +116,7 @@ Future<void> main() async {
           update: (_, appConfig, account, metadataService, _) {
             _log.finest('build flight_log');
             return appConfig.hasFeature('flight_log') && account != null
-                ? FlightLogBookService(
+                ? FlightLogBookService.fromProperties(
                     account,
                     metadataService,
                     appConfig.flightlogBackendInfo,

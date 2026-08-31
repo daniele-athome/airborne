@@ -45,7 +45,7 @@ class FlightLogItem {
 
   @override
   String toString() {
-    return 'FlightLogItem{date: $date, pilot: $pilotName, destination: $destination, startHour: $startHour, endHour: $endHour}';
+    return 'FlightLogItem{id: $id, date: $date, pilot: $pilotName, destination: $destination, startHour: $startHour, endHour: $endHour}';
   }
 }
 

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
 
@@ -46,13 +45,12 @@ enum ScriptErrorCode implements Comparable<ScriptErrorCode> {
 
   /// Whether this code was produced by the script itself, as opposed to being
   /// synthesized locally when the response could not be interpreted.
-  bool get isFromScript =>
-      this != notReachable && this != malformedResponse;
+  bool get isFromScript => this != notReachable && this != malformedResponse;
 
   /// Parses a code coming from the script. An unrecognized value is itself a
   /// protocol violation, hence [malformedResponse].
   static ScriptErrorCode fromCode(String value) => values.firstWhere(
-        (c) => c.code == value,
+    (c) => c.code == value,
     orElse: () => malformedResponse,
   );
 
@@ -64,11 +62,7 @@ enum ScriptErrorCode implements Comparable<ScriptErrorCode> {
 
 /// An error reported by the backend script, or by this client on its behalf.
 class ScriptException implements Exception {
-  const ScriptException(
-    this.code,
-    this.message, {
-    this.details,
-  });
+  const ScriptException(this.code, this.message, {this.details});
 
   /// One of [ScriptErrorCode]; it's a string because we might have other, yet
   /// unknown values.
@@ -113,7 +107,7 @@ class ScriptClient {
   static const _timeout = Duration(seconds: 30);
 
   /// How many times a BUSY response is retried before giving up.
-  static const _maxBusyAttempts = 4;
+  static const _maxBusyAttempts = 2;
 
   /// Identifies this build in the log of the deployment. Diagnostic only:
   /// nothing is decided on its value.
@@ -121,14 +115,9 @@ class ScriptClient {
 
   final Uri _url;
   final String _token;
-  http.Client _httpClient;
+  final http.Client _httpClient;
 
   static final Random _random = Random();
-
-  @visibleForTesting
-  set httpClient(http.Client client) {
-    _httpClient = client;
-  }
 
   /// Utility method for building an idempotency key.
   static String newRequestId() {
@@ -194,7 +183,8 @@ class ScriptClient {
       try {
         return _unwrap(await _send(body));
       } on ScriptException catch (e) {
-        if (e.code != ScriptErrorCode.busy.code || attempt >= _maxBusyAttempts) {
+        if (e.code != ScriptErrorCode.busy.code ||
+            attempt >= _maxBusyAttempts) {
           rethrow;
         }
         final backoff = 1000 + _random.nextInt(250);

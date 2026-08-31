@@ -15,6 +15,7 @@ void main() {
   late MockScriptClient mockScriptClient;
   late FlightLogBookService testService;
   final datetimeFormatter = DateFormat('yyyy-MM-dd HH:mm:SS');
+  const requestId = 'TEST_REQUEST_ID';
 
   setUp(() {
     mockScriptClient = MockScriptClient();
@@ -121,7 +122,7 @@ void main() {
     when(
       mockScriptClient.invoke(
         action: argThat(equals('flight-log/insert'), named: 'action'),
-        requestId: anyNamed('requestId'),
+        requestId: argThat(equals(requestId), named: 'requestId'),
         payload: anyNamed('payload'),
       ),
     ).thenAnswer((_) => Future.value(fakeAppended));
@@ -157,7 +158,10 @@ void main() {
     );
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
-    expect(await testService.appendItem(fakeItem), expectedItem);
+    expect(
+      await testService.appendItem(fakeItem, requestId: requestId),
+      expectedItem,
+    );
   });
 
   test('update item', () async {
@@ -166,7 +170,7 @@ void main() {
     when(
       mockScriptClient.invoke(
         action: argThat(equals('flight-log/update'), named: 'action'),
-        requestId: anyNamed('requestId'),
+        requestId: argThat(equals(requestId), named: 'requestId'),
         payload: anyNamed('payload'),
       ),
     ).thenAnswer((_) => Future.value(fakeAppended));
@@ -202,7 +206,14 @@ void main() {
     );
     // TODO for now the input item is returned...
     final expectedItem = fakeItem;
-    expect(await testService.updateItem(fakeItem.id!, fakeItem), expectedItem);
+    expect(
+      await testService.updateItem(
+        fakeItem.id!,
+        fakeItem,
+        requestId: requestId,
+      ),
+      expectedItem,
+    );
   });
 
   test('delete item', () async {
@@ -211,7 +222,7 @@ void main() {
     when(
       mockScriptClient.invoke(
         action: argThat(equals('flight-log/delete'), named: 'action'),
-        requestId: anyNamed('requestId'),
+        requestId: argThat(equals(requestId), named: 'requestId'),
         payload: anyNamed('payload'),
       ),
     ).thenAnswer((_) => Future.value(fakeAppended));
@@ -245,6 +256,9 @@ void main() {
       null,
       null,
     );
-    expect(await testService.deleteItem(fakeItem.id!), 'REMOVED_ID');
+    expect(
+      await testService.deleteItem(fakeItem.id!, requestId: requestId),
+      'REMOVED_ID',
+    );
   });
 }

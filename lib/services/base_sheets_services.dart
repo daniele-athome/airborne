@@ -189,30 +189,30 @@ abstract class GoogleAppsScriptStoreService<T>
 
   // TODO exception handling
 
-  Future<T> appendItem(T item) async {
+  Future<T> appendItem(T item, {required String requestId}) async {
     final result = await _scriptClient.invoke(
       action: 'flight-log/insert',
-      requestId: ScriptClient.newRequestId(),
+      requestId: requestId,
       payload: buildRowData(item),
     );
 
     return newItem(item, result.id);
   }
 
-  Future<T> updateItem(String id, T item) async {
+  Future<T> updateItem(String id, T item, {required String requestId}) async {
     final result = await _scriptClient.invoke(
       action: 'flight-log/update',
-      requestId: ScriptClient.newRequestId(),
+      requestId: requestId,
       payload: {...buildRowData(item), 'id': id},
     );
 
     return newItem(item, result.id);
   }
 
-  Future<String?> deleteItem(String id) async {
+  Future<String?> deleteItem(String id, {required String requestId}) async {
     final result = await _scriptClient.invoke(
       action: 'flight-log/delete',
-      requestId: ScriptClient.newRequestId(),
+      requestId: requestId,
       payload: {'id': id},
     );
 

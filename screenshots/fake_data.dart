@@ -463,12 +463,15 @@ class FakeLogBookService implements FlightLogBookService {
   FakeLogBookService(this.items);
 
   @override
-  Future<FlightLogItem> appendItem(FlightLogItem item) {
+  Future<FlightLogItem> appendItem(
+    FlightLogItem item, {
+    required String requestId,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<String?> deleteItem(String id) {
+  Future<String?> deleteItem(String id, {required String requestId}) {
     throw UnimplementedError();
   }
 
@@ -514,7 +517,11 @@ class FakeLogBookService implements FlightLogBookService {
   }
 
   @override
-  Future<FlightLogItem> updateItem(String id, FlightLogItem item) {
+  Future<FlightLogItem> updateItem(
+    String id,
+    FlightLogItem item, {
+    required String requestId,
+  }) {
     throw UnimplementedError();
   }
 

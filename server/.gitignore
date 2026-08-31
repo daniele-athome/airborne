@@ -1,0 +1,5 @@
+/node_modules
+# clasp credentials — never commit these
+.clasprc.json
+# generated at deploy time from the current git commit
+/src/01_build.js

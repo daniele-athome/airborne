@@ -5,14 +5,18 @@ on:
     paths-ignore:
       - README.md
       - 'docs/**'
+      - 'server/**'
       - 'utils/**'
       - '.github/workflows/docs.yml'
+      - '.github/workflows/server.yml'
   pull_request:
     paths-ignore:
       - README.md
       - 'docs/**'
+      - 'server/**'
       - 'utils/**'
       - '.github/workflows/docs.yml'
+      - '.github/workflows/server.yml'
   workflow_dispatch:
 
 env:

@@ -39,9 +39,8 @@ class AppConfig extends ChangeNotifier {
       case 'book_flight':
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
-        return _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] !=
-                null &&
-            _currentAircraft!.backendInfo['flightlog_sheet_name'] != null &&
+        return _hasScriptBackend &&
+            _currentAircraft!.backendInfo['flightlog_enabled'] == true &&
             _currentAircraft!.noPilotName != null;
       case 'activities':
         return _currentAircraft!.backendInfo['activities_spreadsheet_id'] !=
@@ -55,6 +54,11 @@ class AppConfig extends ChangeNotifier {
         throw Exception('Unknown feature: $feature');
     }
   }
+
+  /// Whether this aircraft is served by the backend script.
+  bool get _hasScriptBackend =>
+      _currentAircraft!.backendInfo['script_url'] != null &&
+      _currentAircraft!.backendInfo['script_token'] != null;
 
   bool get admin {
     return _currentAircraft!.admin;
@@ -73,11 +77,23 @@ class AppConfig extends ChangeNotifier {
     return _currentAircraft!.backendInfo['google_calendar_id']! as String;
   }
 
+  /// URL of the backend script deployment.
+  String get scriptUrl {
+    return _currentAircraft!.backendInfo['script_url']! as String;
+  }
+
+  /// Token identifying this pilot to the backend script.
+  String get scriptToken {
+    return _currentAircraft!.backendInfo['script_token']! as String;
+  }
+
   Map<String, String> get flightlogBackendInfo {
     return {
       'spreadsheet_id':
           _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
+      'script_url': _currentAircraft!.backendInfo['script_url'],
+      'script_token': _currentAircraft!.backendInfo['script_token'],
     };
   }
 

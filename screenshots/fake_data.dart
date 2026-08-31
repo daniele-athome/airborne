@@ -276,6 +276,7 @@ class FakeAppConfig extends AppConfig {
   final String? initPilotName;
 
   FakeAppConfig() : initPilotName = null;
+
   FakeAppConfig.withPilotName(this.initPilotName);
 
   @override
@@ -462,12 +463,15 @@ class FakeLogBookService implements FlightLogBookService {
   FakeLogBookService(this.items);
 
   @override
-  Future<FlightLogItem> appendItem(FlightLogItem item) {
+  Future<FlightLogItem> appendItem(
+    FlightLogItem item, {
+    required String requestId,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<String?> deleteItem(String id) {
+  Future<String?> deleteItem(String id, {required String requestId}) {
     throw UnimplementedError();
   }
 
@@ -492,7 +496,12 @@ class FakeLogBookService implements FlightLogBookService {
 
   /// Not used: writing operations are not implemented.
   @override
-  List<Object?> buildRowData(FlightLogItem item) {
+  Map<String, dynamic> buildRowData(FlightLogItem item) {
+    throw UnimplementedError();
+  }
+
+  @override
+  FlightLogItem newItem(FlightLogItem item, String newId) {
     throw UnimplementedError();
   }
 
@@ -508,7 +517,11 @@ class FakeLogBookService implements FlightLogBookService {
   }
 
   @override
-  Future<FlightLogItem> updateItem(String id, FlightLogItem item) {
+  Future<FlightLogItem> updateItem(
+    String id,
+    FlightLogItem item, {
+    required String requestId,
+  }) {
     throw UnimplementedError();
   }
 
@@ -577,29 +590,15 @@ class FakeActivitiesService implements ActivitiesService {
   }
 
   @override
-  Future<ActivityEntry> appendItem(ActivityEntry item) =>
-      throw UnimplementedError();
-
-  @override
   ActivityEntry buildItem(String rowId, List<Object?> rowData) =>
       throw UnimplementedError();
 
   @override
-  List<Object?> buildRowData(ActivityEntry item) => throw UnimplementedError();
-
-  @override
   set dataHash(String dataHash) => throw UnimplementedError();
-
-  @override
-  Future<String?> deleteItem(String id) => throw UnimplementedError();
 
   @override
   int getColumnCount() => 10;
 
   @override
   String getMetadataPrefixKey() => throw UnimplementedError();
-
-  @override
-  Future<ActivityEntry> updateItem(String id, ActivityEntry item) =>
-      throw UnimplementedError();
 }

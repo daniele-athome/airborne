@@ -118,6 +118,7 @@ List<Object?> _formatRowData(FlightLogItem item) => [
   item.fuel ?? '',
   item.fuel != null ? item.fuelPrice : '',
   item.notes ?? '',
+  item.id,
 ];
 
 /// Google Sheets API for the rows.

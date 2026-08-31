@@ -46,7 +46,4 @@ class ActivitiesService extends GoogleSheetsStoreService<ActivityEntry> {
 
   @override
   int getColumnCount() => 10;
-
-  @override
-  List<Object?> buildRowData(ActivityEntry item) => throw UnimplementedError();
 }

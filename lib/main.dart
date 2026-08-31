@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl_standalone.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,11 @@ Future<void> main() async {
   // FIXME this will also load the current aircraft, so it's not so fast afterall :P
   final appConfig = AppConfig();
   await appConfig.init();
+
+  // global pool for HTTP calls
+  // TODO not used in DownloadProvider yet
+  final httpClient = http.Client();
+
   runApp(
     MultiProvider(
       providers: [
@@ -116,10 +122,11 @@ Future<void> main() async {
           update: (_, appConfig, account, metadataService, _) {
             _log.finest('build flight_log');
             return appConfig.hasFeature('flight_log') && account != null
-                ? FlightLogBookService(
+                ? FlightLogBookService.fromProperties(
                     account,
                     metadataService,
                     appConfig.flightlogBackendInfo,
+                    httpClient,
                   )
                 : null;
           },

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/googleapis.dart';
+import 'package:airborne/helpers/script_client.dart';
 import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/services/flight_log_services.dart';
 import 'package:airborne/services/metadata_services.dart';
@@ -13,6 +14,7 @@ import 'package:mockito/annotations.dart';
     GoogleCalendarService,
     GoogleServiceAccountService,
     GoogleSheetsService,
+    ScriptClient,
     MetadataService,
     DownloadProvider,
     AppConfig,

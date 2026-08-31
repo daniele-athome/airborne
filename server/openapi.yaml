@@ -1,0 +1,845 @@
+# Airborne backend — HTTP contract.
+#
+# This document describes the deployed Apps Script web app, and it describes it
+# from the caller's side: what a client may send, and what it must be prepared to
+# receive. Where the server is more permissive than what is written here, the
+# narrower rule is the contract — a client that stays inside this document keeps
+# working if the server later tightens up.
+#
+# Three things about this API do not fit the shape OpenAPI expects, and are
+# spelled out in prose because there is nowhere else to put them:
+#
+#   1. One path, one POST, three operations. The operation is chosen by the
+#      `action` field of the request body, not by the URL or the method, so the
+#      three flight-log operations share a single OpenAPI operation object and
+#      are separated by the `oneOf` on the request schema.
+#
+#   2. The status code carries no meaning. ContentService cannot set one, so
+#      every answer that reaches the application layer is 200 — success and
+#      failure alike. The outcome is `ok`, and on failure `error.code`. Never
+#      branch on the HTTP status.
+#
+#   3. Authentication is a field of the request body. OpenAPI security schemes
+#      only reach headers, query strings and cookies, so `token` cannot be
+#      declared as one and every operation states `security: []`. That is a gap
+#      in the description, not an unauthenticated endpoint.
+#
+# See README.md for deployment and docs/backend.md for the spreadsheet side.
+
+openapi: 3.1.0
+
+info:
+  title: Airborne backend
+  version: '1'
+  summary: Mediated writes to the flight log of one aircraft.
+  description: |
+    A Google Apps Script web app bound to the spreadsheet of a single aircraft.
+    It exists so that the check and the write of a flight log entry happen inside
+    one lock-guarded execution instead of two round trips from the app, which is
+    what would otherwise let two pilots overwrite each other without any error.
+
+    It is not a general backend. It holds no state, serves exactly one
+    spreadsheet, and covers **writes only**: the app reads the flight log
+    straight from Google Sheets with its own credentials. There is deliberately
+    no read action here.
+
+    ## Following the redirect
+
+    `script.google.com` answers **both** `GET` and `POST` on `/exec` with a
+    `302` to a generated URL on `script.googleusercontent.com`. The JSON body is
+    served by that second request, never by the first, so a client that does not
+    follow redirects sees an empty body and concludes nothing.
+
+    How the redirect is followed matters, because the two common clients disagree:
+
+    * `curl` turns the `POST` into a `GET` on a `302` (its historical default,
+      overridable with `--post302`), which is why the `api-*.sh` scripts work
+      with a plain `-L`.
+    * `dart:io` — and therefore `package:http` — follows RFC 9110 to the letter
+      and only rewrites the method on a `303`, so it repeats the `POST`, body
+      included, against the redirect target.
+
+    The stored response is returned either way in practice, but a client that
+    wants the behaviour pinned rather than inherited should set
+    `followRedirects: false` and issue the second `GET` on `Location` itself.
+
+    ## Media type, and the web target
+
+    Requests are `application/json`. This rules out calling the API from a
+    browser: `application/json` is not a CORS-safelisted content type, so it
+    triggers a preflight `OPTIONS`, and Apps Script does not answer one. A Flutter
+    web build would need `text/plain` on both sides, which is a protocol change
+    and not merely a header change — it is called out here so the limitation is a
+    recorded decision rather than a discovery.
+
+    ## Not every response is JSON
+
+    Before a request reaches `doPost` it passes through Google. If the deployment
+    is not published to anyone anonymous, if the account is over quota, or if the
+    script fails to load, Google answers with an HTML page of its own — sometimes
+    with a `200`. Parse defensively: a body that does not parse as JSON is an
+    infrastructure failure, not a protocol error, and carries none of the fields
+    described here.
+  license:
+    name: GPL-3.0-or-later
+    identifier: GPL-3.0-or-later
+
+servers:
+  - url: https://script.google.com/macros/s/{deploymentId}
+    description: |
+      One deployment per aircraft. Redeploying the same deployment id is what
+      keeps this URL stable across releases; a fresh `clasp deploy` would mint a
+      new one that no installed app knows about.
+    variables:
+      deploymentId:
+        default: '00000000000000000000000000000000000000000000000000000000000000000'
+        description: The Google Apps Script id of the aircraft's web app deployment.
+
+paths:
+  /exec:
+    get:
+      operationId: getServiceInfo
+      summary: Handshake.
+      description: |
+        Reports the running build and the protocol range it speaks. Takes no
+        token and touches no data, so it is safe to call to check that a
+        deployment is alive and reachable before configuring anything else.
+
+        Use it to decide whether the app and the server can talk at all: a client
+        speaking version `v` is compatible when `vMin <= v <= vMax`.
+      # `token` is a body field; there is no body on a GET, and none is needed.
+      security: []
+      responses:
+        '200':
+          $ref: '#/components/responses/ServiceInfo'
+        '302':
+          $ref: '#/components/responses/Redirect'
+
+    post:
+      operationId: submitRequest
+      summary: Perform one flight log operation.
+      description: |
+        Every operation is a `POST` to this path. Which one runs is decided by
+        `action`; the shape of `payload` follows from it.
+
+        The request is authenticated by `token`, matched verbatim (after trimming)
+        against a `token.<pilot name>` row of the Metadata sheet. That row also
+        names the caller: the pilot the token belongs to is the identity every
+        permission decision is made against. A token whose pilot has no
+        `role.<pilot name>` row is **not** authorized — an unconfigured pilot is
+        rejected rather than treated as an ordinary one.
+
+        ## What a pilot may do
+
+        An `admin` does anything. Anyone else may:
+
+        * file, edit and delete entries under their own name;
+        * file, edit and delete entries under the maintenance name, when the
+          deployment configures one (`NO_PILOT_NAME`);
+        * hand one of their own entries over to the maintenance name.
+
+        The hand-over is one-way: an entry already filed under the maintenance
+        name is reassignable by nobody but an admin.
+
+        ## Retrying safely
+
+        Every action here changes data, so `requestId` is mandatory rather than
+        advisory: a client that loses the answer cannot know whether the write
+        landed. Retry with the **same** `requestId` and the stored answer is
+        replayed instead of the operation running twice; the replay is marked
+        with `replayed: true`.
+
+        Only successful responses are remembered, and only for a few minutes.
+        `BUSY` and errors are meant to be retried, and a retry arriving after the
+        record expires executes for real — so idempotency is a guard against a
+        lost response, not a guarantee that holds forever.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+            examples:
+              insert:
+                summary: File a new flight under the caller's own name
+                value:
+                  v: 1
+                  token: deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+                  action: flight-log/insert
+                  requestId: 6f0d4d6e-1f6a-4e2d-9d1e-2a7c9d4f1b30
+                  client: airborne/1.2.3
+                  payload:
+                    date: '2026-08-24'
+                    startHour: 73.26
+                    endHour: 74.28
+                    origin: LIRU
+                    destination: LIRE
+                    fuel: 20
+                    fuelPrice: 1.9
+                    notes: training flight
+              insertForAnother:
+                summary: File a flight under the maintenance name
+                description: |
+                  Allowed to any pilot when the deployment sets `NO_PILOT_NAME`.
+                  Naming any *other* pilot requires the `admin` role.
+                value:
+                  v: 1
+                  token: deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+                  action: flight-log/insert
+                  requestId: 0b0e1c2d-3f4a-5b6c-7d8e-9f0a1b2c3d4e
+                  payload:
+                    date: '2026-08-24'
+                    pilotName: NO PILOT
+                    startHour: 73.26
+                    endHour: 74.28
+                    origin: LIRU
+                    destination: LIRU
+              update:
+                summary: Correct two fields of an existing flight
+                description: |
+                  Only the named fields change. Everything absent from the
+                  payload keeps the value it has in the sheet.
+                value:
+                  v: 1
+                  token: deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+                  action: flight-log/update
+                  requestId: 9c8b7a65-4d3e-2f1a-0b9c-8d7e6f5a4b3c
+                  client: airborne/1.2.3
+                  payload:
+                    id: ab12cd34ef
+                    endHour: 74.5
+                    notes: diverted to LIRA
+              delete:
+                summary: Remove a flight
+                value:
+                  v: 1
+                  token: deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+                  action: flight-log/delete
+                  requestId: 1a2b3c4d-5e6f-4a8b-9c0d-1e2f3a4b5c6d
+                  payload:
+                    id: ab12cd34ef
+      responses:
+        '200':
+          $ref: '#/components/responses/ActionResult'
+        '302':
+          $ref: '#/components/responses/Redirect'
+
+components:
+
+  responses:
+
+    ServiceInfo:
+      description: |
+        The handshake. Always `ok: true` — this operation has no failure of its
+        own, and anything that stops it from running stops it before it can
+        answer in JSON at all.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceInfoResponse'
+          examples:
+            alive:
+              value:
+                ok: true
+                v: 1
+                vMin: 1
+                vMax: 1
+                data:
+                  service: airborne
+                  buildId: d5d9db6
+        text/html:
+          schema:
+            type: string
+            description: |
+              Served by Google, not by the script: a sign-in page, a quota notice
+              or an error page. It carries none of the fields above.
+
+    ActionResult:
+      description: |
+        The outcome of the request. **Both success and failure arrive as 200** —
+        read `ok`, and on failure `error.code`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Response'
+          examples:
+            inserted:
+              summary: Success — the id of the new entry
+              value:
+                ok: true
+                v: 1
+                vMin: 1
+                vMax: 1
+                data:
+                  id: ab12cd34ef
+            replayed:
+              summary: Success, replayed from the idempotency record
+              description: |
+                The identical answer to an earlier request carrying the same
+                `requestId`. The operation did not run a second time.
+              value:
+                ok: true
+                v: 1
+                vMin: 1
+                vMax: 1
+                data:
+                  id: ab12cd34ef
+                replayed: true
+            forbidden:
+              summary: A pilot editing somebody else's entry
+              value:
+                ok: false
+                v: 1
+                vMin: 1
+                vMax: 1
+                error:
+                  code: FORBIDDEN
+                  message: Not allowed to modify an entry filed under another name
+            notFound:
+              summary: No entry carries that id
+              value:
+                ok: false
+                v: 1
+                vMin: 1
+                vMax: 1
+                error:
+                  code: NOT_FOUND
+                  message: Entry ab12cd34ef not found
+            busy:
+              summary: Another write is in progress — retry with the same requestId
+              value:
+                ok: false
+                v: 1
+                vMin: 1
+                vMax: 1
+                error:
+                  code: BUSY
+                  message: Another operation is in progress, retry shortly
+        text/html:
+          schema:
+            type: string
+            description: |
+              Served by Google, not by the script. See the note on non-JSON
+              responses in the API description.
+
+    Redirect:
+      description: |
+        The real answer is one request away. `script.google.com` never serves the
+        body itself: it redirects to a generated URL on
+        `script.googleusercontent.com`, and the JSON described above is what that
+        second request returns.
+
+        A client that follows redirects never observes this response; one that
+        does not must issue a `GET` on `Location` to obtain the body. Either way
+        the request is not executed twice — the redirect target serves a stored
+        result.
+      headers:
+        Location:
+          required: true
+          description: The generated URL that serves the response body.
+          schema:
+            type: string
+            format: uri
+            examples:
+              - https://script.googleusercontent.com/macros/echo?user_content_key=…
+
+  schemas:
+
+    # ---------------------------------------------------------------- requests
+
+    Request:
+      title: Request envelope
+      description: |
+        The envelope is frozen. `v`, `token`, `action`, `requestId`, `expect`,
+        `payload` and `client` keep their names and their meaning forever, so
+        that any build can read `v` before knowing which contract version it is
+        being spoken to in. Only payload shapes and action semantics move with
+        `v`.
+
+        Envelope fields not listed here are ignored by the server. They are
+        reserved: do not use them to carry anything of your own.
+      oneOf:
+        - $ref: '#/components/schemas/InsertRequest'
+        - $ref: '#/components/schemas/UpdateRequest'
+        - $ref: '#/components/schemas/DeleteRequest'
+      discriminator:
+        propertyName: action
+        mapping:
+          flight-log/insert: '#/components/schemas/InsertRequest'
+          flight-log/update: '#/components/schemas/UpdateRequest'
+          flight-log/delete: '#/components/schemas/DeleteRequest'
+
+    EnvelopeBase:
+      type: object
+      description: The fields every request carries, whatever the action.
+      required:
+        - v
+        - token
+        - action
+        - requestId
+      properties:
+        v:
+          type: integer
+          description: |
+            Contract version spoken by the client. Rejected with
+            `PROTOCOL_INCOMPATIBLE` when outside the server's `vMin`…`vMax`,
+            which the handshake reports without needing a token.
+          examples:
+            - 1
+        token:
+          type: string
+          minLength: 1
+          description: |
+            The caller's secret, opaque to this API and compared verbatim after
+            trimming. It identifies the pilot: there is no separate user field,
+            and no way to act on behalf of somebody else except by naming them in
+            an identity field, which is a permission decision of its own.
+
+            Treat it as a credential — it is bearer-equivalent, it does not
+            expire, and it is revoked only by editing the spreadsheet.
+        action:
+          type: string
+          description: Which operation to perform.
+          enum:
+            - flight-log/insert
+            - flight-log/update
+            - flight-log/delete
+        requestId:
+          type: string
+          minLength: 1
+          description: |
+            Identifies this attempt, not this request: a retry of the same
+            operation reuses it, and that is what makes the retry safe. Mandatory
+            on every action, because every action changes data.
+
+            Any string a client can keep unique will do; a UUID (Universally
+            Unique Identifier) v4 is the obvious choice.
+          examples:
+            - 6f0d4d6e-1f6a-4e2d-9d1e-2a7c9d4f1b30
+        client:
+          type: string
+          description: |
+            Who is calling, for diagnostics only. Nothing is decided on its
+            value, and it is never shown to another pilot.
+
+            Clients SHOULD send the client name and its version as
+            `name/major.minor.patch`. This is a recommendation and not a
+            constraint: the format is deliberately not enforced here, so that a
+            client with an unusual version string is never rejected over a field
+            the server does not read.
+          examples:
+            - airborne/1.2.3
+
+    InsertRequest:
+      title: flight-log/insert
+      description: Files a new flight.
+      allOf:
+        - $ref: '#/components/schemas/EnvelopeBase'
+        - type: object
+          required:
+            - payload
+          properties:
+            action:
+              const: flight-log/insert
+            payload:
+              $ref: '#/components/schemas/InsertPayload'
+            expect:
+              $ref: '#/components/schemas/InsertExpect'
+
+    UpdateRequest:
+      title: flight-log/update
+      description: |
+        Changes an existing flight. The whole row is rewritten every time, so a
+        field absent from the payload is not cleared — it is read back out of the
+        sheet and written again unchanged.
+      allOf:
+        - $ref: '#/components/schemas/EnvelopeBase'
+        - type: object
+          required:
+            - payload
+          properties:
+            action:
+              const: flight-log/update
+            payload:
+              $ref: '#/components/schemas/UpdatePayload'
+            expect:
+              $ref: '#/components/schemas/UpdateExpect'
+
+    DeleteRequest:
+      title: flight-log/delete
+      description: Removes a flight.
+      allOf:
+        - $ref: '#/components/schemas/EnvelopeBase'
+        - type: object
+          required:
+            - payload
+          properties:
+            action:
+              const: flight-log/delete
+            payload:
+              $ref: '#/components/schemas/DeletePayload'
+            expect:
+              $ref: '#/components/schemas/DeleteExpect'
+
+    # --------------------------------------------------------------- payloads
+
+    InsertPayload:
+      type: object
+      description: |
+        A new flight. Everything the sheet manages on its own — when the row was
+        created, its identifier, and the computed flight time — is assigned by the
+        server; sending those columns has no effect.
+      required:
+        - date
+        - startHour
+        - endHour
+        - origin
+        - destination
+      properties:
+        date:
+          $ref: '#/components/schemas/FlightDate'
+        pilotName:
+          type: string
+          description: |
+            Who the flight is filed under. Omit it — or name yourself — to file it
+            under the authenticated pilot, which is what an ordinary client does.
+
+            Naming the maintenance pilot is allowed to anyone when the deployment
+            configures one. Naming any other pilot requires the `admin` role and
+            is otherwise `FORBIDDEN`.
+
+            Names are compared case-insensitively and ignoring surrounding
+            spaces, so `bob` and ` Bob ` are the same pilot.
+        startHour:
+          $ref: '#/components/schemas/HourMeter'
+        endHour:
+          $ref: '#/components/schemas/HourMeter'
+        origin:
+          type: string
+          minLength: 1
+          description: Departure airfield, as free text.
+          examples:
+            - LIRU
+        destination:
+          type: string
+          minLength: 1
+          description: Arrival airfield, as free text.
+          examples:
+            - LIRE
+        fuel:
+          type:
+            - number
+            - 'null'
+          description: Fuel added during the flight. Omit, or send null, when none was.
+        fuelPrice:
+          type:
+            - number
+            - 'null'
+          description: Price paid for that fuel. Meaningless without `fuel`.
+        notes:
+          type:
+            - string
+            - 'null'
+          description: Free text, shown to every pilot.
+
+    UpdatePayload:
+      type: object
+      description: |
+        The fields to change, and nothing else. A field that is absent keeps its
+        stored value; a field that is present replaces it.
+
+        A required field cannot be blanked: sending `""` for `date`, `startHour`,
+        `endHour`, `origin` or `destination` is a `BAD_REQUEST`, not a way to
+        clear the column. Optional fields (`fuel`, `fuelPrice`, `notes`) *are*
+        cleared by `""` or by null.
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/EntryId'
+        date:
+          $ref: '#/components/schemas/FlightDate'
+        pilotName:
+          type: string
+          description: |
+            Refiles the entry under another name. Omit it to leave the entry where
+            it is — which is what an ordinary edit does.
+
+            A pilot may refile their own entry under the maintenance name, and
+            that is the only reassignment they can make: an entry already filed
+            under the maintenance name cannot be taken over, and an entry filed
+            under another pilot cannot be edited at all. An `admin` is bound by
+            none of this.
+        startHour:
+          $ref: '#/components/schemas/HourMeter'
+        endHour:
+          $ref: '#/components/schemas/HourMeter'
+        origin:
+          type: string
+          minLength: 1
+        destination:
+          type: string
+          minLength: 1
+        fuel:
+          type:
+            - number
+            - 'null'
+        fuelPrice:
+          type:
+            - number
+            - 'null'
+        notes:
+          type:
+            - string
+            - 'null'
+
+    DeletePayload:
+      type: object
+      description: |
+        A pilot deletes what is filed under their own name, and what is filed
+        under the maintenance name; anything else is `FORBIDDEN`. That is the
+        same ownership test an update makes, so an entry a caller can edit is an
+        entry that caller can also destroy — there is no confirmation step here
+        and no undo.
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/EntryId'
+
+    # ---------------------------------------------------------- preconditions
+
+    InsertExpect:
+      type: object
+      description: |
+        Reserved. Parsed and carried, never acted upon by this build. Declared
+        per action so that each can constrain it independently later without
+        disturbing the others.
+
+    UpdateExpect:
+      type: object
+      description: |
+        Reserved. Parsed and carried, never acted upon by this build. Intended
+        for the preconditions an edit wants checked under the lock — the natural
+        home for optimistic concurrency, once there is something to compare
+        against.
+
+    DeleteExpect:
+      type: object
+      description: Reserved. Parsed and carried, never acted upon by this build.
+
+    # ------------------------------------------------------------ field types
+
+    EntryId:
+      type: string
+      minLength: 1
+      description: |
+        Identifies a flight for as long as it exists. The sheet is re-sorted after
+        every change, so a row number identifies nothing for longer than a few
+        seconds — this is the only durable handle a client has on an entry.
+
+        Ids the server generates are ten lowercase characters starting with a
+        letter; that first letter is what keeps a spreadsheet cell from reading
+        the id back as a number. An id is *not* validated against that shape on
+        the way in, so that entries created by other means remain addressable: an
+        id that matches nothing is simply `NOT_FOUND`.
+      examples:
+        - ab12cd34ef
+
+    FlightDate:
+      type: string
+      pattern: '^\d{4}-\d{2}-\d{2}([T ].*)?$'
+      description: |
+        The day of the flight, as `yyyy-MM-dd`. A full ISO 8601 timestamp is also
+        accepted and the day it names is what gets filed; the time of day is not
+        something the log records, and the offset is not consulted to decide the
+        day — `2026-08-24T23:30:00Z` is the 24th.
+
+        Days are range-checked. `2026-02-30`, `2026-13-01` and the 29th of a
+        February that has 28 days are refused with `BAD_REQUEST` rather than
+        rolled forward into a real date.
+      examples:
+        - '2026-08-24'
+        - '2026-08-24T09:30:00+02:00'
+
+    HourMeter:
+      type: number
+      description: |
+        A reading of the aircraft's hour meter, not a duration. The log is sorted
+        on these two, so they are what orders the flights of a day.
+
+        A numeric string is also accepted, for compatibility with older clients;
+        new clients should send a number.
+      examples:
+        - 73.26
+
+    # --------------------------------------------------------------- responses
+
+    Response:
+      title: Response
+      description: |
+        Success and failure share the version fields and are told apart by `ok`.
+        Nothing else is reliable: the status code is 200 in both cases.
+      oneOf:
+        - $ref: '#/components/schemas/OkResponse'
+        - $ref: '#/components/schemas/ErrorResponse'
+
+    ResponseBase:
+      type: object
+      description: |
+        Present on every response, including the handshake. The version fields
+        are repeated on failures on purpose: a `PROTOCOL_INCOMPATIBLE` has to be
+        able to tell a client what it should have said.
+      required:
+        - ok
+        - v
+        - vMin
+        - vMax
+      properties:
+        ok:
+          type: boolean
+          description: Whether the operation was carried out.
+        v:
+          type: integer
+          description: Contract version the server speaks.
+        vMin:
+          type: integer
+          description: Oldest contract version it still accepts.
+        vMax:
+          type: integer
+          description: Newest contract version it accepts.
+
+    OkResponse:
+      allOf:
+        - $ref: '#/components/schemas/ResponseBase'
+        - type: object
+          required:
+            - ok
+            - data
+          properties:
+            ok:
+              const: true
+            data:
+              $ref: '#/components/schemas/EntryRef'
+            replayed:
+              const: true
+              description: |
+                Present only on a replay: this is the stored answer to an earlier
+                request carrying the same `requestId`, and the operation did not
+                run again. Absent on a first execution — never `false`.
+
+    ErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ResponseBase'
+        - type: object
+          required:
+            - ok
+            - error
+          properties:
+            ok:
+              const: false
+            error:
+              $ref: '#/components/schemas/Error'
+
+    ServiceInfoResponse:
+      allOf:
+        - $ref: '#/components/schemas/ResponseBase'
+        - type: object
+          required:
+            - ok
+            - data
+          properties:
+            ok:
+              const: true
+            data:
+              type: object
+              required:
+                - service
+                - buildId
+              properties:
+                service:
+                  const: airborne
+                  description: |
+                    Identifies what is answering. A deployment URL that returns
+                    anything else is not this API.
+                buildId:
+                  type: string
+                  description: |
+                    The short commit hash the live deployment was built from, or
+                    `dev` when it was pushed without going through `deploy.sh`.
+                  examples:
+                    - d5d9db6
+                    - dev
+
+    EntryRef:
+      type: object
+      description: |
+        What every action returns: the entry it acted on. On an insert this is the
+        id the server has just assigned, and it is the only time the client is
+        told it — an entry whose id the app never learned is an entry it can never
+        edit.
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/EntryId'
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          description: |
+            Diagnostic, in English, and not stable across releases. Clients
+            localize from `code` and fall back to this only for a code they do not
+            recognize. Never parse it.
+        details:
+          type: string
+          description: |
+            Extra diagnostic text, present only on `INTERNAL`, where it carries
+            the server-side stack trace. Log it; do not show it to a pilot, and do
+            not rely on it being there.
+
+    ErrorCode:
+      type: string
+      description: |
+        The stable, machine-readable outcome. These seven never change meaning —
+        a client switches on them and must have a branch for a code it does not
+        know, because that is how this list grows.
+
+        * `BAD_REQUEST` — the request was not understood: unparseable or empty
+          body, missing or non-integer `v`, unknown `action`, missing
+          `requestId`, missing `id`, a required field absent or blanked, or a
+          field of the wrong type. Retrying it unchanged will fail again.
+        * `UNAUTHORIZED` — no usable token: absent, empty, matching no pilot, or
+          matching a pilot for whom no role is configured. Indistinguishable on
+          purpose: the client learns that the token does not work, not why.
+        * `FORBIDDEN` — the token is good and the operation is not allowed to it:
+          filing under another pilot's name, editing or deleting an entry filed
+          under one, or taking back an entry handed over to the maintenance name.
+        * `NOT_FOUND` — no entry carries that `id`. Also the answer when it was
+          deleted between the client reading the log and sending the edit.
+        * `BUSY` — another write held the lock for too long, and the operation did
+          not run. This is the one error worth retrying automatically, with the
+          same `requestId` and after a back-off.
+        * `PROTOCOL_INCOMPATIBLE` — the client's `v` falls outside `vMin`…`vMax`.
+          The app is too old for the deployment, or the deployment too old for
+          the app; both bounds are in the response.
+        * `INTERNAL` — the script failed in a way it did not anticipate, and
+          `details` carries the stack trace. Whether the write landed is unknown:
+          retry with the same `requestId`, which is exactly the case idempotency
+          exists for.
+      enum:
+        - BAD_REQUEST
+        - UNAUTHORIZED
+        - FORBIDDEN
+        - NOT_FOUND
+        - BUSY
+        - PROTOCOL_INCOMPATIBLE
+        - INTERNAL

@@ -328,6 +328,14 @@ class AppLocalizationsIt extends AppLocalizations {
       'Qualcun altro ha cambiato il log book. Torna indietro, ricarica il log book e riprova.';
 
   @override
+  String get flightLogModal_error_itemNotFound =>
+      'Questo volo non esiste più. Torna indietro, ricarica il log book e riprova.';
+
+  @override
+  String get flightLogModal_error_unknown =>
+      'Si è verificato un errore sconosciuto. Contatta il tuo amministratore.';
+
+  @override
   String get flightLogModal_dialog_changePilot_title => 'Cambiare pilota?';
 
   @override

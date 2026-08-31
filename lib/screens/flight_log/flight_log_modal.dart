@@ -14,6 +14,7 @@ import '../../helpers/digit_display.dart';
 import '../../helpers/future_progress_dialog.dart';
 import '../../helpers/list_tiles.dart';
 import '../../helpers/pilot_select_list.dart';
+import '../../helpers/script_client.dart';
 import '../../helpers/utils.dart';
 import '../../models/flight_log_models.dart';
 import '../../services/base_sheets_services.dart';
@@ -82,6 +83,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   late FlightLogBookService _service;
   late AppConfig _appConfig;
+
+  String? _pendingSaveRequestId;
+  String? _pendingDeleteRequestId;
 
   bool get _isEditing => widget.item.id != null;
 
@@ -722,13 +726,17 @@ class _FlightLogModalState extends State<FlightLogModal> {
       fuelPrice,
       _notesController.text,
     );
+    final requestId = _pendingSaveRequestId ??= ScriptClient.newRequestId();
     final Future task =
         (_isEditing
-                ? _service.updateItem(item.id!, item)
-                : _service.appendItem(item))
+                ? _service.updateItem(item.id!, item, requestId: requestId)
+                : _service.appendItem(item, requestId: requestId))
             .timeout(kNetworkRequestTimeout)
             // safe typing it for catchError
-            .then((value) => Future<FlightLogItem?>.value(value))
+            .then((value) {
+              _pendingSaveRequestId = null;
+              return Future<FlightLogItem?>.value(value);
+            })
             .catchError((error, StackTrace stacktrace) {
               _log.warning('SAVE ERROR', error, stacktrace);
               if (!context.mounted) {
@@ -745,6 +753,22 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 message = AppLocalizations.of(
                   context,
                 )!.flightLogModal_error_dataChanged;
+              } else if (error is AccessDeniedException) {
+                message = _isEditing
+                    ? AppLocalizations.of(
+                        context,
+                      )!.flightLogModal_error_notOwnFlight_edit
+                    : AppLocalizations.of(
+                        context,
+                      )!.flightLogModal_error_loggingForOthers;
+              } else if (error is ItemNotFoundException) {
+                message = AppLocalizations.of(
+                  context,
+                )!.flightLogModal_error_itemNotFound;
+              } else if (error is InternalServerException) {
+                message = AppLocalizations.of(
+                  context,
+                )!.flightLogModal_error_unknown;
               } else {
                 message = getExceptionMessage(error);
               }
@@ -793,9 +817,14 @@ class _FlightLogModalState extends State<FlightLogModal> {
   }
 
   void _doDelete(BuildContext context) {
+    final requestId = _pendingDeleteRequestId ??= ScriptClient.newRequestId();
     final Future task = _service
-        .deleteItem(widget.item.id!)
+        .deleteItem(widget.item.id!, requestId: requestId)
         .timeout(kNetworkRequestTimeout)
+        .then((value) {
+          _pendingDeleteRequestId = null;
+          return value;
+        })
         .catchError((error, StackTrace stacktrace) {
           _log.warning('DELETE ERROR', error, stacktrace);
           if (!context.mounted) {
@@ -808,6 +837,18 @@ class _FlightLogModalState extends State<FlightLogModal> {
             message = AppLocalizations.of(
               context,
             )!.error_generic_network_timeout;
+          } else if (error is AccessDeniedException) {
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_notOwnFlight_delete;
+          } else if (error is ItemNotFoundException) {
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_itemNotFound;
+          } else if (error is InternalServerException) {
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_unknown;
           } else {
             message = getExceptionMessage(error);
           }

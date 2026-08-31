@@ -25,6 +25,17 @@ class FlightLogItem {
   num? fuelPrice;
   String? notes;
 
+  FlightLogItem.from(FlightLogItem from, this.id)
+    : date = from.date,
+      pilotName = from.pilotName,
+      origin = from.origin,
+      destination = from.destination,
+      startHour = from.startHour,
+      endHour = from.endHour,
+      fuel = from.fuel,
+      fuelPrice = from.fuelPrice,
+      notes = from.notes;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is FlightLogItem && id == other.id;
@@ -34,7 +45,7 @@ class FlightLogItem {
 
   @override
   String toString() {
-    return 'FlightLogItem{date: $date, pilot: $pilotName, destination: $destination, startHour: $startHour, endHour: $endHour}';
+    return 'FlightLogItem{id: $id, date: $date, pilot: $pilotName, destination: $destination, startHour: $startHour, endHour: $endHour}';
   }
 }
 

@@ -25,7 +25,7 @@ environment:
 
 dependencies:
   adaptive_dialog: 2.8.0
-  archive: 4.0.9
+  archive: 4.2.0
   auto_size_text: 3.0.0
   collection: 1.19.1
   cupertino_calendar_picker: 2.2.6
@@ -36,7 +36,7 @@ dependencies:
     sdk: flutter
   flutter_platform_widgets: 10.0.1
   fluttertoast: 10.0.0
-  googleapis: 16.0.0
+  googleapis: 17.0.0
   googleapis_auth: 2.3.3
   http: 1.6.0
   # not ready yet: https://github.com/daniele-athome/airborne/issues/78
@@ -51,9 +51,9 @@ dependencies:
   provider: 6.1.5+1
   shared_preferences: 2.5.5
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 34.2.3
-  syncfusion_localizations: 34.2.3
-  syncfusion_flutter_core: 34.2.3
+  syncfusion_flutter_calendar: 34.2.5
+  syncfusion_localizations: 34.2.5
+  syncfusion_flutter_core: 34.2.5
   timeline_tile: 2.0.0
   timezone: 0.11.1
   url_launcher: 6.3.2

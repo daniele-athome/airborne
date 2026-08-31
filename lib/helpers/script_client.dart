@@ -16,6 +16,7 @@ enum ScriptErrorCode implements Comparable<ScriptErrorCode> {
   unauthorized('UNAUTHORIZED'),
   forbidden('FORBIDDEN'),
   notFound('NOT_FOUND'),
+  // TODO conflict('CONFLICT') -- for when we'll use "expect"
   busy('BUSY'),
   protocolIncompatible('PROTOCOL_INCOMPATIBLE'),
   internal('INTERNAL'),

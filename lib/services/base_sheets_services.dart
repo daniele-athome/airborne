@@ -190,7 +190,7 @@ abstract class GoogleAppsScriptStoreService<T>
   // TODO exception handling
 
   Future<T> appendItem(T item, {required String requestId}) async {
-    final result = await _scriptClient.invoke(
+    final result = await _doInvoke(
       action: 'flight-log/insert',
       requestId: requestId,
       payload: buildRowData(item),
@@ -200,7 +200,7 @@ abstract class GoogleAppsScriptStoreService<T>
   }
 
   Future<T> updateItem(String id, T item, {required String requestId}) async {
-    final result = await _scriptClient.invoke(
+    final result = await _doInvoke(
       action: 'flight-log/update',
       requestId: requestId,
       payload: {...buildRowData(item), 'id': id},
@@ -210,13 +210,39 @@ abstract class GoogleAppsScriptStoreService<T>
   }
 
   Future<String?> deleteItem(String id, {required String requestId}) async {
-    final result = await _scriptClient.invoke(
+    final result = await _doInvoke(
       action: 'flight-log/delete',
       requestId: requestId,
       payload: {'id': id},
     );
 
     return result.id;
+  }
+
+  Future<ScriptResult> _doInvoke({
+    required String action,
+    required Map<String, dynamic> payload,
+    required String requestId,
+  }) async {
+    try {
+      return await _scriptClient.invoke(
+        action: action,
+        requestId: requestId,
+        payload: payload,
+      );
+    } on ScriptException catch (e) {
+      if (e.code == ScriptErrorCode.unauthorized.code) {
+        throw const AccessDeniedException();
+      } else if (e.code == ScriptErrorCode.notFound.code) {
+        throw const ItemNotFoundException();
+      } else if (e.code == ScriptErrorCode.malformedResponse.code ||
+          e.code == ScriptErrorCode.notReachable.code) {
+        throw const InternalServerException();
+      } else {
+        // TODO not really safe...
+        rethrow;
+      }
+    }
   }
 
   /// Subclasses should override this to build a new item, copied from the given one, using the given id.
@@ -229,4 +255,19 @@ abstract class GoogleAppsScriptStoreService<T>
 /// Exception thrown when the hash of the flight log has changed.
 class DataChangedException implements Exception {
   const DataChangedException();
+}
+
+/// User doesn't have access to the requested item.
+class AccessDeniedException implements Exception {
+  const AccessDeniedException();
+}
+
+/// The request item was not found.
+class ItemNotFoundException implements Exception {
+  const ItemNotFoundException();
+}
+
+/// An internal server error that we can't really figure out.
+class InternalServerException implements Exception {
+  const InternalServerException();
 }

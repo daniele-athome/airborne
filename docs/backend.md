@@ -175,7 +175,6 @@ the spreadsheet.
     // Token of the pilot this archive is for. Each pilot gets their own archive.
     "script_token": "...",
     // JSON-escaped string of the service account JSON file.
-    // Only used for bookings now: remove it if not using the app for booking flights.
     "google_api_service_account": "{...}",
     // API key for accessing Google services.
     "google_api_key": "...",
@@ -191,7 +190,7 @@ the spreadsheet.
     // Actual sheet name - within the spreadsheet - for the flight log
     // Remove the line if not using the flight log.
     "flightlog_sheet_name": "Flight log",
-    // Spreadsheet ID of the Google Sheets document - for the journal.
+    // Spreadsheet ID of the Google Sheets document for the journal.
     // Remove the line if not using the journal.
     "activities_spreadsheet_id": "...",
     // Actual sheet name - within the spreadsheet - for the journal.

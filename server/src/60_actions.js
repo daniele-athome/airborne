@@ -27,33 +27,45 @@ const FLIGHT_LOG_VERSION_KEY = 'flight_log.hash';
 const ID_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
 const ID_ALPHABET = ID_LETTERS + '0123456789';
 
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+/** Length of a month, Gregorian leap rule included. */
+function daysInMonth(year, month) {
+    if (month === 2 && ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)) {
+        return 29;
+    }
+    return DAYS_IN_MONTH[month - 1];
+}
+
+function pad2(value) {
+    return value < 10 ? '0' + value : String(value);
+}
+
 /**
- * Parses a date field.
- *
- * A plain `yyyy-MM-dd` becomes midnight in the script timezone, which is what
- * typing the date into the sheet would produce; a full ISO timestamp keeps its
- * time component.
+ * Parses a date field into the `yyyy-MM-dd` string the cell should hold.
  */
 function coerceDate(field, raw) {
-    if (raw instanceof Date) {
-        return {value: raw};
-    }
     if (typeof raw !== 'string') {
         return {error: 'Field ' + field.name + ' must be a date string'};
     }
 
-    const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
-    if (dateOnly) {
-        return {
-            value: new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
-        };
-    }
-
-    const parsed = new Date(raw);
-    if (isNaN(parsed.getTime())) {
+    // A full ISO 8601 timestamp is accepted, and the day it names is the day the
+    // flight is filed under: the time of day is not something the log records.
+    // Read off the string rather than parsed, so no timezone enters into it.
+    const parts = /^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T ].*)?$/.exec(raw);
+    if (!parts) {
         return {error: 'Field ' + field.name + ' is not a valid date: ' + raw};
     }
-    return {value: parsed};
+
+    const year = Number(parts[1]);
+    const month = Number(parts[2]);
+    const day = Number(parts[3]);
+
+    if (month < 1 || month > 12 || day < 1 || day > daysInMonth(year, month)) {
+        return {error: 'Field ' + field.name + ' is not a valid date: ' + raw};
+    }
+
+    return {value: parts[1] + '-' + pad2(month) + '-' + pad2(day)};
 }
 
 /** Validates a payload value against its field definition. */
@@ -438,6 +450,7 @@ function actionFlightLogDelete(payload, identity) {
 if (typeof module === 'object') {
     module.exports = {
         flight_log_config, FLIGHT_LOG_VERSION_KEY, ID_LETTERS, ID_ALPHABET,
+        DAYS_IN_MONTH, daysInMonth, pad2,
         coerceDate, coerceField, generateStableId, buildRowValues,
         getNoPilotName, identityFields, identityOwner, claimedName,
         resolveIdentityForInsert, resolveIdentityForUpdate, checkIdentityForDelete,

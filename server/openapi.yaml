@@ -649,15 +649,16 @@ components:
 
     FlightDate:
       type: string
-      minLength: 1
+      pattern: '^\d{4}-\d{2}-\d{2}([T ].*)?$'
       description: |
-        The day of the flight, either as `yyyy-MM-dd` or as a full ISO 8601
-        timestamp. A plain date becomes midnight in the spreadsheet's time zone,
-        which is what typing that date into the cell would have produced; a
-        timestamp keeps its time component.
+        The day of the flight, as `yyyy-MM-dd`. A full ISO 8601 timestamp is also
+        accepted and the day it names is what gets filed; the time of day is not
+        something the log records, and the offset is not consulted to decide the
+        day — `2026-08-24T23:30:00Z` is the 24th.
 
-        Days are not range-checked: `2026-02-30` is accepted and rolls over to the
-        1st of March rather than being rejected.
+        Days are range-checked. `2026-02-30`, `2026-13-01` and the 29th of a
+        February that has 28 days are refused with `BAD_REQUEST` rather than
+        rolled forward into a real date.
       examples:
         - '2026-08-24'
         - '2026-08-24T09:30:00+02:00'

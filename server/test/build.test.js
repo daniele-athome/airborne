@@ -80,7 +80,7 @@ describe('insert', () => {
         assert.equal(values[AT.endHour], 1201.8);
         assert.equal(values[AT.origin], 'LIRU');
         assert.equal(values[AT.destination], 'LIRE');
-        assert.equal(values[AT.date].getFullYear(), 2026);
+        assert.equal(values[AT.date], '2026-08-27');
     });
 
     it('stamps createdAt with the current time', () => {
@@ -151,8 +151,7 @@ describe('update', () => {
 
     it('coerces what it does change', () => {
         const values = built(updated({date: '2026-09-01', startHour: '1300'}));
-        assert.ok(values[AT.date] instanceof Date);
-        assert.equal(values[AT.date].getMonth() + 1, 9);
+        assert.equal(values[AT.date], '2026-09-01');
         assert.equal(values[AT.startHour], 1300);
     });
 

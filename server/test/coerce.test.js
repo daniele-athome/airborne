@@ -6,10 +6,11 @@
  * wrong thing does not fail here — it fails months later, in a sheet, as a
  * number where a date should be.
  *
- * Dates are asserted on their local components, never on an ISO string: a
- * `yyyy-MM-dd` payload becomes midnight in the script timezone by design, so
- * comparing serialized forms would make these tests say something about the
- * machine running them rather than about the code.
+ * Dates never become `Date` objects: a flight date is a day, and the cell is
+ * given the `yyyy-MM-dd` string so that the spreadsheet parses it in its own
+ * timezone, the way it would a day typed by hand. These tests therefore assert
+ * on plain strings, and nothing here can say anything about the timezone of the
+ * machine running them — which is the point.
  */
 
 const {describe, it} = require('node:test');
@@ -32,53 +33,51 @@ function assertRejected(result, pattern) {
     assert.match(result.error, pattern);
 }
 
-function assertLocalDate(result, year, month, day) {
-    assert.equal(result.error, undefined, 'expected a date, got: ' + result.error);
-    assert.ok(result.value instanceof Date, 'expected a Date');
-    assert.deepEqual(
-        [result.value.getFullYear(), result.value.getMonth() + 1, result.value.getDate()],
-        [year, month, day]
-    );
-}
-
 const dateField = field({name: 'date', type: 'date', required: true});
 
 describe('coerceDate', () => {
-    it('passes a Date through untouched', () => {
-        const original = new Date(2026, 7, 27, 14, 30);
-        assert.equal(coerceDate(dateField, original).value, original);
-    });
-
-    it('reads yyyy-MM-dd as local midnight', () => {
-        // What typing the date into the sheet by hand would produce. Compared
-        // against a locally built Date rather than against components, because
-        // that is what tells local midnight apart from `new Date('2026-08-27')`,
-        // which is midnight UTC. The two coincide only when the script timezone
-        // is UTC, and there the distinction genuinely does not exist.
+    it('hands the cell a string, never a Date', () => {
+        // The whole point of this layer. A Date would be written as an instant
+        // and converted back to a serial using the spreadsheet timezone, so the
+        // stored day would depend on that matching the script timezone.
         const result = coerceDate(dateField, '2026-08-27');
-        assertLocalDate(result, 2026, 8, 27);
-        assert.equal(result.value.getTime(), new Date(2026, 7, 27).getTime());
+        assert.equal(typeof result.value, 'string');
+        assert.equal(result.value, '2026-08-27');
     });
 
-    it('keeps the time component of a full timestamp', () => {
-        const result = coerceDate(dateField, '2026-08-27T14:30:00Z');
-        assert.equal(result.value.getTime(), Date.parse('2026-08-27T14:30:00Z'));
+    it('takes the day from a full timestamp, and nothing else', () => {
+        // Read off the text, not parsed: `...T23:30:00Z` is still the 27th here,
+        // whatever timezone the machine or the deployment happens to be in.
+        assertValue(coerceDate(dateField, '2026-08-27T14:30:00Z'), '2026-08-27');
+        assertValue(coerceDate(dateField, '2026-08-27T23:30:00Z'), '2026-08-27');
+        assertValue(coerceDate(dateField, '2026-08-27T00:30:00+09:00'), '2026-08-27');
     });
 
     it('accepts a leap day that exists', () => {
-        assertLocalDate(coerceDate(dateField, '2024-02-29'), 2024, 2, 29);
+        assertValue(coerceDate(dateField, '2024-02-29'), '2024-02-29');
+        assertValue(coerceDate(dateField, '2000-02-29'), '2000-02-29');
     });
 
-    it('accepts an unpadded date through the fallback parser', () => {
-        // It misses the regex and lands in `new Date(string)`, which still reads
-        // it as local time. Pinned because the two paths must not disagree.
-        assertLocalDate(coerceDate(dateField, '2026-8-27'), 2026, 8, 27);
+    it('pads a date written with single digits', () => {
+        // The cell must end up with one shape only, or two spellings of the same
+        // day would sit in the column looking like different values.
+        assertValue(coerceDate(dateField, '2026-8-27'), '2026-08-27');
+        assertValue(coerceDate(dateField, '2026-8-7'), '2026-08-07');
     });
 
     it('refuses a value that is not text', () => {
         assertRejected(coerceDate(dateField, 20260827), /must be a date string/);
         assertRejected(coerceDate(dateField, null), /must be a date string/);
         assertRejected(coerceDate(dateField, {}), /must be a date string/);
+        assertRejected(coerceDate(dateField, new Date(2026, 7, 27)), /must be a date string/);
+    });
+
+    it('refuses a shape it does not recognize', () => {
+        // Everything `new Date(string)` used to accept and this does not. The
+        // spec names two forms; anything else was being guessed at.
+        assertRejected(coerceDate(dateField, '27/08/2026'), /not a valid date/);
+        assertRejected(coerceDate(dateField, 'August 27, 2026'), /not a valid date/);
+        assertRejected(coerceDate(dateField, '2026-08'), /not a valid date/);
     });
 
     it('refuses unparseable text, quoting it back', () => {
@@ -92,22 +91,31 @@ describe('coerceDate', () => {
     });
 
     /*
-     * The regex checks the shape of the date, not that the day exists, and
-     * `new Date(2026, 12, 1)` rolls over instead of complaining. So an impossible
-     * date is accepted and silently becomes a different, possible one — the
-     * failure mode that leaves someone's flight filed under the wrong month with
-     * nothing in the response to suggest it.
+     * Range-checking is not a refinement here, it is what keeps the column a
+     * column of dates. Nothing normalizes an impossible day any more: were one
+     * to get through, Sheets would fail to read `2026-02-30` as a date and keep
+     * it as text, and the app would then find a string where it expects a serial.
      */
-    it('refuses a day that does not exist in its month', {todo: 'coerceDate does not range-check'}, () => {
+    it('refuses a day that does not exist in its month', () => {
         assertRejected(coerceDate(dateField, '2026-02-30'), /not a valid date/);
         assertRejected(coerceDate(dateField, '2026-04-31'), /not a valid date/);
         assertRejected(coerceDate(dateField, '2026-02-29'), /not a valid date/);
+        assertRejected(coerceDate(dateField, '1900-02-29'), /not a valid date/);
     });
 
-    it('refuses an out-of-range month or day', {todo: 'coerceDate does not range-check'}, () => {
+    it('refuses an out-of-range month or day', () => {
         assertRejected(coerceDate(dateField, '2026-13-01'), /not a valid date/);
         assertRejected(coerceDate(dateField, '2026-00-10'), /not a valid date/);
         assertRejected(coerceDate(dateField, '2026-08-00'), /not a valid date/);
+    });
+
+    it('accepts the last day of every month', () => {
+        const lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        for (let month = 1; month <= 12; month++) {
+            const day = '2026-' + (month < 10 ? '0' + month : month) + '-' + lengths[month - 1];
+            assertValue(coerceDate(dateField, day), day);
+            assert.match(coerceDate(dateField, '2026-' + month + '-' + (lengths[month - 1] + 1)).error, /not a valid date/);
+        }
     });
 });
 
@@ -205,7 +213,7 @@ describe('coerceField: numbers', () => {
 
 describe('coerceField: dispatch', () => {
     it('hands date fields to coerceDate', () => {
-        assertLocalDate(coerceField(dateField, '2026-08-27'), 2026, 8, 27);
+        assertValue(coerceField(dateField, '2026-08-27'), '2026-08-27');
         assertRejected(coerceField(dateField, 'yesterday'), /not a valid date/);
     });
 

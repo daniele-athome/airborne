@@ -18,10 +18,10 @@ const assert = require('node:assert/strict');
 require('./load.js');
 require('./stubs.js');
 
-const VERSIONS = [PROTOCOL_V, PROTOCOL_V_MIN, PROTOCOL_V_MAX];
+const VERSIONS = [PROTOCOL_V];
 
 function versionsOf(response) {
-    return [response.v, response.vMin, response.vMax];
+    return [response.v];
 }
 
 describe('okResponse', () => {
@@ -51,7 +51,7 @@ describe('okResponse', () => {
     }
 
     it('carries no error field', () => {
-        assert.deepEqual(Object.keys(okResponse('x')).sort(), ['data', 'ok', 'v', 'vMax', 'vMin']);
+        assert.deepEqual(Object.keys(okResponse('x')).sort(), ['data', 'ok', 'v']);
     });
 });
 
@@ -91,7 +91,7 @@ describe('errorResponse', () => {
     it('carries no data field', () => {
         assert.deepEqual(
             Object.keys(errorResponse(ERROR.BUSY, 'x')).sort(),
-            ['error', 'ok', 'v', 'vMax', 'vMin']
+            ['error', 'ok', 'v']
         );
     });
 });

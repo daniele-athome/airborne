@@ -40,8 +40,6 @@ function okResponse(data) {
     return {
         ok: true,
         v: PROTOCOL_V,
-        vMin: PROTOCOL_V_MIN,
-        vMax: PROTOCOL_V_MAX,
         data: data === undefined ? null : data,
     };
 }
@@ -60,8 +58,6 @@ function errorResponse(code, message, details) {
     return {
         ok: false,
         v: PROTOCOL_V,
-        vMin: PROTOCOL_V_MIN,
-        vMax: PROTOCOL_V_MAX,
         error: error
     };
 }

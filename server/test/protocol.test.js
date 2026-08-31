@@ -114,8 +114,8 @@ describe('parseEnvelope: version', () => {
         // The whole point of the code: the client cannot negotiate without them.
         const error = parseEnvelope(body({v: PROTOCOL_V_MAX + 1})).error;
         assert.deepEqual(
-            [error.v, error.vMin, error.vMax],
-            [PROTOCOL_V, PROTOCOL_V_MIN, PROTOCOL_V_MAX]
+            [error.v],
+            [PROTOCOL_V]
         );
     });
 

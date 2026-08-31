@@ -191,6 +191,8 @@ the spreadsheet.
     // Actual sheet name - within the spreadsheet - for the flight log
     // Remove the line if not using the flight log.
     "flightlog_sheet_name": "Flight log",
+    // Actual sheet name - within the spreadsheet - for the journal.
+    // Remove the line if not using the journal.
     "activities_spreadsheet_id": "...",
     // Actual sheet name - within the spreadsheet - for the journal.
     // Remove the line if not using the journal.

@@ -185,6 +185,12 @@ the spreadsheet.
     // Enables the flight log. The sheet itself is resolved by the backend script.
     // Remove the line if not using the flight log.
     "flightlog_enabled": true,
+    // Spreadsheet ID of the Google Sheets document for the flight log.
+    // Remove the line if not using the flight log.
+    "flightlog_spreadsheet_id": "...",
+    // Actual sheet name - within the spreadsheet - for the flight log
+    // Remove the line if not using the flight log.
+    "flightlog_sheet_name": "Flight log",
     "activities_spreadsheet_id": "...",
     // Actual sheet name - within the spreadsheet - for the journal.
     // Remove the line if not using the journal.

@@ -6,6 +6,7 @@ import 'package:logging/logging.dart';
 
 import '../helpers/googleapis.dart';
 import 'metadata_services.dart';
+import 'script_client.dart';
 
 /// Items per page to fetch.
 const _kItemsPerPage = 20;
@@ -19,6 +20,7 @@ const _columnLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 /// A base class for a Google Sheets-based data store.
 ///
 /// `<T>` is the type of the data object represented in the store.
+@Deprecated("Port all functionalities to AppsScriptGoogleStoreService")
 abstract class GoogleSheetsStoreService<T> {
   late final Logger _log = Logger(runtimeType.toString());
 
@@ -133,86 +135,6 @@ abstract class GoogleSheetsStoreService<T> {
 
   bool hasMoreData() => _lastId > 0;
 
-  Future<T> appendItem(T item) async {
-    // check if flight log hash changed since last metadata reload
-    // this will throw if hash has changed
-    await _ensureUnchangedHash();
-
-    final client = await _ensureService();
-    final response = await client.appendRows(
-      _spreadsheetId,
-      _sheetName,
-      _sheetAppendRange(),
-      [buildRowData(item)],
-    );
-    if (response.updates != null && response.updates!.updatedRange != null) {
-      await _waitForDataChange();
-      // TODO return a copy of item with filled id (parse response)
-      return item;
-    } else {
-      throw Exception('Unable to append rows to sheet');
-    }
-  }
-
-  Future<T> updateItem(String id, T item) async {
-    // check if flight log hash changed since last metadata reload
-    // this will throw if hash has changed
-    await _ensureUnchangedHash();
-
-    final client = await _ensureService();
-    final rowNum = int.parse(id);
-    final response = await client.updateRows(
-      _spreadsheetId,
-      _sheetName,
-      _sheetDataRange(rowNum, rowNum),
-      [buildRowData(item)],
-    );
-    if (response.updatedRange != null && response.updatedRange!.isNotEmpty) {
-      await _waitForDataChange();
-      // TODO return a copy of item (parse response data if available?)
-      return item;
-    } else {
-      throw Exception('Unable to append rows to sheet');
-    }
-  }
-
-  Future<String?> deleteItem(String id) async {
-    // check if flight log hash changed since last metadata reload
-    // this will throw if hash has changed
-    await _ensureUnchangedHash();
-
-    final client = await _ensureService();
-    final rowNumber = _itemIdToRowNumber(int.parse(id));
-    final response = await client.deleteRows(
-      _spreadsheetId,
-      _sheetName,
-      rowNumber,
-      rowNumber,
-    );
-    if (response.replies != null && response.replies!.length == 1) {
-      await _waitForDataChange();
-      return id;
-    } else {
-      throw Exception('Unable to delete flight log item $id');
-    }
-  }
-
-  /// Waits for the flight hash value to change, to give time to the script in
-  /// the Google Sheet to run.
-  Future<void> _waitForDataChange() async {
-    if (_metadataService != null) {
-      var currentVersion = _dataHash;
-      do {
-        final store = await _metadataService.reload();
-        currentVersion = store[_getMetadataHashKey()];
-
-        if (currentVersion == _dataHash) {
-          await Future.delayed(Duration(seconds: 1));
-        }
-      } while (currentVersion == _dataHash);
-    }
-  }
-
   Future<GoogleSheetsService> _ensureService() async {
     if (_client != null) {
       return _client!;
@@ -221,20 +143,6 @@ abstract class GoogleSheetsStoreService<T> {
         await _accountService.getAuthenticatedClient(),
       );
       return _client!;
-    }
-  }
-
-  /// Completes correctly if hash has not changed, throws exception otherwise.
-  Future<void> _ensureUnchangedHash() async {
-    if (_metadataService != null) {
-      final store = await _metadataService.reload();
-      final newHash = store[_getMetadataHashKey()];
-      _log.finest('Old hash: $_dataHash, new hash: $newHash');
-      if (newHash == null) {
-        throw const FormatException('No data found on sheet.');
-      } else if (newHash != _dataHash) {
-        throw const DataChangedException();
-      }
     }
   }
 
@@ -251,8 +159,6 @@ abstract class GoogleSheetsStoreService<T> {
   String _sheetDataRange(int first, int last) =>
       'A${_itemIdToRowNumber(first)}:${_columnCellNameFromCount()}${_itemIdToRowNumber(last)}';
 
-  String _sheetAppendRange() => 'A2:${_columnCellNameFromCount()}2';
-
   /// Convert item ID to sheet row number. +1 is for skipping the header row.
   int _itemIdToRowNumber(int id) => id + 1;
 
@@ -264,8 +170,60 @@ abstract class GoogleSheetsStoreService<T> {
 
   /// Builds a data object from a row of data from the sheet.
   T buildItem(String rowId, List<Object?> rowData);
+}
 
-  List<Object?> buildRowData(T item);
+/// A base class for a Google Sheets-based data store with Apps Script backend installed for write operations.
+///
+/// `<T>` is the type of the data object represented in the store.
+abstract class GoogleAppsScriptStoreService<T>
+    extends GoogleSheetsStoreService<T> {
+  GoogleAppsScriptStoreService({
+    required String scriptUrl,
+    required String scriptToken,
+    required super.accountService,
+    required super.metadataService,
+    required super.spreadsheetId,
+    required super.sheetName,
+  }) : _scriptClient = ScriptClient(url: scriptUrl, token: scriptToken);
+
+  final ScriptClient _scriptClient;
+
+  // TODO exception handling
+
+  Future<T> appendItem(T item) async {
+    final result = await _scriptClient.invoke(
+      action: 'flight-log/insert',
+      requestId: ScriptClient.newRequestId(),
+      payload: buildRowData(item),
+    );
+
+    return newItem(item, result.id);
+  }
+
+  Future<T> updateItem(String id, T item) async {
+    final result = await _scriptClient.invoke(
+      action: 'flight-log/update',
+      requestId: ScriptClient.newRequestId(),
+      payload: {...buildRowData(item), 'id': id},
+    );
+
+    return newItem(item, result.id);
+  }
+
+  Future<String?> deleteItem(String id) async {
+    final result = await _scriptClient.invoke(
+      action: 'flight-log/delete',
+      requestId: ScriptClient.newRequestId(),
+      payload: {'id': id},
+    );
+
+    return result.id;
+  }
+
+  T newItem(T item, String newId);
+
+  /// Subclasses should override this to convert a model into a map for the backend.
+  Map<String, dynamic> buildRowData(T item);
 }
 
 /// Exception thrown when the hash of the flight log has changed.

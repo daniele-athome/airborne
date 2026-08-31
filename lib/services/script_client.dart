@@ -11,16 +11,6 @@ final Logger _log = Logger((ScriptClient).toString());
 /// The version of the server-side protocol we support.
 const kProtocolVersion = 1;
 
-enum ScriptAction {
-  flightLogInsert('flight-log/insert'),
-  flightLogUpdate('flight-log/update'),
-  flightLogDelete('flight-log/delete');
-
-  const ScriptAction(this.action);
-
-  final String action;
-}
-
 enum ScriptErrorCode implements Comparable<ScriptErrorCode> {
   badRequest('BAD_REQUEST'),
   unauthorized('UNAUTHORIZED'),
@@ -130,48 +120,16 @@ class ScriptClient {
     return buffer.toString();
   }
 
-  /// Files a new flight and returns the id assigned to it.
-  Future<ScriptResult> insertFlight({
-    required String requestId,
-    required Map<String, dynamic> flight,
-  }) => _invoke(
-    action: ScriptAction.flightLogInsert,
-    requestId: requestId,
-    payload: flight,
-  );
-
-  /// Changes an existing flight. Only the passed fields will be updated.
-  Future<ScriptResult> updateFlight({
-    required String requestId,
-    required String id,
-    required Map<String, dynamic> changes,
-  }) => _invoke(
-    action: ScriptAction.flightLogUpdate,
-    requestId: requestId,
-    // The explicit id wins over anything the caller left in the map.
-    payload: {...changes, 'id': id},
-  );
-
-  /// Removes a flight.
-  Future<ScriptResult> deleteFlight({
-    required String requestId,
-    required String id,
-  }) => _invoke(
-    action: ScriptAction.flightLogDelete,
-    requestId: requestId,
-    payload: {'id': id},
-  );
-
   /// Sends one envelope, retrying while the script reports itself busy.
-  Future<ScriptResult> _invoke({
-    required ScriptAction action,
+  Future<ScriptResult> invoke({
+    required String action,
     required String requestId,
     required Map<String, dynamic> payload,
   }) async {
     final body = <String, dynamic>{
       'v': kProtocolVersion,
       'token': _token,
-      'action': action.action,
+      'action': action,
       'requestId': requestId,
       'client': _clientId,
       'payload': payload,

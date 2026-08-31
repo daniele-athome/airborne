@@ -92,6 +92,8 @@ class AppConfig extends ChangeNotifier {
       'spreadsheet_id':
           _currentAircraft!.backendInfo['flightlog_spreadsheet_id'],
       'sheet_name': _currentAircraft!.backendInfo['flightlog_sheet_name'],
+      'script_url': _currentAircraft!.backendInfo['script_url'],
+      'script_token': _currentAircraft!.backendInfo['script_token'],
     };
   }
 

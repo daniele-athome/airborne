@@ -187,8 +187,6 @@ abstract class GoogleAppsScriptStoreService<T>
 
   final ScriptClient _scriptClient;
 
-  // TODO exception handling
-
   Future<T> appendItem(T item, {required String requestId}) async {
     final result = await _doInvoke(
       action: 'flight-log/insert',
@@ -231,7 +229,7 @@ abstract class GoogleAppsScriptStoreService<T>
         payload: payload,
       );
     } on ScriptException catch (e) {
-      if (e.code == ScriptErrorCode.unauthorized.code) {
+      if (e.code == ScriptErrorCode.forbidden.code) {
         throw const AccessDeniedException();
       } else if (e.code == ScriptErrorCode.notFound.code) {
         throw const ItemNotFoundException();

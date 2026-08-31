@@ -753,6 +753,22 @@ class _FlightLogModalState extends State<FlightLogModal> {
                 message = AppLocalizations.of(
                   context,
                 )!.flightLogModal_error_dataChanged;
+              } else if (error is AccessDeniedException) {
+                message = _isEditing
+                    ? AppLocalizations.of(
+                        context,
+                      )!.flightLogModal_error_notOwnFlight_edit
+                    : AppLocalizations.of(
+                        context,
+                      )!.flightLogModal_error_loggingForOthers;
+              } else if (error is ItemNotFoundException) {
+                message = AppLocalizations.of(
+                  context,
+                )!.flightLogModal_error_itemNotFound;
+              } else if (error is InternalServerException) {
+                message = AppLocalizations.of(
+                  context,
+                )!.flightLogModal_error_unknown;
               } else {
                 message = getExceptionMessage(error);
               }
@@ -821,6 +837,18 @@ class _FlightLogModalState extends State<FlightLogModal> {
             message = AppLocalizations.of(
               context,
             )!.error_generic_network_timeout;
+          } else if (error is AccessDeniedException) {
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_notOwnFlight_delete;
+          } else if (error is ItemNotFoundException) {
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_itemNotFound;
+          } else if (error is InternalServerException) {
+            message = AppLocalizations.of(
+              context,
+            )!.flightLogModal_error_unknown;
           } else {
             message = getExceptionMessage(error);
           }

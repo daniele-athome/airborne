@@ -638,6 +638,18 @@ abstract class AppLocalizations {
   /// **'Someone else changed the flight log. Go back, refresh the log book and try again.'**
   String get flightLogModal_error_dataChanged;
 
+  /// No description provided for @flightLogModal_error_itemNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This flight does not exist any more. Go back, refresh the log book and try again.'**
+  String get flightLogModal_error_itemNotFound;
+
+  /// No description provided for @flightLogModal_error_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred. Please contact your administrator.'**
+  String get flightLogModal_error_unknown;
+
   /// No description provided for @flightLogModal_dialog_changePilot_title.
   ///
   /// In en, this message translates to:

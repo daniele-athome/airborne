@@ -167,6 +167,8 @@
   "flightLogModal_error_notOwnFlight_edit": "Flight is not yours, you cannot modify it.",
   "flightLogModal_error_alteringTestFlight": "This is a test flight, you cannot change the pilot.",
   "flightLogModal_error_dataChanged": "Someone else changed the flight log. Go back, refresh the log book and try again.",
+  "flightLogModal_error_itemNotFound": "This flight does not exist any more. Go back, refresh the log book and try again.",
+  "flightLogModal_error_unknown": "An unknown error occurred. Please contact your administrator.",
   "flightLogModal_dialog_changePilot_title": "Change pilot?",
   "flightLogModal_dialog_changePilot_message": "You are changing the pilot of a registered flight.",
   "flightLogModal_dialog_changePilotNoPilot_message": "You are turning this flight into a test flight.",

@@ -327,6 +327,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Someone else changed the flight log. Go back, refresh the log book and try again.';
 
   @override
+  String get flightLogModal_error_itemNotFound =>
+      'This flight does not exist any more. Go back, refresh the log book and try again.';
+
+  @override
+  String get flightLogModal_error_unknown =>
+      'An unknown error occurred. Please contact your administrator.';
+
+  @override
   String get flightLogModal_dialog_changePilot_title => 'Change pilot?';
 
   @override

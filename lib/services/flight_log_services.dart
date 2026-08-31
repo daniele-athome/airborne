@@ -29,6 +29,7 @@ class FlightLogBookService extends GoogleAppsScriptStoreService<FlightLogItem> {
     GoogleServiceAccountService accountService,
     MetadataService? metadataService,
     Map<String, String> properties,
+    http.Client httpClient,
   ) => FlightLogBookService(
     accountService,
     metadataService,
@@ -36,7 +37,7 @@ class FlightLogBookService extends GoogleAppsScriptStoreService<FlightLogItem> {
     ScriptClient(
       url: properties['script_url']!,
       token: properties['script_token']!,
-      httpClient: http.Client(),
+      httpClient: httpClient,
     ),
   );
 

@@ -169,10 +169,10 @@ function buildRowValues(schema, payload, existing, identityValues) {
  * Identity rules.
  *
  * An admin does anything. A pilot files, edits and removes entries under their
- * own name; may file and edit entries under the maintenance name; and may hand
- * one of their own entries over to the maintenance name. That hand-over is
- * one-way: an entry already filed under the maintenance name is editable by
- * anybody and reassignable by nobody - and it is not a license to delete.
+ * own name; may file, edit and remove entries under the maintenance name; and
+ * may hand one of their own entries over to the maintenance name. That
+ * hand-over is one-way: an entry already filed under the maintenance name is
+ * reassignable by nobody.
  */
 
 /** The maintenance pilot name, or null when the deployment defines none. */
@@ -317,9 +317,16 @@ function checkIdentityForDelete(sheetConfig, identity, existing) {
         return null;
     }
 
+    const noPilotName = getNoPilotName();
     const fields = identityFields(sheetConfig);
     for (let i = 0; i < fields.length; i++) {
-        if (!sameName(identityOwner(fields[i], existing), identity.pilotName)) {
+        const owner = identityOwner(fields[i], existing);
+        const ownedBySelf = sameName(owner, identity.pilotName);
+        const ownedByNoPilot = !!noPilotName && sameName(owner, noPilotName);
+
+        // Same gate `resolveIdentityForUpdate` opens with, and deliberately the
+        // same shape: the two drift apart the moment one of them is edited alone.
+        if (!ownedBySelf && !ownedByNoPilot) {
             return 'Not allowed to delete an entry filed under another name';
         }
     }

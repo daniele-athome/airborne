@@ -134,13 +134,12 @@ paths:
         An `admin` does anything. Anyone else may:
 
         * file, edit and delete entries under their own name;
-        * file and edit entries under the maintenance name, when the deployment
-          configures one (`NO_PILOT_NAME`);
+        * file, edit and delete entries under the maintenance name, when the
+          deployment configures one (`NO_PILOT_NAME`);
         * hand one of their own entries over to the maintenance name.
 
-        That hand-over is one-way. An entry already filed under the maintenance
-        name is editable by anybody, reassignable by nobody, and deletable only by
-        an admin.
+        The hand-over is one-way: an entry already filed under the maintenance
+        name is reassignable by nobody but an admin.
 
         ## Retrying safely
 
@@ -598,9 +597,11 @@ components:
     DeletePayload:
       type: object
       description: |
-        Deletion is the one operation with no maintenance-name exemption: a pilot
-        deletes only what is filed under their own name, and an entry handed over
-        to the maintenance name can afterwards be deleted only by an `admin`.
+        A pilot deletes what is filed under their own name, and what is filed
+        under the maintenance name; anything else is `FORBIDDEN`. That is the
+        same ownership test an update makes, so an entry a caller can edit is an
+        entry that caller can also destroy — there is no confirmation step here
+        and no undo.
       required:
         - id
       properties:

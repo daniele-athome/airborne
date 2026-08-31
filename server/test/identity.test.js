@@ -2,17 +2,15 @@
  * The authorization matrix.
  *
  * An admin does anything. A pilot files, edits and removes entries under their
- * own name; may file and edit entries under the maintenance name; and may hand
- * one of their own entries over to the maintenance name. That hand-over is
- * one-way, and it is not a license to delete.
+ * own name; does the same to entries under the maintenance name; and may hand
+ * one of their own entries over to that name, one way only.
  *
  * Those rules are not a predicate over a single name: what a request may write
- * depends on the name already in the row, and the answer differs between update
- * and delete. The two asymmetries that encode this — a maintenance row cannot be
- * taken back, and cannot be deleted — are what these tables exist to hold in
- * place. If someone ever folds the three resolvers back into one check, it is
- * `maintenance row, claimed back` and `maintenance row` under delete that go
- * red first.
+ * depends on the name already in the row. Delete asks a strict subset of what
+ * update asks — may this caller touch this row at all — so the one asymmetry
+ * left to hold in place is that a maintenance row cannot be taken back. If
+ * someone ever folds the three resolvers into one check, it is
+ * `maintenance row, claimed back` that goes red first.
  */
 
 const {describe, it, beforeEach} = require('node:test');
@@ -184,16 +182,17 @@ describe('delete', () => {
         );
     });
 
-    it('refuses a maintenance entry, which update would have allowed', () => {
-        // The one place where the two actions part company: an entry anybody may
-        // edit is not an entry anybody may destroy.
+    it('allows a maintenance entry, exactly as update does', () => {
+        // The two actions answer the same ownership question. Asserted side by
+        // side on purpose: this is what fails if one of the two checks is ever
+        // changed without the other.
         assert.equal(
             resolveIdentityForUpdate(flight_log_config, claiming(undefined), pilot(), rowFiledUnder(NO_PILOT)).error,
             undefined
         );
-        assert.match(
+        assert.equal(
             checkIdentityForDelete(flight_log_config, pilot(), rowFiledUnder(NO_PILOT)),
-            /another name/
+            null
         );
     });
 
@@ -250,6 +249,31 @@ describe('without a maintenance name configured', () => {
     it('leaves a row already filed under it out of reach', () => {
         assertDenied(
             resolveIdentityForUpdate(flight_log_config, claiming(undefined), pilot(), rowFiledUnder(NO_PILOT)),
+            /another name/
+        );
+    });
+
+    it('leaves a row already filed under it undeletable too', () => {
+        // The exemption is granted by the configured name, not by the string:
+        // without `NO_PILOT_NAME` the row belongs to a pilot nobody is.
+        assert.match(
+            checkIdentityForDelete(flight_log_config, pilot(), rowFiledUnder(NO_PILOT)),
+            /another name/
+        );
+    });
+
+    it('does not hand an unowned row to everybody', () => {
+        // `sameName('', null)` is true: an empty cell and an unconfigured
+        // maintenance name normalize to the same empty string. Both resolvers
+        // therefore test that a name is configured *before* comparing against
+        // it. Drop that test and every row with a blank pilot column becomes
+        // editable and deletable by any pilot who can guess its id.
+        assertDenied(
+            resolveIdentityForUpdate(flight_log_config, claiming(undefined), pilot(), rowFiledUnder('')),
+            /another name/
+        );
+        assert.match(
+            checkIdentityForDelete(flight_log_config, pilot(), rowFiledUnder('')),
             /another name/
         );
     });

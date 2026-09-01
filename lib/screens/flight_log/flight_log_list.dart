@@ -14,92 +14,25 @@ import '../../services/flight_log_services.dart';
 
 final Logger _log = Logger((FlightLogItem).toString());
 
-class FlightLogList extends StatefulWidget {
+class FlightLogList extends StatelessWidget {
   const FlightLogList({
     super.key,
     required this.controller,
-    required this.logBookService,
     required this.onTapItem,
     required this.hourmeterMultiplier,
   });
 
   final FlightLogListController controller;
-  final FlightLogBookService logBookService;
   final Function(BuildContext context, FlightLogItem item) onTapItem;
   final int hourmeterMultiplier;
 
-  @override
-  State<FlightLogList> createState() => _FlightLogListState();
-}
-
-class _FlightLogListState extends State<FlightLogList> {
-  final _pagingController = PagingController<int, FlightLogItem>(
-    firstPageKey: 1,
-  );
-  var _firstTime = true;
-
-  @override
-  void initState() {
-    _pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
-    widget.controller.addListener(_refresh);
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(FlightLogList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.removeListener(_refresh);
-      widget.controller.addListener(_refresh);
-    }
-  }
-
-  Future<void> _fetchPage(int pageKey) async {
-    try {
-      if (_firstTime) {
-        await widget.logBookService.reset();
-      }
-
-      final items = widget.logBookService.hasMoreData()
-          ? await widget.logBookService.fetchItems()
-          : <FlightLogItem>[];
-      final page = items
-          .toList(growable: false)
-          .reversed
-          .toList(growable: false);
-
-      if (_firstTime) {
-        if (page.isNotEmpty) {
-          widget.controller.lastEndHourMeter = page[0].endHour;
-          widget.controller.empty = false;
-        } else {
-          widget.controller.lastEndHourMeter = 0;
-          widget.controller.empty = true;
-        }
-        _firstTime = false;
-      }
-
-      if (widget.logBookService.hasMoreData()) {
-        _pagingController.appendPage(page, pageKey + 1);
-      } else {
-        _pagingController.appendLastPage(page);
-      }
-    } catch (error, stacktrace) {
-      _log.warning('error loading log book data', error, stacktrace);
-      _pagingController.error = error;
-    }
-  }
-
-  Future<void> _refresh() async {
-    _firstTime = true;
-    return Future.sync(() => _pagingController.refresh());
-  }
+  Future<void> _refresh() async => controller.refresh();
 
   Widget _buildListItem(BuildContext context, FlightLogItem item, int index) =>
       FlightLogListItem(
         item: item,
-        onTapItem: widget.onTapItem,
-        hourmeterMultiplier: widget.hourmeterMultiplier,
+        onTapItem: onTapItem,
+        hourmeterMultiplier: hourmeterMultiplier,
       );
 
   Widget noItemsFoundIndicator(BuildContext context) =>
@@ -108,72 +41,71 @@ class _FlightLogListState extends State<FlightLogList> {
         onTryAgain: _refresh,
       );
 
-  Widget firstPageErrorIndicator(BuildContext context) =>
+  Widget firstPageErrorIndicator(BuildContext context, Object? error) =>
       FirstPageExceptionIndicator(
         title: AppLocalizations.of(context)!.flightLog_error_firstPageIndicator,
-        message: getExceptionMessage(_pagingController.error),
+        message: getExceptionMessage(error),
         onTryAgain: _refresh,
       );
 
-  Widget newPageErrorIndicator(BuildContext context) => NewPageErrorIndicator(
-    message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
-    onTap: _pagingController.retryLastFailedRequest,
-  );
+  Widget newPageErrorIndicator(BuildContext context, VoidCallback onRetry) =>
+      NewPageErrorIndicator(
+        message: AppLocalizations.of(context)!.flightLog_error_newPageIndicator,
+        onTap: onRetry,
+      );
 
   /// FIXME using PagedSliverList within a CustomScrollView for Material leads to errors
   @override
   Widget build(BuildContext context) {
     // TODO test scrolling physics with no content
-    return PlatformWidget(
-      material: (context, platform) => RefreshIndicator(
-        onRefresh: () => _refresh(),
-        child: PagedListView.separated(
-          physics: const AlwaysScrollableScrollPhysics(),
-          pagingController: _pagingController,
-          separatorBuilder: (context, index) => FlightLogListDivider(),
-          builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
-            itemBuilder: _buildListItem,
-            firstPageErrorIndicatorBuilder: (context) =>
-                firstPageErrorIndicator(context),
-            newPageErrorIndicatorBuilder: (context) =>
-                newPageErrorIndicator(context),
-            noItemsFoundIndicatorBuilder: (context) =>
-                noItemsFoundIndicator(context),
-          ),
-        ),
-      ),
-      cupertino: (context, platform) => CustomScrollView(
-        slivers: <Widget>[
-          CupertinoSliverRefreshControl(onRefresh: () => _refresh()),
-          PagedSliverList.separated(
-            pagingController: _pagingController,
+    return PagingListener<int, FlightLogItem>(
+      controller: controller,
+      builder: (context, state, fetchNextPage) => PlatformWidget(
+        material: (context, platform) => RefreshIndicator(
+          onRefresh: () => _refresh(),
+          child: PagedListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            state: state,
+            fetchNextPage: fetchNextPage,
             separatorBuilder: (context, index) => FlightLogListDivider(),
             builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
               itemBuilder: _buildListItem,
               firstPageErrorIndicatorBuilder: (context) =>
-                  firstPageErrorIndicator(context),
+                  firstPageErrorIndicator(context, state.error),
               newPageErrorIndicatorBuilder: (context) =>
-                  newPageErrorIndicator(context),
+                  newPageErrorIndicator(context, fetchNextPage),
               noItemsFoundIndicatorBuilder: (context) =>
                   noItemsFoundIndicator(context),
-              firstPageProgressIndicatorBuilder: (context) =>
-                  const CupertinoActivityIndicator(radius: 20),
-              newPageProgressIndicatorBuilder: (context) => const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: CupertinoActivityIndicator(radius: 16),
-              ),
             ),
           ),
-        ],
+        ),
+        cupertino: (context, platform) => CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverRefreshControl(onRefresh: () => _refresh()),
+            PagedSliverList.separated(
+              state: state,
+              fetchNextPage: fetchNextPage,
+              separatorBuilder: (context, index) => FlightLogListDivider(),
+              builderDelegate: PagedChildBuilderDelegate<FlightLogItem>(
+                itemBuilder: _buildListItem,
+                firstPageErrorIndicatorBuilder: (context) =>
+                    firstPageErrorIndicator(context, state.error),
+                newPageErrorIndicatorBuilder: (context) =>
+                    newPageErrorIndicator(context, fetchNextPage),
+                noItemsFoundIndicatorBuilder: (context) =>
+                    noItemsFoundIndicator(context),
+                firstPageProgressIndicatorBuilder: (context) =>
+                    const CupertinoActivityIndicator(radius: 20),
+                newPageProgressIndicatorBuilder: (context) => const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: CupertinoActivityIndicator(radius: 16),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    widget.controller.removeListener(_refresh);
-    super.dispose();
   }
 }
 
@@ -339,41 +271,63 @@ class FlightLogListItem extends StatelessWidget {
   }
 }
 
-// FIXME the way this controller is used triggers an extra useless refresh and it also doesn't play well with infinite_scroll_pagination v5.
-//  Refactor it so we have one single state handling the list (PagingState + our extra stuff) and (maybe) extend PagingController
-class FlightLogListController extends ValueNotifier<FlightLogListState> {
-  FlightLogListController() : super(const FlightLogListState());
+/// Holds the whole state of the flight log list, driving the log book service.
+class FlightLogListController extends PagingController<int, FlightLogItem> {
+  FlightLogListController._(
+    this._logBookService, {
+    required super.getNextPageKey,
+    required super.fetchPage,
+  });
 
-  set lastEndHourMeter(num? number) {
-    value = FlightLogListState(lastEndHourMeter: number, empty: value.empty);
-  }
-
-  num? get lastEndHourMeter {
-    return value.lastEndHourMeter;
-  }
-
-  set empty(bool? empty) {
-    value = FlightLogListState(
-      lastEndHourMeter: value.lastEndHourMeter,
-      empty: empty,
+  /// The callbacks need the instance itself, hence the factory.
+  factory FlightLogListController(FlightLogBookService logBookService) {
+    late final FlightLogListController controller;
+    return controller = FlightLogListController._(
+      logBookService,
+      getNextPageKey: (state) => controller._nextPageKey(state),
+      fetchPage: (pageKey) => controller._fetchPage(pageKey),
     );
   }
 
-  bool? get empty {
-    return value.empty;
+  final FlightLogBookService _logBookService;
+  var _firstTime = true;
+
+  /// Hourmeter of the last logged flight. Null if not loaded yet or empty.
+  num? get lastEndHourMeter => items?.firstOrNull?.endHour;
+
+  /// Whether the first page was loaded, even if empty.
+  bool get loaded => items != null;
+
+  @override
+  void refresh() {
+    _firstTime = true;
+    super.refresh();
   }
 
-  void reset() {
-    value = const FlightLogListState();
+  /// The service keeps the cursor itself, so the page key is just a counter.
+  /// There is no cursor before the first fetch, hence [_firstTime].
+  int? _nextPageKey(PagingState<int, FlightLogItem> state) =>
+      (_firstTime || _logBookService.hasMoreData())
+      ? state.nextIntPageKey
+      : null;
+
+  Future<List<FlightLogItem>> _fetchPage(int pageKey) async {
+    try {
+      if (_firstTime) {
+        await _logBookService.reset();
+        _firstTime = false;
+      }
+
+      final items = _logBookService.hasMoreData()
+          ? await _logBookService.fetchItems()
+          : <FlightLogItem>[];
+      // the log book is stored in chronological order, we display it reversed
+      return items.toList(growable: false).reversed.toList(growable: false);
+    } catch (error, stacktrace) {
+      _log.warning('error loading log book data', error, stacktrace);
+      rethrow;
+    }
   }
-}
-
-@immutable
-class FlightLogListState {
-  const FlightLogListState({this.lastEndHourMeter, this.empty});
-
-  final num? lastEndHourMeter;
-  final bool? empty;
 }
 
 class FlightLogListDivider extends PlatformWidget {

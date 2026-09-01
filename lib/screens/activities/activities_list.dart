@@ -13,72 +13,45 @@ import '../../services/activities_services.dart';
 final Logger _log = Logger((ActivityEntry).toString());
 
 class ActivitiesList extends StatefulWidget {
-  final ActivitiesListController controller;
   final ActivitiesService activitiesService;
 
-  const ActivitiesList({
-    super.key,
-    required this.controller,
-    required this.activitiesService,
-  });
+  const ActivitiesList({super.key, required this.activitiesService});
 
   @override
   State<ActivitiesList> createState() => _ActivitiesListState();
 }
 
 class _ActivitiesListState extends State<ActivitiesList> {
-  final _pagingController = PagingController<int, ActivityEntry>(
-    firstPageKey: 1,
+  late final _pagingController = PagingController<int, ActivityEntry>(
+    getNextPageKey: _nextPageKey,
+    fetchPage: _fetchPage,
   );
   var _firstTime = true;
 
-  @override
-  void initState() {
-    _pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
-    widget.controller.addListener(_refresh);
-    super.initState();
-  }
+  /// The service tracks the cursor itself, so the page key is just a counter.
+  /// Before the first fetch there is no cursor yet, hence [_firstTime].
+  int? _nextPageKey(PagingState<int, ActivityEntry> state) =>
+      (_firstTime || widget.activitiesService.hasMoreData())
+      ? state.nextIntPageKey
+      : null;
 
-  @override
-  void didUpdateWidget(ActivitiesList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.removeListener(_refresh);
-      widget.controller.addListener(_refresh);
-    }
-  }
-
-  Future<void> _fetchPage(int pageKey) async {
+  Future<List<ActivityEntry>> _fetchPage(int pageKey) async {
     try {
       if (_firstTime) {
         await widget.activitiesService.reset();
+        _firstTime = false;
       }
 
       final items = widget.activitiesService.hasMoreData()
           ? await widget.activitiesService.fetchItems()
           : <ActivityEntry>[];
-      final page = items
+      return items
           // ignore done items for now
           .where((entry) => entry.status != ActivityStatus.done)
           .toList(growable: false);
-
-      if (_firstTime) {
-        if (page.isNotEmpty) {
-          widget.controller.empty = false;
-        } else {
-          widget.controller.empty = true;
-        }
-        _firstTime = false;
-      }
-
-      if (widget.activitiesService.hasMoreData()) {
-        _pagingController.appendPage(page, pageKey + 1);
-      } else {
-        _pagingController.appendLastPage(page);
-      }
     } catch (error, stacktrace) {
       _log.warning('error loading activities data', error, stacktrace);
-      _pagingController.error = error;
+      rethrow;
     }
   }
 
@@ -93,19 +66,22 @@ class _ActivitiesListState extends State<ActivitiesList> {
         onTryAgain: _refresh,
       );
 
-  Widget firstPageErrorIndicator(BuildContext context) =>
+  Widget firstPageErrorIndicator(BuildContext context, Object? error) =>
       FirstPageExceptionIndicator(
         title: AppLocalizations.of(
           context,
         )!.activities_error_firstPageIndicator,
-        message: getExceptionMessage(_pagingController.error),
+        message: getExceptionMessage(error),
         onTryAgain: _refresh,
       );
 
-  Widget newPageErrorIndicator(BuildContext context) => NewPageErrorIndicator(
-    message: AppLocalizations.of(context)!.activities_error_newPageIndicator,
-    onTap: _pagingController.retryLastFailedRequest,
-  );
+  Widget newPageErrorIndicator(BuildContext context, VoidCallback onRetry) =>
+      NewPageErrorIndicator(
+        message: AppLocalizations.of(
+          context,
+        )!.activities_error_newPageIndicator,
+        onTap: onRetry,
+      );
 
   Widget _buildListItem(BuildContext context, ActivityEntry item, int index) {
     return _EntryListItem(entry: item);
@@ -115,50 +91,55 @@ class _ActivitiesListState extends State<ActivitiesList> {
   @override
   Widget build(BuildContext context) {
     // TODO test scrolling physics with no content
-    return PlatformWidget(
-      cupertino: (context, platform) => CustomScrollView(
-        slivers: <Widget>[
-          CupertinoSliverRefreshControl(onRefresh: () => _refresh()),
-          SliverPadding(
-            // 2 points less because something else is adding padding
-            padding: const EdgeInsets.symmetric(vertical: 6.0),
-            sliver: PagedSliverList.separated(
-              pagingController: _pagingController,
-              separatorBuilder: (context, index) => const SizedBox.shrink(),
-              builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
-                itemBuilder: _buildListItem,
-                firstPageErrorIndicatorBuilder: (context) =>
-                    firstPageErrorIndicator(context),
-                newPageErrorIndicatorBuilder: (context) =>
-                    newPageErrorIndicator(context),
-                noItemsFoundIndicatorBuilder: (context) =>
-                    noItemsFoundIndicator(context),
-                firstPageProgressIndicatorBuilder: (context) =>
-                    const CupertinoActivityIndicator(radius: 20),
-                newPageProgressIndicatorBuilder: (context) => const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: CupertinoActivityIndicator(radius: 16),
+    return PagingListener<int, ActivityEntry>(
+      controller: _pagingController,
+      builder: (context, state, fetchNextPage) => PlatformWidget(
+        cupertino: (context, platform) => CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverRefreshControl(onRefresh: () => _refresh()),
+            SliverPadding(
+              // 2 points less because something else is adding padding
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              sliver: PagedSliverList.separated(
+                state: state,
+                fetchNextPage: fetchNextPage,
+                separatorBuilder: (context, index) => const SizedBox.shrink(),
+                builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
+                  itemBuilder: _buildListItem,
+                  firstPageErrorIndicatorBuilder: (context) =>
+                      firstPageErrorIndicator(context, state.error),
+                  newPageErrorIndicatorBuilder: (context) =>
+                      newPageErrorIndicator(context, fetchNextPage),
+                  noItemsFoundIndicatorBuilder: (context) =>
+                      noItemsFoundIndicator(context),
+                  firstPageProgressIndicatorBuilder: (context) =>
+                      const CupertinoActivityIndicator(radius: 20),
+                  newPageProgressIndicatorBuilder: (context) => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: CupertinoActivityIndicator(radius: 16),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      material: (context, platform) => RefreshIndicator(
-        onRefresh: () => _refresh(),
-        child: PagedListView.separated(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          pagingController: _pagingController,
-          separatorBuilder: (context, index) => const SizedBox.shrink(),
-          builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
-            itemBuilder: _buildListItem,
-            firstPageErrorIndicatorBuilder: (context) =>
-                firstPageErrorIndicator(context),
-            newPageErrorIndicatorBuilder: (context) =>
-                newPageErrorIndicator(context),
-            noItemsFoundIndicatorBuilder: (context) =>
-                noItemsFoundIndicator(context),
+          ],
+        ),
+        material: (context, platform) => RefreshIndicator(
+          onRefresh: () => _refresh(),
+          child: PagedListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            state: state,
+            fetchNextPage: fetchNextPage,
+            separatorBuilder: (context, index) => const SizedBox.shrink(),
+            builderDelegate: PagedChildBuilderDelegate<ActivityEntry>(
+              itemBuilder: _buildListItem,
+              firstPageErrorIndicatorBuilder: (context) =>
+                  firstPageErrorIndicator(context, state.error),
+              newPageErrorIndicatorBuilder: (context) =>
+                  newPageErrorIndicator(context, fetchNextPage),
+              noItemsFoundIndicatorBuilder: (context) =>
+                  noItemsFoundIndicator(context),
+            ),
           ),
         ),
       ),
@@ -168,32 +149,8 @@ class _ActivitiesListState extends State<ActivitiesList> {
   @override
   void dispose() {
     _pagingController.dispose();
-    widget.controller.removeListener(_refresh);
     super.dispose();
   }
-}
-
-class ActivitiesListController extends ValueNotifier<ActivitiesListState> {
-  ActivitiesListController() : super(const ActivitiesListState());
-
-  set empty(bool? empty) {
-    value = ActivitiesListState(empty: empty);
-  }
-
-  bool? get empty {
-    return value.empty;
-  }
-
-  void reset() {
-    value = const ActivitiesListState();
-  }
-}
-
-@immutable
-class ActivitiesListState {
-  const ActivitiesListState({this.empty});
-
-  final bool? empty;
 }
 
 class _EntryListItem extends StatelessWidget {

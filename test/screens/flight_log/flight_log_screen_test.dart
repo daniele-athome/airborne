@@ -40,6 +40,46 @@ void main() async {
     );
   }
 
+  /// Stubs a service holding a single page of [itemCount] items.
+  MockFlightLogBookService mockService(int itemCount) {
+    const pilots = ['Sara', 'Anna', 'John', 'Peter'];
+    final service = MockFlightLogBookService();
+    var hasMoreData = true;
+    when(service.reset()).thenAnswer((_) async => hasMoreData = true);
+    when(service.hasMoreData()).thenAnswer((_) => hasMoreData);
+    when(service.fetchItems()).thenAnswer((_) async {
+      hasMoreData = false;
+      return List<FlightLogItem>.generate(itemCount, (index) {
+        return FlightLogItem(
+          // TODO 1-based index?
+          (index + 1).toString(),
+          DateTime.parse('2023-10-27T10:00:00Z'),
+          pilots[index % pilots.length],
+          'Fly@localhost',
+          'Fly@localhost',
+          1238 + index,
+          1238 + index + 1,
+          null,
+          null,
+          null,
+        );
+      }, growable: false);
+    });
+    return service;
+  }
+
+  int loadedItemCount(WidgetTester tester) {
+    final listFinder = find.descendant(
+      of: find.byKey(const Key('list_flight_log')),
+      matching: find.byType(PagedListView<int, FlightLogItem>),
+    );
+    return tester
+        .widget<PagedListView<int, FlightLogItem>>(listFinder)
+        .state
+        .items!
+        .length;
+  }
+
   group('Load flight log items', () {
     testWidgets('First page', (tester) async {
       final pilots = ['Sara', 'Anna', 'John', 'Peter'];
@@ -80,6 +120,41 @@ void main() async {
         listFinder,
       );
       expect(listWidget.state.items!.length, 20);
+    });
+
+    testWidgets('A new service instance reloads the list', (tester) async {
+      final appConfig = _provideAppConfigForSampleAircraft();
+      final service = ValueNotifier<FlightLogBookService>(mockService(20));
+      addTearDown(service.dispose);
+
+      await tester.pumpWidget(
+        ValueListenableBuilder(
+          valueListenable: service,
+          builder: (context, value, child) => MultiProvider(
+            providers: [
+              appConfig,
+              Provider.value(value: value),
+            ],
+            child: MaterialApp(
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              locale: locale,
+              home: FlightLogScreen(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(loadedItemCount(tester), 20);
+
+      // e.g. the aircraft data was updated while sitting on another tab
+      service.value = mockService(3);
+      await tester.pumpAndSettle();
+      expect(loadedItemCount(tester), 3);
     });
   });
 

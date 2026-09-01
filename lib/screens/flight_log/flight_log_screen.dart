@@ -23,11 +23,10 @@ class _FlightLogScreenState extends State<FlightLogScreen>
     with WidgetsBindingObserver {
   late FToast _fToast;
   late AppConfig _appConfig;
-  late FlightLogBookService _logBookService;
 
-  /// Created lazily because it needs the service from the provider.
-  late final FlightLogListController _logBookController =
-      FlightLogListController(_logBookService);
+  /// The service the controller is bound to. Null until the first binding.
+  FlightLogBookService? _logBookService;
+  late FlightLogListController _logBookController;
 
   @override
   void initState() {
@@ -40,7 +39,16 @@ class _FlightLogScreenState extends State<FlightLogScreen>
   @override
   void didChangeDependencies() {
     _appConfig = Provider.of<AppConfig>(context, listen: false);
-    _logBookService = Provider.of<FlightLogBookService>(context, listen: false);
+    // we will be listening to this provider now
+    final logBookService = Provider.of<FlightLogBookService>(context);
+    if (!identical(logBookService, _logBookService)) {
+      // dispose the controller bound to the previous service, if any
+      if (_logBookService != null) {
+        _logBookController.dispose();
+      }
+      _logBookService = logBookService;
+      _logBookController = FlightLogListController(logBookService);
+    }
     super.didChangeDependencies();
   }
 
@@ -92,7 +100,7 @@ class _FlightLogScreenState extends State<FlightLogScreen>
     }
 
     Widget pageRouteBuilder(BuildContext context) =>
-        Provider.value(value: _logBookService, child: FlightLogModal(model));
+        Provider.value(value: _logBookService!, child: FlightLogModal(model));
 
     final route = platformPageRoute(
       context: context,

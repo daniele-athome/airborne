@@ -45,21 +45,27 @@ class FlightLogBookService extends GoogleAppsScriptStoreService<FlightLogItem> {
   String getMetadataPrefixKey() => 'flight_log';
 
   @override
-  FlightLogItem buildItem(String rowId, List<Object?> rowData) => FlightLogItem(
-    // item ID is a 1-based ordinal - we don't use it though
-    rowData[10] as String,
-    dateFromGsheets((rowData[1] as int).toDouble()),
-    rowData[2] as String,
-    rowData[5] as String,
-    rowData[6] as String,
-    rowData[3] as num,
-    rowData[4] as num,
-    rowData[7] is num ? rowData[7] as num : null,
-    rowData[8] is num ? rowData[8] as num : null,
-    rowData[9] is String && (rowData[9] as String).isNotEmpty
-        ? rowData[9] as String?
-        : null,
-  );
+  FlightLogItem buildItem(String rowId, List<Object?> rowData) {
+    try {
+      return FlightLogItem(
+        // item ID is a 1-based ordinal - we don't use it though
+        rowData[10] as String,
+        dateFromGsheets((rowData[1] as int).toDouble()),
+        rowData[2] as String,
+        rowData[5] as String,
+        rowData[6] as String,
+        rowData[3] as num,
+        rowData[4] as num,
+        rowData[7] is num ? rowData[7] as num : null,
+        rowData[8] is num ? rowData[8] as num : null,
+        rowData[9] is String && (rowData[9] as String).isNotEmpty
+            ? rowData[9] as String?
+            : null,
+      );
+    } catch (e) {
+      throw FormatException("Record has wrong format", e);
+    }
+  }
 
   @override
   int getColumnCount() => 11;

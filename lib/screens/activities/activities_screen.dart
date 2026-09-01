@@ -18,16 +18,8 @@ class ActivitiesScreen extends StatefulWidget {
 }
 
 class _ActivitiesScreenState extends State<ActivitiesScreen> {
-  late ActivitiesListController _activitiesController;
-
   // TODO late AppConfig _appConfig;
   late ActivitiesService _activitiesService;
-
-  @override
-  void initState() {
-    super.initState();
-    _activitiesController = ActivitiesListController();
-  }
 
   @override
   void didChangeDependencies() {
@@ -54,10 +46,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
       cupertino: (context, platform) => CupertinoPageScaffoldData(
         backgroundColor: kCupertinoDialogScaffoldBackgroundColor(context),
       ),
-      body: ActivitiesList(
-        controller: _activitiesController,
-        activitiesService: _activitiesService,
-      ),
+      body: ActivitiesList(activitiesService: _activitiesService),
     );
   }
 }

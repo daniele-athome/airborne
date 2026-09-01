@@ -68,6 +68,8 @@ void main() async {
       });
 
       await tester.pumpWidget(createSkeletonApp(service, null));
+      // the first page is requested in a post-frame callback
+      await tester.pumpAndSettle();
 
       // verify list item count
       final listFinder = find.descendant(
@@ -77,7 +79,7 @@ void main() async {
       final listWidget = tester.widget<PagedListView<int, FlightLogItem>>(
         listFinder,
       );
-      expect(listWidget.pagingController.value.itemList!.length, 20);
+      expect(listWidget.state.items!.length, 20);
     });
   });
 

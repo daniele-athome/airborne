@@ -22,9 +22,12 @@ class FlightLogScreen extends StatefulWidget {
 class _FlightLogScreenState extends State<FlightLogScreen>
     with WidgetsBindingObserver {
   late FToast _fToast;
-  late FlightLogListController _logBookController;
   late AppConfig _appConfig;
   late FlightLogBookService _logBookService;
+
+  /// Created lazily because it needs the service from the provider.
+  late final FlightLogListController _logBookController =
+      FlightLogListController(_logBookService);
 
   @override
   void initState() {
@@ -32,7 +35,6 @@ class _FlightLogScreenState extends State<FlightLogScreen>
     WidgetsBinding.instance.addObserver(this);
     _fToast = FToast();
     _fToast.init(context);
-    _logBookController = FlightLogListController();
   }
 
   @override
@@ -55,13 +57,14 @@ class _FlightLogScreenState extends State<FlightLogScreen>
     if (state == AppLifecycleState.resumed &&
         route != null &&
         route.isCurrent) {
-      _logBookController.reset();
+      _logBookController.refresh();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _logBookController.dispose();
     super.dispose();
   }
 
@@ -118,7 +121,7 @@ class _FlightLogScreenState extends State<FlightLogScreen>
         }
         showToast(_fToast, message, const Duration(seconds: 2));
         // refresh list
-        _logBookController.reset();
+        _logBookController.refresh();
       }
     });
   }
@@ -127,16 +130,13 @@ class _FlightLogScreenState extends State<FlightLogScreen>
     return FlightLogList(
       key: const Key('list_flight_log'),
       controller: _logBookController,
-      logBookService: _logBookService,
       onTapItem: (context, item) => _onTapItem(context, item),
       hourmeterMultiplier: _appConfig.hourmeterMultiplier,
     );
   }
 
-  /// Hide create button until we have the first (actually last) item of the log
-  bool _canShowCreateButton() =>
-      _logBookController.lastEndHourMeter != null ||
-      _logBookController.empty == true;
+  /// Hide create button until the first page of the log is loaded
+  bool _canShowCreateButton() => _logBookController.loaded;
 
   @override
   Widget build(BuildContext context) {

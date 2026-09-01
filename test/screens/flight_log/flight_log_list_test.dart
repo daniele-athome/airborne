@@ -39,8 +39,7 @@ void main() async {
           // Material is needed by some child widget
           child: Material(
             child: FlightLogList(
-              controller: FlightLogListController(),
-              logBookService: flightLogService,
+              controller: FlightLogListController(flightLogService),
               onTapItem: (context, item) => {},
               hourmeterMultiplier: 60,
             ),
@@ -87,7 +86,7 @@ void main() async {
       final listWidget = tester.widget<PagedListView<int, FlightLogItem>>(
         listFinder,
       );
-      expect(listWidget.pagingController.value.itemList!.length, 20);
+      expect(listWidget.state.items!.length, 20);
 
       // check against golden
       await expectLater(

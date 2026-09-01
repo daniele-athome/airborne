@@ -107,8 +107,7 @@ abstract class GoogleSheetsStoreService<T> {
     final client = await _ensureService();
 
     final lastId = _lastId;
-    _lastId = max(_lastId - _kItemsPerPage, 0);
-    final firstId = _lastId + 1;
+    final firstId = max(_lastId - _kItemsPerPage, 0) + 1;
     _log.fine(
       'getting rows from $firstId to $lastId (range: ${_sheetDataRange(firstId, lastId)})',
     );
@@ -124,13 +123,20 @@ abstract class GoogleSheetsStoreService<T> {
     }
 
     _log.finest(value.values);
-    return value.values!.mapIndexed<T>(
-      (index, rowData) => buildItem(
-        // item ID is a 1-based ordinal
-        (firstId + index).toString(),
-        rowData,
-      ),
-    );
+    final items = value.values!
+        .mapIndexed<T>(
+          (index, rowData) => buildItem(
+            // item ID is a 1-based ordinal
+            (firstId + index).toString(),
+            rowData,
+          ),
+        )
+        // the toList() call ensures that buildItem is called immediately, so we can handle any fail here
+        .toList(growable: false);
+
+    // update our cursor only after the page has been successfully processed
+    _lastId = firstId - 1;
+    return items;
   }
 
   bool hasMoreData() => _lastId > 0;

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/helpers/script_client.dart';
 import 'package:airborne/models/flight_log_models.dart';
@@ -115,6 +117,20 @@ void main() {
     expect(testService.lastId, 0);
   });
   // TODO test('fetch items (multiple pages)', ...);
+
+  test('fetch items (failure keeps the cursor)', () async {
+    testService.lastId = 42;
+    when(
+      mockSheetsService.getRows('TEST', 'SHEET', 'A24:K43'),
+    ).thenAnswer((_) => Future.error(const SocketException('No network')));
+
+    await expectLater(
+      testService.fetchItems(),
+      throwsA(isA<SocketException>()),
+    );
+    // the failed page must be fetched again on retry
+    expect(testService.lastId, 42);
+  });
 
   test('create item', () async {
     final timestamp = DateTime.now();

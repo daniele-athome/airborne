@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/flight_log/flight_log_list.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -88,6 +90,40 @@ void main() {
       expect(controller.items!.length, 2);
       // the service cursor was reset again
       verify(service.reset()).called(2);
+    });
+
+    test('A failed page can be retried any number of times', () async {
+      final service = MockFlightLogBookService();
+      var remaining = 3;
+      var failing = false;
+      when(service.reset()).thenAnswer((_) async {});
+      when(service.hasMoreData()).thenAnswer((_) => remaining > 0);
+      when(service.fetchItems()).thenAnswer((_) async {
+        // the service keeps its cursor when a fetch fails
+        if (failing) throw const SocketException('No network');
+        remaining--;
+        return [buildItem(0)];
+      });
+      final controller = FlightLogListController(service);
+      addTearDown(controller.dispose);
+
+      controller.fetchNextPage();
+      await pumpEventQueue();
+      expect(controller.status, PagingStatus.ongoing);
+
+      failing = true;
+      for (var retry = 0; retry < 5; retry++) {
+        controller.fetchNextPage();
+        await pumpEventQueue();
+        // the new page error indicator must stay on screen
+        expect(controller.status, PagingStatus.subsequentPageError);
+      }
+
+      failing = false;
+      controller.fetchNextPage();
+      await pumpEventQueue();
+      expect(controller.items!.length, 2);
+      expect(controller.status, PagingStatus.ongoing);
     });
 
     test('A failed first page keeps the error and can be retried', () async {

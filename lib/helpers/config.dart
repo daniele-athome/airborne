@@ -40,6 +40,8 @@ class AppConfig extends ChangeNotifier {
         return _currentAircraft!.backendInfo['google_calendar_id'] != null;
       case 'flight_log':
         return _hasScriptBackend &&
+            _currentAircraft!.backendInfo['flightlog_spreadsheet_id'] != null &&
+            _currentAircraft!.backendInfo['flightlog_sheet_name'] != null &&
             _currentAircraft!.backendInfo['flightlog_enabled'] == true &&
             _currentAircraft!.noPilotName != null;
       case 'activities':

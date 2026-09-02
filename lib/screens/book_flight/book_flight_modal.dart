@@ -110,6 +110,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         CupertinoFormSection.insetGrouped(
           children: <Widget>[
             CupertinoFormButtonRow(
+              key: const Key('button_bookFlightModal_pilot'),
               onPressed: () => _onTapPilot(context),
               padding: kDefaultCupertinoFormRowPadding,
               prefix: Text(
@@ -134,10 +135,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
           children: <Widget>[
             // start date/time
             CupertinoDateTimeFormFieldRow(
+              key: const Key('input_bookFlightModal_startDate'),
               prefix: Text(
                 AppLocalizations.of(context)!.bookFlightModal_label_start,
               ),
               helper: _SunTimesListTile(
+                key: const Key('text_bookFlightModal_startSunTimes'),
                 sunrise: startSunTimes.sunrise,
                 sunset: startSunTimes.sunset,
               ),
@@ -147,10 +150,12 @@ class _BookFlightModalState extends State<BookFlightModal> {
             ),
             // end date/time
             CupertinoDateTimeFormFieldRow(
+              key: const Key('input_bookFlightModal_endDate'),
               prefix: Text(
                 AppLocalizations.of(context)!.bookFlightModal_label_end,
               ),
               helper: _SunTimesListTile(
+                key: const Key('text_bookFlightModal_endSunTimes'),
                 sunrise: endSunTimes.sunrise,
                 sunset: endSunTimes.sunset,
               ),
@@ -164,6 +169,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         CupertinoFormSection.insetGrouped(
           children: <Widget>[
             CupertinoTextFormFieldRow(
+              key: const Key('input_bookFlightModal_notes'),
               // FIXME doesn't work because TextFormFieldRow can't pass padding to the text field -- padding: kDefaultCupertinoFormRowPadding,
               controller: TextEditingController(text: _notes),
               // TODO cursorColor: widget.model.backgroundColor,
@@ -190,6 +196,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
                 children: [
                   Expanded(
                     child: CupertinoButton(
+                      key: const Key('button_bookFlightModal_delete'),
                       onPressed: () => _onDelete(context),
                       child: Text(
                         AppLocalizations.of(
@@ -219,6 +226,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
       padding: EdgeInsets.zero,
       children: <Widget>[
         ListTile(
+          key: const Key('button_bookFlightModal_pilot'),
           contentPadding: const EdgeInsetsDirectional.fromSTEB(15, 5, 15, 5),
           leading: CircleAvatar(
             foregroundImage: appConfig.getPilotAvatar(_pilotName),
@@ -229,16 +237,19 @@ class _BookFlightModalState extends State<BookFlightModal> {
         const Divider(height: 1.0, thickness: 1),
         // start date/time
         DateTimeListTile(
+          key: const Key('input_bookFlightModal_startDate'),
           controller: _startDateController,
           onDateSelected: (date, oldDate) => _onStartDateChanged(date, oldDate),
           onTimeSelected: (date, oldDate) => _onStartDateChanged(date, oldDate),
         ),
         _SunTimesListTile(
+          key: const Key('text_bookFlightModal_startSunTimes'),
           sunrise: startSunTimes.sunrise,
           sunset: startSunTimes.sunset,
         ),
         // end date/time
         DateTimeListTile(
+          key: const Key('input_bookFlightModal_endDate'),
           controller: _endDateController,
           showIcon: false,
           onDateSelected: (date, oldDate) => _onEndDateChanged(date, oldDate),
@@ -247,6 +258,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         Container(
           padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 20),
           child: _SunTimesListTile(
+            key: const Key('text_bookFlightModal_endSunTimes'),
             sunrise: endSunTimes.sunrise,
             sunset: endSunTimes.sunset,
           ),
@@ -257,6 +269,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
           contentPadding: const EdgeInsetsDirectional.fromSTEB(20, 5, 20, 5),
           leading: const Icon(Icons.subject),
           title: TextField(
+            key: const Key('input_bookFlightModal_notes'),
             controller: TextEditingController(text: _notes),
             // TODO cursorColor: widget.model.backgroundColor,
             onChanged: (String value) {
@@ -342,6 +355,7 @@ class _BookFlightModalState extends State<BookFlightModal> {
         trailingActions.insert(
           0,
           PlatformIconButton(
+            widgetKey: const Key('button_bookFlightModal_delete'),
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
             material: (_, _) => MaterialIconButtonData(
@@ -609,7 +623,6 @@ class _SunTimesListTile extends StatelessWidget {
   final DateTime sunset;
 
   const _SunTimesListTile({
-    // ignore: unused_element_parameter
     super.key,
     required this.sunrise,
     required this.sunset,
@@ -641,7 +654,14 @@ class _SunTimesListTile extends StatelessWidget {
               DateFormat(kAviationTimeFormat).format(sunrise),
               style: textStyle,
             ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.2, height: 0),
+            // the cupertino row is indented by its prefix, so a share of the
+            // screen width does not fit in it
+            isCupertino(context)
+                ? const Spacer()
+                : SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: 0,
+                  ),
             Icon(Icons.nightlight_round, color: _getIconColor(context)),
             const SizedBox(width: 10, height: 0),
             Text(

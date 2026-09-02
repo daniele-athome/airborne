@@ -28,6 +28,18 @@ const EdgeInsetsGeometry kDefaultCupertinoFormRowVerticalPadding =
 const EdgeInsetsGeometry kDefaultCupertinoDateTimeFormRowPadding =
     EdgeInsets.symmetric(horizontal: 2.0, vertical: 6.0);
 
+/// The date and time picker buttons style their label with a text style of
+/// their own that names no font family, which leaves them out of the Cupertino
+/// typography (and out of the fonts a widget test can load). This puts the font
+/// of the theme back in.
+PickerButtonDecoration kPickerButtonDecoration(BuildContext context) =>
+    PickerButtonDecoration.withDynamicColor(
+      context,
+      textStyle: CupertinoTheme.of(
+        context,
+      ).textTheme.textStyle.copyWith(fontSize: 17.0),
+    );
+
 /// Margin between form sections.
 const double kDefaultCupertinoFormSectionMargin = 22.0;
 
@@ -233,6 +245,9 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                      Padding(
                        padding: kDefaultCupertinoDateTimeFormRowPadding,
                        child: CupertinoCalendarPickerButton(
+                         buttonDecoration: kPickerButtonDecoration(
+                           field.context,
+                         ),
                          initialDateTime: field.value,
                          minimumDateTime: _kDatePickerMinimumDate,
                          maximumDateTime: _kDatePickerMaximumDate,
@@ -256,6 +271,9 @@ class CupertinoDateTimeFormFieldRow extends FormField<DateTime> {
                      Padding(
                        padding: kDefaultCupertinoDateTimeFormRowPadding,
                        child: CupertinoTimePickerButton(
+                         buttonDecoration: kPickerButtonDecoration(
+                           field.context,
+                         ),
                          initialTime: TimeOfDay.fromDateTime(field.value!),
                          use24hFormat: true,
                          onTimeChanged: (value) {

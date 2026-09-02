@@ -11,9 +11,17 @@
 
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// The families Flutter names in [CupertinoTextThemeData], none of which ship
+/// with the framework.
+const List<String> _cupertinoSystemFonts = [
+  'CupertinoSystemText',
+  'CupertinoSystemDisplay',
+];
 
 ///By default, flutter test only uses a single "test" font called Ahem.
 ///
@@ -44,6 +52,13 @@ Future<void> loadAppFonts() async {
   final fontLoader = FontLoader('Roboto');
   fontLoader.addFont(Future.value(ByteData.view(fontData.buffer)));
   await fontLoader.load();
+
+  // Using Roboto as Cupertino fonts, just for the goldens
+  for (final family in _cupertinoSystemFonts) {
+    final loader = FontLoader(family)
+      ..addFont(Future.value(ByteData.view(fontData.buffer)));
+    await loader.load();
+  }
 }
 
 /// There is no way to easily load the Roboto or Cupertino fonts.

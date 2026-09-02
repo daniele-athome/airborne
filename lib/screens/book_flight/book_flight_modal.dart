@@ -59,6 +59,13 @@ class _BookFlightModalState extends State<BookFlightModal> {
     super.didUpdateWidget(oldWidget);
   }
 
+  @override
+  void dispose() {
+    _startDateController.dispose();
+    _endDateController.dispose();
+    super.dispose();
+  }
+
   void _updateEventData() {
     _pilotName = widget.event.pilotName;
     _notes = widget.event.notes;

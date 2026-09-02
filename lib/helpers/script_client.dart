@@ -197,12 +197,7 @@ class ScriptClient {
     }
 
     if (decoded['ok'] != true) {
-      final error = decoded['error'] as Map<String, dynamic>?;
-      throw ScriptException(
-        error?['code'] as String? ?? ScriptErrorCode.internal.code,
-        error?['message'] as String? ?? 'Unknown backend error',
-        details: error?['details'] as String?,
-      );
+      throw _errorFrom(decoded['error']);
     }
 
     final data = decoded['data'];
@@ -216,5 +211,32 @@ class ScriptClient {
     }
 
     return ScriptResult(id: id, replayed: decoded['replayed'] == true);
+  }
+
+  /// Builds the exception for an `ok: false` envelope.
+  ScriptException _errorFrom(Object? error) {
+    if (error != null && error is! Map<String, dynamic>) {
+      _log.severe('backend reported an unreadable error: $error');
+      return ScriptException(
+        ScriptErrorCode.malformedResponse.code,
+        'The backend reported an error it could not describe.',
+      );
+    }
+
+    // a missing error object is the script failing without saying why
+    final fields = error is Map<String, dynamic>
+        ? error
+        : const <String, dynamic>{};
+    final code = fields['code'];
+    final message = fields['message'];
+    final details = fields['details'];
+    if (code != null && code is! String) {
+      _log.warning('backend reported a non-string error code: $code');
+    }
+    return ScriptException(
+      code is String ? code : ScriptErrorCode.internal.code,
+      message is String ? message : 'Unknown backend error',
+      details: details is String ? details : null,
+    );
   }
 }

@@ -31,6 +31,7 @@
 *.g.dart
 *.mocks.dart
 /coverage/
+/test/**/failures/
 
 # Web related
 lib/generated_plugin_registrant.dart

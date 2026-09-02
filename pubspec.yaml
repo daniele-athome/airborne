@@ -60,6 +60,7 @@ dependencies:
 
 dev_dependencies:
   build_runner:
+  fake_async: any
   flutter_driver:
     sdk: flutter
   flutter_lints: any
@@ -79,6 +80,7 @@ dev_dependencies:
       url: https://github.com/daniele-athome/screenshots.git
       ref: 9b22b11566463e5b730fe9049da7e400e659a870
   test: any
+  url_launcher_platform_interface: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

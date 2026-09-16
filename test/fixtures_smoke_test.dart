@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' show instantiateImageCodec;
 
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/aircraft_data.dart';
@@ -62,6 +63,19 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(FakeImage('anna'), FakeImage('anna'));
     expect(FakeImage('anna'), isNot(FakeImage('john')));
+  });
+
+  testWidgets('FakeImage pixels decode to a 1x1 image', (tester) async {
+    // decoding needs the real event loop: the fake clock would never finish it
+    final image = await tester.runAsync(() async {
+      final codec = await instantiateImageCodec(kTransparentPixelPng);
+      final frame = await codec.getNextFrame();
+      codec.dispose();
+      return frame.image;
+    });
+    expect(image!.width, 1);
+    expect(image.height, 1);
+    image.dispose();
   });
 
   group('aircraft fixtures', () {

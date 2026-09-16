@@ -32,7 +32,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   void didChangeDependencies() {
-    _appConfig = Provider.of<AppConfig>(context, listen: false);
+    _appConfig = Provider.of<AppConfig>(context);
     _downloadProvider = Provider.of<DownloadProvider>(context, listen: false);
     super.didChangeDependencies();
   }

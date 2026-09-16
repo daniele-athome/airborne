@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 
 /// A 1x1 transparent PNG: the cheapest thing that decodes to a real image.
 final Uint8List kTransparentPixelPng = base64Decode(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNkYAAAAAYAAjhRTaMAAAAASUVORK5CYII=',
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNgAAIAAAUAAen63NgAAAAASUVORK5CYII=',
 );
 
 /// An [ImageProvider] that resolves without touching filesystem or network.

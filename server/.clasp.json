@@ -1,5 +1,5 @@
 {
-  "scriptId": "14UbxUr-MinmHYYDYYpPAfW4kgrNAzohxp7EaO6tKHIQkD8-j3sMNjXmy",
+  "scriptId": "@@SCRIPT_ID@@",
   "rootDir": "src",
   "filePushOrder": [
     "src/00_config.js",
@@ -9,6 +9,7 @@
     "src/40_store.js",
     "src/50_lock.js",
     "src/60_actions.js",
-    "src/90_main.js"
+    "src/90_main.js",
+    "src/99_onChange.js"
   ]
 }

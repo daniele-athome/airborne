@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +20,13 @@ void main() async {
   const locale = Locale('en');
   final lang = await AppLocalizations.delegate.load(locale);
 
-  Widget createSkeletonApp(FlightLogItem model) => MultiProvider(
+  Widget createSkeletonApp(
+    FlightLogItem model, {
+    MockFlightLogBookService? service,
+  }) => MultiProvider(
     providers: [
       _provideAppConfigForSampleAircraft(),
-      _provideFlightLogBookService(),
+      _provideFlightLogBookService(service),
     ],
     child: MaterialApp(
       localizationsDelegates: const [
@@ -89,12 +93,14 @@ void main() async {
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
+      // letters never make it into the field in the first place
       await tester.enterText(
         find.byKey(const Key("input_flightLogModal_fuelPrice")),
         "ABC",
       );
       await tester.pump();
-      expect(tester.state<FormState>(find.byType(Form)).validate(), false);
+      expect(_textOf(tester, const Key("input_flightLogModal_fuelPrice")), '');
+      expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
         find.byKey(const Key("input_flightLogModal_fuelPrice")),
@@ -117,12 +123,16 @@ void main() async {
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
-      // FIXME this should fail on the locale of the test
+      // the separator of another locale is taken for the decimal one
       await tester.enterText(
         find.byKey(const Key("input_flightLogModal_fuelPrice")),
         "43,2",
       );
       await tester.pump();
+      expect(
+        _textOf(tester, const Key("input_flightLogModal_fuelPrice")),
+        '43.2',
+      );
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
 
@@ -148,12 +158,14 @@ void main() async {
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
+      // letters never make it into the field in the first place
       await tester.enterText(
         find.byKey(const Key("input_flightLogModal_fuel")),
         "ABC",
       );
       await tester.pump();
-      expect(tester.state<FormState>(find.byType(Form)).validate(), false);
+      expect(_textOf(tester, const Key("input_flightLogModal_fuel")), '');
+      expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
       await tester.enterText(
         find.byKey(const Key("input_flightLogModal_fuel")),
@@ -183,12 +195,13 @@ void main() async {
       await tester.pump();
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
 
-      // FIXME this should fail on the locale of the test
+      // the separator of another locale is taken for the decimal one
       await tester.enterText(
         find.byKey(const Key("input_flightLogModal_fuel")),
         "43,2",
       );
       await tester.pump();
+      expect(_textOf(tester, const Key("input_flightLogModal_fuel")), '43.2');
       expect(tester.state<FormState>(find.byType(Form)).validate(), true);
     });
 
@@ -254,7 +267,127 @@ void main() async {
       );
     });
   });
+
+  group('Fuel numbers are read the same in every locale', () {
+    const fuelKey = Key("input_flightLogModal_fuel");
+    const fuelPriceKey = Key("input_flightLogModal_fuelPrice");
+
+    FlightLogItem emptyItem() => FlightLogItem(
+      null,
+      DateTime.now(),
+      'Sara',
+      'Fly@localhost',
+      'Fly@localhost',
+      1238,
+      1240,
+      null,
+      null,
+      null,
+    );
+
+    /// Runs [body] with the number locale of the app set to [locale].
+    void withNumberLocale(String locale) {
+      final previous = Intl.defaultLocale;
+      Intl.defaultLocale = locale;
+      addTearDown(() => Intl.defaultLocale = previous);
+    }
+
+    testWidgets('a dot typed in a comma locale is a decimal separator', (
+      tester,
+    ) async {
+      withNumberLocale('it');
+      await tester.pumpWidget(createSkeletonApp(emptyItem()));
+
+      await tester.enterText(find.byKey(fuelKey), "42.71");
+      await tester.enterText(find.byKey(fuelPriceKey), "106.78");
+      await tester.pump();
+
+      // the field holds what an italian would have typed
+      expect(_textOf(tester, fuelKey), '42,71');
+      expect(_textOf(tester, fuelPriceKey), '106,78');
+      expect(tester.state<FormState>(find.byType(Form)).validate(), true);
+    });
+
+    testWidgets('a comma typed in a dot locale is a decimal separator', (
+      tester,
+    ) async {
+      withNumberLocale('en_US');
+      await tester.pumpWidget(createSkeletonApp(emptyItem()));
+
+      await tester.enterText(find.byKey(fuelKey), "42,71");
+      await tester.enterText(find.byKey(fuelPriceKey), "106,78");
+      await tester.pump();
+
+      expect(_textOf(tester, fuelKey), '42.71');
+      expect(_textOf(tester, fuelPriceKey), '106.78');
+      expect(tester.state<FormState>(find.byType(Form)).validate(), true);
+    });
+
+    testWidgets('the saved flight carries the number that was typed', (
+      tester,
+    ) async {
+      withNumberLocale('it');
+      final service = MockFlightLogBookService();
+      final saved = <FlightLogItem>[];
+      when(
+        service.appendItem(any, requestId: anyNamed('requestId')),
+      ).thenAnswer((invocation) async {
+        final item = invocation.positionalArguments.first as FlightLogItem;
+        saved.add(item);
+        return item;
+      });
+
+      await tester.pumpWidget(createSkeletonApp(emptyItem(), service: service));
+
+      // a refuel of 42.71 litres for 106.78 euro, typed on a dot keyboard
+      await tester.enterText(find.byKey(fuelKey), "42.71");
+      await tester.enterText(find.byKey(fuelPriceKey), "106.78");
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('button_flightLogModal_save')));
+      await tester.pumpAndSettle();
+
+      expect(saved, hasLength(1));
+      // rounded to the decimals the log book keeps, not read as 4271
+      expect(saved.single.fuel, 42.7);
+      expect(saved.single.fuelPrice, 2.5);
+    });
+
+    testWidgets('the fuel of an existing flight shows in the locale', (
+      tester,
+    ) async {
+      withNumberLocale('it');
+      final item = FlightLogItem(
+        'id',
+        DateTime.now(),
+        'Sara',
+        'Fly@localhost',
+        'Fly@localhost',
+        1238,
+        1240,
+        42.7,
+        2.5,
+        null,
+      );
+      await tester.pumpWidget(createSkeletonApp(item));
+
+      expect(_textOf(tester, fuelKey), '42,7');
+      // the cost field holds the total, i.e. amount by price
+      expect(_textOf(tester, fuelPriceKey), '106,75');
+    });
+  });
 }
+
+/// The text the field marked with [key] holds.
+String _textOf(WidgetTester tester, Key key) => tester
+    .widget<EditableText>(
+      find.descendant(
+        of: find.byKey(key),
+        matching: find.byType(EditableText),
+        matchRoot: true,
+      ),
+    )
+    .controller
+    .text;
 
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
@@ -265,13 +398,15 @@ ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   when(appConfig.pilotName).thenReturn('Sara');
   when(appConfig.pilotNames).thenReturn(['Sara', 'Anna', 'John', 'Peter']);
   when(appConfig.hourmeterMultiplier).thenReturn(60);
+  when(appConfig.admin).thenReturn(true);
 
   // TODO stub some stuff
   return ChangeNotifierProvider<AppConfig>.value(value: appConfig);
 }
 
-Provider<FlightLogBookService> _provideFlightLogBookService() {
-  final service = MockFlightLogBookService();
+Provider<FlightLogBookService> _provideFlightLogBookService([
+  MockFlightLogBookService? service,
+]) {
   // TODO stub some stuff
-  return Provider.value(value: service);
+  return Provider.value(value: service ?? MockFlightLogBookService());
 }

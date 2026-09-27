@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -147,6 +148,85 @@ extension NumberFormatTryParse on NumberFormat {
     }
   }
 }
+
+/// Characters a keyboard might send as a decimal separator, whatever the locale
+/// it was configured for.
+const _kDecimalSeparators = <String>{
+  '.', // FULL STOP
+  ',', // COMMA
+  '\u066B', // ARABIC DECIMAL SEPARATOR
+  '\uFF0E', // FULLWIDTH FULL STOP
+  '\uFF0C', // FULLWIDTH COMMA
+};
+
+/// Keeps a decimal input field readable by the [NumberFormat] of a locale, no
+/// matter which keyboard the text comes from.
+///
+/// Digits are kept, anything that looks like a decimal separator becomes the
+/// separator of the locale, and everything else (letters, signs, spaces) is
+/// dropped. Only the first separator survives and a leading one gets a zero in
+/// front of it, so the field never holds a thousands separator to be mistaken
+/// for a decimal one (or the other way around).
+class DecimalTextInputFormatter extends TextInputFormatter {
+  /// Formats for [locale], or for the current locale when it is null.
+  DecimalTextInputFormatter([String? locale])
+    : decimalSeparator = decimalSeparatorOf(locale);
+
+  /// The separator the field is kept in, i.e. the one of its locale.
+  final String decimalSeparator;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final text = StringBuffer();
+    // where the caret is now, and where it lands once we dropped something
+    final caret = newValue.selection.end < 0
+        ? newValue.text.length
+        : newValue.selection.end;
+    var newCaret = caret;
+    var hasSeparator = false;
+
+    for (var i = 0; i < newValue.text.length; i++) {
+      final char = newValue.text[i];
+      if (_isDigit(char)) {
+        text.write(char);
+      } else if (!hasSeparator &&
+          (_kDecimalSeparators.contains(char) || char == decimalSeparator)) {
+        hasSeparator = true;
+        if (text.isEmpty) {
+          // a field starting with a separator is a number starting with zero
+          text.write('0');
+          if (i < caret) {
+            newCaret++;
+          }
+        }
+        text.write(decimalSeparator);
+      } else if (i < caret) {
+        // dropped before the caret, which moves back with it
+        newCaret--;
+      }
+    }
+
+    final result = text.toString();
+    return TextEditingValue(
+      text: result,
+      selection: TextSelection.collapsed(
+        offset: math.min(math.max(newCaret, 0), result.length),
+      ),
+    );
+  }
+
+  static bool _isDigit(String char) {
+    final code = char.codeUnitAt(0);
+    return code >= 0x30 && code <= 0x39;
+  }
+}
+
+/// The decimal separator of [locale], or of the current locale when it is null.
+String decimalSeparatorOf([String? locale]) =>
+    NumberFormat.decimalPattern(locale).symbols.DECIMAL_SEP;
 
 extension BuildContextExtension on BuildContext {
   Locale get locale {

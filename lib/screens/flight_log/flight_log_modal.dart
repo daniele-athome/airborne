@@ -36,26 +36,15 @@ const _kMaterialTotalFlightTimePadding = EdgeInsetsDirectional.only(
 const _kFuelDecimals = 1;
 const _kFuelPriceDecimals = 2;
 
-final _fuelPriceFormatter = NumberFormat("####0.00")..turnOffGrouping();
+NumberFormat _buildFuelPriceFormatter() =>
+    NumberFormat("####0.00")..turnOffGrouping();
 
 /// Parser can't truncate or round the parsed number, so we'll round it before save
-final _fuelFormatter = NumberFormat("####0.#")..turnOffGrouping();
+NumberFormat _buildFuelFormatter() =>
+    NumberFormat("####0.#")..turnOffGrouping();
 
-bool _validateFuel(String? fuelValue) =>
-    fuelValue == null ||
-    fuelValue.isEmpty ||
-    _fuelFormatter.tryParse(fuelValue) != null;
-
-bool _validateFuelPrice(String? fuelPriceValue) =>
-    fuelPriceValue == null ||
-    fuelPriceValue.isEmpty ||
-    _fuelPriceFormatter.tryParse(fuelPriceValue) != null;
-
-num _parseFuel(String text) =>
-    roundDouble(_fuelFormatter.parse(text), _kFuelDecimals);
-
-num _parseFuelPrice(String text) =>
-    roundDouble(_fuelPriceFormatter.parse(text), _kFuelPriceDecimals);
+bool _validateNumber(NumberFormat formatter, String? value) =>
+    value == null || value.isEmpty || formatter.tryParse(value) != null;
 
 class FlightLogModal extends StatefulWidget {
   const FlightLogModal(this.item, {super.key});
@@ -84,6 +73,11 @@ class _FlightLogModalState extends State<FlightLogModal> {
   late FlightLogBookService _service;
   late AppConfig _appConfig;
 
+  /// Number handling of the fuel fields, all bound to the current locale.
+  late final NumberFormat _fuelFormatter;
+  late final NumberFormat _fuelPriceFormatter;
+  late final DecimalTextInputFormatter _decimalInputFormatter;
+
   String? _pendingSaveRequestId;
   String? _pendingDeleteRequestId;
 
@@ -91,6 +85,9 @@ class _FlightLogModalState extends State<FlightLogModal> {
 
   @override
   void initState() {
+    _fuelFormatter = _buildFuelFormatter();
+    _fuelPriceFormatter = _buildFuelPriceFormatter();
+    _decimalInputFormatter = DecimalTextInputFormatter();
     _pilotName = widget.item.pilotName;
     _originController = TextEditingController(text: widget.item.origin);
     _destinationController = TextEditingController(
@@ -136,6 +133,18 @@ class _FlightLogModalState extends State<FlightLogModal> {
         ? _fuelPriceFormatter.format(widget.item.fuel! * widget.item.fuelPrice!)
         : '';
   }
+
+  bool _validateFuel(String? fuelValue) =>
+      _validateNumber(_fuelFormatter, fuelValue);
+
+  bool _validateFuelPrice(String? fuelPriceValue) =>
+      _validateNumber(_fuelPriceFormatter, fuelPriceValue);
+
+  num _parseFuel(String text) =>
+      roundDouble(_fuelFormatter.parse(text), _kFuelDecimals);
+
+  num _parseFuelPrice(String text) =>
+      roundDouble(_fuelPriceFormatter.parse(text), _kFuelPriceDecimals);
 
   /// Computes the total flight time from the hour meters value.
   /// Hour meters show hours in the integer part and hundredth of hours in the decimal part.
@@ -250,6 +259,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              inputFormatters: [_decimalInputFormatter],
               validator: (value) => !_validateFuel(value)
                   ? AppLocalizations.of(
                       context,
@@ -271,6 +281,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              inputFormatters: [_decimalInputFormatter],
               validator: (value) => !_validateFuelPrice(value)
                   ? AppLocalizations.of(
                       context,
@@ -446,6 +457,7 @@ class _FlightLogModalState extends State<FlightLogModal> {
             controller: _fuelController,
             // TODO cursorColor: widget.model.backgroundColor,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [_decimalInputFormatter],
             maxLines: 1,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
@@ -467,6 +479,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
               key: const Key("input_flightLogModal_fuelPrice"),
               textController: _fuelPriceController,
               currencySymbol: _appConfig.fuelPriceCurrency,
+              numberFormatter: _fuelPriceFormatter,
+              inputFormatter: _decimalInputFormatter,
             ),
           ),
         ),
@@ -902,11 +916,21 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
     this.onChanged,
     required this.currencySymbol,
     required this.textController,
+    required this.numberFormatter,
+    required this.inputFormatter,
   });
 
   final TextEditingController? textController;
   final void Function(num? value)? onChanged;
   final String currencySymbol;
+
+  /// Reads and writes the field in the current locale.
+  final NumberFormat numberFormatter;
+
+  /// Keeps the field readable by [numberFormatter].
+  final DecimalTextInputFormatter inputFormatter;
+
+  bool _validate(String? value) => _validateNumber(numberFormatter, value);
 
   @override
   Widget build(BuildContext context) {
@@ -914,13 +938,18 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
       controller: textController,
       // TODO cursorColor: widget.model.backgroundColor,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [inputFormatter],
       maxLines: 1,
       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-      onChanged: (value) => onChanged != null
-          ? onChanged!(
-              _validateFuelPrice(value) ? _parseFuelPrice(value) : null,
-            )
-          : {},
+      onChanged: (value) {
+        if (onChanged == null) {
+          return;
+        }
+        final parsed = numberFormatter.tryParse(value);
+        onChanged!(
+          parsed != null ? roundDouble(parsed, _kFuelPriceDecimals) : null,
+        );
+      },
       decoration: InputDecoration(
         border: InputBorder.none,
         // FIXME not using given currency symbol
@@ -928,7 +957,7 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
         hintText: AppLocalizations.of(context)!.flightLogModal_hint_fuel_cost,
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (value) => !_validateFuelPrice(value)
+      validator: (value) => !_validate(value)
           ? AppLocalizations.of(
               context,
             )!.flightLogModal_error_fuelCost_invalid_number

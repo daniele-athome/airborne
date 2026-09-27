@@ -66,6 +66,20 @@ void main() {
       expect(formatter.tryParse(''), isNull);
     });
 
+    test('decimalSeparatorOf reads the separator of a locale', () {
+      expect(decimalSeparatorOf('en'), '.');
+      expect(decimalSeparatorOf('it'), ',');
+      expect(decimalSeparatorOf('de_DE'), ',');
+      // not every locale uses an ASCII separator
+      expect(decimalSeparatorOf('fa'), '\u066B');
+    });
+
+    test('decimalSeparatorOf falls back to the current locale', () {
+      Intl.defaultLocale = 'it';
+      addTearDown(() => Intl.defaultLocale = null);
+      expect(decimalSeparatorOf(), ',');
+    });
+
     test('capitalize upper-cases the first character', () {
       expect('hello'.capitalize(), 'Hello');
       expect('Hello'.capitalize(), 'Hello');
@@ -74,6 +88,104 @@ void main() {
       // leading whitespace is trimmed first
       expect('  hello'.capitalize(), 'Hello');
       expect('1st'.capitalize(), '1st');
+    });
+  });
+
+  group('DecimalTextInputFormatter', () {
+    /// What the field holds after [text] was typed into it, with the caret at
+    /// [caret] (at the end of the text by default).
+    TextEditingValue typed(
+      DecimalTextInputFormatter formatter,
+      String text, {
+      int? caret,
+    }) => formatter.formatEditUpdate(
+      TextEditingValue.empty,
+      TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: caret ?? text.length),
+      ),
+    );
+
+    test('takes any separator for the one of its locale', () {
+      // whatever the keyboard sends, the field holds the locale separator
+      for (final separator in ['.', ',', '\u066B', '\uFF0E', '\uFF0C']) {
+        expect(
+          typed(DecimalTextInputFormatter('it'), '42${separator}71').text,
+          '42,71',
+          reason: 'separator ${separator.codeUnitAt(0).toRadixString(16)}',
+        );
+        expect(
+          typed(DecimalTextInputFormatter('en'), '42${separator}71').text,
+          '42.71',
+          reason: 'separator ${separator.codeUnitAt(0).toRadixString(16)}',
+        );
+      }
+    });
+
+    test('holds a non-ASCII separator too', () {
+      expect(
+        typed(DecimalTextInputFormatter('fa'), '42.71').text,
+        '42\u066B71',
+      );
+    });
+
+    test('follows the current locale when not given one', () {
+      Intl.defaultLocale = 'it';
+      addTearDown(() => Intl.defaultLocale = null);
+      expect(typed(DecimalTextInputFormatter(), '42.71').text, '42,71');
+    });
+
+    test('keeps the first separator only', () {
+      final formatter = DecimalTextInputFormatter('en');
+      // no grouping: the first separator is the decimal one, the rest is gone
+      expect(typed(formatter, '1.234,56').text, '1.23456');
+      expect(typed(formatter, '1,2,3').text, '1.23');
+      expect(typed(formatter, '42..').text, '42.');
+    });
+
+    test('drops anything that is not a digit or a separator', () {
+      final formatter = DecimalTextInputFormatter('en');
+      expect(typed(formatter, 'ABC').text, '');
+      expect(typed(formatter, '4a2').text, '42');
+      // no negative amounts of fuel
+      expect(typed(formatter, '-42').text, '42');
+      expect(typed(formatter, '42 ').text, '42');
+      expect(typed(formatter, '').text, '');
+    });
+
+    test('a leading separator starts a number with zero', () {
+      final formatter = DecimalTextInputFormatter('it');
+      final value = typed(formatter, ',5');
+      expect(value.text, '0,5');
+      // the caret moved along with the inserted zero
+      expect(value.selection.baseOffset, 3);
+    });
+
+    test('keeps the caret where the text it follows ends up', () {
+      final formatter = DecimalTextInputFormatter('it');
+
+      // typing a dot in the middle of 4271 keeps the caret after it
+      final separator = typed(formatter, '42.71', caret: 3);
+      expect(separator.text, '42,71');
+      expect(separator.selection.baseOffset, 3);
+
+      // a dropped character takes the caret back with it
+      final dropped = typed(formatter, '4a2', caret: 2);
+      expect(dropped.text, '42');
+      expect(dropped.selection.baseOffset, 1);
+
+      // the caret never lands outside the text
+      final cleared = typed(formatter, 'abc', caret: 3);
+      expect(cleared.text, '');
+      expect(cleared.selection.baseOffset, 0);
+    });
+
+    test('what it holds is what the locale formatter reads back', () {
+      for (final locale in ['en', 'it', 'de_DE', 'fr']) {
+        final formatter = NumberFormat("####0.00", locale)..turnOffGrouping();
+        final text = typed(DecimalTextInputFormatter(locale), '42.71').text;
+        expect(formatter.tryParse(text), 42.71, reason: locale);
+      }
     });
   });
 

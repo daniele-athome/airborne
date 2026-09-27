@@ -8,7 +8,7 @@ function onChange(event){
     const sheetName = sheet.getName();
     if (sheetName.startsWith('Flight log') || sheetName.startsWith('Registro voli')) {
         if (sheet.getRange('L1').getValue() != 'LOCKED') {
-            const range = sheet.getRange("A:J");
+            const range = sheet.getRange("A:K");
             range.sort([{ column : 4 }, { column : 5 }]);
         }
 

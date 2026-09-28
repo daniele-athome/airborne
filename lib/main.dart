@@ -133,13 +133,13 @@ Future<void> main() async {
         ),
         ProxyProvider3<
           AppConfig,
-          GoogleServiceAccountService,
+          GoogleServiceAccountService?,
           MetadataService?,
           ActivitiesService?
         >(
           update: (_, appConfig, account, metadataService, _) {
             _log.finest('build activities');
-            return appConfig.hasFeature('activities')
+            return appConfig.hasFeature('activities') && account != null
                 ? ActivitiesService(
                     account,
                     metadataService,

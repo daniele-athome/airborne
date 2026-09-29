@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/airborne/assets/css/style.css?v=" media="screen" type="text/css">
+    <link rel="stylesheet" href="/airborne/assets/css/print.css" media="print" type="text/css">
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+<!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Airborne backend setup | Airborne</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Airborne backend setup" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Aircraft Management" />
+<meta name="twitter:description" property="og:description" content="Aircraft Management" />
+<link rel="canonical" href="/airborne/backend.html" />
+<meta property="og:url" content="/airborne/backend.html" />
+<meta property="og:site_name" content="Airborne" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Airborne backend setup" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Aircraft Management","headline":"Airborne backend setup","url":"/airborne/backend.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/airborne/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <a href="/airborne/">
+          <h1>Airborne</h1>
+        </a>
+        <h2>Aircraft Management</h2>
+        
+        
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1 id="backend-setup">Backend setup</h1>
+
+<p>All backend data is stored on the Google cloud.</p>
+
+<h1 id="data-overview">Data overview</h1>
+
+<h2 id="bookings">Bookings</h2>
+
+<p>Flight bookings are stored in a <strong>Google Calendar</strong>, having the pilot name as event title and the notes as event description.<br />
+Events are created by the app with UTC time zone: the app will use the aircraft time zone to correct them.</p>
+
+<h2 id="log-book">Log book</h2>
+
+<p>The log book uses a <strong>Google Sheet</strong> to store flights. The structure is very simple, see the Google Sheets template
+linked below.</p>
+
+<p>The log book is automatically sorted by start hour and end hour. There also some basic checks implemented using
+conditional formatting.</p>
+
+<h2 id="how-the-app-talks-to-the-sheets">How the app talks to the sheets</h2>
+
+<p>The app does <strong>not</strong> write to the spreadsheet directly. Every insert, edit, and deletion goes through a small
+Apps Script web app bound to the spreadsheet itself, whose source lives in <code class="language-plaintext highlighter-rouge">server/</code> in this repository.</p>
+
+<p>Two things follow from this that are visible in the sheet:</p>
+
+<ul>
+  <li>a <strong>stable id column</strong> (column <code class="language-plaintext highlighter-rouge">K</code> of the Flight log), because the sheet is re-sorted on every change and row numbers
+therefore do not identify a flight for longer than a few seconds;</li>
+  <li>the <strong>pilot tokens</strong> in the Metadata sheet, which is how the script knows who is calling.</li>
+</ul>
+
+<p>The script mediates the <strong>flight log only</strong>. Bookings are unaffected: they stay on Google Calendar, written directly by
+the app.</p>
+
+<p>The request and response format is described in <code class="language-plaintext highlighter-rouge">server/openapi.yaml</code>, which is the reference for anything talking to
+the deployment.</p>
+
+<h1 id="setup-a-new-aircraft">Setup a new aircraft</h1>
+
+<p>Here is what you need to do to setup a new aircraft.</p>
+
+<h1 id="google-cloud-setup-checklist">Google Cloud setup checklist</h1>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Create a Google account for management or use the account of one of the pilots to setup all of the following</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Sign up to Google Cloud Platform (free tier)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Enable APIs: Google Calendar, Google Sheets</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GCP: create API key with no application restriction and assign it APIs: Google Calendar, Google Sheets</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GCP: create service account and create (and download) a JSON key</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Create a new Google Calendar and assign write permissions to the service account and to all the pilots</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Create a new Google Sheet (see below) and assign write permissions to the service account and to all the pilots</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Deploy the backend script into that spreadsheet and issue one token per pilot (see below)</li>
+</ul>
+
+<h2 id="google-sheet-setup">Google Sheet setup</h2>
+
+<p>You can start by copying the following template:</p>
+
+<p>https://docs.google.com/spreadsheets/d/1ZpfdoaEA5rJmFmulG8tzBqBGPJdy5sk4j6B_8P776Qo/copy</p>
+
+<p>The template includes all necessary sheets. The script that drives it is <strong>not</strong> part of the template any more: it
+lives in <code class="language-plaintext highlighter-rouge">server/</code> in this repository and is deployed into the spreadsheet, as described in the next section.</p>
+
+<h3 id="sheet-structure">Sheet structure</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Sheet</th>
+      <th>Columns</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Flight log</td>
+      <td><code class="language-plaintext highlighter-rouge">A:J</code> data, <code class="language-plaintext highlighter-rouge">K</code> id, <code class="language-plaintext highlighter-rouge">L</code> flight time</td>
+      <td>sorted by start and end hour</td>
+    </tr>
+    <tr>
+      <td>Activities</td>
+      <td>(work in progress)</td>
+      <td>(work in progress)</td>
+    </tr>
+    <tr>
+      <td>Metadata</td>
+      <td><code class="language-plaintext highlighter-rouge">A:B</code> key/value</td>
+      <td>versions, counters, pilot tokens</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The Flight log columns are fixed and positional: <code class="language-plaintext highlighter-rouge">A</code> creation timestamp, <code class="language-plaintext highlighter-rouge">B</code> date, <code class="language-plaintext highlighter-rouge">C</code> pilot name, <code class="language-plaintext highlighter-rouge">D</code> start hour,
+<code class="language-plaintext highlighter-rouge">E</code> end hour, <code class="language-plaintext highlighter-rouge">F</code> origin, <code class="language-plaintext highlighter-rouge">G</code> destination, <code class="language-plaintext highlighter-rouge">H</code> fuel, <code class="language-plaintext highlighter-rouge">I</code> fuel price, <code class="language-plaintext highlighter-rouge">J</code> notes, <code class="language-plaintext highlighter-rouge">K</code> stable id. The script rewrites the
+whole row on every change and addresses the columns by position, so <strong>do not reorder or insert columns</strong>.</p>
+
+<p>Column <strong>K</strong> holds a stable id, assigned by the script and never reused. Do not remove it, do not reorder it, and do
+not fill it by hand: it is what identifies a flight for the app. The ids are ten lowercase characters starting with a
+letter, e.g. <code class="language-plaintext highlighter-rouge">ab12cd34ef</code> — the leading letter is what stops the spreadsheet from reading an id back as a number,
+which would make the row unfindable.</p>
+
+<p>The Metadata sheet holds these keys:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Key</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">flight_log.hash</code>, <code class="language-plaintext highlighter-rouge">activities.hash</code></td>
+      <td>version number, changes at every modification</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">flight_log.count</code>, <code class="language-plaintext highlighter-rouge">activities.count</code></td>
+      <td>number of rows</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">token.&lt;pilot name&gt;</code></td>
+      <td>that pilot’s token, stored as the app sends it</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">role.&lt;pilot name&gt;</code></td>
+      <td><code class="language-plaintext highlighter-rouge">pilot</code>, or <code class="language-plaintext highlighter-rouge">admin</code> to also edit other pilots’ entries</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Of these the script writes only <code class="language-plaintext highlighter-rouge">flight_log.hash</code>, which it bumps after every change it makes; it assigns flight ids
+itself, so there is no <code class="language-plaintext highlighter-rouge">next_id</code> counter to keep any more. The <code class="language-plaintext highlighter-rouge">count</code> keys are <code class="language-plaintext highlighter-rouge">COUNTA</code> formulas that the spreadsheet
+keeps up to date on its own.</p>
+
+<h2 id="backend-script-setup">Backend script setup</h2>
+
+<p>The script is bound to the spreadsheet and can only reach that one document: its manifest requests
+<code class="language-plaintext highlighter-rouge">spreadsheets.currentonly</code>, so even though it runs with your account’s identity it cannot touch any other
+spreadsheet you own. Every aircraft therefore has its own copy and its own deployment URL.</p>
+
+<ol>
+  <li>Open the spreadsheet → Extensions → Apps Script. Note the script id from Project Settings.</li>
+  <li>
+    <p>Push the sources from this repository:</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>server
+<span class="c"># put the script id in .clasp.json</span>
+npx clasp login
+npx clasp push
+</code></pre></div>    </div>
+
+    <p>From then on use <code class="language-plaintext highlighter-rouge">./deploy.sh</code>, which pushes and redeploys in one step: see <code class="language-plaintext highlighter-rouge">server/README.md</code>.</p>
+  </li>
+  <li>
+    <p>In Project Settings → Script Properties, add:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Required</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">METADATA_SHEET_NAME</code></td>
+          <td>yes</td>
+          <td><code class="language-plaintext highlighter-rouge">Metadata</code></td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">FLIGHT_LOG_SHEET_NAME</code></td>
+          <td>yes</td>
+          <td><code class="language-plaintext highlighter-rouge">Flight log</code> (or <code class="language-plaintext highlighter-rouge">Registro voli</code>)</td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">NO_PILOT_NAME</code></td>
+          <td>no</td>
+          <td>the maintenance pilot name, if you use one</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>There is no trigger to add. This script has no <code class="language-plaintext highlighter-rouge">onChange</code> function: every sort and every version bump happens
+inside the write it belongs to, so a change typed directly into the spreadsheet triggers neither — the next change
+made through the app puts both right.</li>
+  <li>Deploy → New deployment → Web app. Access and identity are already set in the manifest
+(execute as the owner, reachable by anyone with the URL). Keep the deployment id: redeploying <strong>the same one</strong> is
+what keeps the URL stable for apps already installed.</li>
+  <li>
+    <p>Check it answers, without any token:</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-L</span> <span class="s2">"https://script.google.com/macros/s/&lt;deployment id&gt;/exec"</span>
+</code></pre></div>    </div>
+
+    <p>A JSON response means the deployment is reachable; it reports the build the deployment was made from and the
+protocol versions it speaks. An HTML page means the access setting is wrong and callers are being sent to a login
+page.</p>
+  </li>
+</ol>
+
+<h3 id="pilot-tokens">Pilot tokens</h3>
+
+<p>Each pilot gets their own token, which goes in their copy of the aircraft archive as <code class="language-plaintext highlighter-rouge">script_token</code>. The script
+compares what the app sends against the Metadata sheet exactly as stored, so the two have to be the same string:</p>
+
+<ul>
+  <li>generate a long random value per pilot — 64 hexadecimal characters is a good shape, and it must be unguessable;</li>
+  <li>add a <code class="language-plaintext highlighter-rouge">token.&lt;pilot name&gt;</code> row in the Metadata sheet with that value;</li>
+  <li>add the matching <code class="language-plaintext highlighter-rouge">role.&lt;pilot name&gt;</code> row, without which the token is refused;</li>
+  <li>put the same value in that pilot’s archive.</li>
+</ul>
+
+<p>The value in the sheet <strong>is</strong> the credential, not a verifier for it: whoever can read the Metadata sheet can act as
+any pilot. Give read access to the spreadsheet only to people you would hand every pilot’s token to.</p>
+
+<p>To revoke a pilot, delete their row: it takes effect on their next request.</p>
+
+<h2 id="aircraft-definition-file">Aircraft definition file</h2>
+
+<p>The definition file contains all information about your aircraft, as well as the credentials to access the calendar and
+the spreadsheet.</p>
+
+<blockquote>
+  <p>Comments are only for documentation purposes and are not supported by the app! Please <strong>remove them</strong> before creating
+the zip file!</p>
+</blockquote>
+
+<div class="language-json5 highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="c">// Gives administrative access to the user. Administrators can edit everything, even entries created by other people.</span><span class="w">
+  </span><span class="nl">"admin"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Internal ID of the aircraft. It's recommended to use the call sign in lowercase, without the hyphen.</span><span class="w">
+  </span><span class="nl">"aircraft_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a1234"</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Aircraft call sign.</span><span class="w">
+  </span><span class="nl">"callsign"</span><span class="p">:</span><span class="w"> </span><span class="s2">"A-1234"</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Google Docs information.</span><span class="w">
+  </span><span class="nl">"backend_info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="c">// URL of the backend script deployment (ends with /exec).</span><span class="w">
+    </span><span class="c">// Required for the flight log and the journal.</span><span class="w">
+    </span><span class="nl">"script_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://script.google.com/macros/s/.../exec"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Token of the pilot this archive is for. Each pilot gets their own archive.</span><span class="w">
+    </span><span class="nl">"script_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// JSON-escaped string of the service account JSON file.</span><span class="w">
+    </span><span class="nl">"google_api_service_account"</span><span class="p">:</span><span class="w"> </span><span class="s2">"{...}"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// API key for accessing Google services.</span><span class="w">
+    </span><span class="nl">"google_api_key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// ID of the Google Calendar used for booking flights.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the app for booking flights.</span><span class="w">
+    </span><span class="nl">"google_calendar_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"...@group.calendar.google.com"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Enables the flight log. The sheet itself is resolved by the backend script.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the flight log.</span><span class="w">
+    </span><span class="nl">"flightlog_enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Spreadsheet ID of the Google Sheets document for the flight log.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the flight log.</span><span class="w">
+    </span><span class="nl">"flightlog_spreadsheet_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Actual sheet name - within the spreadsheet - for the flight log</span><span class="w">
+    </span><span class="c">// Remove the line if not using the flight log.</span><span class="w">
+    </span><span class="nl">"flightlog_sheet_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Flight log"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Spreadsheet ID of the Google Sheets document for the journal.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the journal.</span><span class="w">
+    </span><span class="nl">"activities_spreadsheet_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Actual sheet name - within the spreadsheet - for the journal.</span><span class="w">
+    </span><span class="c">// Remove the line if not using the journal.</span><span class="w">
+    </span><span class="nl">"activities_sheet_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Activities"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Spreadsheet ID of the Google Sheets document for the metadata table.</span><span class="w">
+    </span><span class="nl">"metadata_spreadsheet_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Actual sheet name - within the spreadsheet - for the metadata table.</span><span class="w">
+    </span><span class="nl">"metadata_sheet_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Metadata"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="c">// Name of the (fake) pilot when registering a maintenance flight or engine start.</span><span class="w">
+  </span><span class="nl">"no_pilot_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"(maintenance)"</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Name of the pilots.</span><span class="w">
+  </span><span class="nl">"pilot_names"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"Mike"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"John"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Claudia"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Anna"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"Simon"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="c">// URL to the documents archive of the aircraft.</span><span class="w">
+  </span><span class="nl">"documents_archive"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://..."</span><span class="p">,</span><span class="w">
+  </span><span class="c">// Hangar location information.</span><span class="w">
+  </span><span class="nl">"location"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fly Berlin"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">52.8844253</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">12.7143166</span><span class="p">,</span><span class="w">
+    </span><span class="c">// This timezone will be used when booking flights in the calendar.</span><span class="w">
+    </span><span class="nl">"timezone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Europe/Berlin"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Live weather information. Remove the line if none available.</span><span class="w">
+    </span><span class="nl">"weather_live"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.earthtv.com/en/webcam/berlin-brandenburger-tor"</span><span class="p">,</span><span class="w">
+    </span><span class="c">// Weather forecast information. Remove the line if none available.</span><span class="w">
+    </span><span class="nl">"weather_forecast"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.bbc.com/weather/2950159"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="aircraft-data-file">Aircraft data file</h2>
+
+<p>There is a <a href="https://daniele-athome.github.io/airborne/aircraft-tool/">nice web tool to build an aircraft data file</a> (BETA);
+if the tool doesn’t work you can proceed with the manual process.</p>
+
+<p>Create a zip file with the following:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">aircraft.json</code></li>
+  <li><code class="language-plaintext highlighter-rouge">avatar-&lt;name&gt;.jpg</code> files with picture of all pilots (names must match the ones in aircraft definition file, <strong>but all lowercase</strong>)</li>
+  <li><code class="language-plaintext highlighter-rouge">aircraft.jpg</code> with a picture of your aircraft</li>
+</ul>
+
+<blockquote>
+  <p>Since <code class="language-plaintext highlighter-rouge">script_token</code> identifies the pilot, you need <strong>one archive per pilot</strong>, each with that pilot’s token.
+Everything else in the archive is identical.</p>
+</blockquote>
+
+<p>You can then serve the zip file from anywhere you like, as long as it has a publicly accessible HTTPS URL, either
+without authentication or with HTTP Basic authentication (the app supports no other authentication method).</p>
+
+<blockquote>
+  <p>When using HTTP Basic authentication, you will need to type “username:password” in the password field during aircraft
+configuration in the app.</p>
+</blockquote>
+
+        </section>
+
+        <aside id="sidebar">
+          
+
+          
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  </body>
+</html>

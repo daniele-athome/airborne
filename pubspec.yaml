@@ -28,6 +28,7 @@ dependencies:
   archive: 4.3.0
   auto_size_text: 3.0.0
   collection: 1.19.1
+  # cannot upgrade yet because of flutter_platform_widgets
   cupertino_calendar_picker: 2.2.6
   cupertino_icons: 1.0.9
   flutter:

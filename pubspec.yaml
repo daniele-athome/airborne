@@ -35,7 +35,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_platform_widgets: 10.0.1
-  fluttertoast: 10.0.0
+  fluttertoast: 10.0.1
   googleapis: 17.0.0
   googleapis_auth: 2.3.4
   http: 1.6.0
@@ -44,15 +44,15 @@ dependencies:
   json_schema: 5.2.2
   logging: 1.3.0
   material_segmented_control: 5.0.1
-  package_info_plus: 10.2.1
+  package_info_plus: 10.2.2
   path: 1.9.1
   path_provider: 2.1.6
   provider: 6.1.5+1
   shared_preferences: 2.5.5
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 34.2.9
-  syncfusion_localizations: 34.2.9
-  syncfusion_flutter_core: 34.2.9
+  syncfusion_flutter_calendar: 35.1.37
+  syncfusion_localizations: 35.1.37
+  syncfusion_flutter_core: 35.1.37
   timeline_tile: 2.0.0
   timezone: 0.11.1
   url_launcher: 6.3.2

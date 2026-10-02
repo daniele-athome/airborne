@@ -35,7 +35,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_platform_widgets: 10.0.1
-  fluttertoast: 10.0.1
+  # pinned: 10.0.1 migrated the Android plugin to the Kotlin DSL and still sets
+  # targetSdk in defaultConfig, which AGP 9 removed from library modules
+  # (https://github.com/PonnamKarthik/FlutterToast/blob/master/android/build.gradle.kts).
+  fluttertoast: 10.0.0
   googleapis: 17.0.0
   googleapis_auth: 2.3.4
   http: 1.6.0

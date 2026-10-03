@@ -1,46 +1,15 @@
 PODS:
   - Flutter (1.0.0)
-  - fluttertoast (0.0.2):
-    - Flutter
-  - integration_test (0.0.1):
-    - Flutter
-  - package_info_plus (0.4.5):
-    - Flutter
-  - shared_preferences_foundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
-  - url_launcher_ios (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
-  - integration_test (from `.symlinks/plugins/integration_test/ios`)
-  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  fluttertoast:
-    :path: ".symlinks/plugins/fluttertoast/ios"
-  integration_test:
-    :path: ".symlinks/plugins/integration_test/ios"
-  package_info_plus:
-    :path: ".symlinks/plugins/package_info_plus/ios"
-  shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  url_launcher_ios:
-    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
-  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
-  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
-  shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
-  url_launcher_ios: bb13df5870e8c4234ca12609d04010a21be43dfa
+  Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
 
 PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
 

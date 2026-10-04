@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.0.0](https://github.com/daniele-athome/airborne/compare/v1.9.1...v2.0.0) (2026-10-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* Google Apps Script API backend
+
+### Features
+
+* Google Apps Script API backend ([3af1250](https://github.com/daniele-athome/airborne/commit/3af1250f44d1e38329087c10e52383d72155c7ca))
+* **server:** automatic generation of ID in flight log sheet ([98a1f76](https://github.com/daniele-athome/airborne/commit/98a1f765ef986710fc8757ba51eaa168b1063e93))
+
+
+### Bug Fixes
+
+* fix about screen updating with new information after refreshing aircraft data ([4410802](https://github.com/daniele-athome/airborne/commit/4410802f9b757fae53b3af42e28ffc3f8a2f147d))
+* fix error on logout ([1f5cd75](https://github.com/daniele-athome/airborne/commit/1f5cd7509877f02697c00ce0957ed29538233b83))
+* fix lists skipping pages on error ([8c3672b](https://github.com/daniele-athome/airborne/commit/8c3672b5dc55aae680ef2d2eca01b420119fb687))
+* **flight-log:** fix fuel price input accepting wrong decimal separators ([f85b5c1](https://github.com/daniele-athome/airborne/commit/f85b5c151f06c1a057869daa6eb2f89b897ea821))
+* handle format errors gracefully ([7a87a4c](https://github.com/daniele-athome/airborne/commit/7a87a4c890fec35400af59b29c9382b763edbc55))
+* handle malformed error responses gracefully ([39a6aa8](https://github.com/daniele-athome/airborne/commit/39a6aa82d638fbb463f7c71463a511ac491e1ee5))
+* propagate CupertinoTheme to date/time pickers ([35c2b27](https://github.com/daniele-athome/airborne/commit/35c2b27845654f33e8e35d6844bbd5b4028e5552))
+* proper safety checks on aircraft configuration ([defe062](https://github.com/daniele-athome/airborne/commit/defe06264af0eb210eed472c9a607ec4d2f78192))
+* properly dispose of allocated resources ([8bcc94b](https://github.com/daniele-athome/airborne/commit/8bcc94b4c59eb2c6c50fed0fe567b8152af83a73))
+* **server:** fix autosort ([a8c3151](https://github.com/daniele-athome/airborne/commit/a8c31516842ea84ab0eece343fe2c5806ee53e29))
+
 ## [1.9.1](https://github.com/daniele-athome/airborne/compare/v1.9.0...v1.9.1) (2026-03-29)
 
 

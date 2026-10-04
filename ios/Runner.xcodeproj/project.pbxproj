@@ -464,7 +464,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = it.casaricci.airborne;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development it.casaricci.airborne";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development it.casaricci.airborne";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development it.casaricci.airborne 1791129447";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -499,7 +499,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = it.casaricci.airborne;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore it.casaricci.airborne";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore it.casaricci.airborne";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore it.casaricci.airborne 1791129548";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

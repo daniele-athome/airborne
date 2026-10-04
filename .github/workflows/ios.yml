@@ -23,8 +23,7 @@ env:
   flutter_version: '3.47.6'
 
 jobs:
-  # Since Fastlane also builds, there is no way to split jobs without sacrificing build time
-  test-build-deploy:
+  test-build:
     # can't use macos-latest with Flutter 3.35.7: https://github.com/flutter/flutter/issues/176824
     runs-on: macos-15-intel
     steps:
@@ -87,9 +86,14 @@ jobs:
           ./.github/workflows/integration-tests.sh ${{ steps.launch-ios.outputs.udid }}
 
       - name: Build iOS application
+        if: github.ref_name != 'release'
         run: flutter build ios --no-pub --release --no-codesign
 
-      - name: Prepare for deploy
+      - name: Configure iOS application build
+        if: github.ref_name == 'release'
+        run: flutter build ios --no-pub --release --config-only
+
+      - name: Prepare for build
         if: github.ref_name == 'release'
         env:
           APPSTORE_APIKEY: ${{ secrets.IOS_APPSTORE_APIKEY }}
@@ -107,17 +111,66 @@ jobs:
         if: github.ref_name == 'release'
         run: |
           # custom version of fastlane: https://github.com/fastlane/fastlane/pull/22288
-          gem install specific_install -N 
+          gem install specific_install -N
           gem specific_install -l https://github.com/daniele-athome/fastlane.git -b stable
           # https://github.com/fastlane/fastlane/issues/29183#issuecomment-2567093826
           gem install abbrev mutex_m ostruct -N
 
-      - name: Build and deploy to App Store
+      - name: Build release for App Store
         if: github.ref_name == 'release'
         env:
           MATCH_APPSTORE_USERNAME: ${{ secrets.IOS_MATCH_APPSTORE_USERNAME }}
           MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
           MATCH_GIT_AUTHORIZATION: ${{ secrets.IOS_MATCH_GIT_AUTHORIZATION }}
+        run: |
+          cd ios
+          fastlane build_production
+
+      - name: Upload release artifact for deploy
+        if: github.ref_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa-release
+          path: build/ios/ipa/airborne.ipa
+
+  deploy:
+    needs: test-build
+    if: github.ref_name == 'release'
+    runs-on: macos-15-intel
+    steps:
+      - name: Switch to latest XCode
+        run: sudo xcode-select --switch /Applications/Xcode_26.3.app
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download deploy artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-ipa-release
+          path: build/ios/ipa
+
+      - name: Prepare for deploy
+        env:
+          APPSTORE_APIKEY: ${{ secrets.IOS_APPSTORE_APIKEY }}
+        run: |
+          cd ios
+          echo "${APPSTORE_APIKEY}" | base64 -d >fastlane/AuthKey.p8
+
+      - name: Setup Ruby environment
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      - name: Install Fastlane
+        run: |
+          # custom version of fastlane: https://github.com/fastlane/fastlane/pull/22288
+          gem install specific_install -N
+          gem specific_install -l https://github.com/daniele-athome/fastlane.git -b stable
+          # https://github.com/fastlane/fastlane/issues/29183#issuecomment-2567093826
+          gem install abbrev mutex_m ostruct -N
+
+      - name: Deploy to App Store
         run: |
           cd ios
           fastlane deploy_production

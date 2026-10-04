@@ -17,9 +17,11 @@ setup_travis
 
 default_platform(:ios)
 
+IPA_OUTPUT_DIRECTORY = "../build/ios/ipa"
+IPA_OUTPUT_NAME = "airborne.ipa"
+
 platform :ios do
-  desc "Push a new release build to the App Store"
-  lane :deploy_production do
+  private_lane :appstore_api_key do
     app_store_connect_api_key(
         key_id: "W5LZR27YRG",
         issuer_id: "e078f710-8cef-4b37-a9b4-67b1550dd0e5",
@@ -27,6 +29,11 @@ platform :ios do
         #duration: 1200, # optional (maximum 1200)
         in_house: false
     )
+  end
+
+  desc "Build a signed release for the App Store"
+  lane :build_production do
+    appstore_api_key
     sync_code_signing(
         type: "appstore",
         git_url: "https://github.com/daniele-athome/airborne-deploy.git",
@@ -35,8 +42,18 @@ platform :ios do
         # https://github.com/fastlane/fastlane/issues/29431
         force_legacy_encryption: true,
     )
-    build_app(scheme: "Runner")
+    build_app(
+        scheme: "Runner",
+        output_directory: IPA_OUTPUT_DIRECTORY,
+        output_name: IPA_OUTPUT_NAME,
+    )
+  end
+
+  desc "Push a release build previously made by build_production to the App Store"
+  lane :deploy_production do
+    appstore_api_key
     upload_to_app_store(
+        ipa: File.join(IPA_OUTPUT_DIRECTORY, IPA_OUTPUT_NAME),
         force: true,
         submit_for_review: true,
         submission_information: {
@@ -50,5 +67,11 @@ platform :ios do
         skip_screenshots: false,
         overwrite_screenshots: true
     )
+  end
+
+  desc "Build and push a new release build to the App Store"
+  lane :build_and_deploy_production do
+    build_production
+    deploy_production
   end
 end

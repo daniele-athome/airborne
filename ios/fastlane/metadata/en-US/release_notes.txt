@@ -1,2 +1,2 @@
-* fix flight time calculation
-* exclude all-day events from calendar
+* fix fuel price input accepting wrong decimal separators
+* several more bugfixes

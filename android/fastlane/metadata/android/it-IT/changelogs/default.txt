@@ -1,2 +1,2 @@
-* fix calcolo tempo di volo
-* escludi eventi giornalieri dal calendario
+* il campo prezzo carburante ora gestisce correttamente i separatori decimali
+* correzione di svariati bug

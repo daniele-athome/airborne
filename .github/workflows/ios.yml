@@ -31,7 +31,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_26.3.app
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Calculating hash of Flutter patches for the cache key
         id: patches-hash
@@ -142,7 +142,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_26.3.app
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download deploy artifact
         uses: actions/download-artifact@v4

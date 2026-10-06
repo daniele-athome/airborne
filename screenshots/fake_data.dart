@@ -12,11 +12,10 @@ import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:airborne/services/activities_services.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:airborne/services/flight_log_services.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
@@ -216,13 +215,13 @@ class MainNavigationApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppConfig>(
       builder: (context, appConfig, child) => PlatformApp(
+        // ignore: deprecated_member_use
+        builder: (ctx, child) => MaterialUiCompatibilityBridge(child: child!),
         onGenerateTitle: (BuildContext context) =>
             AppLocalizations.of(context)!.appName,
         localizationsDelegates: const [
           AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+          ...GlobalMaterialLocalizations.delegates,
           SfGlobalLocalizations.delegate,
         ],
         supportedLocales: AppLocalizations.supportedLocales,

@@ -3,8 +3,8 @@ import 'dart:ui' show instantiateImageCodec;
 
 import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/aircraft_data.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;

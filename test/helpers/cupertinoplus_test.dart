@@ -1,7 +1,7 @@
 import 'package:airborne/helpers/cupertinoplus.dart';
 import 'package:airborne/helpers/utils.dart';
 import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/app.dart';

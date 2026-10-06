@@ -22,3 +22,4 @@ linter:
     prefer_relative_imports: true
     use_key_in_widget_constructors: true
     always_declare_return_types: true
+    migrate_design_widgets: true

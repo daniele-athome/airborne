@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:airborne/helpers/digit_display.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/app.dart';

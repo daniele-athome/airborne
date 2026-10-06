@@ -1,9 +1,8 @@
 import 'package:airborne/generated/intl/app_localizations.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -14,9 +13,7 @@ const kTestPlatforms = [TargetPlatform.android, TargetPlatform.iOS];
 /// Same delegates as `MyApp`, minus the syncfusion one which no helper needs.
 const List<LocalizationsDelegate<dynamic>> kTestLocalizationsDelegates = [
   AppLocalizations.delegate,
-  GlobalMaterialLocalizations.delegate,
-  GlobalWidgetsLocalizations.delegate,
-  GlobalCupertinoLocalizations.delegate,
+  ...GlobalMaterialLocalizations.delegates,
 ];
 
 /// Wraps [home] in a localized [PlatformApp], rendered as Material or Cupertino
@@ -36,6 +33,8 @@ Widget createTestApp({
     initialPlatform: platform,
     builder: (context) {
       final Widget app = PlatformApp(
+        // ignore: deprecated_member_use
+        builder: (ctx, child) => MaterialUiCompatibilityBridge(child: child!),
         localizationsDelegates: kTestLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: locale,

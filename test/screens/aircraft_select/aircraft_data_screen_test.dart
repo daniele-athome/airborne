@@ -2,21 +2,20 @@ import 'package:airborne/generated/intl/app_localizations.dart';
 import 'package:airborne/helpers/config.dart';
 import 'package:airborne/helpers/utils.dart';
 import 'package:airborne/screens/aircraft_select/aircraft_data_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
 import '../../generate_mocks.mocks.dart';
 
 void main() {
   Widget createSkeletonApp() => MaterialApp(
+    // ignore: deprecated_member_use
+    builder: (ctx, child) => MaterialUiCompatibilityBridge(child: child!),
     localizationsDelegates: const [
       AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
+      ...GlobalMaterialLocalizations.delegates,
     ],
     locale: const Locale('en'),
     home: MultiProvider(

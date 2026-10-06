@@ -4,7 +4,7 @@ import 'package:airborne/helpers/googleapis.dart';
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/flight_log/flight_log_list.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';

@@ -11,10 +11,10 @@ locales:
 
 devices:
   ios:
-    iPhone 16 Pro Max:
+    iPhone 17 Pro Max:
       orientation:
         - Portrait
-    iPad Pro 13-inch (M4):
+    iPad Pro 13-inch (M5):
       orientation:
         # FIXME doesn't work yet - LandscapeLeft
         - Portrait

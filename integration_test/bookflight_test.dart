@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:googleapis/calendar/v3.dart' as gapi_calendar;
 import 'package:airborne/main.dart' as app;
 import 'package:airborne/screens/book_flight/book_flight_modal.dart';

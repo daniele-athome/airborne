@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
@@ -39,13 +38,13 @@ class _MyAppState extends State<MyApp> {
     _log.finest('MAIN-BUILD');
     final AppConfig appConfig = Provider.of<AppConfig>(context, listen: false);
     return PlatformApp(
+      // ignore: deprecated_member_use
+      builder: (ctx, child) => MaterialUiCompatibilityBridge(child: child!),
       onGenerateTitle: (BuildContext context) =>
           AppLocalizations.of(context)!.appName,
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
         SfGlobalLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,

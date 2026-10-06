@@ -21,21 +21,24 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 2.0.0+32
 
 environment:
-  sdk: ">=3.10.0 <4.0.0"
+  sdk: ">=3.13.0 <4.0.0"
 
 dependencies:
   adaptive_dialog: 2.8.3
   archive: 4.3.0
   auto_size_text: 3.0.0
   collection: 1.19.1
-  # cannot upgrade yet because of flutter_platform_widgets
-  cupertino_calendar_picker: 2.2.6
-  cupertino_icons: 1.0.9
+  cupertino_calendar_picker: 3.0.0
+  cupertino_icons: 2.0.0
+  cupertino_ui: 1.1.1
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_platform_widgets: 10.0.1
+  flutter_platform_widgets:
+    git:
+      url: https://github.com/daniele-athome/flutter_platform_widgets.git
+      ref: 96a1a375549c3e01c6a817357953df0df9b0c332
   fluttertoast: 10.0.2
   googleapis: 17.0.0
   googleapis_auth: 2.3.4
@@ -45,6 +48,7 @@ dependencies:
   json_schema: 5.2.2
   logging: 1.3.0
   material_segmented_control: 5.0.1
+  material_ui: 1.5.0
   package_info_plus: 10.2.2
   path: 1.9.1
   path_provider: 2.1.6
@@ -79,7 +83,7 @@ dev_dependencies:
   screenshots:
     git:
       url: https://github.com/daniele-athome/screenshots.git
-      ref: 9b22b11566463e5b730fe9049da7e400e659a870
+      ref: 7a645bb4094d8ce26943d4b9cda9c76082a091d6
   test: any
   url_launcher_platform_interface: any
 

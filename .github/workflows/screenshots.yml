@@ -44,10 +44,12 @@ jobs:
       - name: Install tools
         run: sudo apt-get update && sudo apt-get install -y imagemagick yq
 
-      - name: Calculating hash of Flutter patches for the cache key
+      - name: Calculating hash of patches for the cache keys
         id: patches-hash
         run: |
-          find ./.github/workflows/patches -type f -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print "FLUTTER_PATCHES_HASH=" $1}' >> $GITHUB_OUTPUT
+          patches=./.github/workflows/patches
+          echo "FLUTTER_PATCHES_HASH=$(find $patches/flutter -type f -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "DEPS_PATCHES_HASH=$(find $patches -type f -not -path "$patches/flutter/*" -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v2
@@ -56,15 +58,17 @@ jobs:
           flutter-version: ${{ env.flutter_version }}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ steps.patches-hash.outputs.FLUTTER_PATCHES_HASH }}"
+          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-${{ hashFiles('pubspec.lock') }}-${{ steps.patches-hash.outputs.DEPS_PATCHES_HASH }}"
 
       - name: Patch Flutter
         if: steps.flutter-action.outputs.CACHE-HIT != 'true'
-        run: |
-          git apply "${{ github.workspace }}/.github/workflows/patches/0001-Workaround-for-wrong-list-divider-margin-119895.patch"
-        working-directory: ${{ env.FLUTTER_ROOT }}
+        run: ./.github/workflows/patch-flutter.sh
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Patch dependencies
+        run: ./.github/workflows/patch-deps.sh
 
       - name: Building generated source code
         run: dart run build_runner build
@@ -128,19 +132,21 @@ jobs:
     strategy:
       matrix:
         device:
-          - "iPhone 16 Pro Max"
-          - "iPad Pro 13-inch (M4)"
+          - "iPhone 17 Pro Max"
+          - "iPad Pro 13-inch (M5)"
     steps:
       - name: Switch to latest XCode
-        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+        run: sudo xcode-select --switch /Applications/Xcode_26.3.app
 
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Calculating hash of Flutter patches for the cache key
+      - name: Calculating hash of patches for the cache keys
         id: patches-hash
         run: |
-          find ./.github/workflows/patches -type f -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print "FLUTTER_PATCHES_HASH=" $1}' >> $GITHUB_OUTPUT
+          patches=./.github/workflows/patches
+          echo "FLUTTER_PATCHES_HASH=$(find $patches/flutter -type f -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "DEPS_PATCHES_HASH=$(find $patches -type f -not -path "$patches/flutter/*" -print0 | sort -zV | xargs -0 sha1sum | sha1sum | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Setup Flutter environment
         uses: subosito/flutter-action@v2
@@ -149,18 +155,20 @@ jobs:
           flutter-version: ${{ env.flutter_version }}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ steps.patches-hash.outputs.FLUTTER_PATCHES_HASH }}"
+          pub-cache-key: "flutter-pub-:os:-:channel:-:version:-:arch:-${{ hashFiles('pubspec.lock') }}-${{ steps.patches-hash.outputs.DEPS_PATCHES_HASH }}"
 
       - name: Patch Flutter
         if: steps.flutter-action.outputs.CACHE-HIT != 'true'
-        run: |
-          git apply "${{ github.workspace }}/.github/workflows/patches/0001-Workaround-for-wrong-list-divider-margin-119895.patch"
-        working-directory: ${{ env.FLUTTER_ROOT }}
+        run: ./.github/workflows/patch-flutter.sh
 
       - name: Install tools
         run: brew install imagemagick ios-deploy
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Patch dependencies
+        run: ./.github/workflows/patch-deps.sh
 
       - name: Building generated source code
         run: dart run build_runner build

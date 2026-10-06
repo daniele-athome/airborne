@@ -221,20 +221,20 @@ packages:
     dependency: "direct main"
     description:
       name: cupertino_calendar_picker
-      sha256: "91a717b990d2c602c0be84a8c1e584eea69fae92dad7b3259d019e1b40e10a54"
+      sha256: ac19bea89fbb363f3f6e4b19b5abe05c693e7f35f63f50c1032924ff999ce2a6
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.6"
+    version: "3.0.0"
   cupertino_icons:
     dependency: "direct main"
     description:
       name: cupertino_icons
-      sha256: "41e005c33bd814be4d3096aff55b1908d419fde52ca656c8c47719ec745873cd"
+      sha256: b7cc2390aac296c083bea762859413eb1cf5b630c70e0c7e4d831018f762a8b2
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.9"
+    version: "2.0.0"
   cupertino_ui:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: cupertino_ui
       sha256: c23816577a1280cff409e989541767887011f8f1d8c1863a794ed308af46f2a9
@@ -331,11 +331,12 @@ packages:
   flutter_platform_widgets:
     dependency: "direct main"
     description:
-      name: flutter_platform_widgets
-      sha256: aa110ef638076831d060047911a62810d02b4695db58e7682b716c4c4eee65bc
-      url: "https://pub.dev"
-    source: hosted
-    version: "10.0.1"
+      path: "."
+      ref: "96a1a375549c3e01c6a817357953df0df9b0c332"
+      resolved-ref: "96a1a375549c3e01c6a817357953df0df9b0c332"
+      url: "https://github.com/daniele-athome/flutter_platform_widgets.git"
+    source: git
+    version: "10.0.0"
   flutter_staggered_grid_view:
     dependency: transitive
     description:
@@ -629,7 +630,7 @@ packages:
     source: hosted
     version: "5.0.1"
   material_ui:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: material_ui
       sha256: "32d98f11cf5942a095a8c3e01b03e4de3b17941437713dcf36b1088fb62e23d2"
@@ -888,8 +889,8 @@ packages:
     dependency: "direct dev"
     description:
       path: "."
-      ref: "9b22b11566463e5b730fe9049da7e400e659a870"
-      resolved-ref: "9b22b11566463e5b730fe9049da7e400e659a870"
+      ref: "7a645bb4094d8ce26943d4b9cda9c76082a091d6"
+      resolved-ref: "7a645bb4094d8ce26943d4b9cda9c76082a091d6"
       url: "https://github.com/daniele-athome/screenshots.git"
     source: git
     version: "3.1.2"

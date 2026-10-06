@@ -5,15 +5,14 @@ import 'package:airborne/helpers/config.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/flight_log/flight_log_list.dart';
 import 'package:airborne/services/flight_log_services.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-import '../../golden_config.dart';
 import '../../generate_mocks.mocks.dart';
+import '../../golden_config.dart';
 
 void main() async {
   const locale = Locale('en');
@@ -27,11 +26,11 @@ void main() async {
         Provider.value(value: flightLogService),
       ],
       child: MaterialApp(
+        // ignore: deprecated_member_use
+        builder: (ctx, child) => MaterialUiCompatibilityBridge(child: child!),
         localizationsDelegates: const [
           AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+          ...GlobalMaterialLocalizations.delegates,
         ],
         locale: locale,
         home: RepaintBoundary(

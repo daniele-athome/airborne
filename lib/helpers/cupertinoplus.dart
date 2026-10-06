@@ -1,6 +1,6 @@
 import 'package:cupertino_calendar_picker/cupertino_calendar_picker.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'utils.dart';
 

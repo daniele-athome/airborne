@@ -107,6 +107,7 @@ jobs:
           EOF
 
       - name: Run screenshots tests
+        timeout-minutes: 30
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: '${{ matrix.device.api_level }}'
@@ -208,6 +209,7 @@ jobs:
           shutdown_after_job: true
 
       - name: Run screenshots tests
+        timeout-minutes: 30
         run: |
           flutter doctor
           flutter devices

@@ -227,7 +227,7 @@ jobs:
       TARGET_BRANCH: ci/screenshots-update
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup git repository
         run: |

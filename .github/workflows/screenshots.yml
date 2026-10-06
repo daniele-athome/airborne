@@ -134,6 +134,9 @@ jobs:
         device:
           - "iPhone 17 Pro Max"
           - "iPad Pro 13-inch (M5)"
+        locale:
+          - en_US
+          - it
     steps:
       - name: Switch to latest XCode
         run: sudo xcode-select --switch /Applications/Xcode_26.3.app
@@ -189,8 +192,7 @@ jobs:
           staging: ./.screenshots
           
           locales:
-            - en-US
-            - it
+            - ${{ matrix.locale }}
 
           devices:
             ios:
@@ -208,6 +210,7 @@ jobs:
           shutdown_after_job: true
 
       - name: Run screenshots tests
+        timeout-minutes: 15
         run: |
           flutter doctor
           flutter devices
@@ -216,8 +219,8 @@ jobs:
       - name: Archive screenshots
         uses: actions/upload-artifact@v7
         with:
-          name: 'ios-screenshots-${{ matrix.device }}'
-          path: './ios/fastlane/screenshots/*/${{ matrix.device }}-*.png'
+          name: 'ios-screenshots-${{ matrix.device }}-${{ matrix.locale }}'
+          path: './ios/fastlane/screenshots/${{ matrix.locale }}/${{ matrix.device }}-*.png'
 
   pull_request:
     name: Create pull request

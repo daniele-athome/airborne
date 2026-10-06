@@ -201,7 +201,7 @@ jobs:
           EOF
 
       - name: Launch iOS simulator
-        uses: futureware-tech/simulator-action@v4
+        uses: futureware-tech/simulator-action@v6
         with:
           model: '${{ matrix.device }}'
           wait_for_boot: true

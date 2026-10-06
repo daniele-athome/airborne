@@ -121,7 +121,7 @@ jobs:
             ~/.pub-cache/bin/screenshots -c ./screenshots.yaml
 
       - name: Archive screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'android-screenshots-${{ env.AVD_NAME }}'
           path: './android/fastlane/metadata/android/*/images/*/${{ matrix.device.avd_name }}-*.png'
@@ -214,7 +214,7 @@ jobs:
           ~/.pub-cache/bin/screenshots -c ./screenshots.yaml
 
       - name: Archive screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 'ios-screenshots-${{ matrix.device }}'
           path: './ios/fastlane/screenshots/*/${{ matrix.device }}-*.png'
@@ -241,14 +241,14 @@ jobs:
           rm -f ./ios/fastlane/screenshots/*/*.png
 
       - name: Download Android screenshot artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           path: ./android/fastlane/metadata/android
           pattern: android-screenshots-*
           merge-multiple: true
 
       - name: Download iOS screenshot artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           path: ./ios/fastlane/screenshots
           pattern: ios-screenshots-*

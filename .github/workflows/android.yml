@@ -118,7 +118,7 @@ jobs:
 
       - name: Upload release artifact for deploy
         if: github.ref_name == 'release'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-bundle-release
           path: build/app/outputs/bundle/release/app-release.aab
@@ -132,7 +132,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Download deploy artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: android-bundle-release
           path: build/app/outputs/bundle/release

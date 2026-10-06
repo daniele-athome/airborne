@@ -66,17 +66,14 @@ String getRelativeDateString(
   DateTime value,
 ) {
   if (value.isToday) {
-    return AppLocalizations.of(
-      context,
-    )!.relativeDate_today(formatter.format(value));
+    return AppLocalizations.of(context)!
+        .relativeDate_today(formatter.format(value));
   } else if (value.isYesterday) {
-    return AppLocalizations.of(
-      context,
-    )!.relativeDate_yesterday(formatter.format(value));
+    return AppLocalizations.of(context)!
+        .relativeDate_yesterday(formatter.format(value));
   } else if (value.isTomorrow) {
-    return AppLocalizations.of(
-      context,
-    )!.relativeDate_tomorrow(formatter.format(value));
+    return AppLocalizations.of(context)!
+        .relativeDate_tomorrow(formatter.format(value));
   } else {
     return formatter.format(value);
   }
@@ -85,17 +82,15 @@ String getRelativeDateString(
 String formatFlightTimeDuration(BuildContext context, Duration duration) {
   if (duration.inMinutes >= 60) {
     // format in minutes + hour/minutes
-    return AppLocalizations.of(
-      context,
-    )!.flightLogModal_text_totalFlightTime_extended(
-      duration.inMinutes,
-      duration.toFlightTimeSpec(),
-    );
+    return AppLocalizations.of(context)!
+        .flightLogModal_text_totalFlightTime_extended(
+          duration.inMinutes,
+          duration.toFlightTimeSpec(),
+        );
   } else {
     // format in minutes only
-    return AppLocalizations.of(
-      context,
-    )!.flightLogModal_text_totalFlightTime_simple(duration.inMinutes);
+    return AppLocalizations.of(context)!
+        .flightLogModal_text_totalFlightTime_simple(duration.inMinutes);
   }
 }
 

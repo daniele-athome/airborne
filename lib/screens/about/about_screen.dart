@@ -72,21 +72,17 @@ class _AboutScreenState extends State<AboutScreen> {
                   // TODO specialize exceptions (e.g. network errors, others...)
                   final String message;
                   if (error is TimeoutException) {
-                    message = AppLocalizations.of(
-                      context,
-                    )!.error_generic_network_timeout;
+                    message = AppLocalizations.of(context)!
+                        .error_generic_network_timeout;
                   } else if (error is AircraftBadFileException) {
-                    message = AppLocalizations.of(
-                      context,
-                    )!.addAircraft_error_bad_datafile_format;
+                    message = AppLocalizations.of(context)!
+                        .addAircraft_error_bad_datafile_format;
                   } else if (error is AircraftValidationException) {
-                    message = AppLocalizations.of(
-                      context,
-                    )!.addAircraft_error_invalid_datafile;
+                    message = AppLocalizations.of(context)!
+                        .addAircraft_error_invalid_datafile;
                   } else if (error is AircraftStoreException) {
-                    message = AppLocalizations.of(
-                      context,
-                    )!.addAircraft_error_storing;
+                    message = AppLocalizations.of(context)!
+                        .addAircraft_error_storing;
                   } else {
                     message = getExceptionMessage(error);
                   }
@@ -108,9 +104,8 @@ class _AboutScreenState extends State<AboutScreen> {
                 message: isCupertino(context)
                     ? null
                     : Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.addAircraft_dialog_downloading,
+                        AppLocalizations.of(context)!
+                            .addAircraft_dialog_downloading,
                       ),
               );
             },
@@ -226,9 +221,8 @@ class _AboutScreenState extends State<AboutScreen> {
                       const Icon(CupertinoIcons.sun_max_fill),
                       const SizedBox(width: 8.0),
                       Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.about_aircraft_location_weather_live,
+                        AppLocalizations.of(context)!
+                            .about_aircraft_location_weather_live,
                       ),
                     ],
                   ),
@@ -252,9 +246,8 @@ class _AboutScreenState extends State<AboutScreen> {
                       const Icon(CupertinoIcons.cloud_moon_rain_fill),
                       const SizedBox(width: 8.0),
                       Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.about_aircraft_location_weather_forecast,
+                        AppLocalizations.of(context)!
+                            .about_aircraft_location_weather_forecast,
                       ),
                     ],
                   ),
@@ -372,9 +365,8 @@ class _AboutScreenState extends State<AboutScreen> {
       subtitle: Text(AppLocalizations.of(context)!.about_aircraft_callsign),
       title: Text(
         _appConfig.currentAircraft!.callSign,
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
+        style: Theme.of(context).textTheme.titleLarge!
+            .copyWith(fontWeight: FontWeight.bold),
       ),
     ),
     ListTile(
@@ -409,9 +401,8 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 icon: const Icon(Icons.sunny),
                 label: Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.about_aircraft_location_weather_live,
+                  AppLocalizations.of(context)!
+                      .about_aircraft_location_weather_live,
                 ),
               ),
             ),
@@ -427,9 +418,8 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 icon: const Icon(Icons.wb_cloudy),
                 label: Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.about_aircraft_location_weather_forecast,
+                  AppLocalizations.of(context)!
+                      .about_aircraft_location_weather_forecast,
                 ),
               ),
             ),
@@ -448,9 +438,8 @@ class _AboutScreenState extends State<AboutScreen> {
           AppLocalizations.of(context)!.about_aircraft_documents_archive,
         ),
         subtitle: Text(
-          AppLocalizations.of(
-            context,
-          )!.about_aircraft_documents_archive_subtitle,
+          AppLocalizations.of(context)!
+              .about_aircraft_documents_archive_subtitle,
         ),
         onTap: () =>
             openUrl(context, _appConfig.currentAircraft!.documentsArchive!),

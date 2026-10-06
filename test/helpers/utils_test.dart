@@ -693,9 +693,8 @@ void main() {
 
     test('hides a socket failure behind a timeout', () async {
       final client = MockHttpClient();
-      when(
-        client.getUrl(any),
-      ).thenThrow(const SocketException('connection refused'));
+      when(client.getUrl(any))
+          .thenThrow(const SocketException('connection refused'));
       final provider = DownloadProvider(() => client);
 
       await expectLater(

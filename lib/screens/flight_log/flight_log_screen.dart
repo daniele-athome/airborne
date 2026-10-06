@@ -115,17 +115,14 @@ class _FlightLogScreenState extends State<FlightLogScreen>
 
         final String message;
         if (item == null) {
-          message = AppLocalizations.of(
-            context,
-          )!.flightLog_message_flight_added;
+          message = AppLocalizations.of(context)!
+              .flightLog_message_flight_added;
         } else if (result is DeletedFlightLogItem) {
-          message = AppLocalizations.of(
-            context,
-          )!.flightLog_message_flight_canceled;
+          message = AppLocalizations.of(context)!
+              .flightLog_message_flight_canceled;
         } else {
-          message = AppLocalizations.of(
-            context,
-          )!.flightLog_message_flight_updated;
+          message = AppLocalizations.of(context)!
+              .flightLog_message_flight_updated;
         }
         showToast(_fToast, message, const Duration(seconds: 2));
         // refresh list
@@ -191,9 +188,8 @@ class _FlightLogScreenState extends State<FlightLogScreen>
                         icon: Icon(
                           CupertinoIcons.add,
                           color: CupertinoColors.systemRed,
-                          semanticLabel: AppLocalizations.of(
-                            context,
-                          )!.button_logFlight,
+                          semanticLabel: AppLocalizations.of(context)!
+                              .button_logFlight,
                         ),
                         // TODO not ready yet
                         //color: CupertinoColors.systemRed,

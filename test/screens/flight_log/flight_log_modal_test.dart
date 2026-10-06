@@ -328,13 +328,12 @@ void main() async {
       withNumberLocale('it');
       final service = MockFlightLogBookService();
       final saved = <FlightLogItem>[];
-      when(
-        service.appendItem(any, requestId: anyNamed('requestId')),
-      ).thenAnswer((invocation) async {
-        final item = invocation.positionalArguments.first as FlightLogItem;
-        saved.add(item);
-        return item;
-      });
+      when(service.appendItem(any, requestId: anyNamed('requestId')))
+          .thenAnswer((invocation) async {
+            final item = invocation.positionalArguments.first as FlightLogItem;
+            saved.add(item);
+            return item;
+          });
 
       await tester.pumpWidget(createSkeletonApp(emptyItem(), service: service));
 
@@ -390,9 +389,8 @@ String _textOf(WidgetTester tester, Key key) => tester
 
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
-  when(
-    appConfig.getPilotAvatar(any),
-  ).thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
+  when(appConfig.getPilotAvatar(any))
+      .thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
   when(appConfig.fuelPriceCurrency).thenReturn('€');
   when(appConfig.pilotName).thenReturn('Sara');
   when(appConfig.pilotNames).thenReturn(['Sara', 'Anna', 'John', 'Peter']);

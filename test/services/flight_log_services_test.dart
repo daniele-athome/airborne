@@ -74,12 +74,10 @@ void main() {
       range: 'A2:J11',
       values: rows,
     );
-    when(
-      mockSheetsService.getRows('TEST', 'SHEET', 'A2:K3'),
-    ).thenAnswer((_) => Future.value(fakeRows));
-    when(
-      mockMetadataService.reload(),
-    ).thenAnswer((_) => Future.value(<String, String>{}));
+    when(mockSheetsService.getRows('TEST', 'SHEET', 'A2:K3'))
+        .thenAnswer((_) => Future.value(fakeRows));
+    when(mockMetadataService.reload())
+        .thenAnswer((_) => Future.value(<String, String>{}));
     when(mockMetadataService.get(any)).thenAnswer((_) => Future.value(null));
 
     final dateOnly = DateTime.utc(
@@ -120,9 +118,8 @@ void main() {
 
   test('fetch items (failure keeps the cursor)', () async {
     testService.lastId = 42;
-    when(
-      mockSheetsService.getRows('TEST', 'SHEET', 'A24:K43'),
-    ).thenAnswer((_) => Future.error(const SocketException('No network')));
+    when(mockSheetsService.getRows('TEST', 'SHEET', 'A24:K43'))
+        .thenAnswer((_) => Future.error(const SocketException('No network')));
 
     await expectLater(
       testService.fetchItems(),

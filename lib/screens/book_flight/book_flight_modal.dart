@@ -181,9 +181,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
               minLines: 3,
               maxLines: 3,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-              placeholder: AppLocalizations.of(
-                context,
-              )!.bookFlightModal_hint_notes,
+              placeholder: AppLocalizations.of(context)!
+                  .bookFlightModal_hint_notes,
             ),
           ],
         ),
@@ -199,9 +198,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
                       key: const Key('button_bookFlightModal_delete'),
                       onPressed: () => _onDelete(context),
                       child: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.bookFlightModal_button_delete,
+                        AppLocalizations.of(context)!
+                            .bookFlightModal_button_delete,
                         style: const TextStyle(
                           color: CupertinoColors.destructiveRed,
                         ),
@@ -281,9 +279,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: AppLocalizations.of(
-                context,
-              )!.bookFlightModal_hint_notes,
+              hintText: AppLocalizations.of(context)!
+                  .bookFlightModal_hint_notes,
             ),
           ),
         ),
@@ -359,9 +356,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
             material: (_, _) => MaterialIconButtonData(
-              tooltip: AppLocalizations.of(
-                context,
-              )!.bookFlightModal_button_delete,
+              tooltip: AppLocalizations.of(context)!
+                  .bookFlightModal_button_delete,
             ),
           ),
         );
@@ -394,9 +390,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
         if (_appConfig.pilotName != widget.event.pilotName) {
           showError(
             context,
-            AppLocalizations.of(
-              context,
-            )!.bookFlightModal_error_notOwnBooking_edit,
+            AppLocalizations.of(context)!
+                .bookFlightModal_error_notOwnBooking_edit,
           );
           return;
         }
@@ -404,12 +399,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
         if (_pilotName != widget.event.pilotName) {
           showConfirm(
             context: context,
-            text: AppLocalizations.of(
-              context,
-            )!.bookFlightModal_dialog_changePilot_message,
-            title: AppLocalizations.of(
-              context,
-            )!.bookFlightModal_dialog_changePilot_title,
+            text: AppLocalizations.of(context)!
+                .bookFlightModal_dialog_changePilot_message,
+            title: AppLocalizations.of(context)!
+                .bookFlightModal_dialog_changePilot_title,
             okCallback: () => _doSave(context),
           );
           return;
@@ -429,12 +422,10 @@ class _BookFlightModalState extends State<BookFlightModal> {
       if (startTime.isBefore(now) || endTime.isBefore(now)) {
         showConfirm(
           context: context,
-          text: AppLocalizations.of(
-            context,
-          )!.bookFlightModal_dialog_pastDateTime_message,
-          title: AppLocalizations.of(
-            context,
-          )!.bookFlightModal_dialog_pastDateTime_title,
+          text: AppLocalizations.of(context)!
+              .bookFlightModal_dialog_pastDateTime_message,
+          title: AppLocalizations.of(context)!
+              .bookFlightModal_dialog_pastDateTime_title,
           okCallback: () => _doSave(context),
         );
         return;
@@ -444,9 +435,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
         if (_appConfig.pilotName != _pilotName) {
           showError(
             context,
-            AppLocalizations.of(
-              context,
-            )!.bookFlightModal_error_bookingForOthers,
+            AppLocalizations.of(context)!
+                .bookFlightModal_error_bookingForOthers,
           );
           return;
         }
@@ -479,9 +469,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
           if (conflict) {
             if (context.mounted) {
               throw Exception(
-                AppLocalizations.of(
-                  context,
-                )!.bookFlightModal_error_timeConflict,
+                AppLocalizations.of(context)!
+                    .bookFlightModal_error_timeConflict,
               );
             } else {
               return Future.value(null);
@@ -503,9 +492,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
           final String message;
           // TODO specialize exceptions (e.g. network errors, others...)
           if (error is TimeoutException) {
-            message = AppLocalizations.of(
-              context,
-            )!.error_generic_network_timeout;
+            message = AppLocalizations.of(context)!
+                .error_generic_network_timeout;
           } else {
             message = getExceptionMessage(error);
           }
@@ -537,9 +525,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
       if (_appConfig.pilotName != widget.event.pilotName) {
         showError(
           context,
-          AppLocalizations.of(
-            context,
-          )!.bookFlightModal_error_notOwnBooking_delete,
+          AppLocalizations.of(context)!
+              .bookFlightModal_error_notOwnBooking_delete,
         );
         return;
       }
@@ -569,9 +556,8 @@ class _BookFlightModalState extends State<BookFlightModal> {
           final String message;
           // TODO specialize exceptions (e.g. network errors, others...)
           if (error is TimeoutException) {
-            message = AppLocalizations.of(
-              context,
-            )!.error_generic_network_timeout;
+            message = AppLocalizations.of(context)!
+                .error_generic_network_timeout;
           } else {
             message = getExceptionMessage(error);
           }

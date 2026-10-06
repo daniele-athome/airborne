@@ -50,9 +50,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
                           padding: EdgeInsets.zero,
                         ),
                         child: Text(
-                          AppLocalizations.of(
-                            context,
-                          )!.addAircraft_button_install,
+                          AppLocalizations.of(context)!
+                              .addAircraft_button_install,
                         ),
                       ),
                 ),
@@ -102,21 +101,17 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
                 // TODO specialize exceptions (e.g. network errors, others...)
                 final String message;
                 if (error is TimeoutException) {
-                  message = AppLocalizations.of(
-                    context,
-                  )!.error_generic_network_timeout;
+                  message = AppLocalizations.of(context)!
+                      .error_generic_network_timeout;
                 } else if (error is AircraftBadFileException) {
-                  message = AppLocalizations.of(
-                    context,
-                  )!.addAircraft_error_bad_datafile_format;
+                  message = AppLocalizations.of(context)!
+                      .addAircraft_error_bad_datafile_format;
                 } else if (error is AircraftValidationException) {
-                  message = AppLocalizations.of(
-                    context,
-                  )!.addAircraft_error_invalid_datafile;
+                  message = AppLocalizations.of(context)!
+                      .addAircraft_error_invalid_datafile;
                 } else if (error is AircraftStoreException) {
-                  message = AppLocalizations.of(
-                    context,
-                  )!.addAircraft_error_storing;
+                  message = AppLocalizations.of(context)!
+                      .addAircraft_error_storing;
                 } else {
                   message = getExceptionMessage(error);
                 }
@@ -137,9 +132,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             message: isCupertino(context)
                 ? null
                 : Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.addAircraft_dialog_downloading,
+                    AppLocalizations.of(context)!
+                        .addAircraft_dialog_downloading,
                   ),
           );
         },
@@ -191,9 +185,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
               protocols: ['http', 'https'],
               requireProtocol: true,
             )) {
-          return AppLocalizations.of(
-            context,
-          )!.addAircraft_error_invalid_address;
+          return AppLocalizations.of(context)!
+              .addAircraft_error_invalid_address;
         }
         return null;
       },
@@ -225,9 +218,8 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
             prefix: Text(
               AppLocalizations.of(context)!.addAircraft_hint_password,
             ),
-            placeholder: AppLocalizations.of(
-              context,
-            )!.addAircraft_hint_password,
+            placeholder: AppLocalizations.of(context)!
+                .addAircraft_hint_password,
             padding: const EdgeInsetsDirectional.fromSTEB(20.0, 6.0, 6.0, 6.0),
           ),
         );
@@ -265,41 +257,39 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
         children: _buildFormSections(context, appConfig),
       );
 
-  Widget _buildCupertinoForm(
-    BuildContext context,
-    AppConfig appConfig,
-  ) => ListView(
-    children: [
-      CupertinoFormSection.insetGrouped(
-        header: Text(
-          AppLocalizations.of(context)!.addAircraft_text1,
-          // FIXME workaround for https://github.com/flutter/flutter/issues/48438
-          // FIXME background color is not consistent with scaffold background color (of course)
-          style: CupertinoTheme.of(
-            context,
-          ).textTheme.textStyle.copyWith(fontSize: 18),
-        ),
-        footer: Row(
-          spacing: 6,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(CupertinoIcons.info_circle),
-            Expanded(
-              child: Text.rich(
-                formatMarkdown(AppLocalizations.of(context)!.addAircraft_text2),
-                // FIXME workaround for https://github.com/flutter/flutter/issues/48438
-                // FIXME background color is not consistent with scaffold background color (of course)
-                style: CupertinoTheme.of(
-                  context,
-                ).textTheme.textStyle.copyWith(fontSize: 16),
-              ),
+  Widget _buildCupertinoForm(BuildContext context, AppConfig appConfig) =>
+      ListView(
+        children: [
+          CupertinoFormSection.insetGrouped(
+            header: Text(
+              AppLocalizations.of(context)!.addAircraft_text1,
+              // FIXME workaround for https://github.com/flutter/flutter/issues/48438
+              // FIXME background color is not consistent with scaffold background color (of course)
+              style: CupertinoTheme.of(context).textTheme.textStyle
+                  .copyWith(fontSize: 18),
             ),
-          ],
-        ),
-        children: _buildFormSections(context, appConfig),
-      ),
-    ],
-  );
+            footer: Row(
+              spacing: 6,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(CupertinoIcons.info_circle),
+                Expanded(
+                  child: Text.rich(
+                    formatMarkdown(
+                      AppLocalizations.of(context)!.addAircraft_text2,
+                    ),
+                    // FIXME workaround for https://github.com/flutter/flutter/issues/48438
+                    // FIXME background color is not consistent with scaffold background color (of course)
+                    style: CupertinoTheme.of(context).textTheme.textStyle
+                        .copyWith(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+            children: _buildFormSections(context, appConfig),
+          ),
+        ],
+      );
 
   Widget _buildForm(BuildContext context, AppConfig appConfig) => Form(
     key: _formKey,

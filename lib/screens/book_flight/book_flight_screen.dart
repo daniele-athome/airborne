@@ -211,18 +211,17 @@ class BookFlightScreenState extends State<BookFlightScreen> {
         final mainDate = _visibleDates[_visibleDates.length ~/ 2];
         final year = mainDate.year;
         final month = mainDate.month;
-        _appBarTitle = DateFormat.yMMMM(
-          context.localeString,
-        ).format(DateTime(year, month)).capitalize();
+        _appBarTitle = DateFormat.yMMMM(context.localeString)
+            .format(DateTime(year, month))
+            .capitalize();
         break;
       case CalendarView.week:
         _appBarTitle =
             '${DateFormat.yMMMd(context.localeString).format(_visibleDates.reduce((a, b) => a.isBefore(b) ? a : b))} - ${DateFormat.yMMMd(context.localeString).format(_visibleDates.reduce((a, b) => a.isBefore(b) ? b : a))}';
         break;
       case CalendarView.day:
-        _appBarTitle = DateFormat.yMMMMd(
-          context.localeString,
-        ).format(_visibleDates[0]);
+        _appBarTitle = DateFormat.yMMMMd(context.localeString)
+            .format(_visibleDates[0]);
         break;
       default:
         throw UnsupportedError('Unsupported calendar view');
@@ -431,17 +430,14 @@ class BookFlightScreenState extends State<BookFlightScreen> {
       if (result != null && context.mounted) {
         final String message;
         if (event == null) {
-          message = AppLocalizations.of(
-            context,
-          )!.bookFlight_message_flight_added;
+          message = AppLocalizations.of(context)!
+              .bookFlight_message_flight_added;
         } else if (result is DeletedFlightBooking) {
-          message = AppLocalizations.of(
-            context,
-          )!.bookFlight_message_flight_canceled;
+          message = AppLocalizations.of(context)!
+              .bookFlight_message_flight_canceled;
         } else {
-          message = AppLocalizations.of(
-            context,
-          )!.bookFlight_message_flight_updated;
+          message = AppLocalizations.of(context)!
+              .bookFlight_message_flight_updated;
         }
         showToast(_fToast, message, const Duration(seconds: 2));
         _refresh(result, event == null);
@@ -712,9 +708,8 @@ class BookFlightScreenState extends State<BookFlightScreen> {
   }
 
   Widget _buildCalendar(BuildContext context, AppConfig appConfig) {
-    final firstDayOfWeekIndex = MaterialLocalizations.of(
-      context,
-    ).firstDayOfWeekIndex;
+    final firstDayOfWeekIndex = MaterialLocalizations.of(context)
+        .firstDayOfWeekIndex;
     return Theme(
       data: getBrightness(context) == Brightness.dark
           ? ThemeData.dark()

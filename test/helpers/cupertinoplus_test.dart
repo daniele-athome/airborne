@@ -34,9 +34,8 @@ void main() {
     testWidgets('is a shade darker than white in light mode', (tester) async {
       final context = await pumpCupertino(tester, const SizedBox.shrink());
 
-      final color = kCupertinoDialogScaffoldBackgroundColor(
-        context,
-      ).resolveFrom(context);
+      final color = kCupertinoDialogScaffoldBackgroundColor(context)
+          .resolveFrom(context);
       expect(color.toARGB32(), 0xFFF2F2F7);
     });
 
@@ -47,9 +46,8 @@ void main() {
         brightness: Brightness.dark,
       );
 
-      final color = kCupertinoDialogScaffoldBackgroundColor(
-        context,
-      ).resolveFrom(context);
+      final color = kCupertinoDialogScaffoldBackgroundColor(context)
+          .resolveFrom(context);
       expect(
         color.toARGB32(),
         CupertinoTheme.of(context).scaffoldBackgroundColor.toARGB32(),

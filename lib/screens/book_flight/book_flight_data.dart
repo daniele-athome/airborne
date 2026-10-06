@@ -62,9 +62,10 @@ class FlightBookingDataSource extends CalendarDataSource {
       // changed events
       changed.addAll(
         events.where((FlightBooking f) {
-          final FlightBooking? otherEvent =
-              appointments!.firstWhere((e) => e == f, orElse: () => null)
-                  as FlightBooking?;
+          final FlightBooking? otherEvent = appointments!.firstWhere(
+            (e) => e == f,
+            orElse: () => null,
+          ) as FlightBooking?;
           return otherEvent != null && !otherEvent.equals(f);
         }),
       );

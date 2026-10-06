@@ -68,18 +68,16 @@ class _ActivitiesListState extends State<ActivitiesList> {
 
   Widget firstPageErrorIndicator(BuildContext context, Object? error) =>
       FirstPageExceptionIndicator(
-        title: AppLocalizations.of(
-          context,
-        )!.activities_error_firstPageIndicator,
+        title: AppLocalizations.of(context)!
+            .activities_error_firstPageIndicator,
         message: getExceptionMessage(error),
         onTryAgain: _refresh,
       );
 
   Widget newPageErrorIndicator(BuildContext context, VoidCallback onRetry) =>
       NewPageErrorIndicator(
-        message: AppLocalizations.of(
-          context,
-        )!.activities_error_newPageIndicator,
+        message: AppLocalizations.of(context)!
+            .activities_error_newPageIndicator,
         onTap: onRetry,
       );
 
@@ -211,17 +209,15 @@ class _EntryListItem extends StatelessWidget {
           bgColor = Colors.amber;
           iconColor = Colors.white;
           icon = Icons.warning_amber_outlined;
-          text = AppLocalizations.of(
-            context,
-          )!.activities_activity_type_important;
+          text = AppLocalizations.of(context)!
+              .activities_activity_type_important;
           break;
         case ActivityType.critical:
           bgColor = Colors.red;
           iconColor = Colors.white;
           icon = Icons.block_outlined;
-          text = AppLocalizations.of(
-            context,
-          )!.activities_activity_type_critical;
+          text = AppLocalizations.of(context)!
+              .activities_activity_type_critical;
           break;
       }
     }
@@ -231,12 +227,10 @@ class _EntryListItem extends StatelessWidget {
         ? Colors.black
         : Colors.white;
     final textStyle = isCupertino(context)
-        ? CupertinoTheme.of(
-            context,
-          ).textTheme.textStyle.copyWith(fontSize: 14, color: dateTextColor)
-        : Theme.of(
-            context,
-          ).textTheme.bodyMedium!.copyWith(color: dateTextColor);
+        ? CupertinoTheme.of(context).textTheme.textStyle
+              .copyWith(fontSize: 14, color: dateTextColor)
+        : Theme.of(context).textTheme.bodyMedium!
+              .copyWith(color: dateTextColor);
 
     return Container(
       decoration: BoxDecoration(
@@ -282,12 +276,10 @@ class _EntryListItem extends StatelessWidget {
         ? Colors.black
         : Colors.white;
     final textStyle = isCupertino(context)
-        ? CupertinoTheme.of(
-            context,
-          ).textTheme.textStyle.copyWith(fontSize: 14, color: dateTextColor)
-        : Theme.of(
-            context,
-          ).textTheme.bodyMedium!.copyWith(color: dateTextColor);
+        ? CupertinoTheme.of(context).textTheme.textStyle
+              .copyWith(fontSize: 14, color: dateTextColor)
+        : Theme.of(context).textTheme.bodyMedium!
+              .copyWith(color: dateTextColor);
 
     return Container(
       decoration: BoxDecoration(

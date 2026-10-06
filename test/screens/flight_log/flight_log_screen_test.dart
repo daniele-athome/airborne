@@ -186,9 +186,8 @@ void main() async {
 
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
-  when(
-    appConfig.getPilotAvatar(any),
-  ).thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
+  when(appConfig.getPilotAvatar(any))
+      .thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
   when(appConfig.fuelPriceCurrency).thenReturn('€');
   when(appConfig.pilotName).thenReturn('Sara');
   when(appConfig.locationName).thenReturn('Fly@localhost');

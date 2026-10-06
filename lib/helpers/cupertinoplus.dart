@@ -35,9 +35,8 @@ const EdgeInsetsGeometry kDefaultCupertinoDateTimeFormRowPadding =
 PickerButtonDecoration kPickerButtonDecoration(BuildContext context) =>
     PickerButtonDecoration.withDynamicColor(
       context,
-      textStyle: CupertinoTheme.of(
-        context,
-      ).textTheme.textStyle.copyWith(fontSize: 17.0),
+      textStyle: CupertinoTheme.of(context).textTheme.textStyle
+          .copyWith(fontSize: 17.0),
     );
 
 /// Margin between form sections.

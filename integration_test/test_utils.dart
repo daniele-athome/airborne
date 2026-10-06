@@ -69,9 +69,8 @@ FlightLogItem randomFlightLogItem(int id) {
 }
 
 Interceptor mockGoogleAuthentication() {
-  return nock(
-      'https://oauth2.googleapis.com',
-    ).post('/token', (List<int> body, ContentType contentType) => true)
+  return nock('https://oauth2.googleapis.com')
+      .post('/token', (List<int> body, ContentType contentType) => true)
     ..persist()
     ..reply(
       200,

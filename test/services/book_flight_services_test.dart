@@ -45,9 +45,8 @@ void main() {
       items: [fakeEvent],
       timeZone: 'UTC',
     );
-    when(
-      mockCalendarService.listEvents("TEST", dtStart, dtEnd),
-    ).thenAnswer((_) => Future.value(fakeEvents));
+    when(mockCalendarService.listEvents("TEST", dtStart, dtEnd))
+        .thenAnswer((_) => Future.value(fakeEvents));
 
     final expectedEvent = FlightBooking(
       eventId,
@@ -122,9 +121,8 @@ void main() {
       description: null,
     );
     // TODO stub event parameter (needs custom ArgMatcher)
-    when(
-      mockCalendarService.insertEvent("TEST", any),
-    ).thenAnswer((_) => Future.value(fakeEvent));
+    when(mockCalendarService.insertEvent("TEST", any))
+        .thenAnswer((_) => Future.value(fakeEvent));
 
     final fakeBooking = FlightBooking(
       "NEWEVENT",
@@ -147,9 +145,8 @@ void main() {
       description: null,
     );
     // TODO stub event parameter (needs custom ArgMatcher)
-    when(
-      mockCalendarService.updateEvent("TEST", "NEWEVENT", any),
-    ).thenAnswer((_) => Future.value(fakeEvent));
+    when(mockCalendarService.updateEvent("TEST", "NEWEVENT", any))
+        .thenAnswer((_) => Future.value(fakeEvent));
 
     final fakeBooking = FlightBooking(
       "NEWEVENT",
@@ -164,9 +161,8 @@ void main() {
   test('delete booking', () async {
     final dtStart = DateTime.now();
     final dtEnd = DateTime.now();
-    when(
-      mockCalendarService.deleteEvent("TEST", "NEWEVENT"),
-    ).thenAnswer((_) => Future.value());
+    when(mockCalendarService.deleteEvent("TEST", "NEWEVENT"))
+        .thenAnswer((_) => Future.value());
 
     final fakeBooking = FlightBooking(
       "NEWEVENT",

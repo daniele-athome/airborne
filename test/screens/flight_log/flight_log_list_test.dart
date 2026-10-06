@@ -99,9 +99,8 @@ void main() async {
 
 ChangeNotifierProvider<AppConfig> _provideAppConfigForSampleAircraft() {
   final appConfig = MockAppConfig();
-  when(
-    appConfig.getPilotAvatar(any),
-  ).thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
+  when(appConfig.getPilotAvatar(any))
+      .thenReturn(const AssetImage('assets/images/nopilot_avatar.png'));
   when(appConfig.fuelPriceCurrency).thenReturn('€');
   // TODO stub some stuff
   return ChangeNotifierProvider<AppConfig>.value(value: appConfig);

@@ -209,15 +209,13 @@ class _FlightLogModalState extends State<FlightLogModal> {
           children: <Widget>[
             CupertinoHourFormRow(
               controller: _startHourController,
-              hintText: AppLocalizations.of(
-                context,
-              )!.flightLogModal_label_startHour,
+              hintText: AppLocalizations.of(context)!
+                  .flightLogModal_label_startHour,
             ),
             CupertinoHourFormRow(
               controller: _endHourController,
-              hintText: AppLocalizations.of(
-                context,
-              )!.flightLogModal_label_endHour,
+              hintText: AppLocalizations.of(context)!
+                  .flightLogModal_label_endHour,
             ),
           ],
         ),
@@ -251,9 +249,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
               key: const Key("input_flightLogModal_fuel"),
               controller: _fuelController,
               prefix: Text(
-                AppLocalizations.of(
-                  context,
-                )!.flightLogModal_label_fuel_cupertino,
+                AppLocalizations.of(context)!
+                    .flightLogModal_label_fuel_cupertino,
               ),
               textAlign: TextAlign.end,
               keyboardType: const TextInputType.numberWithOptions(
@@ -261,9 +258,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
               ),
               inputFormatters: [_decimalInputFormatter],
               validator: (value) => !_validateFuel(value)
-                  ? AppLocalizations.of(
-                      context,
-                    )!.flightLogModal_error_fuel_invalid_number
+                  ? AppLocalizations.of(context)!
+                        .flightLogModal_error_fuel_invalid_number
                   : null,
             ),
             // TODO convert to standalone form row widget (using a controller? Though material widget doesn't support it...)
@@ -271,11 +267,10 @@ class _FlightLogModalState extends State<FlightLogModal> {
               key: const Key("input_flightLogModal_fuelPrice"),
               controller: _fuelPriceController,
               prefix: Text(
-                AppLocalizations.of(
-                  context,
-                )!.flightLogModal_label_fuel_cost_cupertino(
-                  _appConfig.fuelPriceCurrency,
-                ),
+                AppLocalizations.of(context)!
+                    .flightLogModal_label_fuel_cost_cupertino(
+                      _appConfig.fuelPriceCurrency,
+                    ),
               ),
               textAlign: TextAlign.end,
               keyboardType: const TextInputType.numberWithOptions(
@@ -283,9 +278,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
               ),
               inputFormatters: [_decimalInputFormatter],
               validator: (value) => !_validateFuelPrice(value)
-                  ? AppLocalizations.of(
-                      context,
-                    )!.flightLogModal_error_fuelCost_invalid_number
+                  ? AppLocalizations.of(context)!
+                        .flightLogModal_error_fuelCost_invalid_number
                   : null,
             ),
           ],
@@ -302,9 +296,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
               minLines: 3,
               maxLines: 3,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-              placeholder: AppLocalizations.of(
-                context,
-              )!.flightLogModal_hint_notes,
+              placeholder: AppLocalizations.of(context)!
+                  .flightLogModal_hint_notes,
             ),
           ],
         ),
@@ -319,9 +312,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
                     child: CupertinoButton(
                       onPressed: () => _onDelete(context),
                       child: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.bookFlightModal_button_delete,
+                        AppLocalizations.of(context)!
+                            .bookFlightModal_button_delete,
                         style: const TextStyle(
                           color: CupertinoColors.destructiveRed,
                         ),
@@ -365,9 +357,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
         const Divider(height: 1.0, thickness: 1),
         HourListTile(
           controller: _startHourController,
-          hintText: AppLocalizations.of(
-            context,
-          )!.flightLogModal_label_startHour,
+          hintText: AppLocalizations.of(context)!
+              .flightLogModal_label_startHour,
           showIcon: true,
         ),
         HourListTile(
@@ -412,9 +403,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
-              labelText: AppLocalizations.of(
-                context,
-              )!.flightLogModal_label_origin,
+              labelText: AppLocalizations.of(context)!
+                  .flightLogModal_label_origin,
             ),
           ),
         ),
@@ -441,9 +431,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               border: InputBorder.none,
-              labelText: AppLocalizations.of(
-                context,
-              )!.flightLogModal_label_destination,
+              labelText: AppLocalizations.of(context)!
+                  .flightLogModal_label_destination,
             ),
           ),
         ),
@@ -468,9 +457,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => !_validateFuel(value)
-                ? AppLocalizations.of(
-                    context,
-                  )!.flightLogModal_error_fuel_invalid_number
+                ? AppLocalizations.of(context)!
+                      .flightLogModal_error_fuel_invalid_number
                 : null,
           ),
           trailing: SizedBox(
@@ -559,9 +547,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
             onPressed: () => _onDelete(context),
             icon: const Icon(Icons.delete_sharp),
             material: (_, _) => MaterialIconButtonData(
-              tooltip: AppLocalizations.of(
-                context,
-              )!.flightLogModal_button_delete,
+              tooltip: AppLocalizations.of(context)!
+                  .flightLogModal_button_delete,
             ),
           ),
         );
@@ -630,9 +617,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
         if (fuelCostValue.isEmpty) {
           showError(
             context,
-            AppLocalizations.of(
-              context,
-            )!.flightLogModal_error_invalid_fuelCost_empty,
+            AppLocalizations.of(context)!
+                .flightLogModal_error_invalid_fuelCost_empty,
           );
           return;
         }
@@ -658,9 +644,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
         if (_appConfig.pilotName != widget.item.pilotName) {
           showError(
             context,
-            AppLocalizations.of(
-              context,
-            )!.flightLogModal_error_notOwnFlight_edit,
+            AppLocalizations.of(context)!
+                .flightLogModal_error_notOwnFlight_edit,
           );
           return;
         }
@@ -671,30 +656,26 @@ class _FlightLogModalState extends State<FlightLogModal> {
               widget.item.pilotName == _appConfig.noPilotName) {
             showError(
               context,
-              AppLocalizations.of(
-                context,
-              )!.flightLogModal_error_alteringTestFlight,
+              AppLocalizations.of(context)!
+                  .flightLogModal_error_alteringTestFlight,
             );
             return;
           }
 
           final String message;
           if (_pilotName == _appConfig.noPilotName) {
-            message = AppLocalizations.of(
-              context,
-            )!.flightLogModal_dialog_changePilotNoPilot_message;
+            message = AppLocalizations.of(context)!
+                .flightLogModal_dialog_changePilotNoPilot_message;
           } else {
-            message = AppLocalizations.of(
-              context,
-            )!.flightLogModal_dialog_changePilot_message;
+            message = AppLocalizations.of(context)!
+                .flightLogModal_dialog_changePilot_message;
           }
 
           showConfirm(
             context: context,
             text: message,
-            title: AppLocalizations.of(
-              context,
-            )!.flightLogModal_dialog_changePilot_title,
+            title: AppLocalizations.of(context)!
+                .flightLogModal_dialog_changePilot_title,
             okCallback: () => _doSave(context),
           );
           return;
@@ -760,29 +741,23 @@ class _FlightLogModalState extends State<FlightLogModal> {
               final String message;
               // TODO specialize exceptions (e.g. network errors, others...)
               if (error is TimeoutException) {
-                message = AppLocalizations.of(
-                  context,
-                )!.error_generic_network_timeout;
+                message = AppLocalizations.of(context)!
+                    .error_generic_network_timeout;
               } else if (error is DataChangedException) {
-                message = AppLocalizations.of(
-                  context,
-                )!.flightLogModal_error_dataChanged;
+                message = AppLocalizations.of(context)!
+                    .flightLogModal_error_dataChanged;
               } else if (error is AccessDeniedException) {
                 message = _isEditing
-                    ? AppLocalizations.of(
-                        context,
-                      )!.flightLogModal_error_notOwnFlight_edit
-                    : AppLocalizations.of(
-                        context,
-                      )!.flightLogModal_error_loggingForOthers;
+                    ? AppLocalizations.of(context)!
+                          .flightLogModal_error_notOwnFlight_edit
+                    : AppLocalizations.of(context)!
+                          .flightLogModal_error_loggingForOthers;
               } else if (error is ItemNotFoundException) {
-                message = AppLocalizations.of(
-                  context,
-                )!.flightLogModal_error_itemNotFound;
+                message = AppLocalizations.of(context)!
+                    .flightLogModal_error_itemNotFound;
               } else if (error is InternalServerException) {
-                message = AppLocalizations.of(
-                  context,
-                )!.flightLogModal_error_unknown;
+                message = AppLocalizations.of(context)!
+                    .flightLogModal_error_unknown;
               } else {
                 message = getExceptionMessage(error);
               }
@@ -813,9 +788,8 @@ class _FlightLogModalState extends State<FlightLogModal> {
       if (_appConfig.pilotName != widget.item.pilotName) {
         showError(
           context,
-          AppLocalizations.of(
-            context,
-          )!.flightLogModal_error_notOwnFlight_delete,
+          AppLocalizations.of(context)!
+              .flightLogModal_error_notOwnFlight_delete,
         );
         return;
       }
@@ -848,21 +822,17 @@ class _FlightLogModalState extends State<FlightLogModal> {
           final String message;
           // TODO specialize exceptions (e.g. network errors, others...)
           if (error is TimeoutException) {
-            message = AppLocalizations.of(
-              context,
-            )!.error_generic_network_timeout;
+            message = AppLocalizations.of(context)!
+                .error_generic_network_timeout;
           } else if (error is AccessDeniedException) {
-            message = AppLocalizations.of(
-              context,
-            )!.flightLogModal_error_notOwnFlight_delete;
+            message = AppLocalizations.of(context)!
+                .flightLogModal_error_notOwnFlight_delete;
           } else if (error is ItemNotFoundException) {
-            message = AppLocalizations.of(
-              context,
-            )!.flightLogModal_error_itemNotFound;
+            message = AppLocalizations.of(context)!
+                .flightLogModal_error_itemNotFound;
           } else if (error is InternalServerException) {
-            message = AppLocalizations.of(
-              context,
-            )!.flightLogModal_error_unknown;
+            message = AppLocalizations.of(context)!
+                .flightLogModal_error_unknown;
           } else {
             message = getExceptionMessage(error);
           }
@@ -958,9 +928,8 @@ class _MaterialFuelPriceSelector extends StatelessWidget {
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (value) => !_validate(value)
-          ? AppLocalizations.of(
-              context,
-            )!.flightLogModal_error_fuelCost_invalid_number
+          ? AppLocalizations.of(context)!
+                .flightLogModal_error_fuelCost_invalid_number
           : null,
     );
   }

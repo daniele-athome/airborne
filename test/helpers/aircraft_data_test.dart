@@ -22,9 +22,8 @@ void main() {
     expect(File(path.join(directory.path, 'aircraft.jpg')).existsSync(), true);
     for (final name in kSamplePilotNames) {
       expect(
-        File(
-          path.join(directory.path, 'avatar-${name.toLowerCase()}.jpg'),
-        ).existsSync(),
+        File(path.join(directory.path, 'avatar-${name.toLowerCase()}.jpg'))
+            .existsSync(),
         true,
         reason: 'missing avatar for $name',
       );
@@ -44,38 +43,27 @@ void main() {
       expect(await reader.validate(), false);
     });
 
-    test(
-      'A zip file with an invalid aircraft JSON file should not pass validation',
-      () async {
-        final badZipFile = await createAircraftZipFile(
-          jsonData: '{3723;.-\\||}',
-        );
-        final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
-        expect(await reader.validate(), false);
-      },
-    );
+    test('A zip file with an invalid aircraft JSON file should not pass validation', () async {
+      final badZipFile = await createAircraftZipFile(jsonData: '{3723;.-\\||}');
+      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
+      expect(await reader.validate(), false);
+    });
 
-    test(
-      'A zip file with an aircraft JSON file missing stuff should not pass validation',
-      () async {
-        final badZipFile = await createAircraftZipFile(
-          jsonData: '{"aircraft_id":"a1234","callsign":"A-1234"}',
-        );
-        final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
-        expect(await reader.validate(), false);
-      },
-    );
+    test('A zip file with an aircraft JSON file missing stuff should not pass validation', () async {
+      final badZipFile = await createAircraftZipFile(
+        jsonData: '{"aircraft_id":"a1234","callsign":"A-1234"}',
+      );
+      final reader = AircraftDataReader(dataFile: badZipFile, urlFile: null);
+      expect(await reader.validate(), false);
+    });
 
-    test(
-      'A zip file with a valid aircraft JSON file but missing stuff should not pass validation',
-      () async {
-        final goodZipFile = await createAircraftZipFile(
-          jsonData: json.encode(aircraftMetadata()),
-        );
-        final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
-        expect(await reader.validate(), false);
-      },
-    );
+    test('A zip file with a valid aircraft JSON file but missing stuff should not pass validation', () async {
+      final goodZipFile = await createAircraftZipFile(
+        jsonData: json.encode(aircraftMetadata()),
+      );
+      final reader = AircraftDataReader(dataFile: goodZipFile, urlFile: null);
+      expect(await reader.validate(), false);
+    });
   });
 
   group('Testing aircraft data file opening', () {

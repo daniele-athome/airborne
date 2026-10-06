@@ -39,9 +39,9 @@ class PilotSelectList extends StatelessWidget {
                         Expanded(
                           child: Text(
                             e,
-                            style: CupertinoTheme.of(
-                              context,
-                            ).textTheme.textStyle,
+                            style: CupertinoTheme.of(context)
+                                .textTheme
+                                .textStyle,
                           ),
                         ),
                       ],

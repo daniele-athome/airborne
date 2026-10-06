@@ -539,9 +539,8 @@ void main() {
         ], requests: requests);
 
         unawaited(
-          invoke(
-            client,
-          ).catchError((_) => const ScriptResult(id: '', replayed: false)),
+          invoke(client)
+              .catchError((_) => const ScriptResult(id: '', replayed: false)),
         );
 
         async.elapse(const Duration(milliseconds: 999));

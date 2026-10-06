@@ -37,14 +37,11 @@ abstract class GoogleSheetsStoreService<T> {
   String? _dataHash;
 
   GoogleSheetsStoreService({
-    required GoogleServiceAccountService accountService,
-    required MetadataService? metadataService,
-    required String spreadsheetId,
-    required String sheetName,
-  }) : _accountService = accountService,
-       _metadataService = metadataService,
-       _spreadsheetId = spreadsheetId,
-       _sheetName = sheetName;
+    required this._accountService,
+    required this._metadataService,
+    required this._spreadsheetId,
+    required this._sheetName,
+  });
 
   @visibleForTesting
   set client(GoogleSheetsService client) {
@@ -184,12 +181,12 @@ abstract class GoogleSheetsStoreService<T> {
 abstract class GoogleAppsScriptStoreService<T>
     extends GoogleSheetsStoreService<T> {
   GoogleAppsScriptStoreService({
-    required ScriptClient scriptClient,
+    required this._scriptClient,
     required super.accountService,
     required super.metadataService,
     required super.spreadsheetId,
     required super.sheetName,
-  }) : _scriptClient = scriptClient;
+  });
 
   final ScriptClient _scriptClient;
 

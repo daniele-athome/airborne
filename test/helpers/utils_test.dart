@@ -859,8 +859,7 @@ class _FakeRequest extends Mock implements HttpClientRequest {
 
 /// A response handing out [body] once, enough for [DownloadProvider].
 class _FakeResponse extends Mock implements HttpClientResponse {
-  _FakeResponse({this.statusCode = 200, List<int> body = const []})
-    : _body = body;
+  _FakeResponse({this.statusCode = 200, this._body = const []});
 
   @override
   final int statusCode;

@@ -87,11 +87,9 @@ class ScriptResult {
 class ScriptClient {
   ScriptClient({
     required String url,
-    required String token,
-    required http.Client httpClient,
-  }) : _url = Uri.parse(url),
-       _token = token,
-       _httpClient = httpClient;
+    required this._token,
+    required this._httpClient,
+  }) : _url = Uri.parse(url);
 
   /// Must stay above the script's own lock timeout of 20s, or the client would
   /// give up while the server is still legitimately waiting its turn to write.

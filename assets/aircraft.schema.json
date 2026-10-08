@@ -9,6 +9,7 @@
     "aircraft_id",
     "callsign",
     "backend_info",
+    "pilot_name",
     "pilot_names",
     "location"
   ],
@@ -47,6 +48,10 @@
     },
     "no_pilot_name": {
       "description": "The name of the fake pilot used to indicate maintenance flights.",
+      "type": "string"
+    },
+    "pilot_name": {
+      "description": "The name of the pilot.",
       "type": "string"
     },
     "pilot_names": {

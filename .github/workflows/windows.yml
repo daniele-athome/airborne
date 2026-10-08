@@ -87,16 +87,18 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - name: Build Windows application (debug)
+        if: github.ref_name != 'release'
         run: flutter build windows --no-pub --debug
 
       - name: Archive debug build
-        if: github.ref_name == 'release'
+        if: github.ref_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           name: windows-bundle-debug
           path: build/windows/x64/runner/debug/
 
       - name: Build Windows application (release)
+        if: github.ref_name == 'release'
         run: flutter build windows --no-pub --release
 
       - name: Archive release build

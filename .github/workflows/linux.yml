@@ -88,16 +88,18 @@ jobs:
         run: xvfb-run ./.github/workflows/integration-tests.sh linux
 
       - name: Build Linux application (debug)
+        if: github.ref_name != 'release'
         run: flutter build linux --no-pub --debug
 
       - name: Archive debug build
-        if: github.ref_name == 'release'
+        if: github.ref_name != 'release'
         uses: actions/upload-artifact@v7
         with:
           name: linux-bundle-debug
           path: build/linux/x64/debug/bundle/
 
       - name: Build Linux application (release)
+        if: github.ref_name == 'release'
         run: flutter build linux --no-pub --release
 
       - name: Archive release build

@@ -201,6 +201,8 @@ the spreadsheet.
     // Actual sheet name - within the spreadsheet - for the metadata table.
     "metadata_sheet_name": "Metadata"
   },
+  // Name of the pilot owning this configuration credentials file.
+  "pilot_name": "Claudia",
   // Name of the (fake) pilot when registering a maintenance flight or engine start.
   "no_pilot_name": "(maintenance)",
   // Name of the pilots.

@@ -347,9 +347,7 @@ void main() {
       test('reloads the aircraft stored last time', () async {
         // what addAircraftDataFile leaves behind after an onboarding
         final zipFile = await createValidAircraftZipFile(
-          metadata: aircraftMetadata(
-            pilotName: 'Anna'
-          ),
+          metadata: aircraftMetadata(pilotName: 'Anna'),
         );
         final reader = AircraftDataReader(dataFile: zipFile, urlFile: null);
         await reader.open();
@@ -369,9 +367,7 @@ void main() {
       });
 
       test('cleans up after an aircraft it can no longer read', () async {
-        SharedPreferences.setMockInitialValues({
-          'currentAircraft': 'ghost',
-        });
+        SharedPreferences.setMockInitialValues({'currentAircraft': 'ghost'});
 
         final config = AppConfig();
         addTearDown(config.dispose);

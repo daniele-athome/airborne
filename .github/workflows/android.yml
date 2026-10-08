@@ -2,6 +2,9 @@ name: android
 
 on:
   push:
+    branches:
+      - master
+      - release
     paths-ignore:
       - README.md
       - 'docs/**'
@@ -20,6 +23,10 @@ on:
       - '.github/workflows/server.yml'
       - '.github/workflows/screenshots.yml'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'release' }}
 
 env:
   flutter_version: '3.47.6'

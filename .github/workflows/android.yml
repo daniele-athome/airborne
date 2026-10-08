@@ -44,6 +44,9 @@ jobs:
           distribution: zulu
           java-version: 21
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Calculating hash of patches for the cache keys
         id: patches-hash
         run: |
@@ -100,7 +103,8 @@ jobs:
 
       - name: Build Android application (debug)
         if: github.ref_name != 'release'
-        run: flutter build appbundle --no-pub --debug
+        # just build 1 platform, it saves time
+        run: flutter build appbundle --no-pub --debug --target-platform android-arm64
 
       - name: Prepare for release build
         if: github.ref_name == 'release'

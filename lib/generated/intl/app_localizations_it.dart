@@ -432,17 +432,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Configurazione dell\'aereo non valida.';
 
   @override
-  String get pilotSelect_title => 'Chi sei?';
-
-  @override
-  String get pilotSelect_confirm_title => 'Confermi?';
-
-  @override
-  String pilotSelect_confirm_message(String name) {
-    return 'Dici di essere **$name**.';
-  }
-
-  @override
   String get about_aircraft_info => 'Aeromobile';
 
   @override

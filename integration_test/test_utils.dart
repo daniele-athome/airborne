@@ -35,12 +35,9 @@ Future clearAppData() async {
   await prefs.clear();
 }
 
-Future setUpDummyAircraft({bool setPilot = true}) async {
+Future setUpDummyAircraft() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('currentAircraft', 'a1234');
-  if (setPilot) {
-    await prefs.setString('pilotName', 'Anna');
-  }
 
   final baseDir = await getApplicationSupportDirectory();
   final dataDir = Directory(path.join(baseDir.path, 'aircrafts'));

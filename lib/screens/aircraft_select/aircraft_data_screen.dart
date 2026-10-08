@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:logging/logging.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 
@@ -142,9 +142,10 @@ class _SetAircraftDataScreenState extends State<SetAircraftDataScreen> {
           // FIXME this should be handled with a simple rebuild by MyApp but it doesn't work
           // probably FutureProgressDialog popping the navigator has something to do with it
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            Navigator.of(context, rootNavigator: true).pushReplacementNamed(
-              appConfig.pilotName != null ? '/' : 'pilot-select',
-            );
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pushReplacementNamed('/');
           });
         }
       });

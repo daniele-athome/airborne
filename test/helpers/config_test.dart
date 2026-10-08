@@ -334,7 +334,6 @@ void main() {
         expect(config.currentAircraft, isNull);
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getString('currentAircraft'), isNull);
-        expect(prefs.getString('pilotName'), isNull);
       });
     });
 

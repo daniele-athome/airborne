@@ -8,7 +8,6 @@ import 'package:airborne/models/activities_models.dart';
 import 'package:airborne/models/book_flight_models.dart';
 import 'package:airborne/models/flight_log_models.dart';
 import 'package:airborne/screens/main/main_screen.dart' as main_screen;
-import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
 import 'package:airborne/services/activities_services.dart';
 import 'package:airborne/services/book_flight_services.dart';
 import 'package:airborne/services/flight_log_services.dart';
@@ -227,10 +226,9 @@ class MainNavigationApp extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
         // TEST
         //locale: const Locale('it', ''),
-        initialRoute: appConfig.pilotName != null ? '/' : 'pilot-select',
+        initialRoute: '/',
         routes: <String, WidgetBuilder>{
           '/': (context) => main_screen.MainNavigation(appConfig),
-          'pilot-select': (context) => const PilotSelectScreen(),
         },
         debugShowCheckedModeBanner: false,
         material: (_, _) => MaterialAppData(
@@ -272,17 +270,11 @@ class MainNavigationApp extends StatelessWidget {
 }
 
 class FakeAppConfig extends AppConfig {
-  final String? initPilotName;
-
-  FakeAppConfig() : initPilotName = null;
-
-  FakeAppConfig.withPilotName(this.initPilotName);
 
   @override
   Future<void> init() async {
     prefs = FakeSharedPreferences({
       'currentAircraft': 'a1234',
-      'pilotName': initPilotName,
     });
 
     //final dataFile = File('test_driver/screenshots_data.zip');

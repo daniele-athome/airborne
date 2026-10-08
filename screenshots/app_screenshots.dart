@@ -37,12 +37,8 @@ void main() async {
 
   late AppConfig appConfig;
 
-  Future<Widget> appMain({String? pilotName}) async {
-    if (pilotName != null) {
-      appConfig = FakeAppConfig.withPilotName(pilotName);
-    } else {
-      appConfig = FakeAppConfig();
-    }
+  Future<Widget> appMain() async {
+    appConfig = FakeAppConfig();
     await appConfig.init();
     return MultiProvider(
       providers: [
@@ -85,16 +81,8 @@ void main() async {
   // https://github.com/flutter/flutter/issues/92381
 
   group('Screenshots', () {
-    testWidgets('Onboarding - Select pilot', (WidgetTester tester) async {
-      runApp(await appMain());
-      await tester.pumpAndSettle();
-      await precacheImages(tester);
-      await tester.pumpAndSettle();
-      await screenshot(binding, tester, '50-onboarding-pilotselect');
-    });
-
     testWidgets('Book flight - Agenda view', (WidgetTester tester) async {
-      runApp(await appMain(pilotName: 'Anna'));
+      runApp(await appMain());
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();
@@ -106,7 +94,7 @@ void main() async {
     });
 
     testWidgets('Book flight - Month view', (WidgetTester tester) async {
-      runApp(await appMain(pilotName: 'Anna'));
+      runApp(await appMain());
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();
@@ -116,7 +104,7 @@ void main() async {
     });
 
     testWidgets('Book flight - Flight editor', (WidgetTester tester) async {
-      runApp(await appMain(pilotName: 'Anna'));
+      runApp(await appMain());
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();
@@ -126,7 +114,7 @@ void main() async {
     });
 
     testWidgets('Log book - List view', (WidgetTester tester) async {
-      runApp(await appMain(pilotName: 'Anna'));
+      runApp(await appMain());
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();
@@ -136,7 +124,7 @@ void main() async {
     });
 
     testWidgets('Log book - Flight editor', (WidgetTester tester) async {
-      runApp(await appMain(pilotName: 'Anna'));
+      runApp(await appMain());
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();
@@ -148,7 +136,7 @@ void main() async {
     });
 
     testWidgets('Activities - List view', (WidgetTester tester) async {
-      runApp(await appMain(pilotName: 'Anna'));
+      runApp(await appMain());
       await tester.pumpAndSettle();
       await precacheImages(tester);
       await tester.pumpAndSettle();

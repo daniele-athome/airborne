@@ -46,6 +46,7 @@ AircraftData _aircraft({
   backendInfo: backendInfo,
   hourmeterMultiplier: 60,
   pilotNames: pilotNames,
+  pilotName: 'Claudia',
   noPilotName: null,
   locationName: 'Fly Berlin',
   locationLatitude: 52.8844253,

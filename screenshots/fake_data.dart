@@ -270,12 +270,9 @@ class MainNavigationApp extends StatelessWidget {
 }
 
 class FakeAppConfig extends AppConfig {
-
   @override
   Future<void> init() async {
-    prefs = FakeSharedPreferences({
-      'currentAircraft': 'a1234',
-    });
+    prefs = FakeSharedPreferences({'currentAircraft': 'a1234'});
 
     //final dataFile = File('test_driver/screenshots_data.zip');
     // ignore: invalid_use_of_visible_for_testing_member

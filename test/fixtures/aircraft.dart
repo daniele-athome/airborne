@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 const kSampleAircraftId = 'a1234';
 const kSampleCallSign = 'A-1234';
+const kSamplePilotName = 'Claudia';
 const kSamplePilotNames = ['Mike', 'John', 'Claudia', 'Anna', 'Simon'];
 
 const kSampleBackendInfo = <String, dynamic>{
@@ -25,6 +26,7 @@ Map<String, dynamic> aircraftMetadata({
   String callSign = kSampleCallSign,
   bool admin = true,
   Map<String, dynamic> backendInfo = kSampleBackendInfo,
+  String pilotName = kSamplePilotName,
   List<String> pilotNames = kSamplePilotNames,
   String? noPilotName,
   int? hourmeterMultiplier,
@@ -37,6 +39,7 @@ Map<String, dynamic> aircraftMetadata({
   'aircraft_id': aircraftId,
   'callsign': callSign,
   'backend_info': backendInfo,
+  'pilot_name': pilotName,
   'pilot_names': pilotNames,
   'no_pilot_name': ?noPilotName,
   'hourmeter_multiplier': ?hourmeterMultiplier,

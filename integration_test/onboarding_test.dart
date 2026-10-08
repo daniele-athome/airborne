@@ -1,9 +1,8 @@
 import 'package:airborne/main.dart' as app;
-import 'package:airborne/screens/pilot_select/pilot_select_screen.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:nock/nock.dart';
 
 import 'test_aircraft_data.dart';
@@ -40,19 +39,6 @@ void main() {
         'http://localhost/a1234.zip',
       );
       await tester.tap(find.byKey(const Key('aircraft_data_button_install')));
-      await tester.pumpAndSettle();
-
-      expect(tester.any(find.byType(PilotSelectScreen)), true);
-    });
-
-    testWidgets('onboarding: select pilot', (WidgetTester tester) async {
-      app.main();
-
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('pilot_select_list:Anna')));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
 
       // check for main navigation bar

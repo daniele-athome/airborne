@@ -28,6 +28,7 @@ class AircraftData {
   final String callSign;
   final Map<String, dynamic> backendInfo;
   final int hourmeterMultiplier;
+  final String pilotName;
   final List<String> pilotNames;
   final String? noPilotName;
   final String locationName;
@@ -48,6 +49,7 @@ class AircraftData {
     required this.callSign,
     required this.backendInfo,
     required this.hourmeterMultiplier,
+    required this.pilotName,
     required this.pilotNames,
     required this.noPilotName,
     required this.locationName,
@@ -147,14 +149,22 @@ class AircraftDataReader {
       }
 
       // pilot avatars
-      for (final pilot in List<String>.from(
+      final pilotList = List<String>.from(
         metadata['pilot_names'] as Iterable<dynamic>,
-      )) {
+      );
+      for (final pilot in pilotList) {
         final avatarPic = archive.findFile('avatar-${pilot.toLowerCase()}.jpg');
         if (avatarPic == null || !avatarPic.isFile) {
           _log.warning('pilot avatar for $pilot is missing');
           return false;
         }
+      }
+
+      // pilot name must be in the pilot list
+      final pilotName = metadata['pilot_name'] as String;
+      if (!pilotList.contains(pilotName)) {
+        _log.warning('pilot name is missing from pilot list');
+        return false;
       }
 
       this.metadata = metadata;
@@ -248,6 +258,7 @@ class AircraftDataReader {
     pilotNames: List<String>.from(
       metadata!['pilot_names'] as Iterable<dynamic>,
     ),
+    pilotName: metadata!['pilot_name'] as String,
     noPilotName: metadata!['no_pilot_name'] as String?,
     locationName: metadata!['location']?['name'] as String,
     locationLatitude: metadata!['location']?['latitude'] as double,

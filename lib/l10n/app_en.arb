@@ -203,18 +203,6 @@
   "addAircraft_error_bad_datafile_format": "Invalid data file, maybe wrong password?",
   "addAircraft_error_invalid_datafile": "Not a valid aircraft data file.",
 
-  "pilotSelect_title": "Who are you?",
-  "pilotSelect_confirm_title": "Confirm?",
-  "pilotSelect_confirm_message": "So you are **{name}**.",
-  "@pilotSelect_confirm_message": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Daniele"
-      }
-    }
-  },
-
   "about_aircraft_info": "Aircraft",
   "about_aircraft_callsign": "Call Sign",
   "about_aircraft_hangar": "Hangar",

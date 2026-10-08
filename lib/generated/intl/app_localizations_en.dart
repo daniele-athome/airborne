@@ -430,17 +430,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Not a valid aircraft data file.';
 
   @override
-  String get pilotSelect_title => 'Who are you?';
-
-  @override
-  String get pilotSelect_confirm_title => 'Confirm?';
-
-  @override
-  String pilotSelect_confirm_message(String name) {
-    return 'So you are **$name**.';
-  }
-
-  @override
   String get about_aircraft_info => 'Aircraft';
 
   @override

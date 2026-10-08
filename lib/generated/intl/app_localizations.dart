@@ -818,24 +818,6 @@ abstract class AppLocalizations {
   /// **'Not a valid aircraft data file.'**
   String get addAircraft_error_invalid_datafile;
 
-  /// No description provided for @pilotSelect_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Who are you?'**
-  String get pilotSelect_title;
-
-  /// No description provided for @pilotSelect_confirm_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm?'**
-  String get pilotSelect_confirm_title;
-
-  /// No description provided for @pilotSelect_confirm_message.
-  ///
-  /// In en, this message translates to:
-  /// **'So you are **{name}**.'**
-  String pilotSelect_confirm_message(String name);
-
   /// No description provided for @about_aircraft_info.
   ///
   /// In en, this message translates to:

@@ -8,7 +8,6 @@ import '../generated/intl/app_localizations.dart';
 import '../helpers/config.dart';
 import 'aircraft_select/aircraft_data_screen.dart';
 import 'main/main_screen.dart';
-import 'pilot_select/pilot_select_screen.dart';
 
 final Logger _log = Logger("app");
 
@@ -29,7 +28,7 @@ class _MyAppState extends State<MyApp> {
     if (appConfig.aircrafts.isEmpty && appConfig.currentAircraft == null) {
       return 'aircraft-data';
     } else {
-      return appConfig.pilotName != null ? '/' : 'pilot-select';
+      return '/';
     }
   }
 
@@ -55,7 +54,6 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => Consumer<AppConfig>(
           builder: (context, appConfig, child) => MainNavigation(appConfig),
         ),
-        'pilot-select': (context) => const PilotSelectScreen(),
         'aircraft-data': (context) => const SetAircraftDataScreen(),
       },
       debugShowCheckedModeBanner: false,

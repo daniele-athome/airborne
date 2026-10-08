@@ -131,10 +131,6 @@
   "addAircraft_error_bad_datafile_format": "File non valido, forse password errata?",
   "addAircraft_error_invalid_datafile": "Configurazione dell'aereo non valida.",
 
-  "pilotSelect_title": "Chi sei?",
-  "pilotSelect_confirm_title": "Confermi?",
-  "pilotSelect_confirm_message": "Dici di essere **{name}**.",
-
   "about_aircraft_info": "Aeromobile",
   "about_aircraft_callsign": "Marche",
   "about_aircraft_hangar": "Hangar",

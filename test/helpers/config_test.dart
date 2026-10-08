@@ -327,34 +327,13 @@ void main() {
         expect(prefs.getString('currentAircraft'), isNull);
       });
 
-      test('remembers the pilot', () async {
-        final config = await buildConfig();
-        var notifications = 0;
-        config.addListener(() => notifications++);
-
-        config.pilotName = 'Anna';
-        expect(config.pilotName, 'Anna');
-        expect(notifications, 1);
-        final prefs = await SharedPreferences.getInstance();
-        expect(prefs.getString('pilotName'), 'Anna');
-
-        config.pilotName = null;
-        expect(config.pilotName, isNull);
-        expect(notifications, 2);
-        expect(prefs.getString('pilotName'), isNull);
-      });
-
-      test('logout drops both the aircraft and the pilot', () async {
+      test('logout drops the aircraft', () async {
         final config = await buildConfig(metadata: aircraftMetadata());
-        config.pilotName = 'Anna';
-
         await config.logout();
 
         expect(config.currentAircraft, isNull);
-        expect(config.pilotName, isNull);
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getString('currentAircraft'), isNull);
-        expect(prefs.getString('pilotName'), isNull);
       });
     });
 
@@ -362,19 +341,19 @@ void main() {
       test('starts empty when nothing was stored', () async {
         final config = await buildConfig();
         expect(config.currentAircraft, isNull);
-        expect(config.pilotName, isNull);
       });
 
       test('reloads the aircraft stored last time', () async {
         // what addAircraftDataFile leaves behind after an onboarding
-        final zipFile = await createValidAircraftZipFile();
+        final zipFile = await createValidAircraftZipFile(
+          metadata: aircraftMetadata(pilotName: 'Anna'),
+        );
         final reader = AircraftDataReader(dataFile: zipFile, urlFile: null);
         await reader.open();
         await addAircraftDataFile(reader, 'https://example.com/a1234.zip');
 
         SharedPreferences.setMockInitialValues({
           'currentAircraft': kSampleAircraftId,
-          'pilotName': 'Anna',
         });
 
         final config = AppConfig();
@@ -387,20 +366,15 @@ void main() {
       });
 
       test('cleans up after an aircraft it can no longer read', () async {
-        SharedPreferences.setMockInitialValues({
-          'currentAircraft': 'ghost',
-          'pilotName': 'Anna',
-        });
+        SharedPreferences.setMockInitialValues({'currentAircraft': 'ghost'});
 
         final config = AppConfig();
         addTearDown(config.dispose);
         await config.init();
 
         expect(config.currentAircraft, isNull);
-        expect(config.pilotName, isNull);
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getString('currentAircraft'), isNull);
-        expect(prefs.getString('pilotName'), isNull);
       });
     });
   });

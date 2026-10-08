@@ -24,7 +24,6 @@ class AppConfig extends ChangeNotifier {
       } catch (e) {
         _log.info('Error loading current aircraft, cleaning everything ($e)');
         _currentAircraftId = null;
-        pilotName = null;
         // a bit drastic maybe...
         await deleteAircraftCache();
       }
@@ -159,6 +158,10 @@ class AppConfig extends ChangeNotifier {
     return _currentAircraft!.noPilotName;
   }
 
+  String? get pilotName {
+    return _currentAircraft!.pilotName;
+  }
+
   ImageProvider getPilotAvatar(String name) {
     return (name == _currentAircraft!.noPilotName
             ? const AssetImage('assets/images/nopilot_avatar.png')
@@ -218,20 +221,6 @@ class AppConfig extends ChangeNotifier {
 
   Future<void> logout() async {
     await setCurrentAircraft(null);
-    pilotName = null;
-    notifyListeners();
-  }
-
-  String? get pilotName {
-    return prefs.getString('pilotName');
-  }
-
-  set pilotName(String? value) {
-    if (value != null) {
-      prefs.setString('pilotName', value);
-    } else {
-      prefs.remove('pilotName');
-    }
     notifyListeners();
   }
 

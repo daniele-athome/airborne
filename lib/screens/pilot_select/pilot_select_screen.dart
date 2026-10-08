@@ -39,7 +39,7 @@ class PilotSelectScreen extends StatelessWidget {
   }
 
   void _confirmPilot(BuildContext context, AppConfig appConfig, String name) {
-    appConfig.pilotName = name;
+    // read-only now: appConfig.pilotName = name;
     Navigator.of(context, rootNavigator: true).pushReplacementNamed('/');
   }
 

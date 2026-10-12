@@ -25,7 +25,7 @@ environment:
 
 dependencies:
   adaptive_dialog: 2.8.3
-  archive: 4.5.0
+  archive: 4.5.1
   auto_size_text: 3.0.0
   collection: 1.19.1
   cupertino_calendar_picker: 3.0.0
@@ -59,7 +59,7 @@ dependencies:
   syncfusion_localizations: 35.1.39
   syncfusion_flutter_core: 35.1.39
   timeline_tile: 2.0.0
-  timezone: 0.11.1
+  timezone: 0.11.2
   url_launcher: 6.3.3
   validators: 3.0.0
 

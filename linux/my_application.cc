@@ -14,9 +14,41 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+// Loads the icons bundled with the application and makes them the default for
+// every window.
+static void my_application_set_default_icon() {
+  g_autofree gchar* executable = g_file_read_link("/proc/self/exe", nullptr);
+  if (executable == nullptr) {
+    return;
+  }
+  g_autofree gchar* bundle_dir = g_path_get_dirname(executable);
+
+  static const char* icon_sizes[] = {"16x16",   "22x22",   "24x24",
+                                     "32x32",   "48x48",   "64x64",
+                                     "128x128", "256x256", "512x512"};
+  GList* icons = nullptr;
+  for (const char* size : icon_sizes) {
+    g_autofree gchar* path =
+        g_build_filename(bundle_dir, "data", "icons", "hicolor", size, "apps",
+                         APPLICATION_ID ".png", nullptr);
+    GdkPixbuf* icon = gdk_pixbuf_new_from_file(path, nullptr);
+    if (icon != nullptr) {
+      icons = g_list_prepend(icons, icon);
+    }
+  }
+
+  if (icons != nullptr) {
+    gtk_window_set_default_icon_list(icons);
+    g_list_free_full(icons, g_object_unref);
+  }
+}
+
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
+
+  my_application_set_default_icon();
+
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 

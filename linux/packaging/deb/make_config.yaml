@@ -1,0 +1,35 @@
+# Debian package metadata for fastforge
+
+display_name: Airborne
+package_name: airborne
+
+maintainer:
+  name: Daniele Ricci
+  email: unofficial-package@not.debian.org
+
+priority: optional
+section: utils
+
+# automatic dependencies still not supported by fastforge. To regenerate:
+#   dpkg-shlibdeps -O --ignore-missing-info -lbundle/lib bundle/airborne bundle/lib/*.so
+dependencies:
+  - libgtk-3-0 (>= 3.24)
+  - libc6 (>= 2.35)
+  - libstdc++6
+  - libgcc-s1
+  - zlib1g
+
+startup_wm_class: airborne
+
+icon: linux/share/icons/hicolor/512x512/apps/it.casaricci.airborne.png
+
+generic_name: Aircraft management
+
+categories:
+  - Utility
+
+keywords:
+  - aircraft
+  - aviation
+  - flight
+  - logbook

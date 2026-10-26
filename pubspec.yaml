@@ -24,13 +24,13 @@ environment:
   sdk: ">=3.13.0 <4.0.0"
 
 dependencies:
-  adaptive_dialog: 2.8.3
-  archive: 4.5.1
+  adaptive_dialog: 2.8.4
+  archive: 4.5.2
   auto_size_text: 3.0.0
   collection: 1.19.1
   cupertino_calendar_picker: 3.0.0
   cupertino_icons: 2.0.0
-  cupertino_ui: 1.1.2
+  cupertino_ui: 1.1.4
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -41,23 +41,23 @@ dependencies:
       ref: 96a1a375549c3e01c6a817357953df0df9b0c332
   fluttertoast: 10.0.2
   googleapis: 17.0.0
-  googleapis_auth: 2.3.4
+  googleapis_auth: 2.3.5
   http: 1.6.0
   infinite_scroll_pagination: 5.1.1
   intl: 0.20.3
   json_schema: 5.2.2
   logging: 1.3.0
   material_segmented_control: 5.0.1
-  material_ui: 1.6.0
+  material_ui: 1.8.0
   package_info_plus: 10.2.2
   path: 1.9.1
   path_provider: 2.1.6
   provider: 6.1.5+1
   shared_preferences: 2.5.6
   solar_calculator: 1.0.3
-  syncfusion_flutter_calendar: 35.1.39
-  syncfusion_localizations: 35.1.39
-  syncfusion_flutter_core: 35.1.39
+  syncfusion_flutter_calendar: 35.1.41
+  syncfusion_localizations: 35.1.41
+  syncfusion_flutter_core: 35.1.41
   timeline_tile: 2.0.0
   timezone: 0.11.2
   url_launcher: 6.3.3
